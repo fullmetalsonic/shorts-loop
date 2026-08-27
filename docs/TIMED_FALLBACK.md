@@ -1,8 +1,12 @@
 # 진행 정보 없는 릴스 시간제 넘김 / Clockless Reels timeout
 
+최종 제품은 **0.2.4/code13**이다. 제품227시험·빌드·lint(0오류/4경고)·설치본동일성검사를통과했고,0회광고1회자동전환과일반·시간제중지를실기기확인했다. 시간제기본10초/5~60초는유지한다. CI·공개다운로드최신상태는 [릴리스 기록](releases/v0.2.4.md),상세시험은 [검증 원장](VERIFICATION.md)을따른다. 아래timed-test A/B는최종광고독립변경전의과거후보다.
+
+Final product: **0.2.4/code13**, 227 product tests and build passed; lint has 0 errors/4 warnings. The installed APK matches, and one ad advanced at zero while normal/timed advancing stayed stopped. See the release record for CI and public-download verification. A/B below are historical candidates.
+
 ## 승인과 목적 / Approval and purpose
 
-사용자는2026-08-27 “기본15초에플러스마이너스” 및 “인식되는것은인식된대로,카운트시작안되는것만시간제,유튜브는그대로”를 승인했다. 이번0.2.4-timed-test는 별도오디오시험앱이 아닌 기존ShortsLoop에 선택적타이머를 추가한다. 원인을해결하거나영상길이를알아내는기능은아니다.
+사용자는2026-08-27 “기본15초에플러스마이너스” 및 “인식되는것은인식된대로,카운트시작안되는것만시간제,유튜브는그대로”를 승인했다. 초기0.2.4-timed-test부터 별도오디오시험앱이 아닌 기존ShortsLoop에 선택적타이머를 추가했다. 원인을해결하거나영상길이를알아내는기능은아니다.
 
 후속 사용자 변경: **기본10초·최대60초**. 후보B(code12)부터 아래최신계약을적용한다. 최초후보A(code11)의15초/최대120초실측은과거증거로보존하고새10초시험과합치지않는다.
 
@@ -35,7 +39,7 @@ Timer safety is based on the available accessibility structure, not a hidden pla
 
 ## 검증과 배포 기준 / Verification and release gate
 
-구현·빌드·설치와 제한된 실기기 시험을 완료했다. B는 일반6개 연속(정상5/시간제1)까지 확인했으며20개 기준은 미완료다. 타이머25시험/설정38시험을 포함한 연결 범위225시험 PASS. 전체245개 중 기존 미연결 VisualSequenceTracker의2개 실패는 숨기거나 임의 삭제하지 않는다. 전체 검증과 한정 기능 검증을 구분한다.
+후보B 당시 검증: 구현·빌드·설치와 제한된 실기기 시험을 완료했다. B는 일반6개 연속(정상5/시간제1)까지 확인했으며20개 기준은 미완료다. 타이머25시험/설정38시험을 포함한 연결 범위225시험 PASS. 당시전체245개 중 기존 미연결 VisualSequenceTracker의2개 실패는 숨기거나 임의 삭제하지 않았다. 최종제품227시험및명시적실험분리와구분한다.
 
 중간 승인 기준은 **정상 N회·시간제·광고를 합친 연속20회 자동 넘김 성공 후 Public 게시**였다. 광고도 의도한 기능의 성공이므로 합계에 포함한다. 수동 이동/중간 실행 재시작은 연속 성공으로 세지 않는다. 종류별 요청·확인 횟수는 남기며, 시간제 성공을 정확한 N회 완주로 바꾸어 설명하지 않는다. 이전 일반영상만20개 기준과 이20개 대기 조건은 아래 후속 요청 이전의 이력이다. 개인정보 화면/원시 로그는 private에만 보관한다.
 

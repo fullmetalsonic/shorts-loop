@@ -1,8 +1,8 @@
-# 쇼츠 자동 넘김 · ShortsLoop 0.2.4 (공개 준비 중 / Preparing release)
+# 쇼츠 자동 넘김 · ShortsLoop 0.2.4 (시험판 / Prerelease)
 
-일반 YouTube 쇼츠와 Instagram 릴스를 정한 횟수만큼 보고 다음 영상으로 넘기는 Android 시험판입니다. **0.2.4는 공개 준비 중**이며, 아래 링크는 게시 예정 주소입니다. 사용자가 20연속 시험 완료 조건을 면제하고 현재 시험판의 공개를 승인했습니다. **20연속 성공이나 안정성 보장을 뜻하지 않습니다.**
+일반 YouTube 쇼츠와 Instagram 릴스를 정한 횟수만큼 보고 다음 영상으로 넘기는 Android 시험판입니다. **0.2.4를 Public으로 공개했습니다.** 사용자가 20연속 시험 완료 조건을 면제하고 현재 시험판의 공개를 승인했습니다. **20연속 성공이나 안정성 보장을 뜻하지 않습니다.**
 
-An experimental Android app that advances supported YouTube Shorts and Instagram Reels after a chosen number of plays. **Version 0.2.4 is being prepared for publication; the release link is planned.** The user approved sharing the current trial without completing the 20-consecutive-transition gate. **This is not a claim of 20 consecutive successes or guaranteed reliability.**
+An experimental Android app that advances supported YouTube Shorts and Instagram Reels after a chosen number of plays. **Version 0.2.4 is publicly released as a prerelease.** The user approved sharing the current trial without completing the 20-consecutive-transition gate. **This is not a claim of 20 consecutive successes or guaranteed reliability.**
 
 **새 기능: 진행 정보 없는 Instagram 영상만 시간제로 넘김.** 기본 OFF·10초, 숫자 입력과 ＋/－로 5~60초를 1초씩 조절합니다. 정상 진행 정보가 있는 영상과 YouTube는 기존 재생 횟수대로 넘깁니다. 반복 2회/시간 10초이면 정상 영상은 2회, 정보 없는 대상 영상은 **총 10초** 뒤 이동합니다. 완주 횟수나 영상 길이를 알아내는 기능은 아닙니다. [설정·안전 동작·검증](docs/TIMED_FALLBACK.md).
 
@@ -16,7 +16,7 @@ An experimental Android app that advances supported YouTube Shorts and Instagram
 
 **The existing visual-assist trial remains optional.** It is OFF by default, separately consented, Android 14+, and RAM-only. Timed fallback takes priority when both are enabled, preserving the visual preference. Learning can add plays; exact total N is not guaranteed.
 
-[0.2.4 게시 예정 / Planned release](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.4) · [0.2.4 릴리스 초안 / Draft release notes](docs/releases/v0.2.4.md) · [검증 / Verification](docs/VERIFICATION.md)
+[0.2.4 APK 다운로드 / Download](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.4) · [릴리스 기록 / Release notes](docs/releases/v0.2.4.md) · [검증 / Verification](docs/VERIFICATION.md)
 
 ## 주요 기능 / Features
 
@@ -40,8 +40,8 @@ An experimental Android app that advances supported YouTube Shorts and Instagram
 Android 8.0(API26) 이상이 설치 대상입니다. 실제 시험은 Galaxy Z Fold8 / Android17에서 했으며 모든 기기의 호환성을 보장하지 않습니다. 인앱 언어는 현재 한국어입니다.<br>
 The minimum OS is Android 8.0/API26. Device testing was on Galaxy Z Fold8 / Android17, not all supported devices. The in-app interface is currently Korean.
 
-1. **공개 준비 중:** 게시 완료 후 위 Release에서 0.2.4 APK를 내려받고 릴리스에 확정된 파일명·SHA256을 확인하세요. 개발 서명·디버그 APK이며 Play Store 배포본이 아닙니다. 현재 최종 파일·해시·공개 다운로드 검증은 대기 중입니다.<br>
-   **Preparing release:** after publication, download the 0.2.4 APK and check the finalized filename and SHA256 in its release notes. It is development-signed and debuggable, not a Play Store release. Final artifact/hash and public-download verification are pending.
+1. 위 Release에서 `shorts-loop-v0.2.4-debug.apk`를 내려받고 릴리스의 SHA256을 확인하세요. 개발 서명·디버그 APK이며 Play Store 배포본이 아닙니다. CI 성공과 공개 다운로드 파일·설치본의 크기/해시 일치를 확인했습니다.<br>
+   Download `shorts-loop-v0.2.4-debug.apk` from the release and check its SHA256. It is development-signed and debuggable, not a Play Store release. CI passed, and the public download matches the installed APK in size and hash.
 2. 신뢰할 수 있는 출처인지 확인한 뒤 Android 설치 안내에 따릅니다. 출처를 알 수 없는 앱 설치 허용이 필요할 수 있습니다. 기존 YouTube·Instagram은 수정하지 않습니다.<br>
    Verify the source and follow Android's installation prompts, including permission to install from that source if needed. YouTube and Instagram are not modified.
 3. 앱을 열고 **사용할 앱**을 선택한 뒤 **일반 영상 · 횟수로 넘김**에서 반복 횟수 `2` 입력 → **입력한 횟수 적용** 또는 키보드 완료. 시간제와 광고는 각각 별도 항목에서 켭니다.<br>
@@ -146,13 +146,16 @@ Windows:
 
 Linux / GitHub Actions:
 ```sh
-./gradlew --no-daemon assembleDebug testDebugUnitTest lintDebug
+./gradlew --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
 ```
 
 APK: `app/build/outputs/apk/debug/app-debug.apk`.
 
 최종 0.2.4(code13): **제품 범위 227개 JUnit·빌드 PASS, lint 오류 0/경고 4**. 광고 독립·UI 변경을 포함한 APK의 서명과 휴대폰 설치본 SHA256 일치를 확인했습니다. [릴리스 기록](docs/releases/v0.2.4.md). Windows 한글 경로의 Gradle 시험 실행기 문제는 동일 컴파일 결과의 직접 JUnit 실행으로 우회했습니다.<br>
 Final 0.2.4 (code13): **227 product tests and build PASS; lint 0 errors/4 warnings**. The APK includes independent ads and grouped UI; signature verification and installed-APK SHA256 matching passed. See release notes. Direct JUnit works around the Windows Unicode-path Gradle test-worker issue.
+
+[GitHub CI](https://github.com/fullmetalsonic/shorts-loop/actions/runs/33074271656)도 제품227개·빌드 PASS, lint0오류/3경고입니다. 익명 공개 다운로드 파일은 로컬/설치본과 같은681624bytes·SHA256이며 v2서명도 확인했습니다.<br>
+GitHub CI also passed 227 product tests and build, with lint 0 errors/3 warnings. The anonymously downloaded APK matches the local/installed 681624-byte file and SHA256; its v2 signature verifies.
 
 별도 미연결 `VisualSequenceTracker` 실험은 **20개 중 18 PASS/2 FAIL**입니다. 영상 주기 오추정·학습 실패가 남아 있으며 시간제 제품 기능의 실패와 구분합니다. 실험 원본을 보존하되 배포 앱과 제품 시험에서 제외합니다. 따라서 제품 227 PASS를 이 실험까지 포함한 전체 PASS로 표현하지 않습니다.<br>
 The separate, unwired `VisualSequenceTracker` experiment has **18 PASS/2 FAIL out of 20 tests**, involving period estimation and learning. These are not timed-fallback failures. Its source is preserved but excluded from the release app and product tests. Product tests passing does not mean this experiment passes.
@@ -180,7 +183,7 @@ This README is the bilingual user guide. Detailed development and test records b
 - [디버그 대장 / Debug log](docs/DEBUG_LOG.md)
 - [누적이력 / Changelog](docs/CHANGELOG.md)
 - [인수인계·문서 색인 / Handover and index](HANDOVER.md)
-- [0.2.4 릴리스 초안 / Draft release record](docs/releases/v0.2.4.md)
+- [0.2.4 공개 기록 / Release record](docs/releases/v0.2.4.md)
 - [이전 0.2.2 릴리스 / Previous release record](docs/releases/v0.2.2.md)
 
 YouTube 및 Instagram과 무관한 개인 프로젝트입니다. 별도의 오픈소스 라이선스는 아직 지정하지 않았습니다.<br>
