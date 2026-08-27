@@ -1,5 +1,13 @@
 # 누적이력
 
+## 2026-08-27 · 0.2.2 Public 게시·다운로드·CI 검증 완료
+
+- [Public 저장소](https://github.com/fullmetalsonic/shorts-loop) 생성, main 소스95a4239844ba35a929b2719e8e935b7eb2d3ea14 및 v0.2.2 태그 게시. 개발 서명 APK와SHA256 파일을 prerelease로 공개.
+- 비로그인 HTTP200 및 공개 첨부 재다운로드 크기627713/SHA25638A283A6780295BB30E1482ED2535C5FE4204B4B5F0180D2C3326D60E3675B58 일치. checksum 첨부도 원본과 일치, APK v2서명 PASS.
+- [GitHub CI33049522094](https://github.com/fullmetalsonic/shorts-loop/actions/runs/33049522094) SUCCESS. Linux Gradle testDebugUnitTest148개(실패/오류/skip0), assembleDebug,lint0오류1경고. 보고서 다운로드·XML 합산 확인. 기존 Windows 직접JUnit148과 구분.
+- 독립 공개 준비 리뷰 PASS:82파일/로컬 문서 링크/개인자료·키 제외/버전·미해결 상태 확인. 사용자 지정WindowsSDK는 ANDROID_HOME 설정 필요 문구 보완.
+- 새 메뉴 실제 기기검사·0.2.2 설치 및 추가 재생 디버깅은 사용자 요청으로 미실행 유지. 메일 미요청/미발송.
+
 ## 2026-08-27 · 0.2.2 배터리 안내 메뉴·공개 시험판 준비
 
 - 사용자 승인으로 자체 앱만 배터리 제한 없음 설정. 예외 목록/커널 frozen=0 확인, 약56초 PiP대기50표본 응답 유지와 전체 화면 시간 추적 재개 확인. D-020 조치 후 제한적 개선이며 전체 안정성 PASS 아님.

@@ -1,5 +1,24 @@
 # 검증 기록 · ShortsLoop 0.2.2
 
+## 공개 배포 확인 · 2026-08-27
+
+| 검사 | 결과 | 증거 |
+|---|---|---|
+| 저장소 가시성 | PUBLIC | [fullmetalsonic/shorts-loop](https://github.com/fullmetalsonic/shorts-loop), API visibility=PUBLIC |
+| 소스·태그 | PASS | v0.2.2 →95a4239844ba35a929b2719e8e935b7eb2d3ea14, 원격 ref 대조 |
+| 릴리스 | PASS | [v0.2.2](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.2), draft=false, prerelease=true, APK+SHA256 2개 첨부 |
+| 익명 공개 접근 | PASS | 인증 헤더 없이 저장소/Release HTTP200 및 APK·checksum 다운로드 |
+| APK 무결성 | PASS | 아래 로컬 빌드·보존본·공개 다운로드 모두627713bytes/동일SHA256, checksum파일도 동일 |
+| 패키지·서명 | PASS | aapt0.2.2/code9/min26/target35/overlay권한만, apksigner v2검증. aapt는 로컬 한글경로 오류를 동일해시 ASCII임시복사로 우회 |
+| Linux CI 빌드·시험·lint | PASS | [run33049522094](https://github.com/fullmetalsonic/shorts-loop/actions/runs/33049522094), head95a4239, conclusion=success |
+| Linux Gradle JUnit | PASS | 보고서 다운로드 후 XML합산148tests/0failures/0errors/0skipped |
+| Linux lint | PASS | 오류0/경고1(OldTargetApi). 비어 있는 v26폴더는Git에없어 로컬보다경고1개적음 |
+| CI 도구 경고 | 남음 | Node20 기반Actions의Node24강제실행/SetupJava4폐기안내. 작업실행은 성공; 보안문제가 없다는 포괄보증은 아님 |
+| 공개 안전·문서 | PASS(검사 범위) | 82공개파일의경로/텍스트검사·독립리뷰·링크검사, private/artifacts/SDK/참고원본/서명키제외. 파일2개PNG는생성아이콘 |
+| 소스 일치 | PASS | 공개 전 worktree와HEAD를git hash-object --filters로대조, remote main/ref확인. 이후 게시증거 문서만 갱신 |
+
+배포검증과 실기기 안정성은 구분한다. 새0.2.2 설치·배터리 메뉴 실제 터치/시각/복귀·자동 넘김 재시험은 보류, D-019/D-021미해결. 공개APK는CI재서명본이아니라아래해시의로컬개발서명본이며CI에는검사보고서만첨부한다. 메일 발송 없음.
+
 ## 0.2.2 최신 검증 · 배터리 안내 및 공개 준비
 
 | 검사 | 결과 | 범위/제한 |
@@ -15,7 +34,7 @@
 | 미해결 제품 문제 | 있음 | D-019 전환 실패, D-021 반복 경계 누락. 안정성 완료 아님 |
 | 웹 화면·회사메일 | N/A / 미수행 | 네이티브 Android / 메일 요청 없음 |
 
-산출물:0.2.2/code9,627,713bytes, SHA256 `38A283A6780295BB30E1482ED2535C5FE4204B4B5F0180D2C3326D60E3675B58`. 개발 서명 APK. 배포 후 해시/서명/CI 결과는 후속 기록한다.
+산출물:0.2.2/code9,627,713bytes, SHA256 `38A283A6780295BB30E1482ED2535C5FE4204B4B5F0180D2C3326D60E3675B58`. 개발 서명 APK. 공개 다운로드/서명/CI 결과는 위 공개 배포 절에 기록했다.
 
 ### D-020 후속 실기기 시험 · 0.2.1 설정 변경, 코드 미변경
 

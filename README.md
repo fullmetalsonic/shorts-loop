@@ -127,6 +127,9 @@ APK: `app/build/outputs/apk/debug/app-debug.apk`.
 로컬0.2.2: 빌드·직접JUnit148개·정적 안전 연결 검사 PASS, lint 오류0/경고2. Windows 한글 경로에서 Gradle 시험 실행기 오류가 있어 스크립트가 같은 컴파일 결과를 직접JUnit으로 실행합니다. Linux CI 결과는 Actions와 [검증 기록](docs/VERIFICATION.md)을 확인하세요.<br>
 Local0.2.2: build,148 direct JUnit tests, and static wiring checks pass; lint reports0 errors/2 warnings. The Windows script uses direct JUnit because the Gradle test worker failed on the Unicode path. See Actions and the [verification record](docs/VERIFICATION.md) for Linux CI.
 
+[릴리스 소스의 GitHub CI](https://github.com/fullmetalsonic/shorts-loop/actions/runs/33049522094)도 빌드·Gradle 단위시험148개·lint(오류0/경고1)를 통과했습니다. 공개 APK를 다시 내려받아 로컬 원본과 크기·SHA256 일치를 확인했습니다.<br>
+[GitHub CI for the release source](https://github.com/fullmetalsonic/shorts-loop/actions/runs/33049522094) also passes the build, 148 Gradle unit tests, and lint (0 errors/1 warning). The publicly downloaded APK matches the local original in size and SHA256.
+
 **0.2.2의 새 배터리 메뉴 실제 터치·화면 복귀 시험 및 설치 후 자동 넘김 재시험은 미실행**입니다. 이전0.2.1 실기기 성공 사례를 새 버전 전체 검증으로 보고하지 않습니다.<br>
 **The new0.2.2 battery menu's actual touch/return flow and post-install auto-advance have not been device-tested.** Earlier0.2.1 successes do not certify this release.
 
