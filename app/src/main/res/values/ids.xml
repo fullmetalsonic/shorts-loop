@@ -1,0 +1,26 @@
+<resources>
+    <item name="count_input" type="id" />
+    <item name="count_up" type="id" />
+    <item name="count_down" type="id" />
+    <item name="count_apply" type="id" />
+    <item name="app_youtube" type="id" />
+    <item name="app_instagram" type="id" />
+    <item name="skip_ads_toggle" type="id" />
+    <item name="floating_toggle" type="id" />
+    <item name="execution_toggle" type="id" />
+    <item name="tap_rotary" type="id" />
+    <item name="tap_quick" type="id" />
+    <item name="help_toggle" type="id" />
+    <item name="floating_count" type="id" />
+    <item name="floating_close" type="id" />
+    <item name="main_start" type="id" />
+    <item name="main_stop" type="id" />
+    <item name="mode_0" type="id" />
+    <item name="mode_1" type="id" />
+    <item name="mode_2" type="id" />
+    <item name="permission_accessibility" type="id" />
+    <item name="permission_overlay" type="id" />
+    <item name="tile_add" type="id" />
+    <item name="battery_status" type="id" />
+    <item name="battery_settings" type="id" />
+</resources>

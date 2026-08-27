@@ -1,0 +1,5 @@
+<!-- minSdk 26; the API33 resource supplies the monochrome layer. -->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" tools:ignore="MonochromeLauncherIcon">
+    <background android:drawable="@drawable/launcher_background" />
+    <foreground android:drawable="@drawable/launcher_foreground" />
+</adaptive-icon>
