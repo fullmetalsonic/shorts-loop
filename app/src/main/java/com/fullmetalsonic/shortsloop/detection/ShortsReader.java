@@ -20,6 +20,6 @@ public final class ShortsReader {
         if (!snapshot.usable() && !snapshot.recognized()) return snapshot;
         // Preserve YouTube's unknown-identity sentinel: it must not confirm a swipe.
         String identity = snapshot.identity.isEmpty() ? "" : packageName + "|" + snapshot.identity;
-        return new YouTubeSnapshot(snapshot.progress, identity, snapshot.page, snapshot.reason, snapshot.ad);
+        return snapshot.withIdentity(identity);
     }
 }

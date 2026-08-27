@@ -1,12 +1,32 @@
 package com.fullmetalsonic.shortsloop.data;
 
 import com.fullmetalsonic.shortsloop.core.ModePolicy;
+import com.fullmetalsonic.shortsloop.core.AdSkipPolicy;
+import com.fullmetalsonic.shortsloop.core.ClocklessTimeoutPolicy;
 import java.util.Map;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 /** Exercises the production store against an in-memory SharedPreferences interface. */
 public class SettingsStoreTest {
+    @Test public void zeroPlayStartCanEnableOnlyAdsWhileTimerStaysOff() {
+        SettingsStore store = new SettingsStore(new MemoryPreferences());
+        store.ceiling(0); store.selectedApp(SettingsStore.INSTAGRAM_PACKAGE, true);
+        store.skipAds(true); store.timedFallback(true); store.start();
+        assertEquals(0, store.target()); assertTrue(store.enabled());
+        assertTrue(AdSkipPolicy.enabled(store.enabled(), store.skipAds(), store.instagramEnabled()));
+        assertFalse(ClocklessTimeoutPolicy.enabled(store.enabled(), store.target(), store.instagramEnabled(), store.timedFallback()));
+        store.enabled(false);
+        assertFalse(AdSkipPolicy.enabled(store.enabled(), store.skipAds(), store.instagramEnabled()));
+    }
+    @Test public void adOptionAndInstagramSelectionStillGateZeroPlayMode() {
+        SettingsStore store = new SettingsStore(new MemoryPreferences());
+        store.ceiling(0); store.selectedApp(SettingsStore.INSTAGRAM_PACKAGE, true); store.start();
+        assertFalse(AdSkipPolicy.enabled(store.enabled(), store.skipAds(), store.instagramEnabled()));
+        store.skipAds(true); store.selectedApp(SettingsStore.INSTAGRAM_PACKAGE, false);
+        assertFalse(AdSkipPolicy.enabled(store.enabled(), store.skipAds(), store.instagramEnabled()));
+        assertEquals(0, store.target()); assertTrue(store.enabled());
+    }
     @Test public void freshInstallHasExplicitCompatibleDefaults() {
         MemoryPreferences preferences = new MemoryPreferences();
         SettingsStore store = new SettingsStore(preferences);
@@ -236,6 +256,121 @@ public class SettingsStoreTest {
         MemoryPreferences preferences = new MemoryPreferences(Map.of("target", 0, "last_nonzero", 1, "skip_ads", true));
         SettingsStore store = new SettingsStore(preferences);
         assertTrue(store.skipAds()); assertEquals(0, store.target()); assertEquals(1, store.ceiling());
+        assertEquals(1, preferences.getInt("settings_version", 0));
+    }
+
+    @Test public void visualAssistanceDefaultsOffForNewLegacyAndExistingSettings() {
+        assertFalse(new SettingsStore(new MemoryPreferences()).visualAssist());
+        assertFalse(new SettingsStore(new MemoryPreferences(Map.of("target", 1))).visualAssist());
+        MemoryPreferences existing = new MemoryPreferences(Map.of("settings_version", 1, "ceiling", 5, "target", 2));
+        SettingsStore store = new SettingsStore(existing);
+        assertFalse(store.visualAssist()); assertEquals(0, existing.writes.size());
+        assertEquals(1, existing.getInt("settings_version", 0));
+    }
+
+    @Test public void visualAssistanceRestoresWithoutChangingOtherSettings() {
+        MemoryPreferences preferences = new MemoryPreferences();
+        SettingsStore store = new SettingsStore(preferences);
+        store.ceiling(5); store.target(2); store.skipAds(true); store.floatingEnabled(false);
+        store.selectedApp(SettingsStore.INSTAGRAM_PACKAGE, true); store.visualAssist(true);
+        SettingsStore restored = new SettingsStore(new MemoryPreferences(preferences.getAll()));
+        assertTrue(restored.visualAssist()); assertTrue(restored.skipAds()); assertFalse(restored.floatingEnabled());
+        assertTrue(restored.instagramEnabled()); assertFalse(restored.enabled());
+        assertEquals(5, restored.ceiling()); assertEquals(2, restored.target());
+        restored.visualAssist(false); assertFalse(restored.visualAssist()); assertTrue(restored.skipAds());
+    }
+
+    @Test public void malformedVisualAssistancePreferenceDefaultsOff() {
+        for (Object invalid : new Object[] {"true", 1, 1L, 1.0f}) {
+            SettingsStore store = new SettingsStore(new MemoryPreferences(Map.of("settings_version", 1, "visual_assist", invalid)));
+            assertFalse(store.visualAssist());
+        }
+    }
+
+    @Test public void migrationPreservesExplicitVisualAssistanceWithoutSchemaChange() {
+        MemoryPreferences preferences = new MemoryPreferences(Map.of("target", 0, "last_nonzero", 1, "visual_assist", true));
+        SettingsStore store = new SettingsStore(preferences);
+        assertTrue(store.visualAssist()); assertEquals(0, store.target()); assertEquals(1, store.ceiling());
+        assertEquals(1, preferences.getInt("settings_version", 0));
+    }
+
+    @Test public void visualAssistanceDoesNotStartExecutionAndSurvivesInstagramDeselection() {
+        SettingsStore store = new SettingsStore(new MemoryPreferences());
+        store.ceiling(0); store.selectedApp(SettingsStore.INSTAGRAM_PACKAGE, true); store.visualAssist(true);
+        assertFalse(store.enabled()); assertEquals(0, store.target());
+        store.selectedApp(SettingsStore.INSTAGRAM_PACKAGE, false);
+        assertTrue(store.visualAssist()); assertFalse(store.instagramEnabled());
+        assertFalse(store.enabled()); assertEquals(0, store.ceiling()); assertEquals(0, store.target());
+    }
+
+    @Test public void timeoutDefaultsOffAndTenSecondsForEveryUpgradePath() {
+        SettingsStore fresh = new SettingsStore(new MemoryPreferences());
+        assertFalse(fresh.timedFallback()); assertEquals(10, fresh.fallbackSeconds());
+        SettingsStore legacy = new SettingsStore(new MemoryPreferences(Map.of("target", 1)));
+        assertFalse(legacy.timedFallback()); assertEquals(10, legacy.fallbackSeconds());
+        MemoryPreferences current = new MemoryPreferences(Map.of("settings_version", 1, "ceiling", 5, "target", 2));
+        SettingsStore existing = new SettingsStore(current);
+        assertFalse(existing.timedFallback()); assertEquals(10, existing.fallbackSeconds());
+        assertEquals(0, current.writes.size()); assertEquals(1, current.getInt("settings_version", 0));
+    }
+
+    @Test public void timeoutRestoresChoiceAndSecondsWithoutErasingVisualAssistance() {
+        MemoryPreferences preferences = new MemoryPreferences();
+        SettingsStore store = new SettingsStore(preferences);
+        store.selectedApp(SettingsStore.INSTAGRAM_PACKAGE, true);
+        store.visualAssist(true); store.timedFallback(true); store.fallbackSeconds(60);
+        SettingsStore restored = new SettingsStore(new MemoryPreferences(preferences.getAll()));
+        assertTrue(restored.timedFallback()); assertEquals(60, restored.fallbackSeconds());
+        assertTrue(restored.visualAssist()); assertTrue(restored.instagramEnabled());
+        restored.timedFallback(false);
+        assertFalse(restored.timedFallback()); assertEquals(60, restored.fallbackSeconds()); assertTrue(restored.visualAssist());
+    }
+
+    @Test public void malformedTimeoutPreferencesUseSafeDefaults() {
+        for (Object invalid : new Object[] {"15", true, 15L, 15.0f}) {
+            SettingsStore store = new SettingsStore(new MemoryPreferences(Map.of("settings_version", 1, "timed_fallback", "true", "fallback_seconds", invalid)));
+            assertFalse(store.timedFallback()); assertEquals(10, store.fallbackSeconds());
+        }
+    }
+
+    @Test public void timeoutSecondsPreserveEveryValidSecondAndRejectOutOfRangeValues() {
+        SettingsStore store = new SettingsStore(new MemoryPreferences());
+        for (int seconds = 5; seconds <= 60; seconds++) {
+            store.fallbackSeconds(seconds); assertEquals(seconds, store.fallbackSeconds());
+        }
+        for (int invalid : new int[] {Integer.MIN_VALUE, -1, 0, 4, 61, 120, Integer.MAX_VALUE}) {
+            store.fallbackSeconds(invalid); assertEquals(10, store.fallbackSeconds());
+            SettingsStore restored = new SettingsStore(new MemoryPreferences(Map.of("settings_version", 1, "fallback_seconds", invalid)));
+            assertEquals(10, restored.fallbackSeconds());
+        }
+    }
+
+    @Test public void timeoutChangesDoNotStartExecutionOrChangeRepeatAndAdSettings() {
+        MemoryPreferences preferences = new MemoryPreferences();
+        SettingsStore store = new SettingsStore(preferences);
+        store.ceiling(5); store.target(0); store.skipAds(true); store.visualAssist(true); store.floatingEnabled(false);
+        int writesBefore = preferences.writes.size();
+        store.fallbackSeconds(16); store.timedFallback(true);
+        assertEquals(writesBefore + 2, preferences.writes.size()); assertTrue(store.timedFallback());
+        assertEquals(16, store.fallbackSeconds()); assertFalse(store.enabled());
+        assertEquals(5, store.ceiling()); assertEquals(0, store.target());
+        assertTrue(store.skipAds()); assertTrue(store.visualAssist()); assertFalse(store.floatingEnabled());
+    }
+
+    @Test public void timeoutChoiceAndSecondsSurviveInstagramDeselection() {
+        SettingsStore store = new SettingsStore(new MemoryPreferences());
+        store.selectedApp(SettingsStore.INSTAGRAM_PACKAGE, true); store.timedFallback(true); store.fallbackSeconds(5);
+        store.selectedApp(SettingsStore.INSTAGRAM_PACKAGE, false);
+        assertTrue(store.timedFallback()); assertEquals(5, store.fallbackSeconds()); assertFalse(store.instagramEnabled());
+        store.selectedApp(SettingsStore.INSTAGRAM_PACKAGE, true);
+        assertTrue(store.timedFallback()); assertEquals(5, store.fallbackSeconds());
+    }
+
+    @Test public void migrationPreservesExistingTimeoutWithoutChangingSchemaOrZeroTarget() {
+        MemoryPreferences preferences = new MemoryPreferences(Map.of("target", 0, "last_nonzero", 1, "timed_fallback", true, "fallback_seconds", 25));
+        SettingsStore store = new SettingsStore(preferences);
+        assertTrue(store.timedFallback()); assertEquals(25, store.fallbackSeconds());
+        assertEquals(1, store.ceiling()); assertEquals(0, store.target());
         assertEquals(1, preferences.getInt("settings_version", 0));
     }
 }

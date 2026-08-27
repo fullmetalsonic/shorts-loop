@@ -54,7 +54,9 @@ public final class ShortsTileService extends TileService implements SharedPrefer
     }
     private void render() {
         boolean active = ModePolicy.tileActive(store.enabled(), store.target(), RuntimeState.connected, RuntimeState.blocked);
-        String subtitle = active ? store.target() == 0 ? "0회 · 자동 넘김 안 함" : getString(R.string.tile_count, store.target())
+        String subtitle = active ? store.target() == 0
+                ? store.skipAds() && store.instagramEnabled() ? "0회 · 광고만 넘김" : "0회 · 넘김 대기"
+                : getString(R.string.tile_count, store.target())
                 : RuntimeState.blocked ? getString(R.string.restart_needed)
                 : !RuntimeState.connected || (store.floatingEnabled() && !Settings.canDrawOverlays(this)) ? getString(R.string.permission_needed)
                 : !store.hasSelectedApps() ? "앱 선택 필요"

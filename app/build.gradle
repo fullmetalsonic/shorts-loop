@@ -6,10 +6,16 @@ android {
         applicationId 'com.fullmetalsonic.shortsloop'
         minSdk 26
         targetSdk 35
-        versionCode 9
-        versionName '0.2.2'
+        versionCode 13
+        versionName '0.2.4'
     }
     buildFeatures { buildConfig true }
+    // Preserve the unfinished, unconnected experiment in source, but not in the product APK/tests.
+    // Run its full (currently failing) suite separately with scripts/verify-sequence-experiment.ps1.
+    sourceSets {
+        main.java.exclude 'com/fullmetalsonic/shortsloop/core/VisualSequenceTracker.java'
+        test.java.exclude 'com/fullmetalsonic/shortsloop/core/VisualSequenceTrackerTest.java'
+    }
     compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
     lint { abortOnError true; checkReleaseBuilds true }
 }

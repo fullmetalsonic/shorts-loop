@@ -96,10 +96,18 @@ public final class FloatingController {
         catch (RuntimeException failure) { root = null; number = null; throw failure; }
     }
     public void update(int current, int target, String status) {
+        update(current, target, status, -1);
+    }
+    public void update(int current, int target, String status, int remainingSeconds) {
         if (number == null) return;
-        String label = current + "/" + target;
+        String label = remainingSeconds >= 0 ? remainingSeconds + "초"
+                : target == 0 && (status.startsWith("광고만 자동 넘김") || status.equals("광고 넘김 확인 중")) ? "광고"
+                : status.equals("시간제 · 다음 영상 확인 중") ? "다음"
+                : status.startsWith("화면 분석") ? (status.contains("수동 넘김") ? "?/" : "…/") + target
+                : (status.startsWith("화면 추정") ? "~" : "") + current + "/" + target;
         if (!label.contentEquals(number.getText())) number.setText(label);
-        String description = context.getString(R.string.floating_description, current, target, status);
+        String description = remainingSeconds >= 0 ? "시간제 넘김 " + remainingSeconds + "초 남음 · " + status
+                : context.getString(R.string.floating_description, current, target, status);
         if (!description.contentEquals(number.getContentDescription() == null ? "" : number.getContentDescription()))
             number.setContentDescription(description);
     }

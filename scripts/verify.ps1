@@ -1,10 +1,11 @@
-param([switch]$SkipBuild)
+param([switch]$SkipBuild, [switch]$ExcludeUnwiredSequenceExperiment)
+# The legacy exclusion switch is retained for old commands; product scope is now explicit in Gradle.
 $ErrorActionPreference = 'Stop'
 $taskRoot = Split-Path -Parent $PSScriptRoot
 Push-Location -LiteralPath $taskRoot
 try {
     if (-not $SkipBuild) {
-        & (Join-Path $taskRoot 'gradlew.bat') --no-daemon assembleDebug compileDebugUnitTestJavaWithJavac lintDebug
+        & (Join-Path $taskRoot 'gradlew.bat') --no-daemon :app:assembleDebug :app:compileDebugUnitTestJavaWithJavac :app:lintDebug
         if ($LASTEXITCODE -ne 0) { throw 'Android build, test compilation, or lint failed.' }
     }
     $taskCache = if ($env:GRADLE_USER_HOME) { Join-Path $env:GRADLE_USER_HOME 'caches/modules-2/files-2.1' } else { Join-Path $env:USERPROFILE '.gradle/caches/modules-2/files-2.1' }
@@ -20,9 +21,22 @@ try {
         $taskPackage = [regex]::Match($taskSource, 'package\s+([\w.]+);').Groups[1].Value
         "$taskPackage.$($_.BaseName)"
     })
+    $taskProductSources = Get-ChildItem -LiteralPath (Join-Path $taskRoot 'app/src/main/java') -Recurse -Filter '*.java' |
+        Where-Object { $_.Name -ne 'VisualSequenceTracker.java' }
+    if ($taskProductSources | Select-String -SimpleMatch 'VisualSequenceTracker') {
+        throw 'Sequence experiment is referenced by the product; scope separation must be reviewed.'
+    }
+    $taskGradle = Get-Content -LiteralPath (Join-Path $taskRoot 'app/build.gradle') -Raw
+    if (-not $taskGradle.Contains("main.java.exclude 'com/fullmetalsonic/shortsloop/core/VisualSequenceTracker.java'") -or
+        -not $taskGradle.Contains("test.java.exclude 'com/fullmetalsonic/shortsloop/core/VisualSequenceTrackerTest.java'") -or
+        (Get-ChildItem -LiteralPath $taskMainClasses -Recurse -Filter 'VisualSequenceTracker*.class')) {
+        throw 'Unconnected experiment must not be compiled into the product.'
+    }
+    Write-Warning 'PRODUCT SUITE: the unconnected sequence implementation and its 20 experimental tests are excluded from the APK. Use verify-sequence-experiment.ps1 for the separate known-failing experiment (18 pass, 2 fail).'
+    $taskTests = @($taskTests | Where-Object { $_ -ne 'com.fullmetalsonic.shortsloop.core.VisualSequenceTrackerTest' })
     # Direct JUnit avoids this PC's Gradle test-worker Unicode-classpath failure.
     & java '-Dfile.encoding=UTF-8' -cp $taskClassPath org.junit.runner.JUnitCore @taskTests
-    if ($LASTEXITCODE -ne 0) { throw 'Direct JUnit regression tests failed.' }
+    $taskJUnitFailed = $LASTEXITCODE -ne 0
     [xml]$taskManifest = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/AndroidManifest.xml') -Raw
     $taskAndroidNs = 'http://schemas.android.com/apk/res/android'
     $taskPermissions = @($taskManifest.manifest.'uses-permission' | ForEach-Object { $_.GetAttribute('name', $taskAndroidNs) })
@@ -50,6 +64,62 @@ try {
         if (-not $taskService.Contains($taskGuard)) { throw 'In-flight request interruption protection changed; review service wiring.' }
     }
     'ADVANCE_INTERRUPTION_WIRING_AUDIT=PASS'
+    $taskVisual = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/java/com/fullmetalsonic/shortsloop/visual/VisualAssistController.java') -Raw
+    [xml]$taskAccessibility = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/res/xml/accessibility_service.xml') -Raw
+    if ($taskAccessibility.'accessibility-service'.GetAttribute('canTakeScreenshot', $taskAndroidNs) -ne 'true' -or
+        -not $taskVisual.Contains('Build.VERSION.SDK_INT < 34') -or
+        -not $taskVisual.Contains('service.takeScreenshotOfWindow(') -or
+        -not $taskVisual.Contains('VisualCapturePolicy.accepts(') -or
+        -not $taskVisual.Contains('buffer.close();') -or
+        $taskVisual -match 'java\.io\.|java\.net\.|takeScreenshot\(' -or
+        $taskService -notmatch '(?s)\(pendingVisual \|\| pendingTimed\)\s*\? gate\.inspectRecognizedPage' -or
+        -not $taskService.Contains('"visual_assist".equals(key)')) {
+        throw 'Visual opt-in/privacy/freshness/strict confirmation wiring changed; review required.'
+    }
+    'VISUAL_ASSIST_WIRING_AUDIT=PASS'
+    $taskSecondsEditor = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/java/com/fullmetalsonic/shortsloop/ui/SecondsEditor.java') -Raw
+    if (-not $taskSecondsEditor.Contains('setRawInputType(InputType.TYPE_CLASS_NUMBER)') -or
+        -not $taskSecondsEditor.Contains('setKeyListener(TextKeyListener.getInstance())') -or
+        $taskSecondsEditor -match 'LengthFilter|DigitsKeyListener|\.setInputType\(' -or
+        -not $taskSecondsEditor.Contains('ClocklessTimeoutPolicy.parseSeconds(input.getText())')) {
+        throw 'Seconds editor raw-input/validation guard changed.'
+    }
+    foreach ($taskGuard in @(
+        '&& InstagramReader.PACKAGE.equals(activePackage) && value != null && !value.usable()',
+        '&& value.visualCandidate && !value.ad && value.recognized()',
+        'if (!timedCandidate(snapshot)) timed.reset();',
+        '|| store.timedFallback()',
+        'ClocklessTimeoutTracker.Result result = timed.observe(key, store.fallbackSeconds(), now);',
+        'if (result.due()) advanceClockless(snapshot, true);',
+        '"timed_fallback".equals(key)', '"fallback_seconds".equals(key)',
+        'timed.reset(); RuntimeState.timedRemainingSeconds = -1;',
+        'if (pendingTimed) confirmedTimed++;'
+    )) {
+        if (-not $taskService.Contains($taskGuard)) { throw "Timed fallback safety wiring changed: $taskGuard" }
+    }
+    if ($taskService.IndexOf('if (timedCandidate(snapshot)) {') -gt $taskService.IndexOf('if (snapshot.visualCandidate && store.visualAssist()')) {
+        throw 'Timed fallback must be prioritized before visual analysis.'
+    }
+    'TIMED_FALLBACK_WIRING_AUDIT=PASS'
+    $taskFloating = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/java/com/fullmetalsonic/shortsloop/overlay/FloatingController.java') -Raw
+    if (-not $taskFloating.Contains('status.equals("시간제 · 다음 영상 확인 중") ? "다음"') -or
+        $taskFloating.Contains('status.startsWith("시간제")')) {
+        throw 'Timed errors must not be shown as an in-flight next-page request.'
+    }
+    'TIMED_PENDING_LABEL_AUDIT=PASS'
+    if (-not $taskService.Contains('if (store.target() == 0 && !adSkippingEnabled())') -or
+        -not $taskService.Contains('AdSkipPolicy.enabled(store.enabled(), store.skipAds(), store.instagramEnabled())') -or
+        $taskService -notmatch '(?s)if \(store.target\(\) == 0\) \{\s*counter.reset\(\); timed.reset\(\); visual.reset\(\);[^}]+return;' -or
+        $taskService.IndexOf('if (snapshot.ad) {') -gt $taskService.IndexOf('if (store.target() == 0) {') -or
+        $taskService.IndexOf('if (store.target() == 0) {') -gt $taskService.IndexOf('if (timedCandidate(snapshot)) {')) {
+        throw 'Independent ads must run before the zero-play guard; timers must stay behind it.'
+    }
+    'ZERO_PLAY_ADS_WIRING_AUDIT=PASS'
+    $taskReader = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/java/com/fullmetalsonic/shortsloop/detection/ShortsReader.java') -Raw
+    if (-not $taskReader.Contains('return snapshot.withIdentity(identity);')) {
+        throw 'App routing must preserve snapshot visual eligibility metadata.'
+    }
+    'SNAPSHOT_METADATA_WIRING_AUDIT=PASS'
     $taskBattery = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/java/com/fullmetalsonic/shortsloop/ui/BatterySetupPanel.java') -Raw
     $taskActivity = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/java/com/fullmetalsonic/shortsloop/ui/MainActivity.java') -Raw
     if (-not $taskBattery.Contains('power.isIgnoringBatteryOptimizations(context.getPackageName())') -or
@@ -63,4 +133,5 @@ try {
     $taskApk = Join-Path $taskRoot 'app/build/outputs/apk/debug/app-debug.apk'
     Get-Item -LiteralPath $taskApk | Select-Object Name, Length
     'APK_SHA256=' + (Get-FileHash -LiteralPath $taskApk -Algorithm SHA256).Hash
+    if ($taskJUnitFailed) { throw 'Direct JUnit regression tests failed. Static audits above do not turn this into a full-suite PASS.' }
 } finally { Pop-Location }

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import com.fullmetalsonic.shortsloop.core.ModePolicy;
 import com.fullmetalsonic.shortsloop.core.PositionPolicy;
 import com.fullmetalsonic.shortsloop.core.SettingsPolicy;
+import com.fullmetalsonic.shortsloop.core.ClocklessTimeoutPolicy;
 
 public final class SettingsStore {
     public static final String YOUTUBE_PACKAGE = "com.google.android.youtube";
@@ -58,6 +59,11 @@ public final class SettingsStore {
     public boolean youtubeEnabled() { return booleanValue("youtube_enabled", true); }
     public boolean instagramEnabled() { return booleanValue("instagram_enabled", false); }
     public boolean skipAds() { return booleanValue("skip_ads", false); }
+    public boolean visualAssist() { return booleanValue("visual_assist", false); }
+    public boolean timedFallback() { return booleanValue("timed_fallback", false); }
+    public int fallbackSeconds() {
+        return ClocklessTimeoutPolicy.sanitizeSeconds(intValue("fallback_seconds", ClocklessTimeoutPolicy.DEFAULT_SECONDS));
+    }
     public int lastNonZero() { return ModePolicy.resume(intValue("last_nonzero", ModePolicy.DEFAULT_COUNT)); }
 
     /** Floating changes only the active target, never its configured upper bound. */
@@ -81,6 +87,11 @@ public final class SettingsStore {
 
     public void floatingEnabled(boolean value) { preferences.edit().putBoolean("floating_enabled", value).apply(); }
     public void skipAds(boolean value) { preferences.edit().putBoolean("skip_ads", value).apply(); }
+    public void visualAssist(boolean value) { preferences.edit().putBoolean("visual_assist", value).apply(); }
+    public void timedFallback(boolean value) { preferences.edit().putBoolean("timed_fallback", value).apply(); }
+    public void fallbackSeconds(int value) {
+        preferences.edit().putInt("fallback_seconds", ClocklessTimeoutPolicy.sanitizeSeconds(value)).apply();
+    }
 
     public void selectedApp(String packageName, boolean selected) {
         if (YOUTUBE_PACKAGE.equals(packageName)) preferences.edit().putBoolean("youtube_enabled", selected).apply();

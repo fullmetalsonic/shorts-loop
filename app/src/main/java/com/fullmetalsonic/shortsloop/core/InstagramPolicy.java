@@ -7,6 +7,14 @@ public final class InstagramPolicy {
     private static final String PREFIX = "com.instagram.android:id/";
     private InstagramPolicy() {}
 
+    /** Explicit play affordance outside captions/authors; absence does not prove playback. */
+    public static boolean isPlayControl(String description) {
+        if (description == null) return false;
+        String value = description.trim().toLowerCase(Locale.ROOT);
+        return value.equals("재생") || value.equals("동영상 재생") || value.equals("영상 재생")
+                || value.equals("play") || value.equals("play video");
+    }
+
     /** The observed scrubber exposes integer milliseconds, not seconds or percent. */
     public static Progress progress(int rangeType, double min, double max, double current) {
         if (rangeType != 0 || !Double.isFinite(min) || !Double.isFinite(max)

@@ -35,7 +35,7 @@ public final class ModePolicy {
     }
 
     public static boolean tileActive(boolean enabled, int target, boolean connected, boolean blocked) {
-        // A zero target pauses advancement, not the running control or floating switch.
+        // Zero pauses ordinary/count/timer advancement, not separately opted-in ads or the control.
         return enabled && connected && !blocked;
     }
 }

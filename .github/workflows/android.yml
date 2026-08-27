@@ -21,8 +21,8 @@ jobs:
       - uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3
       - name: Install Android SDK
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
-      - name: Build, unit tests, and lint
-        run: ./gradlew --no-daemon assembleDebug testDebugUnitTest lintDebug
+      - name: Build, product unit tests, and lint (standalone experiments are not the APK)
+        run: ./gradlew --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
       - name: Upload verification reports (not a signed release APK)
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

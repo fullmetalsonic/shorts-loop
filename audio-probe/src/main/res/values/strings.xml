@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">쇼츠 오디오 시험</string>
+    <style name="ProbeTheme" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:colorAccent">#66D9CE</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:windowBackground">#101827</item>
+    </style>
+</resources>

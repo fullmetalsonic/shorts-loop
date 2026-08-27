@@ -45,7 +45,7 @@ public final class InstagramReader {
             Rect page = null, pager = null;
             int pagerCount = 0, mediaCount = 0, videoCount = 0, seekCount = 0, menuCount = 0;
             Entry scrubber = null;
-            boolean unknownSeekBar = false;
+            boolean unknownSeekBar = false, pausedControl = false;
             StringBuilder identity = new StringBuilder();
             // Audit the entire visible tree before accepting any ad label or progress.
             for (Entry entry : nodes) {
@@ -53,6 +53,8 @@ public final class InstagramReader {
                 if (!node.isVisibleToUser()) continue;
                 String id = string(node.getViewIdResourceName());
                 String type = string(node.getClassName());
+                if (entry.inPager && !entry.inCaption && !entry.inAuthor
+                        && InstagramPolicy.isPlayControl(string(node.getContentDescription()))) pausedControl = true;
                 if (InstagramPolicy.blocks(id, type, node.isFocused(), node.isEditable()))
                     return YouTubeSnapshot.unavailable("댓글·메뉴 조작 중 · 대기");
                 if (entry.inPager && InstagramPolicy.unsupportedMedia(id))
@@ -85,7 +87,7 @@ public final class InstagramReader {
             String hash = digest(identity.toString());
             if (hash.isEmpty()) return YouTubeSnapshot.unavailable("릴스 구분 정보 대기");
             if (scrubber == null)
-                return new YouTubeSnapshot(null, hash, page, "재생 정보 없음 · 이 릴스는 수동 넘김 필요");
+                return YouTubeSnapshot.withoutClock(hash, page, pausedControl);
             AccessibilityNodeInfo node = scrubber.node;
             // The same node can be cached through many playback samples.
             if (!node.refresh() || !node.isVisibleToUser()
@@ -96,8 +98,8 @@ public final class InstagramReader {
             AccessibilityNodeInfo.RangeInfo range = node.getRangeInfo();
             Progress progress = range == null ? null
                     : InstagramPolicy.progress(range.getType(), range.getMin(), range.getMax(), range.getCurrent());
-            return new YouTubeSnapshot(progress, hash, page,
-                    progress == null ? "재생 정보 없음 · 이 릴스는 수동 넘김 필요" : "");
+            return progress == null ? YouTubeSnapshot.withoutClock(hash, page, pausedControl)
+                    : new YouTubeSnapshot(progress, hash, page, "");
         } finally {
             for (Entry entry : nodes) if (entry.node != root) YouTubeReader.recycle(entry.node);
         }

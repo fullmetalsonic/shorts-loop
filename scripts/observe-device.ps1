@@ -14,7 +14,7 @@ if (Test-Path -LiteralPath $taskPath) { throw 'Preserve previous evidence; choos
 $taskAdb = Join-Path $env:LOCALAPPDATA 'Android/Sdk/platform-tools/adb.exe'
 for ($taskIndex = 1; $taskIndex -le $Samples; $taskIndex++) {
     $taskRaw = & $taskAdb -s $Device shell dumpsys activity service com.fullmetalsonic.shortsloop/.service.ShortsAccessibilityService
-    $taskState = @($taskRaw | Where-Object { $_ -match '^\s+(ShortsLoop |connected=|position=|status=|counter=|ceiling=|ads=)' } | ForEach-Object { $_.Trim() })
+    $taskState = @($taskRaw | Where-Object { $_ -match '^\s+(ShortsLoop |connected=|position=|status=|counter=|ceiling=|ads=|timedEnabled=|visual=)' } | ForEach-Object { $_.Trim() })
     if ($taskState.Count -eq 0) { throw 'No diagnostic service response.' }
     $taskLine = [pscustomobject]@{ Sample=$taskIndex; At=(Get-Date).ToString('HH:mm:ss.fff'); State=$taskState } | ConvertTo-Json -Compress
     [IO.File]::AppendAllText($taskPath, $taskLine + [Environment]::NewLine, [Text.UTF8Encoding]::new($false))

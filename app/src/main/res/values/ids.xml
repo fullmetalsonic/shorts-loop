@@ -6,6 +6,12 @@
     <item name="app_youtube" type="id" />
     <item name="app_instagram" type="id" />
     <item name="skip_ads_toggle" type="id" />
+    <item name="visual_assist_toggle" type="id" />
+    <item name="timed_fallback_toggle" type="id" />
+    <item name="fallback_seconds_input" type="id" />
+    <item name="fallback_seconds_plus" type="id" />
+    <item name="fallback_seconds_minus" type="id" />
+    <item name="fallback_seconds_apply" type="id" />
     <item name="floating_toggle" type="id" />
     <item name="execution_toggle" type="id" />
     <item name="tap_rotary" type="id" />
