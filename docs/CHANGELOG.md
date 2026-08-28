@@ -2,6 +2,8 @@
 
 ## 0.5.0/code34 · 앱별 상세 및 TikTok 확장
 
+2026-08-29 Public v0.5.0 게시 완료. 제품 cdd94ae, CI33211739492 SUCCESS, 공개3파일·latest·업데이트feed와 로컬 APK 바이트/해시 일치 PASS. [최종 전달 원장](releases/v0.5.0.md). / Published with successful product CI and anonymous delivery parity; physical automation remains unrun.
+
 - [화면·사용성 감사](UI_AUDIT_0.5.0.md): 기존 3개 화면 관측, 우선순위별 개선, 큰 글씨 하단 재검토. / Baseline screenshots, prioritized changes and large-text review.
 
 - 홈3개앱진입과개별선택·규칙,공통실행/플로팅/권한/업데이트분리. 초안·회전·스크롤·한국어/영어보존. / Per-app navigation and retained state.

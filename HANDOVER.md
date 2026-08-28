@@ -1,14 +1,14 @@
 # ShortsLoop · 기술 인수인계 / Technical handover
 
-## 0.5.0/code34 · 앱별 설정 및 TikTok 확장 / Current checkpoint
+## 0.5.0/code34 · 공개 완료 / Public delivery checkpoint
 
 요구범위구현완료: 홈3개앱버튼/개별상세/공통분리,TT SurfaceView·광고/사진/적격무진행/실제총길이규칙. 기존설정·서명보존,새권한없음. source/page/pager/media/index재검증과hard-stop을유지하고독립리뷰P2(사진scope·준비시간/카운트키누락)를회귀검사와함께보완했다.
 
 Implemented per-app pages and evidence-backed TikTok rules,with preserved settings/signer and no new permissions. Independent review issues in photo scope and prepared source keys are fixed with regression checks.
 
-PC빌드/685JUnit(debug·release)/API26·33·34초기네이티브검사PASS. 마지막UI문구/큰글씨보완후최종산출물검증·게시기록은[검증](docs/VERIFICATION.md),[0.5.0릴리스](docs/releases/v0.5.0.md)를따른다. 새실폰자동넘김은NOT RUN이다. 개인기기캡처/로그는공개하지않는다.
+2026-08-29 기존 Public에 v0.5.0 공개 완료. 제품/태그 cdd94ae/v0.5.0, CI33211739492 SUCCESS. 최종 APK778294bytes/08B0BE6A…1EEDEA, 685JUnit(debug·release), API26/33/34 native31677/31683/31398, API26 공개0.4.0→0.5.0의53개 설정·UID·서명 보존 PASS. 공개3파일의 익명 다운로드·바이트/SHA256/GitHub digest·latest/업데이트feed 일치 PASS. [검증](docs/VERIFICATION.md)·[릴리스 원장](docs/releases/v0.5.0.md). 새 실폰 자동 넘김은NOT RUN이며 개인기기 캡처/로그는 공개하지 않았다.
 
-Initial PC checks pass;final delivery status is in the linked records. New-build physical automation remains unrun. Private device evidence is not published.
+Published to the existing Public repository with successful product CI, final three-OS checks, update preservation and anonymous artifact/feed parity. New-build physical automation remains unrun. Private device evidence is not published. No email was sent.
 
 [앱별상세설명](docs/APP_SETTINGS_0.5.0.md)·[실사용점검](docs/FIELD_TEST_0.5.0.md)·[제품기준](docs/PRODUCT_SPEC.md)·[TikTok진단](docs/TIKTOK_DEVICE_DIAGNOSIS_0.4.0.md)·[누적이력](docs/CHANGELOG.md).
 

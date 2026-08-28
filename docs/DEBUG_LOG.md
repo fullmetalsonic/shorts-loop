@@ -1,5 +1,12 @@
 # 디버그·재발방지 대장
 
+## D-049 · 큰 글씨 실행 영역 / Large-text execution footer
+
+- 증상·재현: Android 13에서 시스템 글씨 2배, TikTok 상세 하단의 긴 실행 제목·상태가 여러 줄로 확장돼 본문 공간을 과도하게 차지했다. 실제 앱 화면으로 확인했다. / Actual Activity capture reproduced an oversized footer at2× font.
+- 원인·잘못된 접근: 고정 영역에서도 표준 글씨용 긴 제목·상태를 그대로 반복했다. 화면을 작게 보이게 하려고 글씨 확대 자체를 막는 방식은 사용하지 않았다. / Standard-length labels were reused in a persistent region; font scaling is not disabled.
+- 수정·영향:1.5배 이상에서 전체 실행/Run all 및 짧은 켜짐/꺼짐 표시, 전체 의미의 contentDescription과 기존 토글 동작 유지. / Compact visual text only, retaining spoken description and execution behavior.
+- 자동 재발방지·재시험: 320dp/1.5·2배 한영 줄 수·상태 설명 검사 추가, 실제 2배 화면 육안 확인. 최종3OS native PASS, 독립리뷰 잔여P1/P2 0. 실폰 레이아웃은NOT RUN. [화면 감사](UI_AUDIT_0.5.0.md). / Native regressions and visual check pass; physical layout remains unrun.
+
 ## D-048 · TikTok 확장과 이전 원천 상태 계승 / Stale source state during expansion
 
 - 증상/재현: 합성같은page에pager/media/index를교체하거나사진피드번호를뒤로바꿀때준비타이머·일반카운터또는사진확인이이전근거를재사용할위험. / Synthetic reused-page changes exposed stale preparation/confirmation risks.

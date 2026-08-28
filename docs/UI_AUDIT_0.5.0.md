@@ -30,3 +30,12 @@ Automated checks cover Korean/English, 320dp layouts, 1/1.5/2× fonts, numeric d
 See the [verification ledger](VERIFICATION.md) for final artifact results. These are app UI/logic checks, not accessibility certification or physical social-app navigation success. Physical checks remain separately listed as NOT RUN. Independent scoped review has no open P1/P2 finding.
 
 [앱별 사용법 / Guide](APP_SETTINGS_0.5.0.md) · [릴리스 / Release](releases/v0.5.0.md)
+
+## 최종 APK 화면 / Final APK captures
+
+제품 cdd94ae, 0.5.0/code34의 실제 Android 13 Activity 화면이다. 합성 설정만 사용하며 호스트 앱이 설치되지 않은 에뮬레이터이므로 각 사용 토글은 비활성이다. 이는 실폰 영상 테스트가 아니다.
+
+These are actual Android 13 Activity captures from the final cdd94ae APK, using synthetic settings. Hosts are not installed, so their activation controls are disabled. They are not physical playback tests.
+
+<img src="images/v0.5.0/home-ko.png" alt="앱별 설정 홈 / Per-app home" width="320">
+<img src="images/v0.5.0/tiktok-ads-ko.png" alt="TikTok 광고 설정 / TikTok ad settings" width="320">

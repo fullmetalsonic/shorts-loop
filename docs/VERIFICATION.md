@@ -2,6 +2,22 @@
 
 ## 0.5.0/code34 · 현재 검증 / Current verification
 
+### 최종 제품 cdd94ae / Final product
+
+- BUILD PASS: debug/release APK, 단위시험 클래스, instrumentation APK, release lint. 제품 source commit `cdd94aeb9e50dcbd03deb76bc06c159ed7556806`와 APK 내장 revision 일치.
+- TEST PASS: debug/release 각각 **685 JUnit**, 실패 0. 한글 경로의 Gradle worker 대신 동일 컴파일 클래스의 직접 JUnit 실행. 별도 비제품 VisualSequence 실험은 포함하지 않는다.
+- 최종 서명 APK **778294 bytes**, SHA256 `08B0BE6A34F666E6EA3BC21950D152B7D14B239ED10F47299E382E7B281EEDEA`. 기존 전체 서명집합 일치, non-debuggable, min26/target35, debug APK 게시 거부 PASS.
+- 최종 APK의 API26/33/34 네이티브 검사 **31677 / 31683 / 31398 PASS**. 합성 노드·서비스 정책·앱별 설정·숫자 입력·화면 복원·320dp/큰 글씨 검사 수이며 실제 소셜 앱 자동 전환 수가 아니다.
+- 업데이트 PASS: 일회용 API26에서 공개0.4.0/code33 → 최종0.5.0/code34 덮어 설치. **53개 설정의 자료형/값**, UID, 서명, 실행OFF, 세 앱 기존 선택·횟수·위치, IG 광고13단위/시간제17초·사진4/6초, TT 신규 옵션OFF와 독립 기본값 유지. 최초 시험의 오래된 code32 시작조건은 시험 fixture를33→34로 정정한 뒤 같은 이전 설치본에서 재실행했다. 제품 데이터 손실을 삭제·재설치로 숨긴 시험이 아니다. API33/34의 이번 버전간 업데이트 보존은 NOT RUN, 최종 APK 네이티브 검사는 위와 같이 PASS.
+- 정적 안전·사진·전환·권한·업데이트 격리 PASS. 다국어 **396키 / 108상태** PASS. Lint **0 errors / 21 warnings**: OldTargetApi1, ObsoleteSdkInt1, UnusedResources19. 미사용 자원 정리는 이번 기능 밖이므로 임의 삭제하지 않았다.
+- UI/UX PASS(검사 범위): 실제 한국어 홈·TikTok 상세·광고 대기 입력 화면과 큰 글씨 하단 육안 확인, 한영 입력/줄 수/초안/회전 복원 자동 회귀. [화면 감사와 최종 캡처](UI_AUDIT_0.5.0.md). 접근성 전체 인증을 뜻하지 않는다.
+- 독립 REVIEW: source 키·사진 scope 보강, 마지막 큰 글씨 하단·업데이트 fixture 재리뷰의 미해결 P1/P2 **0건**. 공개 후보의 민감정보·문서 연결 검사 PASS. 공개 이미지는 개인 데이터 없는 에뮬레이터의 자체 앱 UI뿐이다.
+- **NOT RUN:** 새 실폰 설치, TikTok 일반/광고/사진/시간제/긴 영상 자동 전환, YouTube·Instagram 실제 영상 회귀, 세 앱 실제 동시 재생·장시간 연속 시험. [현장 점검표](FIELD_TEST_0.5.0.md)에 유지한다.
+
+EN: The final cdd94ae signed APK passes build,685 unit tests per variant, API26/33/34 native checks (31677/31683/31398), static/localization guards and API26 public0.4.0→0.5.0 preservation of53 typed settings,UID and signer. Lint has0 errors/21 disclosed warnings. Scoped independent review has no open P1/P2. Native synthetic checks and actual app UI captures do not establish physical social-app automation success. CI and anonymous public download parity are recorded in the [release ledger](releases/v0.5.0.md).
+
+### 초기 후보 / Earlier candidates
+
 초기후보 빌드·release lint PASS,제품JUnit debug/release각685 PASS,정적권한/번역395키·108상태/광고0/시간제/사진/TT전환/배포안전PASS. API26/33/34초기native31647/31653/31362 PASS. 독립코드리뷰에서발견한P2 source키·사진scope보강완료,잔여P1/P2 0. 마지막UI문구·큰글씨보완후최종확인은다음체크포인트에기록한다.
 
 Initial build/lint,685 tests per variant,static safety/localization and API26/33/34 native checks pass. Independent review findings were fixed. Final artifact checks after the last UI refinements are recorded at the next checkpoint.
