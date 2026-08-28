@@ -1,12 +1,12 @@
 # 배포·버전 표시 전수 검토 / Release presentation audit
 
-## 현재0.3.0/code32 · 게시 준비 감사 / Current preparation audit
+## 현재0.3.0/code32 · 공개 완료 감사 / Current publication audit
 
-앱·README·설명서는0.3.0/code32를 현재 배포 대상으로 설명하며,인앱 버전 라벨은 중립적인 이름/설치버전 형태를 유지한다. 듀얼은 기본OFF이고,편집 탭·사용할 앱 선택·전체 실행을 구분한다. X는 해당 앱만 정지하며 전체OFF는 모두 중지한다. 과거 후보와 공개0.2.9의 수치를 최신 결과로 합산하지 않는다.
+앱·README·설명서는0.3.0/code32를 현재 공개판으로 설명하며,인앱 버전 라벨은 중립적인 이름/설치버전 형태를 유지한다. 듀얼은 기본OFF이고,편집 탭·사용할 앱 선택·전체 실행을 구분한다. X는 해당 앱만 정지하며 전체OFF는 모두 중지한다. 과거 후보와 이전 공개0.2.9의 수치를 최신 결과로 합산하지 않는다.
 
-최종 제품 후보의 BUILD·564JUnit·정적 가드·같은APK API26/33/34 native28,043/28,053/27,794·설치 해시를 확인했다. 로컬lint0오류/13경고,독립 검토 범위 미해결P1/P2는0건이다. 실행·듀얼ON을 유지한 전체화면→분할→전체화면 흐름은 실기기 근거가 있으나,모든 앱·예외 조합·원래 회전 방향 복귀·새 듀얼 사진은 검증 완료가 아니다. 현재 Public0.2.9,0.3.0 게시·CI·공개 파일 검증 진행 중. [검증 원장](VERIFICATION.md),[배포 기록](releases/v0.3.0.md).
+최종 제품 후보의 BUILD·564JUnit·정적 가드·같은APK API26/33/34 native28,043/28,053/27,794·설치 해시를 확인했다. 로컬lint0오류/13경고,독립 검토 범위 미해결P1/P2는0건이다. 실행·듀얼ON을 유지한 전체화면→분할→전체화면 흐름은 실기기 근거가 있으나,모든 앱·예외 조합·원래 회전 방향 복귀·새 듀얼 사진은 검증 완료가 아니다. 현재 Public0.3.0/code32의 게시·CI·익명 공개 파일 동일성 검증 완료. CI lint는0오류/12경고로 로컬0오류/13경고와 구분한다. [검증 원장](VERIFICATION.md),[배포 기록](releases/v0.3.0.md).
 
-EN: Current presentation targets0.3.0/code32 with neutral version labels and clear editor/host-selection/dual/master scopes. HostX and masterOFF are distinguished;old evidence remains historical. The final product candidate passed build,564 unit tests,static guards,28,043/28,053/27,794 same-APK native checks onAPI26/33/34 and installed-hash checks. Local lint reports0 errors/13 warnings;no unresolvedP1/P2 remains in independent review scope. Physical fullscreen→split→fullscreen evidence does not establish all-app/all-exception,return-rotation or dual-photo coverage. Public0.2.9 remains current while0.3.0 publication,CI and asset checks proceed.
+EN: Current presentation targets0.3.0/code32 with neutral version labels and clear editor/host-selection/dual/master scopes. HostX and masterOFF are distinguished;old evidence remains historical. The final product candidate passed build,564 unit tests,static guards,28,043/28,053/27,794 same-APK native checks onAPI26/33/34 and installed-hash checks. Local lint reports0 errors/13 warnings;no unresolvedP1/P2 remains in independent review scope. Physical fullscreen→split→fullscreen evidence does not establish all-app/all-exception,return-rotation or dual-photo coverage. Public0.3.0/code32 publication,CI and anonymous-asset parity are complete. CI lint reports0errors/12warnings,distinct from local0errors/13warnings.
 
 ## 이전0.2.8 수정 결과 / Previous remediation
 

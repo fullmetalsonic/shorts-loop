@@ -1,11 +1,13 @@
 # 누적이력
 
-## 0.3.0/code32 · 듀얼모드 검증·배포 준비 / Dual-mode validation and release preparation
+## 0.3.0/code32 · 듀얼모드 공개 완료 / Dual-mode release published
+
+2026-08-28 21:25:22KST 기존Public에v0.3.0/6bfe330 게시,제품CI33170840370SUCCESS(debug/release각564시험),21:25:52KST 공개3파일익명크기/SHA256/digest·HTTP200·업데이트조회PASS. 최종9AA1E884…AF394AA APK742854bytes,실폰덮어설치해시일치·설정보존·실행OFF. 최종3OSnativePASS,개인정보감사/독립리뷰차단사항0. 메일없음. / Published with product CI,final three-OS checks,phone-installed identity and anonymous release/update-feed parity verified;no email.
 
 - 듀얼 토글(기본OFF)을 켜두면 보이는 선택 앱에 따라 전체1개/분할2개/일반 앱 옆1개를 자동 처리한다. 앱별 카운트·긴영상·플로팅 탭/위치/일시정지를 분리하고 X는 해당 앱만 멈춘다. 기존 설정은 보존하며 최초 한 번 앱별로 복사한다.
 - 분할/회전/전체화면 손잡이와 시스템 바의 가림 오인을 고쳤다. 관측 예외와 실제 입력 충돌 검사를 분리하고 오래되거나 창·페이지가 바뀐 대기 요청은 폐기한다.
 - 최신53FD 실폰 후보564JUnit·3OS native·설치해시·독립리뷰PASS. 실행/듀얼ON 유지 전체→분할→전체에서 YT4/4·IG13/13 확인,숨긴 앱 요청0·차단/복구0. 이전 후보의 상하교환·계산기 병행 시험과 분리해 기록한다.
-- 한영 사용법·설정/호환성/업데이트/설계/디버그/검증 문서를 최신화한다. 공개 전 개인정보·원시로그·기기화면·키 제외 및 배포 검증을 수행한다. [최종 릴리스 원장](releases/v0.3.0.md),[상세 시험·한계](VERIFICATION.md).
+- 한영 사용법·설정/호환성/업데이트/설계/디버그/검증 문서를 최신화했다. 개인정보·원시로그·기기화면·키 제외 및 배포 검증을 마쳤다. [최종 릴리스 원장](releases/v0.3.0.md),[상세 시험·한계](VERIFICATION.md).
 
 EN: Default-OFF dual mode automatically adapts to one or two visible selected hosts,with separate settings,counters and floats. Corrected bounded SystemUI observation while preserving input safety. Candidate53FD passes564 unit/three-OS native tests and uninterrupted mode-transition checks with4/4 YouTube and13/13 Instagram confirmations. Prior candidate evidence remains separate. Documentation and privacy/release checks are updated;see the release record for publication status.
 

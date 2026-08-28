@@ -1,8 +1,8 @@
 # Instagram 사진 릴스 / Photo Reels
 
-현재0.3.0/code32는 게시 준비 중이며,Public 공개판은0.2.9다. 사진 기능은0.2.9의 통째/한 장 계약을 유지하되,0.3.0에서는 Instagram 탭과 해당 호스트의 실행/플로팅 상태에 속한다. X는 Instagram만 일시정지하고 전체OFF는 모든 규칙을 중지한다. 새 듀얼 사진 실물 표본은 확보하지 못했으며,아래0.2.9 사진 시험을0.3.0 듀얼 사진 PASS로 재사용하지 않는다. [최신 검증](VERIFICATION.md),[앱별 사용법](USER_GUIDE.md).
+현재 Public 공개판은0.3.0/code32이며 공개 파일·CI·익명 다운로드 동일성 확인을 완료했다. 사진 기능은0.2.9의 통째/한 장 계약을 유지하되,0.3.0에서는 Instagram 탭과 해당 호스트의 실행/플로팅 상태에 속한다. X는 Instagram만 일시정지하고 전체OFF는 모든 규칙을 중지한다. 새 듀얼 사진 실물 표본은 확보하지 못했으며,아래0.2.9 사진 시험을0.3.0 듀얼 사진 PASS로 재사용하지 않는다. [최신 검증](VERIFICATION.md),[앱별 사용법](USER_GUIDE.md).
 
-Current0.3.0/code32 is being prepared for publication;Public0.2.9 remains available. Whole/each-photo rules are retained,but settings and runtime controls now belong to the Instagram host. X pauses Instagram;masterOFF stops every rule. No fresh dual-window photo sample was obtained. Historical0.2.9 photo results below do not establish a0.3.0 dual-photo PASS.
+Public0.3.0/code32 is released,with public assets,CI and anonymous-download parity verified. Whole/each-photo rules are retained,but settings and runtime controls now belong to the Instagram host. X pauses Instagram;masterOFF stops every rule. No fresh dual-window photo sample was obtained. Historical0.2.9 photo results below do not establish a0.3.0 dual-photo PASS.
 
 ## 설정 / Settings
 

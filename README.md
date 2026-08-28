@@ -4,9 +4,13 @@ YouTube Shorts와 Instagram Reels를 설정한 횟수만큼 보고 자동으로 
 
 An Android auto-scroll app for YouTube Shorts and Instagram Reels,with per-app play counts,optional translucent controls,Quick Settings and opt-in multi-window processing. It does not modify either host app.
 
-**0.3.0/code32는 범위별 검증을 마친 배포 후보로 게시 준비 중입니다. 현재 공개 버전은0.2.9입니다.** 게시·CI·공개 다운로드 검증이 끝나기 전까지 공개 완료로 표시하지 않습니다. [0.3.0 릴리스 예정 페이지](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.3.0) · [현재 공개0.2.9](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.9) · [검증 원장](docs/VERIFICATION.md).
+**0.3.0/code32 공개 완료.** 2026-08-28 공개 릴리스·CI·익명 다운로드 동일성을 확인했습니다. [0.3.0 릴리스](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.3.0) · [APK 다운로드](https://github.com/fullmetalsonic/shorts-loop/releases/download/v0.3.0/shorts-loop-v0.3.0.apk) · [검증 원장](docs/VERIFICATION.md).
 
-**0.3.0/code32 is a verified distribution candidate;publication is in progress. The current public version is0.2.9.** Publication,CI and public-download parity are not yet declared complete. See the planned release and verification links above.
+**0.3.0/code32 is publicly released.** Public release,CI and anonymous-download parity were verified on2026-08-28. Use the release,APK and verification links above.
+
+최종 공개 APK는742,854bytes이며,SHA256은 `9AA1E88425206CF1B9CEFBCD55B722DF83822D2F00830C81DDF925981AF394AA`입니다. 실기기 흐름 검증 후보53FD와 내장 소스 revision 기록만 다르고 나머지 ZIP 항목은 같습니다. 최종 APK도3개 OS 검사·실폰 덮어 설치/해시·설정 보존을 확인했습니다. CI는 debug/release 각각564시험 통과,lint0오류/12경고이며 로컬0오류/13경고와 구분합니다.
+
+The final742,854-byte APK has the SHA256 above. Only the embedded source-revision record differs from the53FD physical-flow candidate;all other ZIP entries match. The final APK passed three-OS and physical upgrade/hash/preferences checks. CI passed564 tests each for debug/release,with lint0errors/12warnings versus local0errors/13warnings.
 
 ## 0.3.0의 핵심 / What's new
 
@@ -25,9 +29,9 @@ DualON does not force playback. Hidden hosts are not processed;keyboard,popup,lo
 
 ## 설치와 첫 실행 / Install and start
 
-Android8.0(API26) 이상. 호스트 앱 자체의 기기/OS 지원은 별도이며 [호환성 표](docs/COMPATIBILITY.md)를 확인하세요. 배포 파일명은 `shorts-loop-v0.3.0.apk`입니다. 게시 완료 후 Release의 APK와 SHA256을 확인해 설치하세요. 같은 패키지·서명의 덮어 설치는 저장된 설정을 유지하며,앱을 삭제하면 설정이 사라집니다.
+Android8.0(API26) 이상. 호스트 앱 자체의 기기/OS 지원은 별도이며 [호환성 표](docs/COMPATIBILITY.md)를 확인하세요. [배포 APK](https://github.com/fullmetalsonic/shorts-loop/releases/download/v0.3.0/shorts-loop-v0.3.0.apk)와 Release의 SHA256을 확인해 설치하세요. 같은 패키지·서명의 덮어 설치는 저장된 설정을 유지하며,앱을 삭제하면 설정이 사라집니다.
 
-Android8.0/API26+. Host-app compatibility is separate;see the support table. The release filename is `shorts-loop-v0.3.0.apk`. Once published,verify the release APK/checksum and install over the same-signed app to retain settings. Uninstalling removes preferences.
+Android8.0/API26+. Host-app compatibility is separate;see the support table. Verify the published `shorts-loop-v0.3.0.apk` and checksum,then install over the same-signed app to retain settings. Uninstalling removes preferences.
 
 1. 앱을 열고 전체 실행OFF 상태에서 **사용할 앱 / Apps to use**를 선택합니다.<br>
    Open the app with executionOFF and select the hosts to use.

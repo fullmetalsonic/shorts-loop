@@ -1,12 +1,12 @@
 # 업데이트·배포 계획 · ShortsLoop 0.3.0
 
-## 현재0.3.0/code32 · 게시 준비 / Current release preparation
+## 현재0.3.0/code32 · 공개 완료 / Current published release
 
-배포 대상은 기존 패키지·서명을 유지한 non-debuggable release APK `shorts-loop-v0.3.0.apk`다. 앱별 설정 이전·듀얼 처리·호스트별X를 포함한다. 최종 제품 후보의 BUILD·564JUnit·3개 OS native·설치 해시와 범위별 실기기 흐름을 확인했으나,Public 게시·CI·익명 재다운로드 검증은 아직 완료로 기록하지 않는다. 현재 공개판은0.2.9다. [0.3.0 배포 기록](releases/v0.3.0.md),[검증 원장](VERIFICATION.md).
+배포 대상은 기존 패키지·서명을 유지한 non-debuggable release APK `shorts-loop-v0.3.0.apk`다. 앱별 설정 이전·듀얼 처리·호스트별X를 포함한다. BUILD·564JUnit·3개 OS native·설치 해시와 범위별 실기기 흐름을 확인하고,최종 APK의 Public 게시·CI·익명 재다운로드 검증을 완료했다. 현재 공개판은0.3.0/code32다. [0.3.0 배포 기록](releases/v0.3.0.md),[검증 원장](VERIFICATION.md).
 
-공개 prerelease 포함·draft 제외·더 높은versionCode·OS·메타데이터·크기·SHA256·패키지·서명 검사의 기존 업데이트 정책을 유지한다. 설치 시 전체 실행만OFF로 두고 앱별 설정과 다른 옵션을 보존한다. 모드/설정 이전이나 서비스 재연결이 실행을 몰래 켜지 않는다. 게시 후 소스/태그/CI/Release 첨부3개와 설치·고정 APK의 바이트/해시를 대조한다.
+공개 prerelease 포함·draft 제외·더 높은versionCode·OS·메타데이터·크기·SHA256·패키지·서명 검사의 기존 업데이트 정책을 유지한다. 설치 시 전체 실행만OFF로 두고 앱별 설정과 다른 옵션을 보존한다. 모드/설정 이전이나 서비스 재연결이 실행을 몰래 켜지 않는다. 게시 후 소스/태그/CI/Release 첨부3개와 설치·고정 APK의 바이트/해시·GitHub digest를 대조했고 latest와 인앱 업데이트 피드도 확인했다.
 
-EN: Distribution targets the same-signed,non-debuggable `shorts-loop-v0.3.0.apk`,including per-host migration,dual processing and scopedX. Product build,564 unit tests,three-OS native checks,installed identity and scoped physical flows are verified;public release,CI and anonymous-download parity are still being completed. Public0.2.9 remains current. Preserve prerelease-inclusive/draft-exclusive selection and version/OS/metadata/size/hash/package/signer checks. Installation stops execution while preserving settings;neither migration nor reconnection silently starts automation. Final source/tag/CI/three-asset parity belongs in the linked record.
+EN: Distribution targets the same-signed,non-debuggable `shorts-loop-v0.3.0.apk`,including per-host migration,dual processing and scopedX. Product build,564 unit tests,three-OS native checks,installed identity and scoped physical flows are verified;public release,CI and anonymous-download parity are complete for the final APK. Public0.3.0/code32 is current. Preserve prerelease-inclusive/draft-exclusive selection and version/OS/metadata/size/hash/package/signer checks. Installation stops execution while preserving settings;neither migration nor reconnection silently starts automation. Final source/tag/CI/three-asset parity belongs in the linked record.
 
 ## 이전0.2.9 / Previous0.2.9
 

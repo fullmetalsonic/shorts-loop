@@ -2,6 +2,10 @@
 
 ## D-043 · 분할 화면 상태/대기 입력 분리 / Split-screen isolation and deferred input
 
+현재0.3.0/code32는2026-08-28 공개 완료했다. 최종 APK는742,854bytes/SHA256 `9AA1E88425206CF1B9CEFBCD55B722DF83822D2F00830C81DDF925981AF394AA`이며,아래 실기기 흐름 후보53FD와 ZIP 내부의 소스 revision 기록만 다르고 나머지 항목은 동일하다. 최종 APK의 같은3개 OS native 검사·실폰 덮어 설치/해시·설정 보존·접근성 연결·전체OFF,CI와 익명 공개3파일 동일성 검증을 완료했다. 아래 과정별 후보·실패·미실행 범위를 보존한다. [최종 검증 원장](VERIFICATION.md),[공개 기록](releases/v0.3.0.md).
+
+EN: Public0.3.0/code32 was released on2026-08-28. The final742,854-byte APK above differs from the53FD physical-flow candidate only in its embedded source-revision record;all other ZIP entries match. Same-APK three-OS checks,physical upgrade/hash/preferences/accessibility/masterOFF,CI and anonymous three-asset parity are verified. Candidate history and unrun limits below remain distinct;see the linked final records.
+
 - 증상·재현: 기존 서비스는active root·카운터·타이머·플로팅이하나여서초점없는창을추적하지못했다. 새구조검토에서설정창을자기플로팅으로오인하는조건,0회플로팅위치갱신누락,대기중콘텐츠키변경무시,실행직전창변경정착대기우회를발견했다. 뒤4개는정적/합성재현이며실폰오발관측이라고보고하지않는다.
 - 직접원인: 단일전역세션,초점창전용필터,windowtitle만으로overlay구분,0회earlyreturn,일반identity만비교,재조회후generation/hold누락.
 - 영향: 두앱count혼합·플로팅오표시·가려진영역입력또는다른영상에이전대기요청적용위험.

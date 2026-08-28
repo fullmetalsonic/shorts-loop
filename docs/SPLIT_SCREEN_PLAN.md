@@ -1,16 +1,18 @@
 # 분할 화면 설계·시험 범위 / Split-screen design and verification · 0.3.0
 
-상태: **Public 공개판은0.2.9,0.3.0/code32는 범위별 검증 후 게시 준비 중이다.** 듀얼 모드는0.2.9 배포에 포함되지 않는다. 전체화면·분할 복귀,회전·상하 두 배치와 일반 앱 병행의 확인 범위를 아래처럼 후보별로 구분하며,최종 판정과 정확한 수치·해시는 [검증 원장](VERIFICATION.md)을 따른다. 공개 파일·CI 확인이나 모든 앱·배치·전체 UI 검증 완료를 주장하지 않는다.
+상태: **현재 Public 공개판은0.3.0/code32다.** 듀얼 모드는0.2.9 배포에 포함되지 않는다. 전체화면·분할 복귀,회전·상하 두 배치와 일반 앱 병행의 확인 범위를 아래처럼 후보별로 구분하며,최종 판정과 정확한 수치·해시는 [검증 원장](VERIFICATION.md)을 따른다. 공개 파일·CI·익명 다운로드 동일성 확인을 완료했으며,모든 앱·배치·전체 UI 검증 완료를 주장하지 않는다.
 
-Status: **Public0.2.9 is published;0.3.0/code32 is prepared for publication after scoped verification.** Dual mode is not part of0.2.9. Fullscreen/split returns,rotation,top/bottom layouts and ordinary-app coexistence have artifact-specific evidence below;the [verification record](VERIFICATION.md) owns exact counts,hashes and final outcomes. Public assets/CI and all-app,all-layout or full-UI completion are not claimed.
+Status: **The current public version is0.3.0/code32.** Dual mode is not part of0.2.9. Fullscreen/split returns,rotation,top/bottom layouts and ordinary-app coexistence have artifact-specific evidence below;the [verification record](VERIFICATION.md) owns exact counts,hashes and final outcomes. Public assets,CI and anonymous-download parity are verified;all-app,all-layout or full-UI completion is not claimed.
 
-### 현재 후보와 확인 범위 / Current candidate and evidence scope
+최종 공개 APK9AA1E884…는 아래53FD 후보와 내장 소스 revision 기록만 다르고 나머지 ZIP 항목은 동일하다. 최종 공개 APK의3개 OS 검사·실폰 덮어 설치/해시·설정 보존·전체OFF도 확인했다. / The final published9AA1E884… APK differs from53FD only in its embedded source-revision record;other ZIP entries match. Final-APK three-OS,physical upgrade/hash/preferences and masterOFF checks also passed.
 
-- 최신 설치 후보 `53FDA565…`: 전체화면 전환 때 TYPE3 시스템 손잡이를 잘못 차단하던 제품 창 보호 규칙을 수정했다. BUILD·JUnit564·3개 OS 검사·설정 보존 업그레이드·설치 해시 확인을 통과했다. 실행·듀얼ON을 유지하며 Instagram 전체화면3회(일반1·광고1·긴 영상1)→Instagram 왼쪽·YouTube 오른쪽 분할에서 추가YouTube4회(일반3·긴 영상1)와Instagram1회(일반)→Instagram 전체화면 복귀 후 추가9회(일반4·긴 영상4·광고1)를 확인했다. 마지막 구간에서 숨겨진 YouTube의 요청·확인은4에 유지됐다. 이 구간을 앱별10연속 또는 모든 배치 성공으로 보고하지 않는다. 이전F582/DE7과 동일한 APK 또는 실행 코드가 아니다.
+### 공개판과 검증 후보의 확인 범위 / Release and tested-candidate evidence
+
+- 실기기 흐름 검증 후보 `53FDA565…`: 전체화면 전환 때 TYPE3 시스템 손잡이를 잘못 차단하던 제품 창 보호 규칙을 수정했다. BUILD·JUnit564·3개 OS 검사·설정 보존 업그레이드·설치 해시 확인을 통과했다. 실행·듀얼ON을 유지하며 Instagram 전체화면3회(일반1·광고1·긴 영상1)→Instagram 왼쪽·YouTube 오른쪽 분할에서 추가YouTube4회(일반3·긴 영상1)와Instagram1회(일반)→Instagram 전체화면 복귀 후 추가9회(일반4·긴 영상4·광고1)를 확인했다. 마지막 구간에서 숨겨진 YouTube의 요청·확인은4에 유지됐다. 이 구간을 앱별10연속 또는 모든 배치 성공으로 보고하지 않는다. 이전F582/DE7과 동일한 APK 또는 실행 코드가 아니다.
 - 동작 계약: 듀얼ON·전체 실행ON을 유지하면 전체화면 한 대상·분할 두 대상·일반 앱 옆 한 대상을 보이는 창에 따라 감지한다. 배치마다 모드를 다시 켜도록 설계한 것이 아니다. 중지·서비스 재연결·권한·창/재생 안전 조건은 별도로 적용한다.
 - 한계·남은 시험: 키보드·팝업 보호와 앱 자체의 일시정지를 유지하며 강제 재생하지 않는다. 하나의 계산기 사례를 모든 일반 앱에 확대하지 않는다. 듀얼 사진 릴스의 새 실물 표본과 회전 후 원래 배치로의 복귀 시험은 아직 남아 있다. 최종 물리 시험 결과는 [검증 원장](VERIFICATION.md)에서 갱신한다.
 
-EN: Latest installed candidate53FDA565… changes the product guard for a TYPE3 system handle after fullscreen entry;it is not the same APK or executable payload asF582/DE7. Build,564 unit tests,three-OS,settings-preserving upgrade and installation-hash checks passed. With execution/dualON throughout,the confirmed sequence was3 fullscreen Instagram advances,then4 YouTube and1 Instagram advances in split view,then9 more Instagram advances after returning to fullscreen. Hidden YouTube remained at4 requests/confirmations. This is not a ten-consecutive-per-host or all-layout claim. The mode follows visible hosts without re-enabling dual mode for each layout;stop,reconnection,permission,keyboard/popup and playback guards still apply. Fresh dual-photo samples and return rotation remain outstanding;one Calculator case does not prove every app.
+EN: Physical-flow verification candidate53FDA565… changes the product guard for a TYPE3 system handle after fullscreen entry;it is not the same APK or executable payload asF582/DE7. Build,564 unit tests,three-OS,settings-preserving upgrade and installation-hash checks passed. With execution/dualON throughout,the confirmed sequence was3 fullscreen Instagram advances,then4 YouTube and1 Instagram advances in split view,then9 more Instagram advances after returning to fullscreen. Hidden YouTube remained at4 requests/confirmations. This is not a ten-consecutive-per-host or all-layout claim. The mode follows visible hosts without re-enabling dual mode for each layout;stop,reconnection,permission,keyboard/popup and playback guards still apply. Fresh dual-photo samples and return rotation remain outstanding;one Calculator case does not prove every app.
 
 ### 이전DE7·F582 후보 기록 / PreviousDE7 andF582 evidence
 

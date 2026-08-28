@@ -1,12 +1,14 @@
 # ShortsLoop · 기술 인수인계 / Technical handover
 
-## 현재0.3.0/code32 · 배포 준비 / Current release preparation
+## 현재0.3.0/code32 · 공개 완료 / Current published release
+
+**2026-08-28 21:25:22KST 기존Public에v0.3.0 공개,21:25:52 공개 검증PASS.** 제품6bfe330·태그v0.3.0·CI33170840370SUCCESS(debug/release각564tests,0실패/오류/건너뜀). 배포 APK742854bytes,SHA256`9AA1E88425206CF1B9CEFBCD55B722DF83822D2F00830C81DDF925981AF394AA`,실폰 설치본·익명 공개 다운로드 동일. 최종API26/33/34 native28043/28053/27794PASS. 소스 내장revision·기존 서명·공개3파일·latest/업데이트feed 확인PASS. 아래53FD는 물리시험 후보이며 최종본과내장revision외 ZIP내용이 같다. 메일없음. / Published,CI and anonymous asset/update-feed parity verified;phone-installed final APK matches the release. No email.
 
 듀얼모드·앱별 설정/세션/플로팅을 구현하고 실기기 시험을 마쳤다. 듀얼ON을 유지하면 전체화면 한 앱, 두 앱 분할, 일반 앱 옆 한 대상 앱을 보이는 창 기준으로 처리한다. 강제 초점·강제 재생은 하지 않는다. [사용법](docs/USER_GUIDE.md),[설계](docs/SPLIT_SCREEN_PLAN.md),[릴리스 원장](docs/releases/v0.3.0.md).
 
 최신 실폰 후보는742854bytes·SHA256`53FDA56552ECC4B2D309BF38AD2E0072301866E813C0E445B7B328F6DA029C2A`. 설치해시 일치,BUILD/564JUnit/정적가드PASS,API26/33/34 native28043/28053/27794PASS,lint0오류13경고,독립리뷰P1/P2=0. 시스템 상태표시줄 내부의 작은 창 제어 손잡이를 전체화면 가림으로 오인한 원인을 제한적으로 수정했다. 입력 경로 교차·창 경계 일치 보호는 유지한다.
 
-실행·듀얼ON 유지 시험: 전체IG3회→분할YT4회/IG추가1회→전체IG복귀추가9회,숨긴YT추가0,종료차단/복구/미확인요청0. 이전 후보의 상하두순서·계산기병행·좁은창·개별X 근거와 구분한다. 원래 회전방향 복귀·사진의 모든 듀얼 조합·모든 다른 앱/팝업은 미검증이다. 최종 APK 고정·업그레이드·CI·익명 다운로드 결과는 릴리스 원장에 이어 기록한다. 실폰 전체 실행OFF,기존 설정/권한/OS회전설정 보존. 기존Public에 게시 준비 중이며 메일 발송은 하지 않는다.
+실행·듀얼ON 유지 시험: 전체IG3회→분할YT4회/IG추가1회→전체IG복귀추가9회,숨긴YT추가0,종료차단/복구/미확인요청0. 이전 후보의 상하두순서·계산기병행·좁은창·개별X 근거와 구분한다. 원래 회전방향 복귀·사진의 모든 듀얼 조합·모든 다른 앱/팝업은 미검증이다. 최종 APK 고정·업그레이드·CI·익명 다운로드 결과는 릴리스 원장에 기록했다. 실폰 전체 실행OFF,기존 설정/권한/OS회전설정 보존. Public 게시 완료,메일 발송은 하지 않았다.
 
 EN: Dual mode,isolated host sessions/settings/overlays and scoped safety guards are implemented. Phone candidate53FD…9C2A matches its installed APK;build,564 unit tests,three-OS native checks and source review pass. Keeping execution and dual mode ON confirmed full IG3,dual YT4/IG+1,then returned-full IG+9 while hidden YT stayed unchanged. Evidence is candidate-specific;return rotation and all photo/overlay combinations are untested. Execution is nowOFF with settings and permissions preserved. See the release record for final artifact,upgrade,CI and public-download checks;no email.
 

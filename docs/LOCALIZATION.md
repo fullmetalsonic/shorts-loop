@@ -1,8 +1,8 @@
 # 한국어·영어 안내 / Korean and English · ShortsLoop 0.3.0
 
-대상은 **0.3.0/code32**입니다. 시스템 첫 언어에 따른 한영 선택을 유지하고 앱별 설정·듀얼·호스트별X 안내를 추가합니다. 최종 제품 후보의 빌드·단위·3개 OS 검사와 범위별 실기기 동작을 확인했으며,게시·CI·공개 파일 검증은 진행 중입니다. 모든 실시간 언어 변경·모든 기기 동작을 검증했다는 뜻은 아닙니다. 현재 공개판은0.2.9입니다. [검증 원장](VERIFICATION.md),[0.3.0 기록](releases/v0.3.0.md).
+대상은 **0.3.0/code32**입니다. 시스템 첫 언어에 따른 한영 선택을 유지하고 앱별 설정·듀얼·호스트별X 안내를 추가합니다. 최종 제품 후보의 빌드·단위·3개 OS 검사와 범위별 실기기 동작을 확인했으며,공개 릴리스·CI·익명 공개 파일 동일성 검증도 완료했습니다. 모든 실시간 언어 변경·모든 기기 동작을 검증했다는 뜻은 아닙니다. 현재 공개판은0.3.0/code32입니다. [검증 원장](VERIFICATION.md),[0.3.0 기록](releases/v0.3.0.md).
 
-This guide targets **0.3.0/code32**,retaining first-system-language selection and adding per-host,dual-mode and scopedX guidance. Product build/unit/three-OS checks and scoped physical flows are verified;publication,CI and public-file checks remain in progress. This is not universal real-time language-change or device coverage. Public0.2.9 remains current;see the linked records.
+This guide targets **0.3.0/code32**,retaining first-system-language selection and adding per-host,dual-mode and scopedX guidance. Product build/unit/three-OS checks and scoped physical flows are verified;public release,CI and anonymous-file parity checks are complete. This is not universal real-time language-change or device coverage. Public0.3.0/code32 is current;see the linked records.
 
 ## 1. 언어를 정하는 기준 / Language selection
 

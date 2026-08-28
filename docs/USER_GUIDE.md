@@ -1,10 +1,10 @@
 # 사용 설명서 / User guide · ShortsLoop 0.3.0
 
-## 현재 안내 · 게시 준비 / Current guide · Publication preparation
+## 현재 안내 · 공개 완료 / Current guide · Published
 
-**공개 버전은0.2.9이며,0.3.0/code32는 검증 범위를 확인한 뒤 게시를 준비 중입니다.** 최신 설치본에서 실행·듀얼ON을 유지한 전체화면→두 앱 분할→전체화면 복귀와 실제 자동 전환을 확인했습니다. 숨겨진 앱에는 새 넘김 요청이 없었습니다. 빌드·단위·3개 OS 검사·설정 보존 업그레이드·설치 해시 확인을 마쳤으며,게시 전 전체 실행은OFF로 두었습니다. 아직 공개 파일·CI 확인 완료를 뜻하지 않습니다. 이전 후보의 회전·일반 앱 병행 시험은 별도 이력입니다. [최신 검증 원장](VERIFICATION.md),[이전 후보별 이력](SPLIT_SCREEN_PLAN.md).
+**현재 공개 버전은0.3.0/code32입니다.** 53FD 흐름 검증 후보에서 실행·듀얼ON을 유지한 전체화면→두 앱 분할→전체화면 복귀와 실제 자동 전환을 확인했습니다. 숨겨진 앱에는 새 넘김 요청이 없었습니다. 현재 설치본은 실행 내용이 같고 내장 소스 기록만 다른 최종9AA1입니다. 빌드·단위·3개 OS 검사·설정 보존 업그레이드·설치 해시 확인을 마쳤으며,게시 전 전체 실행은OFF로 두었습니다. 최종 공개 파일·CI·익명 다운로드 동일성 확인도 완료했습니다. 이전 후보의 회전·일반 앱 병행 시험은 별도 이력입니다. [최신 검증 원장](VERIFICATION.md),[이전 후보별 이력](SPLIT_SCREEN_PLAN.md).
 
-**Public0.2.9 remains available;0.3.0/code32 is being prepared for publication after scoped verification.** The latest installed candidate completed fullscreen→dual-host split→fullscreen transitions with execution/dualON throughout;the hidden host issued no new advance. Build,unit,three-OS,settings-preserving upgrade and installation-hash checks passed. Execution isOFF for publication preparation;public assets and CI are not yet verified. Earlier rotation and ordinary-app coexistence evidence remains separate in the [verification record](VERIFICATION.md).
+**The current public version is0.3.0/code32.** Physical-flow candidate53FD completed fullscreen→dual-host split→fullscreen transitions with execution/dualON throughout;the hidden host issued no new advance. The phone now runs final9AA1 with identical runtime payload and different embedded revision metadata. Build,unit,three-OS,settings-preserving upgrade and installation-hash checks passed. Execution remainsOFF;final public assets,CI and anonymous-download parity are verified. Earlier rotation and ordinary-app coexistence evidence remains separate in the [verification record](VERIFICATION.md).
 
 듀얼 모드와 전체 실행을ON으로 유지하면 전체화면의 대상 앱 하나,분할 화면의 두 대상 앱,일반 앱 옆의 대상 앱 하나를 현재 보이는 창에 맞춰 감지합니다. 배치마다 모드를 다시 켜는 방식은 아닙니다. 창·권한·재생 상태가 안전 조건을 만족해야 하며,중지하거나 서비스가 다시 연결된 뒤에는 별도의 재개가 필요할 수 있습니다.
 

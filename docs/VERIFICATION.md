@@ -2,6 +2,8 @@
 
 ## 현재0.3.0/code32 · 최종 기능 검증 / Current functional verification
 
+**공개 검증 완료:** 제품/태그6bfe330/v0.3.0,CI33170840370SUCCESS(debug/release각564tests·0실패/오류/건너뜀,lint0/12). 최종9AA1E884…AF394AA APK742854bytes는API26/33/34 native28043/28053/27794PASS,휴대폰설치본·익명공개다운로드·GitHubdigest일치. 공개3파일HTTP200·latest/인앱feed·메타데이터PASS. 아래53FD후보와내장revision외모든ZIP항목동일. / Public artifact,installed phone APK,product CI and anonymous assets/update feeds are verified;see release record for full hashes and timing.
+
 공개 고정본의 소스·해시·업그레이드·CI·다운로드 확인은 [0.3.0 릴리스 원장](releases/v0.3.0.md)을 따른다. 아래 후보 해시를 공개 APK 해시로 사용하지 않는다.
 
 업그레이드 시험: 공개0.2.9→53FD 후보 덮어 설치를 일회용 API26/33/34에서 각각 수행해PASS. 기존24개 설정의 값·타입을 보존하고 앱별 초기화19개 추가(합계43),각호스트상속·이후독립수정·재초기화방지·사진IG전용·dual기본OFF·실행OFF·동일UID/서명·업데이트선호보존을 확인했다. 휴대폰 데이터는 초기화하지 않았다. / Upgrade checks pass on26/33/34:24 typed legacy preferences preserved,19 migration keys added,independent host inheritance/reopening,Instagram-only photo settings,default-OFF dual mode and unchanged UID/signer/update preferences.

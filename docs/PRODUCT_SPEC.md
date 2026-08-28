@@ -1,10 +1,10 @@
 # 제품 기준 / Product contract · ShortsLoop 0.3.0
 
-## 현재0.3.0 계약 · 게시 준비 / Current contract · Publication preparation
+## 현재0.3.0 계약 · 공개 완료 / Current contract · Published
 
-**Public 공개 버전은0.2.9다. 0.3.0/code32는 범위별 검증을 마치고 게시 준비 중이다.** 최신 후보는 전체화면 시스템 손잡이 보호 규칙을 보완한 제품 코드 변경이다. 실행·듀얼ON 상태에서 전체화면→두 앱 분할→전체화면으로 바꾸며 실제 자동 전환과 숨겨진 호스트의 요청 정지를 확인했다. 빌드·단위·3개 OS·설정 보존 업그레이드·설치 해시 검사는 통과했으나 공개 파일·CI 확인은 아직 진행 중이다. 이전 문구 전용 후보와 같은 실행 파일로 취급하지 않는다. 정확한 APK·구간별 결과는 [검증 원장](VERIFICATION.md),이전 관측은 [분할 화면 이력](SPLIT_SCREEN_PLAN.md)을 따른다.
+**현재 Public 공개 버전은0.3.0/code32다.** 최신 후보는 전체화면 시스템 손잡이 보호 규칙을 보완한 제품 코드 변경이다. 실행·듀얼ON 상태에서 전체화면→두 앱 분할→전체화면으로 바꾸며 실제 자동 전환과 숨겨진 호스트의 요청 정지를 확인했다. 빌드·단위·3개 OS·설정 보존 업그레이드·설치 해시와 최종 공개 파일·CI·익명 다운로드 동일성 확인을 완료했다. 이전 문구 전용 후보와 같은 실행 파일로 취급하지 않는다. 정확한 APK·구간별 결과는 [검증 원장](VERIFICATION.md),이전 관측은 [분할 화면 이력](SPLIT_SCREEN_PLAN.md)을 따른다.
 
-**Public0.2.9 remains published;0.3.0/code32 is prepared for publication after scoped verification.** The latest product guard completed fullscreen→dual-host split→fullscreen operation with execution/dualON,including confirmed advances and no new hidden-host request. Build,unit,three-OS,settings-preserving upgrade and installed-APK checks passed;public assets and CI remain pending. Its executable payload differs from the earlier wording-only candidate;keep artifact and segment results distinct.
+**The current public version is0.3.0/code32.** The latest product guard completed fullscreen→dual-host split→fullscreen operation with execution/dualON,including confirmed advances and no new hidden-host request. Build,unit,three-OS,settings-preserving upgrade and installed-APK checks passed;final public assets,CI and anonymous-download parity are verified. Its executable payload differs from the earlier wording-only candidate;keep artifact and segment results distinct.
 
 듀얼ON·전체 실행ON은 현재 보이는 선택 대상에 맞춰 전체화면 하나·분할 두 앱·일반 앱 옆 한 앱을 감지하는 공통 상태다. 배치마다 다시 설정하는 계약이 아니며,기존 중지·권한·서비스 재연결·안전 보호는 그대로 적용한다. / With dual mode and executionON,detect the currently visible selected hosts across fullscreen,social-app split view or one host beside an ordinary app. Layout changes alone do not require re-enabling the mode;stop,permission,reconnection and safety rules remain unchanged.
 
@@ -30,7 +30,7 @@ EN: Two independent sessions retain their own counters,recovery,timers,photo tra
 
 ### 검증 범위 / Verification boundary
 
-설정 이전·앱별 독립성·UI 초안·제어 범위의 합성시험과 실제 소셜 앱 자동 전환은 별도 근거다. 정확한 APK별 BUILD/Unit/native/시각/실폰 결과는 검증 원장을 따른다. OFF·배치 교환·ON으로 나뉜 구간을 무중단 연속시험으로 합산하지 않는다. 키보드·팝업 보호와 앱 자체 일시정지는 유지하며 모든 일반 앱·배치와의 병행 동작을 보장하지 않는다. 듀얼 사진 릴스의 새 실물 표본과 복귀 회전 시험은 아직 미확보다. 게시·최종 파일·CI 결과가 나오기 전까지0.3.0은 미게시다.
+설정 이전·앱별 독립성·UI 초안·제어 범위의 합성시험과 실제 소셜 앱 자동 전환은 별도 근거다. 정확한 APK별 BUILD/Unit/native/시각/실폰 결과는 검증 원장을 따른다. OFF·배치 교환·ON으로 나뉜 구간을 무중단 연속시험으로 합산하지 않는다. 키보드·팝업 보호와 앱 자체 일시정지는 유지하며 모든 일반 앱·배치와의 병행 동작을 보장하지 않는다. 듀얼 사진 릴스의 새 실물 표본과 복귀 회전 시험은 아직 미확보다. 0.3.0의 게시·최종 파일·CI 확인 결과는 검증 원장에 기록한다.
 
 Synthetic migration,isolation and UI checks are distinct from physical transitions. Use artifact-specific records;segments separated byOFF,swap andON are not one uninterrupted run. Keyboard/popup guards and host-imposed pauses remain,no universal app/layout compatibility is promised,and fresh dual-photo samples plus return-rotation testing remain outstanding. Clock progress or a request alone is not a confirmed transition.
 

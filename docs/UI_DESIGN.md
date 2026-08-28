@@ -1,10 +1,10 @@
 # UI·인간공학 기준 / UI and usability · ShortsLoop 0.3.0
 
-## 현재 화면 계약 · 게시 준비 / Current UI contract · Publication preparation
+## 현재 화면 계약 · 공개 완료 / Current UI contract · Published
 
-**현재 공개판은0.2.9이며0.3.0/code32는 게시 준비 중이다.** 최신 설치본에서 실행·듀얼ON을 유지한 전체화면→두 앱 분할→전체화면 자동 전환과 숨겨진 호스트의 요청 정지를 확인했다. 빌드·단위·3개 OS 검사·설정 보존 업그레이드·설치 해시를 확인했고,범위별 독립 리뷰의 미해결P1/P2는0건이다. 게시 확인과 모든 앱·배치·시각·사용성 감사 완료를 뜻하지 않는다. 이전 문구 전용 후보와 실행 파일이 같다는 설명은 최신 후보에 적용하지 않는다. [검증 원장](VERIFICATION.md),[사용 순서](USER_GUIDE.md),[이전 후보 이력](SPLIT_SCREEN_PLAN.md).
+**현재 공개판은0.3.0/code32다.** 53FD 흐름 검증 후보에서 실행·듀얼ON을 유지한 전체화면→두 앱 분할→전체화면 자동 전환과 숨겨진 호스트의 요청 정지를 확인했다. 현재 설치본은 실행 내용이 같고 내장 소스 기록만 다른 최종9AA1이다. 빌드·단위·3개 OS 검사·설정 보존 업그레이드·설치 해시를 확인했고,범위별 독립 리뷰의 미해결P1/P2는0건이다. 공개 파일·CI·익명 다운로드 동일성 확인을 완료했으나 모든 앱·배치·시각·사용성 감사 완료를 뜻하지 않는다. 이전 문구 전용 후보와 실행 파일이 같다는 설명은 최신 후보에 적용하지 않는다. [검증 원장](VERIFICATION.md),[사용 순서](USER_GUIDE.md),[이전 후보 이력](SPLIT_SCREEN_PLAN.md).
 
-**Public0.2.9 remains published;0.3.0/code32 is being prepared for publication.** The latest installed build completed fullscreen→dual-host split→fullscreen advances with execution/dualON and no new hidden-host request. Build,unit,three-OS,settings-preserving upgrade and installation-hash checks passed;scoped independent review has no unresolvedP1/P2 finding. This is neither completed publication nor an all-app/all-layout visual or usability audit. The earlier wording-only payload comparison does not describe this candidate.
+**The current public version is0.3.0/code32.** Physical-flow candidate53FD completed fullscreen→dual-host split→fullscreen advances with execution/dualON and no new hidden-host request. The phone now runs final9AA1 with identical runtime payload and different revision metadata. Build,unit,three-OS,settings-preserving upgrade and installation-hash checks passed;scoped independent review has no unresolvedP1/P2 finding. Public assets,CI and anonymous-download parity are verified;this is not an all-app/all-layout visual or usability audit. The earlier wording-only payload comparison does not describe this candidate.
 
 듀얼ON 안내는 ‘두 앱이 꼭 있어야 함’이나 ‘배치마다 다시 켜야 함’으로 읽히지 않아야 한다. 전체 실행ON에서 전체화면 한 대상·분할 두 대상·일반 앱 옆 한 대상을 현재 창에 따라 감지하되,안전 보호로 대기하는 상태와 명시적 중지 상태를 구분한다. / DualON must not imply that two hosts are required or the mode must be toggled after each layout change. With executionON,it follows one fullscreen host,two split hosts or one host beside an ordinary app;distinguish guarded waiting from explicit stopping.
 
