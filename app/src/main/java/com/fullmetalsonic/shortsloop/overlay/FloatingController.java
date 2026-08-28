@@ -18,6 +18,8 @@ import android.widget.TextView;
 import com.fullmetalsonic.shortsloop.R;
 import com.fullmetalsonic.shortsloop.core.PositionPolicy;
 import com.fullmetalsonic.shortsloop.core.LiveSkipPolicy;
+import com.fullmetalsonic.shortsloop.core.PlaybackRestart;
+import com.fullmetalsonic.shortsloop.core.LongVideoPolicy;
 import com.fullmetalsonic.shortsloop.data.SettingsStore;
 
 public final class FloatingController {
@@ -103,7 +105,11 @@ public final class FloatingController {
         if (number == null) return;
         String liveLabel = LiveSkipPolicy.floatingLabel(status, remainingSeconds);
         boolean timedStatus = "시간제 · 진행 정보 확인 중".equals(status) || "시간제 · 설정 시간 후 넘김".equals(status);
-        String label = liveLabel != null ? liveLabel
+        String label = status.startsWith("안전정지 · ") ? "정지"
+                : PlaybackRestart.WAITING.equals(status) ? "대기"
+                : LongVideoPolicy.CHECKING.equals(status) || LongVideoPolicy.CONFIRMING.equals(status) ? "긴영상"
+                : target == 0 && store.skipLong() && status.startsWith("반복 꺼짐 · 긴 영상") ? "조건"
+                : liveLabel != null ? liveLabel
                 : remainingSeconds >= 0 && timedStatus ? remainingSeconds + "초"
                 : target == 0 && LiveSkipPolicy.zeroCountStatus(true, true).equals(status) ? "광·라"
                 : target == 0 && LiveSkipPolicy.zeroCountStatus(false, true).equals(status) ? "라이브"

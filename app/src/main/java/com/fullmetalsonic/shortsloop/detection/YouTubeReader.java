@@ -62,7 +62,8 @@ public final class YouTubeReader {
             }
             if (!reel || !timeBar || page == null) return YouTubeSnapshot.unavailable("쇼츠 화면 대기");
             if (validSeekBars != 1) return YouTubeSnapshot.unavailable("재생 시간 확인 대기");
-            return new YouTubeSnapshot(progress, digest(identity.toString()), page, "");
+            return new YouTubeSnapshot(progress, digest(identity.toString()), page, "")
+                    .withContentIdentity(YouTubeContentKey.read(nodes, parents, complete));
         } finally {
             for (AccessibilityNodeInfo node : nodes) if (node != root) recycle(node);
         }

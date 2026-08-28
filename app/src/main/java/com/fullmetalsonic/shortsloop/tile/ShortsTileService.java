@@ -58,8 +58,10 @@ public final class ShortsTileService extends TileService implements SharedPrefer
         boolean active = ModePolicy.tileActive(store.enabled(), store.target(), RuntimeState.connected, RuntimeState.blocked);
         boolean ads = store.skipAds() && store.instagramEnabled() && installed(SettingsStore.INSTAGRAM_PACKAGE);
         boolean live = store.skipLive() && store.youtubeEnabled() && installed(SettingsStore.YOUTUBE_PACKAGE);
+        boolean longVideo = store.skipLong() && ((store.youtubeEnabled() && installed(SettingsStore.YOUTUBE_PACKAGE))
+                || (store.instagramEnabled() && installed(SettingsStore.INSTAGRAM_PACKAGE)));
         String subtitle = active ? store.target() == 0
-                ? getString(R.string.zero_features_short,
+                ? longVideo ? "긴영상·조건 넘김" : getString(R.string.zero_features_short,
                     getString(ads ? R.string.feature_on_short : R.string.feature_off_short),
                     getString(live ? R.string.feature_on_short : R.string.feature_off_short))
                 : getString(R.string.tile_count, store.target())
@@ -67,7 +69,8 @@ public final class ShortsTileService extends TileService implements SharedPrefer
                 : !RuntimeState.connected || (store.floatingEnabled() && !Settings.canDrawOverlays(this)) ? getString(R.string.permission_needed)
                 : !store.hasSelectedApps() ? "앱 선택 필요"
                 : getString(R.string.off);
-        publish(active, subtitle, active && store.target() == 0 ? LiveSkipPolicy.zeroCountStatus(ads, live) : subtitle);
+        publish(active, subtitle, active && store.target() == 0
+                ? com.fullmetalsonic.shortsloop.core.LongVideoPolicy.zeroCountStatus(ads, live, longVideo) : subtitle);
     }
     private void publish(boolean active, String subtitle) {
         publish(active, subtitle, subtitle);

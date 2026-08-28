@@ -1,5 +1,67 @@
 # 누적이력
 
+## 최신 0.2.6/code28 · 검증 완료·게시 준비 / Verified,publication pending
+
+**0.2.6/code28은 로컬 PC·기기 검증을 마친 공개 시험판(pre-release) 게시 준비 상태이며 아직 미게시다.** YouTube의 같은 창·pager·전체 페이지에서 현재 행이 요청 행보다 정확히1 증가하는 근거를 보강했다. 최종 빌드·468JUnit·정적 가드 PASS,lint0오류/기존3경고,동일APK API26/33/34 계측233/233/232 PASS와 설치·설정 보존·접근성·런타임·해시 일치를 확인했다. YouTube20회는148.6초 동안 요청20/확인20(일반4·긴 영상15·라이브1),수동0·실패0·복구0으로 PASS했다. 같은 길이 영상 쌍은 이 실기기20회에 없었으므로 해당 조건의 실기기 재현 성공을 주장하지 않는다.
+
+**0.2.6/code28 has completed local PC/device verification and is ready for public pre-release delivery,but is not yet published.** It adds exact current-row=request-row+1 evidence within the same YouTube window,pager and full-page bounds. Build,468 JUnit tests,static guards,233/233/232 exact-APK API26/33/34 checks and installation/settings/accessibility/runtime/hash parity passed;lint has0 errors/3 existing warnings. YouTube20 passed in148.6 seconds with20 requests/20 confirmations:4 ordinary,15 long-video,1 live,and0 manual swipes,failures or recoveries. No equal-duration pair occurred in this run,so that precise physical case is not claimed as reproduced.
+
+**이번 code26→code28 YouTube 보완에서** Instagram의 일반 확인 경로와 `AdvanceGate`는 변경하지 않았다.0.2.5→0.2.6 전체에서 아무 변화가 없었다는 뜻은 아니다. code26의 Instagram10회 PASS(96.0초,일반3·긴 영상4·시간제2·광고1,수동0)는 해당 버전의 실기기 근거로 보존하고 이번에는 전체10회를 반복하지 않는다. 이 과거 결과를 새 code28 APK에서 Instagram을 재실행한 것처럼 표시하지 않는다. YouTube 재시험과 영향 범위 검증은 통과했으며,기존 Public 저장소에v0.2.6/code28 pre-release를 게시한 뒤 CI·공개 다운로드 동일성을 별도로 확인한다. 현재는 게시 전이다.
+
+**For this code26→code28 YouTube correction**,the generic Instagram path and AdvanceGate are unchanged from code26;this does not mean they were unchanged throughout0.2.5→0.2.6. Code26's Instagram10 PASS(96.0 seconds:3 ordinary,4 long-video,2 timed,1 ad;0 manual swipes) is retained as version-specific evidence without repeating the full run. It is not described as a new Instagram test on code28. The YouTube retest and impact-scope checks passed. Planned delivery is v0.2.6/code28 as a pre-release in the existing Public repository,followed by separate CI/public-download parity checks;publication is still pending.
+
+**YouTube20 실기기 기록:**13:08:46~13:11:14.291,148.6초,기준0→20·요청20/확인20. 일반4·긴 영상15·라이브1,광고/시간제0,수동0·실패0·복구0이다. 전후 화면0~20을 육안 대조했다.10번은 들어온 라이브가 다음 동작으로 이동 중인 화면이고11번에서 다른 일반 영상이 확인됐다. 현재 행의 정확한+1을 관측했다.13번 관측 중 알림 배너가 나타났으나 이후 전환은 계속됐으며 **단일 사례이지 모든 알림에 대한 보증이나 과거 실패 원인 규명은 아니다**. 목표 이후 추가3회는20회 결과에 합산하지 않는다.
+
+13:12 긴 영상 기준30→60초를 인앱에서 복원하고 전체 실행OFF·blocked=false를 확인했다. 같은 길이 영상 쌍은 이번 실기기 시험에 없었으며,플로팅 글자 일부 잘림은 비차단 한계로 남긴다. 공개 전 검증과 실제 게시·공개 파일 동일성 검증을 분리한다.
+
+## 과거 code26 · 지정시험 성공 후 후속실패 / Historical candidate
+
+**과거0.2.6/code26은 실폰 후속 실패로 게시 보류된 미배포 후보였다.** 빌드·454 JUnit(실패0)·정적 가드 PASS, lint0오류/기존3경고. 12:33 동일 APK의 Android API26/33/34 계측209/209/208개 PASS,12:36 휴대폰 설치·전체 기존 설정 직접 비교 보존·접근성 연결·설치 APK 해시 일치 PASS. 12:38:20 YouTube 공식 시험은 요청10/확인10(긴 영상9+라이브1)과 전후 화면의 서로 다른 영상 확인으로 PASS했다. 12:39:22 별도 일반1/1 전환1회도 화면 쌍으로 확인했다. 그러나 후속 연속 실행 중 요청20/확인19에서 같은59초 길이·pager index 부재로 안전정지했다. 해당 실패 요청에는 전후 화면 쌍이 없어 실제 다음 영상 이동 여부는 미확정이다. Instagram은12:43:56~12:45:31.831(96.0초) 별도 시험에서 요청10/확인10(일반3·긴 영상4·시간제10초2·광고1),수동0·실패/복구0으로 PASS했다. **두 앱의 지정10회 PASS가 유튜브 후속 실패를 덮지 않으며 제품 완료·배포 준비 완료가 아니다.**
+
+**Historical0.2.6/code26 remained unpublished after a subsequent device failure blocked its release.** Build,454 JUnit tests with zero failures,static guards and209/209/208 exact-APK API26/33/34 checks passed; lint has0 errors and3 existing warnings. Installation preserved all compared preferences and accessibility binding,and matched the APK hash. The12:38:20 YouTube run passed10 requests/10 confirmed distinct transitions:9 long-video and1 live. A separate12:39:22 ordinary1/1 transition also passed screenshot-pair review. Further continuation then safety-stopped at20 requests/19 confirmations when both durations were59 seconds and pager indices were unavailable. No pre/post screenshot pair exists for that failed request,so actual movement is unproven. A separate96.0-second Instagram run at12:43:56–12:45:31.831 passed10 requests/10 confirmations:3 ordinary,4 long-video,2 ten-second clockless and1 ad,with no manual swipes,failures or recoveries. The two designated ten-transition PASS results do not override the later YouTube failure or establish release readiness.
+
+YouTube의 별도 RAM 메타데이터 키 경로는 **다른 키 AND (요청 후 같은 창·pager의 최신 실제 index 변화 OR 다른 유효 총길이) AND 300ms 이상 안정 AND 최신 실제 전진 재생**을 모두 요구한다. 요청 시 키 출처를 고정해 메타데이터의 등장·소실을 다른 출처의 키와 비교하지 않는다. 부분 메타데이터 소실로 키만 달라져도 이동으로 인정하지 않는다. 일반 반복 identity는 바꾸지 않는다. 메타데이터 키를 쓰지 않는 기존 확인 경로는 안정된 다른 identity 또는 최신 동일 pager 이동+다른 안정된 총길이+전진 근거를 유지한다. 길이 단독은 확인 근거가 아니며, 메타데이터 경로에서 같은 길이이고 pager index도 없으면 실제 이동했더라도 안전정지할 수 있다. 긴 영상 확인4.5초 실패는 일반 복구나 추가 스와이프로 우회하지 않는다.
+
+The supplemental YouTube RAM-metadata path requires a different key AND either request-fresh same-window/pager index movement or a different valid duration,then at least300ms of stability and current forward playback. The identity source is fixed at request time; appearing,missing or partially missing metadata alone cannot confirm movement. Ordinary repeat identity is unchanged. Non-metadata confirmation retains stable changed identity or corroborated fresh pager movement with changed stable duration and forward progress. Duration alone is insufficient. Same-duration metadata pages without pager indices may still safety-stop after real movement. Long-video4.5-second timeouts never use ordinary recovery or retry swipes.
+
+고정 APK: **757038bytes**, SHA256 `82CE7C221C1BF3E6DA8F86F9D487F9685D89DFB22A38D24F60B77F447519E926`. [검증 원장](VERIFICATION.md), [원인·재발방지](DEBUG_LOG.md).
+
+연속 시험은 반복1·긴 영상ON/기준30초·광고/라이브ON·Instagram 시간제10초로 수행했다. 종료 후 플로팅X로 실행을 중지했고 blocked=false를 확인했다.12:46 인앱 숫자 입력으로 긴 영상 기준30→60초를 복원하고 UI·런타임에서 확인했다. 최종 상태는 **전체 실행OFF,반복1,긴 영상ON/60초,광고ON,라이브ON/0초,시간제ON/10초,화면 분석OFF**다. 제품의 신규 기본값OFF/60초를 바꾼 것이 아니라 기존 옵션은 보존했다. 드문 일반 timeout의 실제 발생·새 시작점 복구,최종 전체 화면 시각/사용성 감사,공개 CI·Release·익명 다운로드 동일성은 완료로 표시하지 않는다. 유튜브 후속 확인 실패가 남아 게시 보류를 유지한다.
+
+Instagram 공식 시험은12:43:56~12:45:31.831,총96.0초이며 기준 요청/확인19→29에서 **요청10/확인10 PASS**다. 구성은 일반3·긴 영상4·진행정보 없는10초 시간제2·광고1,수동 이동0·실패0·복구0이다. 전후0~10 화면을 육안 대조했으며8번 캡처는 광고→일반 전환 중이고9번은 안정된 페이지였다. 목표 뒤 추가6회는 이10회 결과에 합산하지 않는다.
+
+The formal Instagram run lasted96.0 seconds at12:43:56–12:45:31.831,advancing the request/confirmation baseline19→29:10/10 PASS. It comprised3 ordinary,4 long-video,2 ten-second clockless and1 ad transition,with0 manual swipes,failures or recoveries. Screenshots0–10 were visually reviewed;capture8 shows the outgoing-ad/incoming-ordinary gesture and9 a settled page. Six later transitions are excluded from this ten-transition result.
+
+**이전 후보는 별도 기록이다.** code23은12:12 실제62→93초 영상 이동 후 요청1/확인0으로 실패했고, code24는12:17 같은 창·영역·인식·안전 조건에서도 공통 텍스트 identity가 같음을 재현했다. code25도12:21~12:22 실제93→57초 이동 후 요청/현재 index가 모두−1이고 공통 identity가 같아 실패했다. code23/24/25는 실폰FAIL·미배포이며 PC·계측PASS가 이를 덮지 않는다. code22의 YouTube2회는 기능 추가로 중단한 과거 관측이며 수동180초 영상 이동1회는 제외했다. 어느 후보의 관측도 code26의10회에 합산하지 않는다.
+
+Earlier code23/24/25 candidates failed physical confirmation and were not published,despite PC/emulator passes. Code23 actually moved62→93 seconds but confirmed0 of1 requests; code24 reproduced identical shared-text identities; code25 moved93→57 seconds but both pager indices were−1. Code22 stopped after two automatic transitions for feature integration,excluding one manual180-second skip. No historical transitions count toward code26.
+
+## 과거 code23 · PC/설치PASS 이후 실폰FAIL·미배포 / Historical candidate,device FAIL
+
+아래는12:12실폰FAIL 이전 체크포인트다. UI·설치검증은전체자동전환PASS가아니며최신code28검증으로재사용하지않는다.
+
+기존 일반 전환 확인 시간초과의 새 시작점 복구에 긴 영상 필터를 추가했다. 기본OFF·총길이 기준60초·1~3600초/±1초이며 선택한 YouTube·Instagram의 일반 영상 중 확인된길이≥기준이면 안전한 실제 진행 확인 후 넘긴다. 반복0과 독립,전체OFF는 중지,길이 불명 추정 금지다. 긴 영상 요청의4.5초 확인 실패는 안전정지이며 일반 복구로 전환하지 않는다.
+
+일반 횟수 다음에 긴 영상 카드를 배치하고 초안·입력 오류·상하한·미설치/미선택·설정보존·0회와 광고 전용 설명을 갱신했다. 복구대기/안전정지가 긴 영상이나0회 라벨에 가려지는 것을 예방한다. 최종빌드·418제품시험/실패0·정적가드PASS,12:10 동일APK API26/33/34 계측163/163/162 및 폰설치·기존설정/접근성bound/설치해시PASS. 고정757601bytes,SHA256 `FC866F0459CD3536114758DB277F0FCD0EF84CFA443E9C8817B448D6ED704B7F`. lint0오류/기존3경고는최종보고서재대조중이다. code23실폰 YouTube10/Instagram10·조건별실제시험·공개CI/릴리스는미실행이다. [검증](VERIFICATION.md), [제품 계약](PRODUCT_SPEC.md), [예방 대장](DEBUG_LOG.md), [릴리스](releases/v0.2.6.md).
+
+EN: Unpublished code23 adds optional long-video filtering(defaultOFF,known duration≥60 seconds,range1–3600),independent of zero plays and guarded by real progress. Build,418 tests,static guards,163/163/162 exact-APK emulator checks and installation parity passed. Lint0/3 awaits final report comparison; actual10+10,physical feature cases and public delivery remain pending.
+
+## 과거 0.2.6/code22 · 시작점 복구 후보 / Historical fresh-start candidate
+
+일반 영상 넘김 확인 시간초과 후 읽기전용 시작점 재인식과 전체횟수 재계산, 플로팅 대기/정지 표시, 인앱 도움말, 개인정보 없는 복구누계 진단을 추가했다. 기존 특수영상/권한/제스처 안전정지를 유지한다. README에 한영 원출처 표시 요청과 원본/변경 구분 안내를 추가하며 별도 라이선스를 임의로 지정하지 않았다. [복구설계](PLAYBACK_RECOVERY.md), [D-034](DEBUG_LOG.md).
+
+과거code22의 빌드·383단위시험·정적가드·Android26/33/34 계측109/109/108 PASS를 보존한다. 실기기 YouTube2회 자동 전환 후180초 영상1개 수동 이동은 제외했고, 기능 추가로 시험을 중단했다.10연속PASS가 아니며 Instagram10·게시 검증은 미실행이다. code23 시험과 합산하지 않는다.
+
+EN: Historical code22 passed build,383 tests and109/109/108 emulator checks for fresh-start recovery. Its phone run confirmed two automatic YouTube transitions,excluded one manual180-second skip,and stopped for feature integration. It is not a ten-transition PASS; Instagram10 and publication were not run. Bilingual attribution requests remain without introducing a new license.
+
+## 2026-08-28 · D-034 읽기 전용 진단 / Read-only diagnosis
+
+후속: 동일 영상에서 플로팅1→0→1 재개 후3회 실제 자동 전환·화면 확인. 최초 실패 미재현/근본 원인 미확정, 제품 수정·새 게시 없음. 시험 후 실행ON·목표1·간편모드1 유지. / Follow-up: rearming the same video restored three actual auto-transitions; the original failure did not reproduce. Root cause remains unknown, with no product change or new release.
+
+code21의 일반 YouTube0/1 정지는 접근성 미연결이 아니라 넘김 확인 실패 후 차단 유지 상태(요청21/확인20)로 확인됐다. 차단 시 조회 중단과 플로팅 오류 라벨 누락을 소스와 실제 상태로 대조했다. 최초 전환 실패의 상세 원인은 미확정. 재시작·수동 넘김·구현·빌드·새 게시 없음. [디버그 대장](DEBUG_LOG.md).
+
+EN: A subsequent code21 normal-YouTube0/1 stall was a latched transition-confirmation failure, not a disconnected accessibility service. Polling stops and the floating label hides the error. Original failure details remain unknown; no restart, manual scroll, code/build change or new publication.
+
 ## 2026-08-28 · v0.2.5 Public 공개·무결성 확인 / Publication and integrity verification
 
 2026-08-28 10:57 KST에 **0.2.5/code21을 기존 Public 저장소의 시험판으로 공개**했다. [v0.2.5 Release](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.5), main·태그 기준 코드 커밋 `689ea8f704792e5bc2dcf3a9089a5f5a3481fdf5`, draft=false/prerelease=true. [CI33134278633](https://github.com/fullmetalsonic/shorts-loop/actions/runs/33134278633) 성공: 내려받은 보고서356시험·실패0·오류0·건너뜀0, CI lint0오류/2경고(로컬 기존3경고와 구분). 익명 릴리스HTTP200 및 배포파일3개(APK709703bytes/SHA96bytes/JSON287bytes)의 원본 대비 크기·SHA-256 일치를 확인했다. 이후 문서 정리는 제품 소스·APK를 바꾸지 않는다.

@@ -60,6 +60,14 @@ public final class SettingsStore {
     public boolean youtubeEnabled() { return booleanValue("youtube_enabled", true); }
     public boolean instagramEnabled() { return booleanValue("instagram_enabled", false); }
     public boolean skipAds() { return booleanValue("skip_ads", false); }
+    public boolean skipLong() { return booleanValue("skip_long", false); }
+    public int longVideoSeconds() {
+        return com.fullmetalsonic.shortsloop.core.LongVideoPolicy.sanitizeSeconds(intValue("long_video_seconds", 60));
+    }
+    public void skipLong(boolean enabled) { preferences.edit().putBoolean("skip_long", enabled).apply(); }
+    public void longVideoSeconds(int value) {
+        preferences.edit().putInt("long_video_seconds", com.fullmetalsonic.shortsloop.core.LongVideoPolicy.sanitizeSeconds(value)).apply();
+    }
     public boolean skipLive() { return booleanValue("skip_live", false); }
     public int liveDelaySeconds() {
         return LiveSkipPolicy.sanitizeSeconds(intValue("live_delay_seconds", LiveSkipPolicy.DEFAULT_SECONDS));

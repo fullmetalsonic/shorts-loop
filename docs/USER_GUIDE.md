@@ -1,8 +1,31 @@
-# 사용 설명서 · ShortsLoop 0.2.5 시험판
+# 사용 설명서 · ShortsLoop 0.2.6 게시 준비 시험판
 
-## 이번 버전 · 호환성·업데이트·메뉴 정리·라이브 미리보기
+## 현재 0.2.6/code28 · 게시 준비 / Publication pending
 
-0.2.5(code21)는 ‘사용 준비 → 이 기기의 기능’, ‘업데이트 · 앱 정보’와 사용 빈도순 메뉴·선택형 YouTube 라이브 미리보기 넘김을 통합한 시험판입니다. 2026-08-28 Public 시험판으로 공개했습니다. 최종 검증·게시 결과는 [VERIFICATION](VERIFICATION.md) 참조.
+**0.2.6/code28은 로컬 PC·기기 검증을 마친 공개 시험판(pre-release) 게시 준비 상태이며 아직 미게시다.** YouTube의 같은 창·pager·전체 페이지에서 현재 행이 요청 행보다 정확히1 증가하는 근거를 보강했다. 최종 빌드·468JUnit·정적 가드 PASS,lint0오류/기존3경고,동일APK API26/33/34 계측233/233/232 PASS와 설치·설정 보존·접근성·런타임·해시 일치를 확인했다. YouTube20회는148.6초 동안 요청20/확인20(일반4·긴 영상15·라이브1),수동0·실패0·복구0으로 PASS했다. 같은 길이 영상 쌍은 이 실기기20회에 없었으므로 해당 조건의 실기기 재현 성공을 주장하지 않는다.
+
+**0.2.6/code28 has completed local PC/device verification and is ready for public pre-release delivery,but is not yet published.** It adds exact current-row=request-row+1 evidence within the same YouTube window,pager and full-page bounds. Build,468 JUnit tests,static guards,233/233/232 exact-APK API26/33/34 checks and installation/settings/accessibility/runtime/hash parity passed;lint has0 errors/3 existing warnings. YouTube20 passed in148.6 seconds with20 requests/20 confirmations:4 ordinary,15 long-video,1 live,and0 manual swipes,failures or recoveries. No equal-duration pair occurred in this run,so that precise physical case is not claimed as reproduced.
+
+**이번 code26→code28 YouTube 보완에서** Instagram의 일반 확인 경로와 `AdvanceGate`는 변경하지 않았다.0.2.5→0.2.6 전체에서 아무 변화가 없었다는 뜻은 아니다. code26의 Instagram10회 PASS(96.0초,일반3·긴 영상4·시간제2·광고1,수동0)는 해당 버전의 실기기 근거로 보존하고 이번에는 전체10회를 반복하지 않는다. 이 과거 결과를 새 code28 APK에서 Instagram을 재실행한 것처럼 표시하지 않는다. YouTube 재시험과 영향 범위 검증은 통과했으며,기존 Public 저장소에v0.2.6/code28 pre-release를 게시한 뒤 CI·공개 다운로드 동일성을 별도로 확인한다. 현재는 게시 전이다.
+
+**For this code26→code28 YouTube correction**,the generic Instagram path and AdvanceGate are unchanged from code26;this does not mean they were unchanged throughout0.2.5→0.2.6. Code26's Instagram10 PASS(96.0 seconds:3 ordinary,4 long-video,2 timed,1 ad;0 manual swipes) is retained as version-specific evidence without repeating the full run. It is not described as a new Instagram test on code28. The YouTube retest and impact-scope checks passed. Planned delivery is v0.2.6/code28 as a pre-release in the existing Public repository,followed by separate CI/public-download parity checks;publication is still pending.
+
+## 이전 code26 검증 / Previous candidate evidence
+
+**이전0.2.6/code26은 후속 실폰 실패로 배포하지 않았던 후보입니다.** 454제품시험·209/209/208 계측·설치/설정/해시 검증은 PASS했습니다. YouTube 지정10회(긴 영상9+라이브1)와 별도 일반1회를 확인했으나 이후 같은 길이 전환 확인에 실패했습니다. Instagram10개는96.0초 동안 일반3·긴 영상4·시간제2·광고1,수동0으로 통과했습니다. 유튜브 실패 요청의 실제 이동은 전후 화면 쌍이 없어 미확정입니다. 시험 후 긴 영상 기준60초를 복원하고 전체 실행은OFF로 종료했습니다. 이전code23/24/25의 실폰FAIL과 최신 결과는 [VERIFICATION](VERIFICATION.md)에서 구분합니다.<br>
+**Historical code26 remained unpublished after a follow-up phone failure.**454 tests,209/209/208 emulator checks and installation/settings/hash checks passed. The designated YouTube10(9 long-video,1 live) and one separate ordinary transition passed,but later same-duration confirmation failed. Instagram10 passed in96.0 seconds(3 ordinary,4 long-video,2 timed,1 ad;0 manual swipes). Actual movement for the failed YouTube request is unproven without a pre/post screenshot pair. The threshold was restored to60 seconds and execution stopped;earlier code23/24/25 failures remain separate.
+
+## 이번 버전 · 새 시작점 복구·긴 영상 건너뛰기
+
+0.2.6(code28)은 로컬 검증을 마친 게시 준비 시험판이며 아직 게시 완료를 뜻하지 않습니다. 정상 진행 정보를 사용하는 일반 영상에서 넘김 확인 시간이 초과되면, 추가 스와이프 없이 새 재생 시작을 관측하고 이전 카운트를 버린 뒤 설정 횟수를 다시 셉니다. 시작점을 확인하자마자 넘기는 기능은 아닙니다. 광고·라이브·시간제·화면 분석 및 권한·화면 변경의 안전정지는 유지합니다. [복구 예시·조건](PLAYBACK_RECOVERY.md), [최종 검증·게시 결과](VERIFICATION.md).
+
+0.2.6(code28) has passed local verification and awaits pre-release publication. After an ordinary progress-based transition times out, recovery waits for a verified fresh playback start without another swipe, then counts the configured plays anew. Finding the start does not advance immediately; other safety stops remain.
+
+code28에는 **긴 영상 건너뛰기**가 추가됩니다. 기본OFF·총길이 기준60초·1~3600초이며 반복0과 별개입니다. 확인한 총길이가 기준 이상이면 재생 처음을 기다리지 않고 안전 확인 후 넘깁니다. 길이를 모르면 추측하지 않습니다. code22의 YouTube 시험은 실제2회 전환 후 기능 추가로 중단했으며 최신 후보의10회 시험에 합산하지 않습니다.
+
+Code28 retains optional long-video skipping: OFF by default, total-duration threshold60 seconds, range1–3600, independent of zero plays. Known durations at least the threshold qualify after safety checks without waiting for a new beginning. Unknown duration is never guessed. Code22's two confirmed YouTube transitions preceded the feature addition and do not count toward the latest ten-transition run.
+
+이전 공개판0.2.5(code21)는 ‘사용 준비 → 이 기기의 기능’, ‘업데이트 · 앱 정보’와 사용 빈도순 메뉴·선택형 YouTube 라이브 미리보기 넘김을 통합했습니다. 2026-08-28 Public 시험판으로 공개한 이력이며 해당 버전의 시험 결과를0.2.6 검증으로 재사용하지 않습니다. 새 APK에서 YouTube10개와 Instagram10개의 실제 자동 전환을 각각 확인하는 것이 이번 시험 목표이며 완료 전 PASS로 표기하지 않습니다.
 
 Android 8(API26)부터 설치 가능하며 8~12L은 빠른 설정 수동 추가, 13(API33) 이상은 추가 요청, 14(API34) 이상만 화면 분석 실험을 제공합니다. Android 10(API29)부터 타일에 별도 상태줄을 표시합니다. Instagram 미설치·미선택 또는 OS 미지원 옵션은 이유와 함께 비활성화하고 저장값은 보존합니다. 기본 반복·시간제·광고·플로팅의 의미는 그대로입니다. 공식 YouTube는 Android 9 이상이며 Instagram 최소 OS는 미확정이므로 기기 Play 스토어의 호환 여부를 확인합니다. [한영 지원표·근거](COMPATIBILITY.md).
 
@@ -10,7 +33,7 @@ Android 8(API26)부터 설치 가능하며 8~12L은 빠른 설정 수동 추가,
 
 이전 공개판 0.2.4는 **정상 N회·시간제·광고를 합친 20연속 자동 이동 검증이 미완료인 시험판**입니다. 당시 code13은 제품227개시험·빌드 PASS, lint0오류/4경고였으며 설치본 해시 일치와 0회 광고1회 자동 이동/일반·시간제 중지를 확인했습니다. 이 결과를 0.2.5 업데이트 경로의 검증으로 재사용하지 않습니다. [0.2.4 이력](releases/v0.2.4.md), [버전별 검증 상태](VERIFICATION.md).
 
-현재 동작은 **일반 영상 N회 / 정보 없는 Instagram 시간제 / Instagram 광고 / YouTube 라이브 미리보기**로 나뉩니다. 0회이면 일반 영상·시간제·화면 분석은 멈추지만 광고·라이브는 각각 해당 앱 선택·별도 옵션 ON·전체 실행 ON이면 동작합니다. 전체 실행 OFF는 광고·라이브까지 모두 멈춥니다. 과거 0.2.1의 ‘0회는 광고 포함 모두 중지’와 달라진 동작입니다.
+현재 동작은 **일반 영상 N회 / 총길이 기준 긴 영상 건너뛰기 / 정보 없는 Instagram 시간제 / Instagram 광고 / YouTube 라이브 미리보기**로 나뉩니다. 0회이면 일반 반복·시간제·화면 분석은 멈추지만 긴 영상·광고·라이브는 각각 해당 앱 선택·별도 옵션ON·전체 실행ON이면 동작합니다. 전체 실행OFF는 모두 멈춥니다. 과거0.2.1의 ‘0회는 광고 포함 모두 중지’와 달라진 동작입니다.
 
 화면 분석 보조는 기본 OFF·별도 동의·Android 14 이상인 시험 기능으로 보존합니다. 시간제와 둘 다 켜면 시간제가 우선합니다. 정확한 총 N회는 보장하지 않습니다. 별도 미연결 `VisualSequenceTracker` 실험의 20시험 중 2실패는 제품 시간제의 실패와 다릅니다. 실험 원본을 보존하고 배포 제품과 제품 시험에서 제외하며 전체 실험까지 PASS로 보고하지 않습니다. 오디오 수신·패턴 시험은 별도 진단 앱이고 제품 자동 넘김에 연결하지 않았으며 이번 APK 첨부 대상도 아닙니다.
 
@@ -19,18 +42,19 @@ Android 8(API26)부터 설치 가능하며 8~12L은 빠른 설정 수동 추가,
 
 ## 1. 처음 사용할 때의 순서
 
-1. 0.2.5 공개 완료 후 릴리스의 개발 서명 APK·해시를 확인하고 설치합니다. **0.2.4에는 업데이트 메뉴가 없으므로 0.2.5 최초 설치는 브라우저 등에서 APK를 직접 받아 기존 앱 위에 설치해야 합니다.** 삭제 후 재설치하면 설정이 사라지므로 먼저 삭제하지 마세요. ‘쇼츠 자동 넘김’을 엽니다. 기존 YouTube·Instagram은 수정하지 않습니다.
+1. 공개 완료된 릴리스의 개발 서명 APK·해시를 확인하고 설치합니다. 검증 중 후보의 게시 예정 링크는 공개 완료를 뜻하지 않습니다. **0.2.4에는 업데이트 메뉴가 없으므로 브라우저 등에서 새 APK를 직접 받아 기존 앱 위에 설치해야 합니다.** 0.2.5 이상은 인앱에서 호환되는 상위 공개 버전을 확인할 수 있습니다. 삭제 후 재설치하면 설정이 사라지므로 먼저 삭제하지 마세요. ‘쇼츠 자동 넘김’을 엽니다. 기존 YouTube·Instagram은 수정하지 않습니다.
 2. ‘사용할 앱’에서 YouTube 쇼츠, Instagram 릴스를 선택합니다. 둘 다 선택할 수 있습니다.
 3. ‘일반 영상 · 횟수로 넘김’에서 총 재생 횟수를 정합니다. 처음에는 `2` 입력 후 완료/적용하면 됩니다.
-4. 필요하면 ‘진행 정보 없는 영상 · 시간제로 넘김’을 켭니다. 기본 OFF·10초이며 Instagram의 지원되는 정보 없는 영상만 대상으로 합니다.
-5. 광고도 넘기려면 별도 ‘광고 · 바로 넘김’에서 광고 옵션을 켭니다. 기본 OFF이며 반복 0회에서도 동작하는 별도 기능입니다.
-6. YouTube 라이브 미리보기도 넘기려면 별도 라이브 옵션을 켭니다. 기본 OFF이며 0~60초 중 0초는 인식 후 바로 넘기기입니다.
-7. ‘플로팅 리모컨’의 ‘화면 위에 숫자 표시’를 정합니다. 숫자가 떠 있는 것이 싫으면 꺼도 됩니다. ‘사용 준비’에서 필요한 권한만 직접 연결합니다.
-8. 아래 고정된 ‘전체 자동 넘김 실행’을 켜고 선택한 앱의 쇼츠/릴스를 전체 화면으로 재생합니다. 정상 영상 중간부터 켰다면 다음 처음 재생부터 셉니다.
+4. 긴 일반 영상을 건너뛰려면 ‘긴 영상 건너뛰기’를 켜고 총길이 기준을 정합니다. 기본OFF·기준60초·입력1~3600초이며,반복0회와 별도로 동작합니다.
+5. 필요하면 ‘진행 정보 없는 영상 · 시간제로 넘김’을 켭니다. 기본 OFF·10초이며 Instagram의 지원되는 정보 없는 영상만 대상으로 합니다.
+6. 광고도 넘기려면 별도 ‘광고 · 바로 넘김’에서 광고 옵션을 켭니다. 기본 OFF이며 반복 0회에서도 동작하는 별도 기능입니다.
+7. YouTube 라이브 미리보기도 넘기려면 별도 라이브 옵션을 켭니다. 기본 OFF이며 0~60초 중 0초는 인식 후 바로 넘기기입니다.
+8. ‘플로팅 리모컨’의 ‘화면 위에 숫자 표시’를 정합니다. 숫자가 떠 있는 것이 싫으면 꺼도 됩니다. ‘사용 준비’에서 필요한 권한만 직접 연결합니다.
+9. 아래 고정된 ‘전체 자동 넘김 실행’을 켜고 선택한 앱의 쇼츠/릴스를 전체 화면으로 재생합니다. 정상 영상 중간부터 켰다면 다음 처음 재생부터 셉니다.
 
 화면 위쪽은 설정, 아래쪽 고정 영역은 실행과 상태 확인용입니다. 길게 스크롤하더라도 실행을 끄기 위해 맨 위로 돌아갈 필요가 없습니다.
 
-본문 순서는 **일반 영상 횟수 → 정보 없는 영상 시간제 → 광고 → YouTube 라이브 → 플로팅 → 사용할 앱 → 사용 준비 → 업데이트 · 앱 정보 → 실험 기능 → 도움말**입니다. 자주 바꾸는 설정을 먼저 두고, 처음 한 번 연결하는 준비 항목은 아래에 둡니다. 접근성이 연결되지 않았으면 상단 ‘접근성 연결 확인 · 해결 방법 보기’, 그 밖의 앱 선택·표시 권한이 부족하면 ‘사용 준비가 필요합니다 · 바로가기’를 표시합니다. 새 버전 배너는 적용 가능한 업데이트가 확인된 경우에만 표시합니다. 하단 ‘전체 자동 넘김 실행’은 자동 넘김 기능을 한꺼번에 켜고 끄는 메인 스위치이며, 업데이트 확인 스위치와는 별개입니다.
+본문 순서는 **일반 영상 횟수 → 긴 영상 건너뛰기 → 정보 없는 영상 시간제 → 광고 → YouTube 라이브 → 플로팅 → 사용할 앱 → 사용 준비 → 업데이트 · 앱 정보 → 실험 기능 → 도움말**입니다. 자주 바꾸는 설정을 먼저 두고, 처음 한 번 연결하는 준비 항목은 아래에 둡니다. 접근성이 연결되지 않았으면 상단 ‘접근성 연결 확인 · 해결 방법 보기’, 그 밖의 앱 선택·표시 권한이 부족하면 ‘사용 준비가 필요합니다 · 바로가기’를 표시합니다. 새 버전 배너는 적용 가능한 업데이트가 확인된 경우에만 표시합니다. 하단 ‘전체 자동 넘김 실행’은 자동 넘김 기능을 한꺼번에 켜고 끄는 메인 스위치이며, 업데이트 확인 스위치와는 별개입니다.
 
 ## 2. 필요한 권한만 연결하기
 
@@ -66,7 +90,7 @@ Android 설정에서 접근성이 ON이어도 OS가 프로세스를 종료한 �
 
 | 입력 | 의미 | 정상 추적 중 표시 예 |
 |---|---|---|
-| 0 | 일반 영상·시간제 중지. 광고·라이브는 별도 옵션에 따름 | 광고·라이브 ON/OFF 상태 안내 |
+| 0 | 일반 반복·시간제 중지. 긴 영상·광고·라이브는 별도 옵션에 따름 | 독립 옵션 상태 안내 |
 | 1 | 처음부터 끝까지 총 한 번 본 뒤 넘김 | `1/1` |
 | 2 | 첫 재생과 한 번의 재재생 후 넘김 | `1/2` → `2/2` |
 | 5 | 처음부터 총 다섯 번 본 뒤 넘김 | `1/5` → … → `5/5` |
@@ -111,14 +135,16 @@ Android 설정에서 접근성이 ON이어도 OS가 프로세스를 종료한 �
 
 `광·라`는 **광고·라이브 옵션이 모두 켜짐**을 뜻합니다. 일반 반복이0회여도 두 옵션은 별도로 동작합니다. 재생 횟수나 현재 영상 종류를 뜻하는 표시는 아닙니다. / `광·라` means both ad and live skipping are enabled independently of zero ordinary plays; it is not a play count or content classification.
 
+0회에서 긴 영상 옵션도 활성이라면 ‘조건’으로 표시합니다. 이는 길이 조건 등의 독립 옵션이 켜졌다는 뜻이며 실제 현재 영상이 길다는 판정 자체는 아닙니다. / At zero plays, “조건” indicates an active long-video option; it does not classify the current video as long.
+
 플로팅 표시를 켜면 터치 방식이 나타납니다. 표시를 끄면 관련 세부 설정을 숨기지만 선택한 방식은 보존합니다.
 
 | 방식 | 기준 3회일 때 숫자를 누르면 | 적합한 사용 |
 |---|---|---|
 | 횟수 순환 | `0 → 1 → 2 → 3 → 0` | 영상마다 횟수를 자주 바꿀 때 |
-| 반복 켜기·끄기 | `0 ↔ 3` | 일반 영상 반복·시간제를 잠시 멈출 때. 광고·라이브는 별도 |
+| 반복 켜기·끄기 | `0 ↔ 3` | 일반 영상 반복·시간제를 잠시 멈출 때. 긴 영상·광고·라이브는 별도 |
 
-터치 방식을 바꾸면 현재 적용 횟수는 기준값으로 맞추고 횟수를 새로 셉니다. 기준이 0이면 어느 방식을 눌러도 0입니다. 일반 영상·시간제를 다시 넘기려면 인앱 기준 횟수를 양수로 바꾸세요. 광고·라이브 옵션은 이 횟수 전환과 별개이므로 모든 자동 넘김을 멈추려면 × 또는 전체 실행 토글을 끕니다.
+터치 방식을 바꾸면 현재 적용 횟수는 기준값으로 맞추고 횟수를 새로 셉니다. 기준이0이면 어느 방식을 눌러도0입니다. 일반 반복·시간제를 다시 사용하려면 인앱 기준 횟수를 양수로 바꾸세요. 긴 영상·광고·라이브 옵션은 이 횟수 전환과 별개이므로 모든 자동 넘김을 멈추려면× 또는 전체 실행 토글을 끕니다.
 
 ### 이동·닫기·표시 끄기의 차이
 
@@ -144,6 +170,23 @@ X는 폭 축소를 위해 24dp×24dp로 작게 만들었습니다. 일반적인 
 앱을 바꾸면 이전 영상의 카운트를 새 앱으로 넘기지 않습니다. 선택하지 않은 앱, 일반 YouTube 동영상, Instagram 홈 게시물·DM 등을 자동 조작하도록 만든 기능이 아닙니다. Instagram이 설치되지 않으면 선택 항목에 ‘미설치’를 표시하고 사용할 수 없게 합니다.
 
 일반 Instagram 릴스는 재생 진행값을 읽을 수 있는 단일 동영상을 대상으로 반복 횟수를 셉니다. 정상 정보가 있으면 시간제보다 횟수 계산이 우선입니다. 재생 정보가 없는 지원 단일 영상만 아래 선택형 시간제를 사용할 수 있습니다. 사진·혼합 콘텐츠·영상 구분 정보를 읽지 못하는 화면은 대기합니다. 재생바가 없다고 광고인 것은 아닙니다.
+
+### 긴 영상 건너뛰기
+
+일반 횟수 카드 바로 아래에 있으며 기본OFF입니다. YouTube·Instagram 중 설치되어 있고 ‘사용할 앱’에서 선택한 앱이 하나 이상이어야 조작할 수 있습니다. 선택 해제로 비활성화해도 옵션과 기준값은 지우지 않습니다.
+
+1. **긴 영상 건너뛰기**를 켭니다. 이 토글만 켜면 전체 실행이 시작되지는 않습니다.
+2. **건너뛸 영상의 최소 총길이(초)**에1~3600 정수를 입력하고 키보드 완료 또는 **입력한 긴 영상 기준 적용**을 누릅니다. −/+는1초씩 적용합니다. 기본60초는1분 이상 영상을 뜻합니다.
+3. 빈칸·0·음수·소수·숫자가 아닌 값·3601 이상이면 저장하지 않으며 이전 확정값을 유지합니다. 오류를 고친 후 다시 적용하세요. 화면 상태를 새로 읽어도 편집 중 초안을 덮어쓰지 않습니다.
+4. 전체 실행을 켜고 선택 앱의 일반 쇼츠/릴스를 재생합니다. **총길이≥기준**이면 같은 페이지와 실제 전진 재생을 안정 확인한 뒤 넘깁니다. 기준60초라면59초는 기존 횟수,60초와120초는 긴 영상 대상입니다.
+
+이 값은 기다릴 시간이 아니라 **영상 전체 길이 기준**입니다. 재생 처음이나 완주를 기다리지 않지만, 정지0초·일시정지·전환 중 화면에서는 안전 확인을 생략하지 않습니다. 길이를 읽을 수 없으면 추측해서 넘기지 않으며, 진행 정보 없는 지원 Instagram 영상은 기존 시간제 옵션을 따릅니다. 반복0에서는 시간제는 멈추지만 긴 영상 옵션은 독립적으로 동작합니다. 전체OFF는 긴 영상까지 모두 멈춥니다.
+
+긴 영상 이동 확인이4.5초 안에 되지 않으면 안전정지합니다. 일반 N회 경로의 재인식 복구로 실패를 우회하거나 같은 영상을 연속 요청하지 않습니다. 광고·라이브도 긴 영상으로 추정하지 않습니다.
+
+code28은 YouTube 페이지의 행 번호가 요청 때보다 정확히1 증가하는지도 확인합니다. 같은 창·pager·페이지 영역,달라진 콘텐츠 키와300ms 이상 안정·실제 전진 재생 검사는 그대로입니다. 행을 모두 읽었는데 같거나 뒤로 가거나2칸 이상 뛰면 총길이가 달라도 확인하지 않습니다. 행 정보 없음은 이동 근거가 아니며,깨진 구조·갱신 실패는 안전정지 조건입니다. code26의 동일 길이 안전정지 사례를 보완하는 후보이며,YouTube20회는 통과했지만 같은 길이 쌍은 실제20회에서 나오지 않았습니다. 조건별 근거는 검증 문서를 확인하세요.
+
+This independent option skips ordinary videos whose known total duration is at least the configured1–3600-second threshold(default60). It is not a waiting timer. Stable-page and actual-forward-playback checks still apply; unknown duration,ads and live previews do not qualify. At zero plays, long-video skipping can run but the Instagram timer remains stopped. An unconfirmed long-video transition hard-stops after4.5 seconds and does not enter ordinary recount recovery.
 
 ### 진행 정보 없는 영상 · 시간제로 넘김
 
@@ -174,11 +217,11 @@ Android 14 이상에서 Instagram을 선택했을 때 별도 동의로 켤 수 �
 3. 하단 ‘전체 자동 넘김 실행’을 켭니다. **광고는 반복 0회에서도 동작합니다.**
 4. Instagram 릴스 화면에서 광고임을 확인하면 완주 횟수를 기다리지 않고 다음 페이지로 한 번 이동을 요청합니다.
 
-광고 옵션만 켜서는 실행이 시작되지 않습니다. **전체 실행 ON + Instagram 선택 + 광고 옵션 ON**을 모두 만족해야 합니다. 반복 횟수는 광고의 실행 조건이 아니며, 광고만 쓰려면 **반복 0회 + 광고 ON + 라이브 OFF + 전체 실행 ON**으로 설정합니다. 실행 OFF, 광고 옵션 OFF 또는 Instagram 선택 해제에서는 광고를 넘기지 않습니다. Instagram 선택을 해제해도 광고 옵션 값은 보존되므로 다시 선택했을 때 기존 설정을 확인하세요.
+광고 옵션만 켜서는 실행이 시작되지 않습니다. **전체 실행ON + Instagram 선택 + 광고 옵션ON**을 모두 만족해야 합니다. 반복 횟수는 광고의 실행 조건이 아니며, 광고만 쓰려면 **반복0회 + 광고ON + 긴 영상·라이브OFF + 전체 실행ON**으로 설정합니다. 실행OFF, 광고 옵션OFF 또는 Instagram 선택 해제에서는 광고를 넘기지 않습니다. Instagram 선택을 해제해도 광고 옵션 값은 보존되므로 다시 선택했을 때 기존 설정을 확인하세요.
 
 광고 옵션을 끄면 광고는 직접 넘겨야 합니다. 일반 릴스의 반복 횟수 설정을 끄는 것은 아닙니다. 앱의 토글 바로 아래에도 이 차이를 안내합니다.
 
-일반 릴스는 원래 설정한 횟수만큼 완주하고, 인식한 광고만 완주 없이 넘깁니다. 광고 옵션은 YouTube 광고에 적용되지 않으며 광고를 제거하거나 차단하는 기능도 아닙니다. 광고 링크·‘자세히 보기’·구매 버튼은 누르지 않고 릴스 화면의 다음 페이지 동작만 요청합니다.
+광고 옵션 자체는 일반 릴스의 반복 횟수를 바꾸지 않습니다. 긴 영상 옵션이 켜져 있고 조건을 만족하면 일반 릴스도 길이 기준에 따라 완주 전에 넘길 수 있습니다. 광고 옵션은 YouTube 광고에 적용되지 않으며 광고를 제거하거나 차단하는 기능도 아닙니다. 광고 링크·‘자세히 보기’·구매 버튼은 누르지 않고 릴스 화면의 다음 페이지 동작만 요청합니다.
 
 영상 위에 팝업처럼 ‘더 알아보기’ 카드가 붙은 릴스 광고도, 광고 구조를 확인하면 카드가 아니라 광고 페이지 전체를 넘깁니다. 별도 창으로 열린 광고 팝업의 X를 찾아 자동으로 닫는 기능은 구현하지 않았으며 지원 범위도 확정하지 않았습니다. 둘을 같은 기능으로 보지 마세요.
 
@@ -207,22 +250,23 @@ Android 14 이상에서 Instagram을 선택했을 때 별도 동의로 켤 수 �
 | 상태 | 자동 넘김 | 플로팅 |
 |---|---|---|
 | 실행 OFF | 광고·라이브 포함 모두 하지 않음 | 닫힘 |
-| 실행 ON, 현재 0회, 광고·라이브 OFF | 일반·시간제·광고·라이브 모두 안 함 | 표시 옵션에 따라 0회 상태 표시 |
-| 실행 ON, 현재 0회, Instagram 선택·광고 ON, 라이브 OFF | 인식된 Instagram 광고만 넘김 | ‘광고’ 표시 |
-| 실행 ON, 현재 0회, YouTube 선택·라이브 ON, 광고 OFF | 인식된 YouTube 라이브 미리보기만 넘김 | ‘라이브’ 또는 남은 초 표시 |
-| 실행 ON, 현재 0회, 두 앱 선택·광고·라이브 ON | 앞에 보이는 대상 앱의 광고 또는 라이브 | ‘광·라’ 또는 진행 상태 표시 |
+| 실행 ON, 현재 0회, 긴 영상·광고·라이브 OFF | 모든 자동 넘김 안 함 | 표시 옵션에 따라 0회 상태 표시 |
+| 실행 ON, 현재 0회, 선택 앱의 긴 영상 ON | 확인된 총길이≥기준인 일반 영상 넘김. 광고·라이브는 각각 옵션에 따름 | ‘조건’ 표시 |
+| 실행 ON, 현재 0회, Instagram 선택·광고 ON, 긴 영상·라이브 OFF | 인식된 Instagram 광고만 넘김 | ‘광고’ 표시 |
+| 실행 ON, 현재 0회, YouTube 선택·라이브 ON, 긴 영상·광고 OFF | 인식된 YouTube 라이브 미리보기만 넘김 | ‘라이브’ 또는 남은 초 표시 |
+| 실행 ON, 현재 0회, 두 앱 선택·광고·라이브 ON, 긴 영상 OFF | 앞에 보이는 대상 앱의 광고 또는 라이브 | ‘광·라’ 또는 진행 상태 표시 |
 | 실행 ON, 현재 양수 | 선택한 앱에서 조건을 만족할 때 수행 | 표시 옵션에 따라 표시 또는 숨김 |
 
-0회에서는 일반 영상·시간제가 멈추며 광고·라이브는 독립 옵션을 따릅니다. 하단은 ‘0회 · 광고 ON/OFF · 라이브 ON/OFF’로 상태를 구분합니다. 다시 양수를 선택할 수 있도록 실행 토글은 켜짐을 유지합니다. 광고·라이브까지 포함해 확실히 멈추려면 **전체 실행 OFF 또는 플로팅 ×**를 사용하세요. 기준 자체가 0이면 껐다 켜도 과거 양수로 몰래 복원하지 않습니다.
+0회에서는 일반 반복·시간제가 멈추며 긴 영상·광고·라이브는 독립 옵션을 따릅니다. 하단은 활성인 독립 옵션과 반복 중지를 구분합니다. 다시 양수를 선택할 수 있도록 실행 토글은 켜짐을 유지합니다. 모든 자동 넘김을 확실히 멈추려면 **전체 실행OFF 또는 플로팅×**를 사용하세요. 기준 자체가0이면 껐다 켜도 과거 양수로 몰래 복원하지 않습니다.
 
-실행 조건이 부족하면 켜짐을 유지하지 않고 앱 선택·권한 안내를 확인하도록 합니다. 한 번의 스와이프 후 다음 영상으로 넘어갔는지 확인하지 못하면 반복 시도하지 않고 재시작 필요 상태로 멈춥니다. 오류 설명을 확인하고 실행을 껐다 다시 켜세요.
+실행 조건이 부족하면 켜짐을 유지하지 않고 앱 선택·권한 안내를 확인하도록 합니다. 한 번의 스와이프 후 다음 영상으로 넘어갔는지 확인하지 못해도 연속 스와이프를 반복하지 않습니다. 0.2.6의 일반 진행 기반 전환 확인 시간 초과만 새 시작점에서 다시 세는 복구 대상이며, 그 밖의 실패는 재시작 필요 상태로 멈춥니다. ‘정지’ 또는 재시작 안내이면 오류 설명과 화면을 확인하고 전체 실행을 껐다 다시 켜세요.
 
 ## 8. 빠른 설정창
 
 1. ‘사용 준비’의 ‘빠른 설정에 실행 토글 추가’를 누릅니다.
 2. 시스템 확인 창에서 추가합니다. 지원되지 않거나 추가되지 않으면 빠른 설정 편집 목록에서 ‘쇼츠 넘김’을 직접 추가합니다.
 3. 타일을 짧게 누르면 실행 ON/OFF가 바뀝니다. ON은 기준 횟수로 시작하며 플로팅 표시 옵션을 따릅니다.
-4. 현재 0회여도 타일은 전체 실행이 켜진 상태를 유지합니다. 일반 영상·시간제는 중지하지만 해당 앱의 광고·라이브 옵션이 켜져 있으면 해당 콘텐츠는 넘길 수 있습니다. 모두 멈추려면 타일을 OFF로 바꾸세요.
+4. 현재0회여도 타일은 전체 실행이 켜진 상태를 유지합니다. 일반 반복·시간제는 중지하지만 해당 앱의 긴 영상·광고·라이브 옵션이 켜져 있으면 조건에 맞는 콘텐츠는 넘길 수 있습니다. 모두 멈추려면 타일을OFF로 바꾸세요.
 5. 타일을 길게 누르면 설정 화면을 엽니다.
 6. ‘권한 설정 필요’, ‘앱 선택 필요’, ‘재시작 필요’가 나타나면 앱 설정과 상태 문구를 확인합니다.
 
@@ -234,6 +278,16 @@ Android 14 이상에서 Instagram을 선택했을 때 별도 동의로 켤 수 �
 
 조회는 약 0.3초 간격이며 앱이 제공하는 시간 정보의 정밀도·갱신주기에 영향을 받습니다. 종료와 스와이프 사이에 짧은 지연이 있을 수 있습니다. 0.1.4에서 도입한 최신 시간 갱신과 표시 지연 허용, 0.1.5에서 도입한 입력초점·빠른 설정·PiP 보호를 유지하고 Instagram 감지에 공통 적용합니다.
 
+### 0.2.6: 카운트가 끊겼을 때 새로 세기
+
+반복1회로 같은 영상을 보고 있다가 카운트가 끊겼다면 이미 본 부분은 계산에서 제외합니다. 영상이 처음으로 돌아오고 실제로 앞으로 재생되는 것을 확인하면 그 재생부터 `1/1`로 새로 추적하며, **새로 추적한 한 회를 끝까지 확인한 뒤** 넘깁니다. 이 예에서는 두 번째 재생까지 보지만, 다음 영상으로 이미 넘어간 경우에는 그 영상의 새 시작이 기준이므로 항상 총 두 번만 본다고 보장하지 않습니다. 반복2회는 새 기준부터 두 회를 다시 셉니다.
+
+새 복구가 적용되는 것은 **일반 진행 정보 기반 넘김 요청 후4.5초 동안 전환을 확인하지 못한 경우**입니다. 해당 요청과 같은 앱·창의 안전한 일반 영상에서 시작 부근과 후속 재생 진행을 확인합니다. 0초 한 번·0초에 멈춘 버퍼링·단순 시간 경과만으로는 재개하지 않습니다. 복구 확인 중 추가 스와이프를 하지 않으며 광고·라이브·시간제로 우회하지 않습니다.
+
+플로팅의 복구 대기는 ‘새 시작을 기다리는 중’, 안전정지는 ‘화면 확인과 수동 재개가 필요한 상태’로 구분합니다. 대기는 목표 횟수를0으로 바꿨다는 뜻이 아닙니다. 전체 실행 OFF나 목표0은 이 일반 카운트 복구보다 우선하며, 접근성 서비스가 끊긴 뒤 자동으로 실행을 다시 켜지 않습니다. 플로팅을 숨겼으면 앱 하단 상태를 확인하세요. 상세한 조건과 남은 한계는 [카운트 복구 안내](PLAYBACK_RECOVERY.md)에 있습니다.
+
+For target1, discard the uncertain earlier play and wait for a verified new beginning plus forward playback. Observe one complete new play before advancing; the start itself never triggers a swipe. This new recovery applies only to the4.5-second timeout after an ordinary progress-based advance. A frozen zero or elapsed time is insufficient. Waiting does not change the saved target; overall OFF, target0 and existing hard stops retain priority.
+
 | 상황 | 처리와 복구 |
 |---|---|
 | 중간 재생에서 시작 | 남은 부분은 완주 제외. 다음 시작을 기다림 |
@@ -241,7 +295,8 @@ Android 14 이상에서 Instagram을 선택했을 때 별도 동의로 켤 수 �
 | 댓글·메뉴·키보드·다른 앱을 감지 | 추적을 초기화하고 자동 스와이프 보류. 영상으로 복귀 |
 | 조회가 3초 넘게 끊김·수동 탐색으로 판단한 시간 점프 | 횟수 초기화 후 다시 관측 |
 | `0/N`이 지속 | 처음 재생 또는 유효한 진행 정보 대기. 앱의 상태 설명 확인 |
-| 넘김 확인 실패 | 연속 스와이프 차단. 실행 OFF→ON으로 재시도 |
+| 일반 진행 기반 넘김 확인 시간 초과 | 추가 스와이프 없이 안전한 새 시작과 후속 재생을 확인한 뒤 새로 카운트 |
+| ‘정지’ 또는 복구 대상 밖의 넘김 실패 | 연속 스와이프 차단. 현재 화면·오류를 확인하고 실행 OFF→ON |
 | 광고 옵션 OFF | 광고에서는 대기. 직접 넘기거나 Instagram 광고 옵션을 켜기 |
 | 재생 정보 없는 일반 릴스 | 광고로 간주하지 않음. 지원 단일 영상은 선택한 시간제/실험 경로, 그 외 직접 이동 |
 | 연속 광고의 전환 구분 실패 |4.5초 후 안전 정지. 자동 재시도 없음 |
@@ -253,7 +308,7 @@ Android 14 이상에서 Instagram을 선택했을 때 별도 동의로 켤 수 �
 
 ## 10. 저장과 업데이트
 
-### 0.2.5에서 새 버전 확인하기
+### 0.2.5 이상에서 새 버전 확인하기
 
 ‘사용 준비’ 다음의 **업데이트 · 앱 정보**에서 현재 설치 버전과 상태를 확인합니다.
 
@@ -276,9 +331,9 @@ Android 14 이상에서 Instagram을 선택했을 때 별도 동의로 켤 수 �
 
 ### 설정 보존과 이전 버전
 
-저장하는 값은 기준/현재 횟수, 마지막 양수 횟수, 실행 요청, 터치 방식, 적용 앱 선택, 플로팅 표시 옵션, 광고 옵션, 라이브 옵션·초 값, 시간제 옵션·초 값, 화면 분석 옵션 및 상대 X/Y 위치입니다. 옵션은 서로 독립 저장하며 대상 앱 선택을 해제해도 관련 설정은 보존합니다. 서비스가 다시 연결되면 실행 요청을 OFF로 바꿉니다. 클라우드·기기이전 백업은 제외합니다.
+저장하는 값은 기준/현재 횟수, 마지막 양수 횟수, 실행 요청, 터치 방식, 적용 앱 선택, 플로팅 표시 옵션, 긴 영상 옵션·총길이 기준, 광고 옵션, 라이브 옵션·초 값, 시간제 옵션·초 값, 화면 분석 옵션 및 상대X/Y 위치입니다. 옵션은 서로 독립 저장하며 대상 앱 선택을 해제해도 관련 설정은 보존합니다. 서비스가 다시 연결되면 실행 요청을OFF로 바꿉니다. 클라우드·기기이전 백업은 제외합니다.
 
-업데이트 자동 조회 선택·마지막 시도 시각·새 버전 정보는 재생 설정과 별도 저장합니다. APK는 앱 내부의 업데이트용 파일이며 영상 데이터가 아닙니다. **0.2.4 → 0.2.5는 최초 수동 APK 설치가 필요**하고, 0.2.5부터 이후 호환되는 공개 버전을 인앱으로 확인할 수 있습니다. 시험판도 업데이트 후보가 될 수 있습니다. 현재 0.2.5는 게시 준비 중이며 최종 검증·게시 결과는 [VERIFICATION](VERIFICATION.md) 참조.
+업데이트 자동 조회 선택·마지막 시도 시각·새 버전 정보는 재생 설정과 별도 저장합니다. APK는 앱 내부의 업데이트용 파일이며 영상 데이터가 아닙니다. **0.2.4에서 업데이트 메뉴가 있는 버전으로 옮길 때는 최초 수동 APK 설치가 필요**하고, 0.2.5부터 이후 호환되는 공개 버전을 인앱으로 확인할 수 있습니다. 시험판도 업데이트 후보가 될 수 있습니다. 0.2.5는 이전 공개판,0.2.6은 검증 중 후보이며 최종 검증·게시 결과는 [VERIFICATION](VERIFICATION.md) 참조.
 
 0.1.5에서 업데이트하면 기존 양수 설정은 기준/현재 값으로 옮깁니다. 기존 현재 값이 0이면 현재 0을 보존하고 마지막 양수를 기준값으로 옮깁니다. 기본 선택은 YouTube만, 플로팅 표시 ON, 횟수 순환입니다. 위치도 유지합니다.
 
@@ -305,10 +360,10 @@ If auto-advance stops after switching apps or using YouTube picture-in-picture, 
 1. 휴대폰 **설정 → 애플리케이션 → 쇼츠 자동 넘김 → 배터리**를 엽니다.
 2. 해당 앱만 **제한 없음**으로 선택합니다. 다른 앱이나 휴대폰 전체 절전 설정은 변경할 필요가 없습니다.
 3. YouTube 쇼츠를 전체 화면으로 열고 재생 시간이 다시 감지되는지 확인합니다. 중간 재생에서 복귀했다면 다음 처음부터 완주를 세므로 즉시 넘기지 않을 수 있습니다.
-4. 앱에 ‘넘김 확인 실패’ 또는 ‘전환 중 화면 변경’이 표시되면 별도의 안전 정지 상태입니다. 현재 영상을 확인한 뒤 자체 실행 토글을 OFF→ON합니다. 배터리 설정이 이 안전 정지까지 해제한다고 가정하지 마세요.
+4. 앱에 복구 대기가 표시되면 새 재생 시작을 관측하는 상태입니다. ‘정지’ 또는 ‘전환 중 화면 변경’ 등 재시작 안내이면 별도의 안전정지이므로 현재 영상을 확인한 뒤 자체 실행 토글을 OFF→ON합니다. 배터리 설정이 이 안전정지까지 해제한다고 가정하지 마세요.
 5. 원래 설정으로 되돌리려면 같은 배터리 화면에서 **최적화**를 선택합니다. 백그라운드 정지가 다시 발생할 수 있습니다.
 
-Open **Settings → Apps → ShortsLoop → Battery → Unrestricted** for this app only. Return to full-screen Shorts and allow a full playback cycle to be observed. A separate “advance not confirmed” safety stop still requires checking the current video and toggling execution OFF, then ON. To undo the battery exception, select **Optimized** on the same screen.
+Open **Settings → Apps → ShortsLoop → Battery → Unrestricted** for this app only. Return to full-screen Shorts and allow a full playback cycle to be observed. Recovery waiting observes a new start; a separate hard stop still requires checking the current video and toggling execution OFF, then ON. To undo the battery exception, select **Optimized** on the same screen.
 
 제한 없음은 배터리 사용량을 늘릴 수 있습니다. 이 설정은 작은 창의 YouTube를 자동으로 넘기도록 지원 범위를 바꾸는 것이 아닙니다. 장시간·재부팅·다른 기기의 효과는 별도 확인이 필요합니다. 앱은 이 설정을 몰래 바꾸지 않습니다. 실제 수행한 시험 범위는 [검증 기록](VERIFICATION.md)의 D-020 후속 시험을 참고하세요.
 

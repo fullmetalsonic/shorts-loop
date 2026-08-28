@@ -33,12 +33,16 @@ public final class CompatibilityInstrumentation extends Instrumentation {
             require(getTargetContext().getDrawable(R.mipmap.ic_launcher) != null, "Launcher icon packaged for runtime OS");
             checks += UpdateClientChecks.run(getTargetContext());
             checks += com.fullmetalsonic.shortsloop.detection.YouTubeLiveChecks.run(getTargetContext());
+            checks += com.fullmetalsonic.shortsloop.detection.ContentKeyChecks.run(getTargetContext());
+            checks += com.fullmetalsonic.shortsloop.detection.PagePositionChecks.run(getTargetContext());
             updates = getTargetContext().getSharedPreferences("updates", 0); originalUpdates = updates.getAll();
             updates.edit().putBoolean("automatic", false).commit();
             SettingsStore store = new SettingsStore(getTargetContext());
             prefs = store.preferences; original = prefs.getAll();
+            runOnMainSync(() -> checks += RecoveryServiceChecks.run(getTargetContext(), store));
             // Simulate restored choices without granting permissions or starting automation.
             store.enabled(false); store.visualAssist(true); store.timedFallback(true); store.skipAds(true);
+            store.skipLong(true); store.longVideoSeconds(321);
             store.selectedApp("com.instagram.android", true);
             activity = startActivitySync(new Intent(getTargetContext(), MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             waitForIdleSync();
@@ -67,6 +71,7 @@ public final class CompatibilityInstrumentation extends Instrumentation {
                 require(CompatibilityPanel.visualReason(activity, 33, true, true, true).contains("이전 선택"), "Old OS explanation preserves choice");
                 require(FeatureSupportPolicy.instagramFeature(true, true), "Basic Instagram capability remains available");
                 checks += LiveUiChecks.run(activity, store);
+                checks += LongVideoUiChecks.run(activity, store);
             });
             VisualAssistController controller = VisualAssistController.create(null, null);
             require(controller != null && !controller.active(), "Factory loads safely on runtime OS");

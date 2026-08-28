@@ -1,8 +1,33 @@
 # Android 버전별 기능 / Android compatibility
 
-대상: **0.2.5(code21), 호환성·인앱 업데이트·메뉴 배치·YouTube 라이브 미리보기를 통합한 시험판**. 2026-08-28 Public 시험판으로 공개했습니다. code14 호환성 후보 및 이전 공개판0.2.4 결과는 별도 이력입니다. 최종 검증·게시 결과는 [VERIFICATION](VERIFICATION.md) 참조.
+## 최신 0.2.6/code28 · 검증 완료·게시 준비 / Verified,publication pending
 
-Scope: **0.2.5 (code21), integrating compatibility, in-app updates, reordered settings and YouTube live-preview skipping**. Published as a public prerelease on2026-08-28. The code14 compatibility candidate and public 0.2.4 results are historical, not verification of this build. See VERIFICATION for final test and publication results.
+**0.2.6/code28은 로컬 PC·기기 검증을 마친 공개 시험판(pre-release) 게시 준비 상태이며 아직 미게시다.** YouTube의 같은 창·pager·전체 페이지에서 현재 행이 요청 행보다 정확히1 증가하는 근거를 보강했다. 최종 빌드·468JUnit·정적 가드 PASS,lint0오류/기존3경고,동일APK API26/33/34 계측233/233/232 PASS와 설치·설정 보존·접근성·런타임·해시 일치를 확인했다. YouTube20회는148.6초 동안 요청20/확인20(일반4·긴 영상15·라이브1),수동0·실패0·복구0으로 PASS했다. 같은 길이 영상 쌍은 이 실기기20회에 없었으므로 해당 조건의 실기기 재현 성공을 주장하지 않는다.
+
+**0.2.6/code28 has completed local PC/device verification and is ready for public pre-release delivery,but is not yet published.** It adds exact current-row=request-row+1 evidence within the same YouTube window,pager and full-page bounds. Build,468 JUnit tests,static guards,233/233/232 exact-APK API26/33/34 checks and installation/settings/accessibility/runtime/hash parity passed;lint has0 errors/3 existing warnings. YouTube20 passed in148.6 seconds with20 requests/20 confirmations:4 ordinary,15 long-video,1 live,and0 manual swipes,failures or recoveries. No equal-duration pair occurred in this run,so that precise physical case is not claimed as reproduced.
+
+**이번 code26→code28 YouTube 보완에서** Instagram의 일반 확인 경로와 `AdvanceGate`는 변경하지 않았다.0.2.5→0.2.6 전체에서 아무 변화가 없었다는 뜻은 아니다. code26의 Instagram10회 PASS(96.0초,일반3·긴 영상4·시간제2·광고1,수동0)는 해당 버전의 실기기 근거로 보존하고 이번에는 전체10회를 반복하지 않는다. 이 과거 결과를 새 code28 APK에서 Instagram을 재실행한 것처럼 표시하지 않는다. YouTube 재시험과 영향 범위 검증은 통과했으며,기존 Public 저장소에v0.2.6/code28 pre-release를 게시한 뒤 CI·공개 다운로드 동일성을 별도로 확인한다. 현재는 게시 전이다.
+
+**For this code26→code28 YouTube correction**,the generic Instagram path and AdvanceGate are unchanged from code26;this does not mean they were unchanged throughout0.2.5→0.2.6. Code26's Instagram10 PASS(96.0 seconds:3 ordinary,4 long-video,2 timed,1 ad;0 manual swipes) is retained as version-specific evidence without repeating the full run. It is not described as a new Instagram test on code28. The YouTube retest and impact-scope checks passed. Planned delivery is v0.2.6/code28 as a pre-release in the existing Public repository,followed by separate CI/public-download parity checks;publication is still pending.
+
+## 과거 code26 지원·검증 범위 / Historical support and checks
+
+**과거0.2.6/code26은 실폰 후속 실패로 게시 보류된 미배포 후보였다.** 빌드·454 JUnit(실패0)·정적 가드 PASS, lint0오류/기존3경고. 12:33 동일 APK의 Android API26/33/34 계측209/209/208개 PASS,12:36 휴대폰 설치·전체 기존 설정 직접 비교 보존·접근성 연결·설치 APK 해시 일치 PASS. 12:38:20 YouTube 공식 시험은 요청10/확인10(긴 영상9+라이브1)과 전후 화면의 서로 다른 영상 확인으로 PASS했다. 12:39:22 별도 일반1/1 전환1회도 화면 쌍으로 확인했다. 그러나 후속 연속 실행 중 요청20/확인19에서 같은59초 길이·pager index 부재로 안전정지했다. 해당 실패 요청에는 전후 화면 쌍이 없어 실제 다음 영상 이동 여부는 미확정이다. Instagram은12:43:56~12:45:31.831(96.0초) 별도 시험에서 요청10/확인10(일반3·긴 영상4·시간제10초2·광고1),수동0·실패/복구0으로 PASS했다. **두 앱의 지정10회 PASS가 유튜브 후속 실패를 덮지 않으며 제품 완료·배포 준비 완료가 아니다.**
+
+**Historical0.2.6/code26 remained unpublished after a subsequent device failure blocked its release.** Build,454 JUnit tests with zero failures,static guards and209/209/208 exact-APK API26/33/34 checks passed; lint has0 errors and3 existing warnings. Installation preserved all compared preferences and accessibility binding,and matched the APK hash. The12:38:20 YouTube run passed10 requests/10 confirmed distinct transitions:9 long-video and1 live. A separate12:39:22 ordinary1/1 transition also passed screenshot-pair review. Further continuation then safety-stopped at20 requests/19 confirmations when both durations were59 seconds and pager indices were unavailable. No pre/post screenshot pair exists for that failed request,so actual movement is unproven. A separate96.0-second Instagram run at12:43:56–12:45:31.831 passed10 requests/10 confirmations:3 ordinary,4 long-video,2 ten-second clockless and1 ad,with no manual swipes,failures or recoveries. The two designated ten-transition PASS results do not override the later YouTube failure or establish release readiness.
+
+Android8(API26) 설치 하한과 버전별 권한·옵션 계약은 유지한다. 긴 영상 옵션은 기본OFF·기준60초·1~3600초이며,선택·설치된 YouTube/Instagram 중 전면 일반 영상의 유효한 총길이≥기준일 때만 적용한다. 앱 자체의 OS 지원과 ShortsLoop의 API 가용성은 별개다. 같은 길이·pager index 부재 등으로 전환을 확실히 구분하지 못하면 지원 OS에서도 안전정지할 수 있다. **계측 PASS는 모든 실제 소셜 앱 화면·기기에서의 자동 동작 보증이 아니다.** [최신 검증](VERIFICATION.md), [전환 확인 한계](DEBUG_LOG.md).
+
+**이전 후보는 별도 기록이다.** code23은12:12 실제62→93초 영상 이동 후 요청1/확인0으로 실패했고, code24는12:17 같은 창·영역·인식·안전 조건에서도 공통 텍스트 identity가 같음을 재현했다. code25도12:21~12:22 실제93→57초 이동 후 요청/현재 index가 모두−1이고 공통 identity가 같아 실패했다. code23/24/25는 실폰FAIL·미배포이며 PC·계측PASS가 이를 덮지 않는다. code22의 YouTube2회는 기능 추가로 중단한 과거 관측이며 수동180초 영상 이동1회는 제외했다. 어느 후보의 관측도 code26의10회에 합산하지 않는다.
+
+## 과거 code23 호환성 체크포인트 · 실폰FAIL/미배포 / Historical compatibility checkpoint
+
+과거대상: **0.2.6(code23),실폰FAIL·미배포**. API26이상동작과화면분석API34제한의분리를유지했고빌드418시험·163/163/162계측·12:10설치/설정/연결/해시는PASS했습니다. 그러나12:12실제긴영상전환확인은FAIL이었으며0.2.6전체PASS나최신code28검증으로사용하지않습니다. 최종 [검증·게시](VERIFICATION.md)를 확인하세요.
+
+Historical **code23** retained API26/no-new-permission compatibility and passed build,418 tests,163/163/162 emulator checks and installation parity. It then failed actual long-video confirmation at12:12 and remained unpublished. These passes do not verify code25.
+
+과거code22의383제품시험·109/109/108계측은 긴 영상 기능 추가 전의 별도 증거입니다. code22의YouTube2회 자동전환과180초영상1개 수동제외 후 세션중단을code23의검증이나10연속PASS로합산하지않습니다.<br>
+Historical code22's383 tests and109/109/108 checks preceded long-video support. Its two automatic YouTube transitions and one excluded manual180-second skip ended with feature integration; they are not code23 evidence or a ten-transition PASS.
 
 ## 지원 원칙 / Policy
 
@@ -21,6 +46,9 @@ The existing minimum remains **Android 8.0 (API26)**, without an Android 7 backp
 
 Conditions include host installation/selection, accessibility permission, and a supported Shorts/Reels screen. Floating controls additionally require overlay permission. Ads require an explicit recognized ad label; timed fallback applies only to eligible clockless Instagram videos. Pop-up/PiP and all host-app versions are not guaranteed.
 
+긴 영상은 두 선택 앱의 확인 가능한 일반 영상에 적용하며 기본OFF·총길이기준60초·1~3600초입니다. 총길이≥기준과같은안전페이지의실제진행을확인해야하며길이불명·정지·특수콘텐츠를추정하지않습니다. 반복0과독립,전체OFF는중지합니다. 어떤OS에서도이조건을생략하지않으며4.5초전환확인실패는안전정지입니다.<br>
+Long-video skipping supports known ordinary durations in either selected host(defaultOFF,threshold60 seconds,range1–3600). Duration≥threshold plus stable-page/real-progress evidence is required on every OS. Unknown,paused or special content is not inferred. Zero plays is independent; overallOFF stops it,and an unconfirmed transition hard-stops after4.5 seconds.
+
 YouTube 라이브 미리보기도 기본 접근성 경로를 사용하며 화면 분석의 API34 제한과 별개입니다. **기본 OFF·대기 0~60초·기본 0초(인식 후 바로)**이며 YouTube 선택·옵션 ON·전체 실행 ON이면 일반 반복 0회에서도 동작합니다. 공식 YouTube가 해당 OS에서 실행되고 쇼츠 내 전용 라이브 구조를 제공해야 합니다. 일반 라이브 시청 화면·텍스트만으로 판정하지 않으며 새 권한·OCR·화면/오디오 분석을 추가하지 않습니다. 부분 표시·화면 차단·구조 미지원·페이지 구분 실패에서는 대기 또는 안전 정지합니다. [라이브 계약](LIVE_SKIP.md).
 
 YouTube live previews use basic accessibility independently of API34 visual assist. **OFF by default, wait 0–60 seconds, initially 0 (immediate after recognition)**; YouTube selection, the live option and main execution enable it even at zero plays. The official host must run on that OS and expose the supported Shorts live structure. Ordinary live-watch screens or text alone are insufficient. No new permission, OCR, image or audio analysis is added. Partial, blocked, unsupported or indistinguishable pages wait or safety-stop.
@@ -33,9 +61,9 @@ YouTube live previews use basic accessibility independently of API34 visual assi
 4. Android 14 미만에서는 **화면 분석 보조**가 꺼진 비활성 상태이며 이유가 보입니다. 이전 기기에서 켰던 선택은 지우지 않지만 여기서는 실행하지 않습니다. Instagram의 시간제·광고는 별도로 사용할 수 있습니다.<br>Below Android 14, visual assist is disabled with a reason. A previous saved choice is retained but cannot run here. Instagram timer and ads remain separate options.
 5. Instagram 미설치·미선택이면 관련 옵션이 비활성화됩니다. 저장값은 보존되며 앱 설치·재선택 후 다시 적용됩니다. 전체 실행을 임의로 켜거나 권한을 자동 허용하지 않습니다.<br>Missing/deselected Instagram disables its options without erasing preferences. They become applicable again after installation/selection. This never auto-starts execution or grants permission.
 
-**0회는 일반·시간제·화면 분석을 중지**합니다. 광고는 Instagram 선택+광고 ON+전체 실행 ON, 라이브는 YouTube 선택+라이브 ON+전체 실행 ON이면 독립적으로 동작합니다. 전체 실행 OFF는 모두 중지합니다. 시간제 기본 OFF/10초, 범위5~60초이며 정상 진행 정보를 10초로 자르지 않습니다.
+**0회는 일반반복·시간제·화면분석을중지**합니다. 긴영상은선택앱+긴영상ON+전체ON,광고는Instagram선택+광고ON+전체ON,라이브는YouTube선택+라이브ON+전체ON이면독립적으로동작합니다. 전체OFF는모두중지합니다. 시간제기본OFF/10초·5~60초는영상총길이기준과별개이며정상진행영상을10초로자르지않습니다.
 
-**Zero plays stops normal, timed and visual advancing**; ads remain independent when Instagram, ads and main execution are enabled, as do live previews when YouTube, the live option and main execution are enabled. Main OFF stops all. Timer defaults to OFF/10 seconds, adjustable 5–60; usable playback clocks are not cut off at ten seconds.
+**Zero plays stops repeat-based,timed and visual advancing**. Long-video,ad and live options remain independently available with the corresponding selected host,option and overall execution enabled. OverallOFF stops all. The timer defaults to OFF/10 seconds,range5–60;it is distinct from the total-duration threshold and does not truncate ordinary clock-based playback at ten seconds.
 
 code17부터 접근성 미연결 시 **접근성 연결 확인 · 해결 방법 보기**와 **접근성 설정·다시 연결**을 표시합니다. Android 설정이 ON이어도 실제 연결이 끊길 수 있으므로 해당 서비스를 OFF→ON하고 연결 후 전체 실행을 직접 켭니다. 화면 분석 OFF에서도 기본 감지·다음 이동에 접근성이 필요합니다. 이 안내는 권한이나 실행 상태를 자동 변경하지 않습니다.
 

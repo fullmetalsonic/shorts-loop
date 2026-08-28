@@ -18,6 +18,9 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import com.fullmetalsonic.shortsloop.core.AdvanceGate;
 import com.fullmetalsonic.shortsloop.core.AdSkipPolicy;
 import com.fullmetalsonic.shortsloop.core.LoopCounter;
+import com.fullmetalsonic.shortsloop.core.PlaybackRestart;
+import com.fullmetalsonic.shortsloop.core.LongVideoPolicy;
+import com.fullmetalsonic.shortsloop.core.LongVideoTracker;
 import com.fullmetalsonic.shortsloop.core.ModePolicy;
 import com.fullmetalsonic.shortsloop.core.SessionPolicy;
 import com.fullmetalsonic.shortsloop.core.ClocklessTimeoutPolicy;
@@ -26,10 +29,12 @@ import com.fullmetalsonic.shortsloop.core.LiveSkipPolicy;
 import com.fullmetalsonic.shortsloop.core.LiveSkipTracker;
 import com.fullmetalsonic.shortsloop.core.LiveTransitionPolicy;
 import com.fullmetalsonic.shortsloop.core.LiveTreePolicy;
+import com.fullmetalsonic.shortsloop.core.YouTubePageStepPolicy;
 import com.fullmetalsonic.shortsloop.data.SettingsStore;
 import com.fullmetalsonic.shortsloop.detection.YouTubeReader;
 import com.fullmetalsonic.shortsloop.detection.YouTubeSnapshot;
 import com.fullmetalsonic.shortsloop.detection.YouTubeWindowGuard;
+import com.fullmetalsonic.shortsloop.detection.YouTubePagePosition;
 import com.fullmetalsonic.shortsloop.detection.ShortsReader;
 import com.fullmetalsonic.shortsloop.detection.InstagramReader;
 import com.fullmetalsonic.shortsloop.overlay.FloatingController;
@@ -44,6 +49,22 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final LoopCounter counter = new LoopCounter();
     private final AdvanceGate gate = new AdvanceGate();
+    private final PlaybackRestart restart = new PlaybackRestart();
+    private int ordinaryRequestWindow = -1;
+    private int recoveryEntries, recoveryStarts;
+    private long recoveryEnteredAt = -1;
+    private final LongVideoTracker longVideo = new LongVideoTracker();
+    private boolean pendingLong, unresolvedLongAttempt;
+    private int longRequests, confirmedLong, longRequestWindow = -1;
+    private Rect longRequestWindowBounds;
+    private String longConfirmationDiagnostic = "none";
+    private int longRequestRow = YouTubePageStepPolicy.UNKNOWN, longCurrentRow = YouTubePageStepPolicy.UNKNOWN;
+    private Rect longRequestPageBounds;
+    private AccessibilityNodeInfo longRequestPager;
+    private long longRequestedAt = -1;
+    private int longRequestIndex = -1;
+    private boolean longPagerChanged;
+    private boolean longRequestContent;
     private final ClocklessTimeoutTracker timed = new ClocklessTimeoutTracker();
     private final LiveSkipTracker live = new LiveSkipTracker();
     private final ShortsReader reader = new ShortsReader();
@@ -78,7 +99,7 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
             lastPollAt = SystemClock.uptimeMillis();
             try { tick(); }
             catch (RuntimeException ignored) { failClosed("화면 조회 오류 · 껐다 켜 주세요"); }
-            if (store != null && store.enabled()) handler.postDelayed(this, store.target() == 0 && !adSkippingEnabled() && !liveSkippingEnabled() ? 900
+            if (store != null && store.enabled()) handler.postDelayed(this, store.target() == 0 && !adSkippingEnabled() && !liveSkippingEnabled() && !longSkippingEnabled() ? 900
                     : visual != null && visual.active() ? 450 : 300);
         }
     };
@@ -111,15 +132,19 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         if ("floating_enabled".equals(key)) { updateFloating(); return; }
         // Only explicit execution OFF/ON may re-arm an unconfirmed live request.
         // A floating count tap can first interrupt the gesture and then change target.
-        if ("enabled".equals(key)) unresolvedLiveAttempt = false;
+        if ("enabled".equals(key)) { unresolvedLiveAttempt = false; unresolvedLongAttempt = false; }
         else if (unresolvedLiveAttempt && store.enabled()) {
             failClosed("라이브 전환 중 설정 변경 · 전체 실행을 껐다 켜 주세요"); return;
+        }
+        else if (unresolvedLongAttempt && store.enabled()) {
+            failClosed("긴 영상 전환 중 설정 변경 · 전체 실행을 껐다 켜 주세요"); return;
         }
         if ("target".equals(key) || "enabled".equals(key) || "ceiling".equals(key)
                 || "tap_mode".equals(key) || "youtube_enabled".equals(key) || "instagram_enabled".equals(key)
                 || "skip_ads".equals(key) || "visual_assist".equals(key)
                 || "timed_fallback".equals(key) || "fallback_seconds".equals(key)
-                || "skip_live".equals(key) || "live_delay_seconds".equals(key)) applySettings();
+                || "skip_live".equals(key) || "live_delay_seconds".equals(key)
+                || "skip_long".equals(key) || "long_video_seconds".equals(key)) applySettings();
     }
     private void updateFloating() {
         if (!store.enabled() || !store.floatingEnabled()) floating.hide();
@@ -151,11 +176,12 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         if (!store.enabled() || RuntimeState.blocked) return;
         if (store.floatingEnabled() && !Settings.canDrawOverlays(this)) { store.enabled(false); return; }
         // Zero ordinary plays still permits independently opted-in ads and live previews.
-        if (store.target() == 0 && !adSkippingEnabled() && !liveSkippingEnabled()) {
+        if (store.target() == 0 && !adSkippingEnabled() && !liveSkippingEnabled() && !longSkippingEnabled()) {
             clearLayoutQuery(); invalidate(); publish(0, zeroCountStatus()); return;
         }
         if (!screenAvailable() || interacting || SystemClock.uptimeMillis() < holdUntil) {
             if (gate.pending()) { failClosed("전환 중 화면 변경 · 다시 켜 주세요"); return; }
+            if (restart.active()) { restart.suspend(); publish(0, PlaybackRestart.WAITING); return; }
             invalidate(); publish(0, "화면·조작 대기"); return;
         }
         YouTubeSnapshot snapshot = snapshot();
@@ -166,25 +192,31 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
             // can confirm them; a stale page event alone never confirms another ad.
             // A newly appearing clock on the SAME visual page is not a page transition.
             AdvanceGate.State state = pendingLive ? inspectLiveTransition(snapshot, now)
+                    : pendingLong ? inspectLongTransition(snapshot, now)
                     : (pendingVisual || pendingTimed)
                     ? gate.inspectRecognizedPage(snapshot.recognized() ? snapshot.identity : "", now)
                     : snapshot.usable()
                     ? gate.inspect(snapshot.identity, snapshot.progress.duration, now)
                     : snapshot.recognized() ? gate.inspectRecognizedPage(snapshot.identity, now) : gate.unavailable(now);
             if (state == AdvanceGate.State.WAITING) {
-                publish(pendingAd || pendingTimed || pendingLive ? 0 : store.target(), pendingLive ? LiveSkipPolicy.STATUS_CONFIRMING : pendingAd ? "광고 넘김 확인 중"
+                publish(pendingAd || pendingTimed || pendingLive || pendingLong ? 0 : store.target(), pendingLong ? LongVideoPolicy.CONFIRMING : pendingLive ? LiveSkipPolicy.STATUS_CONFIRMING : pendingAd ? "광고 넘김 확인 중"
                         : pendingTimed ? "시간제 · 다음 영상 확인 중" : "다음 영상 확인 중"); return;
             }
-            if (state == AdvanceGate.State.FAILED) { failClosed("넘김 확인 실패 · 껐다 켜 주세요"); return; }
+            if (state == AdvanceGate.State.FAILED) { advanceTimedOut(); return; }
             if (state == AdvanceGate.State.CONFIRMED) {
                 confirmedAdvances++; if (pendingAd) confirmedAds++;
                 if (pendingVisual) confirmedVisual++;
                 if (pendingTimed) confirmedTimed++;
                 if (pendingLive) { confirmedLive++; unresolvedLiveAttempt = false; releaseLiveRequest(); }
+                if (pendingLong) { confirmedLong++; unresolvedLongAttempt = false; }
+                pendingLong = false; longVideo.reset(); releaseLongRequest();
                 pendingAd = false; pendingVisual = false; pendingTimed = false; pendingLive = false;
                 counter.reset(); visual.reset(); timed.reset();
             }
         }
+        // Recovery must not fall through into ads/live/timers or issue a retry gesture.
+        if (restart.active()) { observeRestart(snapshot, now); return; }
+        if (!longCandidate(snapshot)) longVideo.reset();
         if (!timedCandidate(snapshot)) timed.reset();
         if (!snapshot.live) live.reset();
         if (snapshot.live) {
@@ -203,6 +235,15 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
             counter.reset(); lastPosition = -1; lastDuration = -1;
             if (adSkippingEnabled()) advanceAd(snapshot);
             else publish(0, "광고 · 바로 넘기기 꺼짐");
+            return;
+        }
+        // Known total duration is an independent filter, not a watch-time timer.
+        if (longCandidate(snapshot)) {
+            counter.reset(); timed.reset(); visual.reset();
+            lastPosition = snapshot.progress.position; lastDuration = snapshot.progress.duration;
+            boolean due = longVideo.observe(longKey(snapshot), snapshot.progress, store.longVideoSeconds(), now);
+            publish(0, LongVideoPolicy.CHECKING);
+            if (due) advanceLong(snapshot);
             return;
         }
         // Ads are independent. Zero still prevents every ordinary/count/timer/visual advance.
@@ -235,6 +276,36 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         LoopCounter.Result result = counter.observe(snapshot.progress, snapshot.identity, now);
         publish(result.current, result.waitingForStart ? "다음 처음 재생부터 계산" : "재생 횟수 확인 중");
         if (result.advance) advance(snapshot);
+    }
+    private void advanceTimedOut() {
+        if (!PlaybackRestart.ordinaryRequest(pendingAd, pendingLive, pendingTimed, pendingVisual, pendingLong)
+                || ordinaryRequestWindow < 0 || store.target() <= 0) {
+            failClosed("넘김 확인 실패 · 껐다 켜 주세요"); return;
+        }
+        int window = ordinaryRequestWindow;
+        invalidate(); // Discard emitted counts and invalidate callbacks from the old request.
+        restart.begin(activePackage, window);
+        recoveryEntries++; recoveryEnteredAt = SystemClock.uptimeMillis();
+        lastPosition = lastDuration = -1;
+        publish(0, PlaybackRestart.WAITING);
+    }
+    private void observeRestart(YouTubeSnapshot snapshot, long now) {
+        if (!store.enabled() || store.target() <= 0 || !store.isSelected(activePackage)
+                || !snapshot.usable() || !snapshot.recognized()
+                || !restart.accepts(activePackage, snapshot.windowId)
+                || snapshot.windowBounds == null || !snapshot.windowBounds.contains(snapshot.page)) {
+            restart.suspend(); publish(0, PlaybackRestart.WAITING); return;
+        }
+        lastPosition = snapshot.progress.position; lastDuration = snapshot.progress.duration;
+        String key = snapshot.identity + "|" + snapshot.page.toShortString() + "|" + snapshot.windowBounds.toShortString();
+        PlaybackRestart.Start start = restart.observe(snapshot.progress, key, now);
+        if (start == null) { publish(0, PlaybackRestart.WAITING); return; }
+        counter.reset();
+        counter.observe(start.progress, snapshot.identity, start.at);
+        LoopCounter.Result result = counter.observe(snapshot.progress, snapshot.identity, now);
+        recoveryStarts++;
+        // Finding a fresh start is neither a completed play nor a confirmed page transition.
+        publish(result.current, PlaybackRestart.COUNTING);
     }
     private YouTubeSnapshot snapshot() {
         AccessibilityNodeInfo root = getRootInActiveWindow();
@@ -273,12 +344,128 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
     private boolean liveSkippingEnabled() {
         return store != null && LiveSkipPolicy.enabled(store.enabled(), store.skipLive(), store.youtubeEnabled());
     }
+    private boolean longSkippingEnabled() {
+        return store != null && store.enabled() && store.skipLong() && store.hasSelectedApps();
+    }
+    private boolean longCandidate(YouTubeSnapshot value) {
+        return longSkippingEnabled() && store.isSelected(activePackage) && value != null && value.usable()
+                && value.recognized() && value.windowId >= 0 && value.windowBounds != null
+                && value.windowBounds.contains(value.page)
+                && LongVideoPolicy.qualifies(true, value.progress, store.longVideoSeconds());
+    }
+    private String longKey(YouTubeSnapshot value) {
+        return activePackage + "|" + value.windowId + "|" + longIdentity(value) + "|" + value.page.toShortString()
+                + "|" + value.windowBounds.toShortString();
+    }
+    private String longIdentity(YouTubeSnapshot value) {
+        return value.contentIdentity.isEmpty() ? value.identity : "content:" + value.contentIdentity;
+    }
+    private String longConfirmationIdentity(YouTubeSnapshot value) {
+        if (!longRequestContent || value.live || value.ad) return value.identity;
+        return value.contentIdentity.isEmpty() ? "" : "content:" + value.contentIdentity;
+    }
+    private AdvanceGate.State inspectLongTransition(YouTubeSnapshot value, long now) {
+        boolean safe = value.recognized() && value.windowId == longRequestWindow && value.windowBounds != null
+                && value.windowBounds.equals(longRequestWindowBounds) && value.windowBounds.contains(value.page);
+        boolean youtubeContent = longRequestContent && YouTubeReader.PACKAGE.equals(activePackage) && !value.live && !value.ad;
+        if (youtubeContent) {
+            longCurrentRow = safe ? readYouTubeRow(value) : YouTubePageStepPolicy.UNSAFE;
+            safe = safe && YouTubePageStepPolicy.permits(longRequestRow, longCurrentRow);
+        }
+        longConfirmationDiagnostic = "recognized=" + value.recognized() + " sameWindow=" + (value.windowId == longRequestWindow)
+                + " sameBounds=" + Objects.equals(value.windowBounds, longRequestWindowBounds) + " safe=" + safe
+                + " duration=" + (value.progress == null ? -1 : value.progress.duration)
+                + " requestIndex=" + longRequestIndex + " currentIndex=" + lastPageIndex + " pagerChanged=" + longPagerChanged
+                + " requestRow=" + longRequestRow + " currentRow=" + longCurrentRow
+                + " contentKey=" + !value.contentIdentity.isEmpty() + " " + gate.transitionDiagnostic(longConfirmationIdentity(value), now);
+        String identity = safe ? longConfirmationIdentity(value) : "";
+        if (longRequestContent && !value.live && !value.ad)
+            return gate.inspectContentPage(identity, safe ? value.progress : null,
+                    safe && (longPagerChanged || (youtubeContent && YouTubePageStepPolicy.next(longRequestRow, longCurrentRow))), now);
+        return gate.inspectLongPage(identity, safe ? value.progress : null, safe && longPagerChanged, now);
+    }
+    private int readYouTubeRow(YouTubeSnapshot expected) {
+        if (longRequestPageBounds == null || !longRequestPageBounds.equals(expected.page)) return YouTubePageStepPolicy.UNSAFE;
+        AccessibilityNodeInfo root = getRootInActiveWindow();
+        java.util.List<AccessibilityNodeInfo> pagers = java.util.Collections.emptyList();
+        try {
+            if (root == null || !root.refresh() || root.getWindowId() != longRequestWindow
+                    || !YouTubeReader.PACKAGE.contentEquals(root.getPackageName() == null ? "" : root.getPackageName()))
+                return YouTubePageStepPolicy.UNSAFE;
+            Rect allowed = windowGuard.allowedBounds(getWindows(), root.getWindowId());
+            if (!longRequestWindowBounds.equals(allowed)) return YouTubePageStepPolicy.UNSAFE;
+            pagers = root.findAccessibilityNodeInfosByViewId("com.google.android.youtube:id/reel_recycler");
+            AccessibilityNodeInfo chosen = null;
+            for (AccessibilityNodeInfo pager : pagers) if (pager.isVisibleToUser()) {
+                if (chosen != null) return YouTubePageStepPolicy.UNSAFE;
+                chosen = pager;
+            }
+            if (chosen == null || longRequestPager == null || !longRequestPager.equals(chosen)) return YouTubePageStepPolicy.UNSAFE;
+            int row = YouTubePagePosition.read(chosen, expected.page, expected.windowId);
+            // Re-read metadata on this same root after the ordinal: do not combine
+            // a previous page's content snapshot with a new page's row number.
+            YouTubeSnapshot after = reader.read(root, store);
+            if (!after.usable() || !Objects.equals(after.contentIdentity, expected.contentIdentity)
+                    || !Objects.equals(after.page, expected.page)) return YouTubePageStepPolicy.UNSAFE;
+            if (YouTubePagePosition.read(chosen, expected.page, expected.windowId) != row) return YouTubePageStepPolicy.UNSAFE;
+            return row;
+        } finally {
+            for (AccessibilityNodeInfo pager : pagers) YouTubeReader.recycle(pager);
+            YouTubeReader.recycle(root);
+        }
+    }
+    private void advanceLong(YouTubeSnapshot original) {
+        if (!longCandidate(original) || RuntimeState.blocked || gate.pending() || restart.active()
+                || interacting || !screenAvailable() || SystemClock.uptimeMillis() < holdUntil) return;
+        YouTubeSnapshot fresh = snapshot();
+        if (RuntimeState.blocked || !longCandidate(fresh) || !longKey(original).equals(longKey(fresh))
+                || Math.abs(original.progress.duration - fresh.progress.duration) > 0.5
+                || fresh.progress.position < original.progress.position) { longVideo.reset(); return; }
+        AccessibilityNodeInfo root = getRootInActiveWindow();
+        java.util.List<AccessibilityNodeInfo> pagers = java.util.Collections.emptyList();
+        try {
+            if (root == null || !root.refresh() || root.getWindowId() != fresh.windowId
+                    || !activePackage.contentEquals(root.getPackageName() == null ? "" : root.getPackageName())) { longVideo.reset(); return; }
+            String pagerId = YouTubeReader.PACKAGE.equals(activePackage)
+                    ? "com.google.android.youtube:id/reel_recycler" : InstagramReader.PAGER_ID;
+            pagers = root.findAccessibilityNodeInfosByViewId(pagerId);
+            AccessibilityNodeInfo chosen = null;
+            for (AccessibilityNodeInfo node : pagers) if (node.isVisibleToUser()) {
+                if (chosen != null) { longVideo.reset(); return; }
+                chosen = node;
+            }
+            if (chosen == null || !chosen.refresh() || !chosen.isVisibleToUser() || chosen.getWindowId() != fresh.windowId
+                    || !pagerId.equals(chosen.getViewIdResourceName())
+                    || !activePackage.contentEquals(chosen.getPackageName() == null ? "" : chosen.getPackageName())) { longVideo.reset(); return; }
+            Rect pagerBounds = new Rect(); chosen.getBoundsInScreen(pagerBounds);
+            if (!pagerBounds.contains(fresh.page)) { longVideo.reset(); return; }
+            releaseLongRequest();
+            longRequestPager = AccessibilityNodeInfo.obtain(chosen);
+            longRequestWindow = fresh.windowId; longRequestWindowBounds = new Rect(fresh.windowBounds);
+            longRequestIndex = lastPageIndex;
+            longRequestContent = !fresh.contentIdentity.isEmpty();
+            longRequestPageBounds = new Rect(fresh.page);
+            if (longRequestContent && YouTubeReader.PACKAGE.equals(activePackage)) {
+                longRequestRow = readYouTubeRow(fresh);
+                if (longRequestRow == YouTubePageStepPolicy.UNSAFE) { releaseLongRequest(); longVideo.reset(); return; }
+            }
+            longVideo.consume(); dispatchPageSwipe(fresh, false, true);
+        } finally {
+            for (AccessibilityNodeInfo pager : pagers) YouTubeReader.recycle(pager);
+            YouTubeReader.recycle(root);
+        }
+    }
+    private void releaseLongRequest() {
+        YouTubeReader.recycle(longRequestPager); longRequestPager = null;
+        longRequestedAt = -1; longRequestIndex = longRequestWindow = -1; longRequestWindowBounds = null; longPagerChanged = false; longRequestContent = false;
+        longRequestRow = longCurrentRow = YouTubePageStepPolicy.UNKNOWN; longRequestPageBounds = null;
+    }
     private boolean liveCandidate(YouTubeSnapshot value) {
         return liveSkippingEnabled() && YouTubeReader.PACKAGE.equals(activePackage) && value != null && value.live
                 && value.recognized() && value.windowId >= 0 && value.windowBounds != null && value.windowBounds.contains(value.page);
     }
     private String zeroCountStatus() {
-        return LiveSkipPolicy.zeroCountStatus(adSkippingEnabled(), liveSkippingEnabled());
+        return LongVideoPolicy.zeroCountStatus(adSkippingEnabled(), liveSkippingEnabled(), longSkippingEnabled());
     }
     private AdvanceGate.State inspectLiveTransition(YouTubeSnapshot value, long now) {
         if (value.windowId != liveRequestWindow || value.windowBounds == null
@@ -322,7 +509,7 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
             liveRequestPager = AccessibilityNodeInfo.obtain(chosen);
             liveRequestWindow = fresh.windowId; liveRequestIndex = lastPageIndex;
             liveRequestWindowBounds = new Rect(fresh.windowBounds);
-            dispatchPageSwipe(verified, true);
+            dispatchPageSwipe(verified, true, false);
         } finally {
             for (AccessibilityNodeInfo pager : pagers) YouTubeReader.recycle(pager);
             YouTubeReader.recycle(root);
@@ -434,11 +621,13 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         if (!store.enabled() || store.target() == 0 || interacting || !screenAvailable()) return;
         YouTubeSnapshot fresh = snapshot();
         if (!fresh.usable() || !Objects.equals(original.identity, fresh.identity)
-                || original.progress.duration != fresh.progress.duration) { invalidate(); return; }
+                || original.progress.duration != fresh.progress.duration
+                || fresh.windowId != original.windowId || !Objects.equals(fresh.page, original.page)
+                || fresh.windowBounds == null || !fresh.windowBounds.contains(fresh.page)) { invalidate(); return; }
         if (RuntimeState.blocked || gate.pending()) return;
-        dispatchPageSwipe(fresh, false);
+        dispatchPageSwipe(fresh, false, false);
     }
-    private void dispatchPageSwipe(YouTubeSnapshot fresh, boolean forLive) {
+    private void dispatchPageSwipe(YouTubeSnapshot fresh, boolean forLive, boolean forLong) {
         Rect page = fresh.page;
         Rect overlay = floating.bounds();
         float startY = page.top + page.height() * 0.75f;
@@ -454,15 +643,18 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         GestureDescription gesture = new GestureDescription.Builder()
                 .addStroke(new GestureDescription.StrokeDescription(path, 0, 280)).build();
         long requestAt = SystemClock.uptimeMillis();
-        gate.begin(fresh.identity, forLive ? -1 : fresh.progress.duration, requestAt);
+        gate.begin(forLong ? longIdentity(fresh) : fresh.identity, forLive ? -1 : fresh.progress.duration, requestAt);
+        ordinaryRequestWindow = forLive || forLong ? -1 : fresh.windowId;
         pendingLive = forLive;
+        pendingLong = forLong;
+        if (forLong) { longRequestedAt = requestAt; longRequests++; unresolvedLongAttempt = true; }
         if (forLive) { liveRequestedAt = requestAt; liveRequests++; unresolvedLiveAttempt = true; }
         int requestGeneration = generation;
         advanceRequests++;
         boolean accepted = dispatchGesture(gesture, new GestureResultCallback() {
             @Override public void onCompleted(GestureDescription description) {
                 // Completion means the gesture ran, not that YouTube changed videos.
-                if (generation == requestGeneration) publish(forLive ? 0 : store.target(), forLive ? LiveSkipPolicy.STATUS_CONFIRMING : "다음 쇼츠 확인 중");
+                if (generation == requestGeneration) publish(forLive || forLong ? 0 : store.target(), forLong ? LongVideoPolicy.CONFIRMING : forLive ? LiveSkipPolicy.STATUS_CONFIRMING : "다음 쇼츠 확인 중");
             }
             @Override public void onCancelled(GestureDescription description) {
                 if (generation == requestGeneration) failClosed("넘김 취소됨 · 껐다 켜 주세요");
@@ -490,6 +682,9 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         if (source == null) return;
         try {
             String id = source.getViewIdResourceName();
+            if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_CLICKED && (longVideo.active() || pendingLong)) {
+                interruptSession(); holdUntil = SystemClock.uptimeMillis() + 900;
+            }
             if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_CLICKED
                     && YouTubeReader.PACKAGE.equals(eventPackage) && (live.active() || pendingLive)) {
                 interruptSession(); holdUntil = SystemClock.uptimeMillis() + 900;
@@ -513,9 +708,17 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
                             liveRequestPager != null && liveRequestPager.equals(source))) {
                         gate.pageChanged(); lastPageIndex = index;
                     }
+                } else if (pendingLong && gate.pending()) {
+                    if (source.refresh() && LiveTransitionPolicy.accepts(longRequestedAt, event.getEventTime(),
+                            SystemClock.uptimeMillis(), longRequestWindow, source.getWindowId(), longRequestIndex, index,
+                            longRequestPager != null && longRequestPager.equals(source))) {
+                        longPagerChanged = true; lastPageIndex = index;
+                    }
                 } else {
                     if (index >= 0 && lastPageIndex >= 0 && index != lastPageIndex) {
-                        if (gate.pending()) gate.pageChanged(); else invalidate();
+                        if (gate.pending()) gate.pageChanged();
+                        else if (restart.active()) restart.suspend();
+                        else invalidate();
                     }
                     if (index >= 0) lastPageIndex = index;
                 }
@@ -523,17 +726,20 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         } finally { YouTubeReader.recycle(source); }
     }
     private void invalidate() {
+        restart.cancel(); ordinaryRequestWindow = -1;
+        longVideo.reset(); pendingLong = false; releaseLongRequest();
         generation++; counter.reset(); gate.cancel(); pendingAd = false; pendingVisual = false; pendingTimed = false; pendingLive = false;
         live.reset(); releaseLiveRequest();
         timed.reset(); RuntimeState.timedRemainingSeconds = -1;
         if (visual != null) visual.reset(); RuntimeState.current = 0;
     }
     private void interruptSession() {
+        if (restart.active()) { restart.suspend(); counter.reset(); return; }
         if (gate.interrupt() == AdvanceGate.State.FAILED) failClosed("전환 중 화면 변경 · 껐다 켜 주세요");
         else invalidate();
     }
     private void failClosed(String message) {
-        invalidate(); RuntimeState.blocked = true; clearLayoutQuery(); publish(0, message); ShortsTileService.refresh(this);
+        invalidate(); RuntimeState.blocked = true; clearLayoutQuery(); publish(0, "안전정지 · " + message); ShortsTileService.refresh(this);
     }
     private void clearLayoutQuery() {
         // The framework may already be disconnecting. There must be no gesture or
@@ -572,6 +778,11 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
                 + " requests=" + advanceRequests + " confirmed=" + confirmedAdvances);
         writer.println("status=" + RuntimeState.status);
         writer.println("counter=" + counter.diagnostic() + " generation=" + generation);
+        writer.println("recovering=" + restart.active() + " recoveryEntries=" + recoveryEntries
+                + " recoveryStarts=" + recoveryStarts + " recoveryEnteredAt=" + recoveryEnteredAt);
+        writer.println("skipLong=" + (store != null && store.skipLong()) + " longSeconds=" + (store == null ? -1 : store.longVideoSeconds())
+                + " longRequests=" + longRequests + " longConfirmed=" + confirmedLong + " pendingLong=" + pendingLong);
+        writer.println("longConfirmation=" + longConfirmationDiagnostic);
         writer.println("ceiling=" + (store == null ? -1 : store.ceiling()) + " tapMode=" + (store == null ? -1 : store.tapMode())
                 + " floating=" + (store != null && store.floatingEnabled()) + " app=" + activePackage);
         writer.println("ads=" + (store != null && store.skipAds()) + " adRequests=" + adRequests + " adConfirmed=" + confirmedAds);

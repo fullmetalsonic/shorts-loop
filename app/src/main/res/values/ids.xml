@@ -17,6 +17,13 @@
     <item name="app_youtube" type="id" />
     <item name="app_instagram" type="id" />
     <item name="skip_ads_toggle" type="id" />
+    <item name="long_video_panel" type="id" />
+    <item name="skip_long_toggle" type="id" />
+    <item name="long_video_support" type="id" />
+    <item name="long_video_seconds_input" type="id" />
+    <item name="long_video_seconds_minus" type="id" />
+    <item name="long_video_seconds_plus" type="id" />
+    <item name="long_video_seconds_apply" type="id" />
     <item name="live_skip_panel" type="id" />
     <item name="skip_live_toggle" type="id" />
     <item name="live_support" type="id" />

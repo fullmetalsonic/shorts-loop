@@ -18,6 +18,7 @@ import com.fullmetalsonic.shortsloop.R;
 import com.fullmetalsonic.shortsloop.core.ModePolicy;
 import com.fullmetalsonic.shortsloop.core.FeatureSupportPolicy;
 import com.fullmetalsonic.shortsloop.core.LiveSkipPolicy;
+import com.fullmetalsonic.shortsloop.core.LongVideoPolicy;
 import com.fullmetalsonic.shortsloop.data.SettingsStore;
 import com.fullmetalsonic.shortsloop.service.RuntimeState;
 import com.fullmetalsonic.shortsloop.tile.ShortsTileService;
@@ -38,7 +39,8 @@ public final class MainActivity extends Activity {
         super.onCreate(savedInstanceState); store = new SettingsStore(this);
         screen = new SettingsScreen(this, store.ceiling(), value -> { store.ceiling(value); render(); },
                 store.fallbackSeconds(), value -> { store.fallbackSeconds(value); render(); },
-                store.liveDelaySeconds(), value -> { store.liveDelaySeconds(value); render(); });
+                store.liveDelaySeconds(), value -> { store.liveDelaySeconds(value); render(); },
+                store.longVideoSeconds(), value -> { store.longVideoSeconds(value); render(); });
         setContentView(screen.root);
         updater = new UpdateController(this, screen.updates, screen.updateBanner, screen::showUpdates);
         screen.setupJump.setOnClickListener(v -> screen.showSetup(RuntimeState.connected && !hasInstalledSelection()));
@@ -51,6 +53,12 @@ public final class MainActivity extends Activity {
             store.timedFallback(true); render();
         });
         screen.skipAds.setOnCheckedChangeListener((v, checked) -> { if (!rendering) { store.skipAds(checked); render(); } });
+        screen.longVideo.toggle.setOnCheckedChangeListener((v, checked) -> {
+            if (rendering) return;
+            if (!checked) { store.skipLong(false); render(); return; }
+            if (!hasInstalledSelection() || !screen.longVideo.commit()) { render(); return; }
+            store.skipLong(true); render();
+        });
         screen.live.toggle.setOnCheckedChangeListener((v, checked) -> {
             if (rendering) return;
             if (!checked) { store.skipLive(false); render(); return; }
@@ -72,6 +80,7 @@ public final class MainActivity extends Activity {
             if (!screen.count.commit()) { render(); return; }
             if (store.ceiling() > 0 && store.timedFallback() && store.instagramEnabled() && !screen.seconds.commit()) { render(); return; }
             if (store.skipLive() && store.youtubeEnabled() && installed(YOUTUBE) && !screen.live.commit()) { render(); return; }
+            if (store.skipLong() && hasInstalledSelection() && !screen.longVideo.commit()) { render(); return; }
             if (!store.hasSelectedApps()) { toast("사용할 앱을 하나 이상 선택해 주세요."); render(); return; }
             if (!(store.youtubeEnabled() && installed(YOUTUBE)) && !(store.instagramEnabled() && installed(INSTAGRAM))) {
                 toast("선택한 앱이 설치되어 있지 않습니다."); render(); return;
@@ -99,12 +108,16 @@ public final class MainActivity extends Activity {
             boolean youtubeInstalled = installed(YOUTUBE), instagramInstalled = installed(INSTAGRAM);
             boolean instagramReady = FeatureSupportPolicy.instagramFeature(instagramInstalled, store.instagramEnabled());
             boolean youtubeReady = youtubeInstalled && store.youtubeEnabled();
+            boolean longReady = youtubeReady || instagramReady;
             screen.count.render(store.ceiling());
             screen.seconds.render(store.fallbackSeconds()); screen.seconds.setAvailable(instagramReady);
             screen.live.render(store.liveDelaySeconds()); screen.live.setAvailable(youtubeReady);
             screen.live.toggle.setChecked(store.skipLive() && youtubeReady);
             screen.live.support.setText(!youtubeInstalled ? R.string.live_youtube_missing
                     : !store.youtubeEnabled() ? R.string.live_youtube_select : R.string.live_youtube_ready);
+            screen.longVideo.render(store.longVideoSeconds()); screen.longVideo.setAvailable(longReady);
+            screen.longVideo.toggle.setChecked(store.skipLong() && longReady);
+            screen.longVideo.support.setText(longReady ? R.string.long_video_host_ready : R.string.long_video_host_unavailable);
             screen.applied.setText(store.target() == store.ceiling() ? "현재 적용: " + store.target() + "회" : "기준 " + store.ceiling() + "회 · 플로팅 현재 " + store.target() + "회");
             screen.youtube.setChecked(store.youtubeEnabled()); screen.instagram.setChecked(store.instagramEnabled());
             screen.youtube.setEnabled(youtubeInstalled); screen.instagram.setEnabled(instagramInstalled);
@@ -122,19 +135,18 @@ public final class MainActivity extends Activity {
             boolean active = store.enabled(); screen.execution.setChecked(active);
             long timedRemaining = RuntimeState.timedRemainingSeconds;
             boolean adsActive = store.skipAds() && instagramReady, liveActive = store.skipLive() && youtubeReady;
+            boolean longActive = store.skipLong() && longReady;
             String liveStatus = LiveSkipPolicy.STATUS_DELAYED.equals(RuntimeState.status) && timedRemaining > 0
                     ? getString(R.string.live_remaining, timedRemaining) : RuntimeState.status;
-            String zeroStatus = getString(R.string.zero_features_short,
-                    getString(adsActive ? R.string.feature_on_short : R.string.feature_off_short),
-                    getString(liveActive ? R.string.feature_on_short : R.string.feature_off_short));
+            String zeroStatus = LongVideoPolicy.zeroCountStatus(adsActive, liveActive, longActive);
             screen.status.setText(!active ? "꺼짐 · 준비되면 켜 주세요" : RuntimeState.blocked ? RuntimeState.status
-                    : store.target() == 0 ? zeroStatus + (LiveSkipPolicy.isLiveStatus(RuntimeState.status) ? "\n" + liveStatus : "")
+                    : store.target() == 0 ? zeroStatus + (LiveSkipPolicy.isLiveStatus(RuntimeState.status)
+                            || LongVideoPolicy.CHECKING.equals(RuntimeState.status) || LongVideoPolicy.CONFIRMING.equals(RuntimeState.status)
+                            ? "\n" + liveStatus : "")
                     : LiveSkipPolicy.isLiveStatus(RuntimeState.status) ? liveStatus
                     : timedRemaining >= 0 ? "시간제 · " + timedRemaining + "초 남음 · " + RuntimeState.status
                     : RuntimeState.current + "/" + store.target() + " · " + RuntimeState.status);
-            screen.status.setContentDescription(active && !RuntimeState.blocked && store.target() == 0
-                    ? screen.status.getText() + ". " + LiveSkipPolicy.zeroCountStatus(adsActive, liveActive)
-                    : screen.status.getText());
+            screen.status.setContentDescription(screen.status.getText());
             screen.status.setTextColor(RuntimeState.blocked ? UiTheme.WARNING : active ? UiTheme.CYAN : UiTheme.MUTED);
             boolean access = RuntimeState.connected, overlay = Settings.canDrawOverlays(this);
             screen.permissionStatus.setText(!access ? getString(R.string.accessibility_reconnect_help)

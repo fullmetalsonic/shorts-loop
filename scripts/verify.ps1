@@ -69,6 +69,51 @@ try {
         if (-not $taskService.Contains($taskGuard)) { throw 'In-flight request interruption protection changed; review service wiring.' }
     }
     'ADVANCE_INTERRUPTION_WIRING_AUDIT=PASS'
+    foreach ($taskGuard in @('if (state == AdvanceGate.State.FAILED) { advanceTimedOut(); return; }',
+        'PlaybackRestart.ordinaryRequest(pendingAd, pendingLive, pendingTimed, pendingVisual, pendingLong)',
+        'if (restart.active()) { observeRestart(snapshot, now); return; }',
+        'restart.cancel(); ordinaryRequestWindow = -1;', 'restart.accepts(activePackage, snapshot.windowId)',
+        'counter.observe(start.progress, snapshot.identity, start.at);',
+        'if (generation == requestGeneration) failClosed(')) {
+        if (-not $taskService.Contains($taskGuard)) { throw "Fresh-start recovery wiring changed: $taskGuard" }
+    }
+    if ($taskService.IndexOf('if (restart.active()) { observeRestart(snapshot, now); return; }') -gt $taskService.IndexOf('if (snapshot.live) {')) {
+        throw 'Recovery must be handled before every special-content skip path.'
+    }
+    $taskRecoveryMethod = [regex]::Match($taskService, '(?s)private void observeRestart\(.*?(?=private YouTubeSnapshot snapshot\()').Value
+    if ($taskRecoveryMethod -match 'dispatchGesture|advanceRequests\+\+|confirmedAdvances\+\+|advance\(snapshot\)') {
+        throw 'Fresh-start recovery must only observe, never swipe or confirm the old request.'
+    }
+    'PLAYBACK_RESTART_WIRING_AUDIT=PASS'
+    foreach ($taskGuard in @('pendingLong ? inspectLongTransition(snapshot, now)',
+        'gate.inspectLongPage(identity, safe ? value.progress : null, safe && longPagerChanged, now)',
+        'gate.inspectContentPage(identity, safe ? value.progress : null,',
+        'YouTubePageStepPolicy.permits(longRequestRow, longCurrentRow)',
+        'youtubeContent && YouTubePageStepPolicy.next(longRequestRow, longCurrentRow)',
+        'longRequestRow = readYouTubeRow(fresh);',
+        'if (longCandidate(snapshot)) {', 'if (due) advanceLong(snapshot);',
+        'longVideo.consume();', 'dispatchPageSwipe(fresh, false, true);',
+        'LiveTransitionPolicy.accepts(longRequestedAt, event.getEventTime()',
+        'longRequestPager != null && longRequestPager.equals(source)',
+        'else if (unresolvedLongAttempt && store.enabled())',
+        '"skip_long".equals(key)', '"long_video_seconds".equals(key)')) {
+        if (-not $taskService.Contains($taskGuard)) { throw "Long video filter wiring changed: $taskGuard" }
+    }
+    if ($taskService.IndexOf('if (longCandidate(snapshot)) {') -gt $taskService.IndexOf('if (store.target() == 0) {') -or
+        $taskService.IndexOf('if (longCandidate(snapshot)) {') -lt $taskService.IndexOf('if (snapshot.ad) {')) {
+        throw 'Long filtering must follow ads/live but precede ordinary zero-count handling.'
+    }
+    'LONG_VIDEO_WIRING_AUDIT=PASS'
+    foreach ($taskGuard in @('longRequestContent && YouTubeReader.PACKAGE.equals(activePackage) && !value.live && !value.ad',
+        '!longRequestPager.equals(chosen)', '!longRequestPageBounds.equals(expected.page)',
+        '!longRequestWindowBounds.equals(allowed)',
+        'YouTubeSnapshot after = reader.read(root, store);',
+        '!Objects.equals(after.contentIdentity, expected.contentIdentity)',
+        'longRequestRow = longCurrentRow = YouTubePageStepPolicy.UNKNOWN;')) {
+        if (-not $taskService.Contains($taskGuard)) { throw "YouTube page ordinal guard changed: $taskGuard" }
+    }
+    if ($taskService -match 'youtube-structure|structureScroll|YouTubeStructureProbe') { throw 'Temporary structural probe must not ship.' }
+    'YOUTUBE_PAGE_POSITION_WIRING_AUDIT=PASS'
     $taskFacade = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/java/com/fullmetalsonic/shortsloop/visual/VisualAssistController.java') -Raw
     $taskVisual = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/java/com/fullmetalsonic/shortsloop/visual/Api34VisualAssistController.java') -Raw
     [xml]$taskAccessibility = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/res/xml-v34/accessibility_service.xml') -Raw
@@ -125,7 +170,7 @@ try {
         throw 'Timed errors must not be shown as an in-flight next-page request.'
     }
     'TIMED_PENDING_LABEL_AUDIT=PASS'
-    if (-not $taskService.Contains('if (store.target() == 0 && !adSkippingEnabled() && !liveSkippingEnabled())') -or
+    if (-not $taskService.Contains('if (store.target() == 0 && !adSkippingEnabled() && !liveSkippingEnabled() && !longSkippingEnabled())') -or
         -not $taskService.Contains('AdSkipPolicy.enabled(store.enabled(), store.skipAds(), store.instagramEnabled())') -or
         $taskService -notmatch '(?s)if \(store.target\(\) == 0\) \{\s*counter.reset\(\); timed.reset\(\); visual.reset\(\);[^}]+return;' -or
         $taskService.IndexOf('if (snapshot.ad) {') -gt $taskService.IndexOf('if (store.target() == 0) {') -or
@@ -148,7 +193,7 @@ try {
     # Guard the service-level lifecycle paths as well as the pure host policy.
     if (-not $taskService.Contains('LiveTreePolicy.includeLayoutNodes(store.enabled() && !RuntimeState.blocked,') -or
         $taskService -notmatch '(?s)if \(configureLiveTree\(pkg\)\) return YouTubeSnapshot.unavailable' -or
-        $taskService -notmatch '(?s)store.target\(\) == 0 && !adSkippingEnabled\(\) && !liveSkippingEnabled\(\)\) \{\s*clearLayoutQuery\(\);' -or
+        $taskService -notmatch '(?s)store.target\(\) == 0 && !adSkippingEnabled\(\) && !liveSkippingEnabled\(\) && !longSkippingEnabled\(\)\) \{\s*clearLayoutQuery\(\);' -or
         $taskService -notmatch 'RuntimeState.blocked = true; clearLayoutQuery\(\);' -or
         $taskService -notmatch '(?s)void onDestroy\(\) \{\s*handler.removeCallbacksAndMessages\(null\); invalidate\(\);\s*clearLayoutQuery\(\);') {
         throw 'Live tree mode must re-read on change and clear on blocked, idle and shutdown paths.'
