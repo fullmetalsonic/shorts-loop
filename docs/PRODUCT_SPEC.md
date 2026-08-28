@@ -1,14 +1,14 @@
 # 제품 기준 · ShortsLoop 0.2.6
 
-## 현재 0.2.6/code28 · 게시 준비 / Publication pending
+## 현재 0.2.6/code28 · Public 시험판 공개 / Published pre-release
 
-**0.2.6/code28은 로컬 PC·기기 검증을 마친 공개 시험판(pre-release) 게시 준비 상태이며 아직 미게시다.** YouTube의 같은 창·pager·전체 페이지에서 현재 행이 요청 행보다 정확히1 증가하는 근거를 보강했다. 최종 빌드·468JUnit·정적 가드 PASS,lint0오류/기존3경고,동일APK API26/33/34 계측233/233/232 PASS와 설치·설정 보존·접근성·런타임·해시 일치를 확인했다. YouTube20회는148.6초 동안 요청20/확인20(일반4·긴 영상15·라이브1),수동0·실패0·복구0으로 PASS했다. 같은 길이 영상 쌍은 이 실기기20회에 없었으므로 해당 조건의 실기기 재현 성공을 주장하지 않는다.
+**0.2.6/code28 공개 시험판(pre-release)을 게시하고 공개 파일 검증까지 완료했다.** YouTube의 같은 창·pager·전체 페이지에서 현재 행이 요청 행보다 정확히1 증가하는 근거를 보강했다. 최종 빌드·468JUnit·정적 가드 PASS,로컬lint0오류/기존3경고,동일APK API26/33/34 계측233/233/232 PASS와 설치·설정 보존·접근성·런타임·해시 일치를 확인했다. YouTube20회는148.6초 동안 요청20/확인20(일반4·긴 영상15·라이브1),수동0·실패0·복구0으로 PASS했다. 같은 길이 영상 쌍은 이 실기기20회에 없었으므로 해당 조건의 실기기 재현 성공을 주장하지 않는다.
 
-**0.2.6/code28 has completed local PC/device verification and is ready for public pre-release delivery,but is not yet published.** It adds exact current-row=request-row+1 evidence within the same YouTube window,pager and full-page bounds. Build,468 JUnit tests,static guards,233/233/232 exact-APK API26/33/34 checks and installation/settings/accessibility/runtime/hash parity passed;lint has0 errors/3 existing warnings. YouTube20 passed in148.6 seconds with20 requests/20 confirmations:4 ordinary,15 long-video,1 live,and0 manual swipes,failures or recoveries. No equal-duration pair occurred in this run,so that precise physical case is not claimed as reproduced.
+**0.2.6/code28 is published as a public pre-release,and public artifact verification is complete.** It adds exact current-row=request-row+1 evidence within the same YouTube window,pager and full-page bounds. Build,468 JUnit tests,static guards,233/233/232 exact-APK API26/33/34 checks and installation/settings/accessibility/runtime/hash parity passed;local lint has0 errors/3 existing warnings. YouTube20 passed in148.6 seconds with20 requests/20 confirmations:4 ordinary,15 long-video,1 live,and0 manual swipes,failures or recoveries. No equal-duration pair occurred in this run,so that precise physical case is not claimed as reproduced.
 
-**이번 code26→code28 YouTube 보완에서** Instagram의 일반 확인 경로와 `AdvanceGate`는 변경하지 않았다.0.2.5→0.2.6 전체에서 아무 변화가 없었다는 뜻은 아니다. code26의 Instagram10회 PASS(96.0초,일반3·긴 영상4·시간제2·광고1,수동0)는 해당 버전의 실기기 근거로 보존하고 이번에는 전체10회를 반복하지 않는다. 이 과거 결과를 새 code28 APK에서 Instagram을 재실행한 것처럼 표시하지 않는다. YouTube 재시험과 영향 범위 검증은 통과했으며,기존 Public 저장소에v0.2.6/code28 pre-release를 게시한 뒤 CI·공개 다운로드 동일성을 별도로 확인한다. 현재는 게시 전이다.
+**이번 code26→code28 YouTube 보완에서** Instagram의 일반 확인 경로와 `AdvanceGate`는 변경하지 않았다.0.2.5→0.2.6 전체에서 아무 변화가 없었다는 뜻은 아니다. code26의 Instagram10회 PASS(96.0초,일반3·긴 영상4·시간제2·광고1,수동0)는 해당 버전의 실기기 근거로 보존하고 이번에는 전체10회를 반복하지 않는다. 이 과거 결과를 새 code28 APK에서 Instagram을 재실행한 것처럼 표시하지 않는다. YouTube 재시험과 영향 범위 검증 후 기존 Public 저장소에v0.2.6/code28 pre-release를 게시했으며 CI·공개 다운로드 동일성도 확인했다.
 
-**For this code26→code28 YouTube correction**,the generic Instagram path and AdvanceGate are unchanged from code26;this does not mean they were unchanged throughout0.2.5→0.2.6. Code26's Instagram10 PASS(96.0 seconds:3 ordinary,4 long-video,2 timed,1 ad;0 manual swipes) is retained as version-specific evidence without repeating the full run. It is not described as a new Instagram test on code28. The YouTube retest and impact-scope checks passed. Planned delivery is v0.2.6/code28 as a pre-release in the existing Public repository,followed by separate CI/public-download parity checks;publication is still pending.
+**For this code26→code28 YouTube correction**,the generic Instagram path and AdvanceGate are unchanged from code26;this does not mean they were unchanged throughout0.2.5→0.2.6. Code26's Instagram10 PASS(96.0 seconds:3 ordinary,4 long-video,2 timed,1 ad;0 manual swipes) is retained as version-specific evidence without repeating the full run. It is not described as a new Instagram test on code28. After the YouTube retest and impact-scope checks passed,v0.2.6/code28 was published as a pre-release in the existing Public repository. CI and public-download parity were verified.
 
 ## 이전 code26 검증 요약 / Previous candidate evidence
 
@@ -16,7 +16,7 @@
 
 ## 현재 계약 · 0.2.6(code28) 새 시작점 복구·긴 영상 후보
 
-0.2.6은 검증 중인 후보이며 일반 진행 정보 기반 넘김 요청의 **4.5초 전환 확인 시간 초과**만 제한적으로 자동 복구한다. 추가 스와이프 없이 같은 요청 앱·창에서 현재의 안전한 일반 영상을 관측한다. 시작 부근(`min(1초, 영상 길이의10%)` 이내) 표본과300ms~3초 이내의 정상 전진 재생을 확인하면 이전 누적값을 버리고 기존 정상 카운터로 설정 횟수를 다시 센다. 시작 확인 자체는 넘김 요청이 아니며, 0초 한 표본·정지0초·시간 경과만으로 복구하지 않는다.
+공개 시험판0.2.6/code28은 일반 진행 정보 기반 넘김 요청의 **4.5초 전환 확인 시간 초과**만 제한적으로 자동 복구한다. 추가 스와이프 없이 같은 요청 앱·창에서 현재의 안전한 일반 영상을 관측한다. 시작 부근(`min(1초, 영상 길이의10%)` 이내) 표본과300ms~3초 이내의 정상 전진 재생을 확인하면 이전 누적값을 버리고 기존 정상 카운터로 설정 횟수를 다시 센다. 시작 확인 자체는 넘김 요청이 아니며, 0초 한 표본·정지0초·시간 경과만으로 복구하지 않는다.
 
 긴 영상·광고·라이브·시간제·화면 분석 실패, 제스처 거부/취소, 권한 문제와 전환 중 앱·창 이탈 등 기존 안전정지는 유지한다. 복구 대기에서 긴 영상·광고·라이브·시간제·화면 분석으로 우회 이동하지 않는다. 전체OFF·목표0·설정 변경과 서비스 재연결의 기존 계약이 우선한다. 플로팅의 복구 대기·안전정지를 정상 회차와 구분한다. 상세 상태·예방 시험은 [PLAYBACK_RECOVERY](PLAYBACK_RECOVERY.md)를 따른다.
 
