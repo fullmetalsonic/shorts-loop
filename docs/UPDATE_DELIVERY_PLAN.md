@@ -1,22 +1,38 @@
 # 통합 업데이트 계획 · 2026-08-28
 
+## 공개 완료 / Published delivery
+
+2026-08-28 10:57 KST에 **0.2.5/code21을 기존 Public 저장소의 시험판으로 공개**했다. [v0.2.5 Release](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.5), main·태그 기준 코드 커밋 `689ea8f704792e5bc2dcf3a9089a5f5a3481fdf5`, draft=false/prerelease=true. [CI33134278633](https://github.com/fullmetalsonic/shorts-loop/actions/runs/33134278633) 성공: 내려받은 보고서356시험·실패0·오류0·건너뜀0, CI lint0오류/2경고(로컬 기존3경고와 구분). 익명 릴리스HTTP200 및 배포파일3개(APK709703bytes/SHA96bytes/JSON287bytes)의 원본 대비 크기·SHA-256 일치를 확인했다. 이후 문서 정리는 제품 소스·APK를 바꾸지 않는다.
+
+**Version0.2.5/code21 was published as a Public prerelease at10:57 KST on2026-08-28**, from code commit `689ea8f704792e5bc2dcf3a9089a5f5a3481fdf5` and tagv0.2.5. CI33134278633 succeeded with356 tests and zero failures/errors/skips; CI lint reported0 errors/2 warnings, separately from3 local warnings. Anonymous release access returnedHTTP200 and all three uploaded assets matched their originals byte-for-byte and by SHA-256. Subsequent documentation changes do not alter product source or the APK.
+
+공개 후10:58~10:59, 설치된code21 앱의 업데이트 확인을 실제 실행해 새 업데이트 없음 안내·조회 시각 갱신을 확인했다. 실제 Public HTTPS 조회와 현재 버전 안내는PASS이며 새 버전 다운로드/설치 재시험은 아니다. 업데이트 자동조회ON·전체실행OFF를 유지했다.
+
+At10:58–10:59, the installed code21 app successfully checked the public release over HTTPS, displayed no applicable newer update and updated its attempt timestamp. This verifies current-version checking, not a new-version download or installation. Automatic checking remained ON and overall execution OFF.
+
+v2서명·기존 인증서·메타데이터21/0.2.5/min26·10:51 설치본 동일성PASS. 공개 후보169개 독립 민감정보 감사·224개 로컬 링크(누락0)도PASS. 서명 인증서와 파일별 검증 범위는 [검증 원장](VERIFICATION.md)을 따른다. 메일 발송 없음.
+
+EN: APK signature/certificate continuity, metadata and installed parity passed, as did the169-file publication audit and224 local links. See the verification ledger for exact values and scope. No email was sent.
+
 ## 현재 체크포인트 / Current checkpoint
 
-**최신0.2.5/code21은 PC 검증·휴대폰 설치 완료, 미게시**다.709703bytes, SHA256 `6095BC8C22BD49AACA348E7D1C048301A9E229C92288D1620439F047179E16B2`로 고정했다.356시험·빌드·lint0오류/기존3경고·LIVE_TREE_LIFECYCLE 포함 정적가드 PASS.10:39 동일 APK API26/33/34 계측74/74/73,10:40 code21 설치·접근성bound·prefs·설치해시 PASS. 최종 조회 원복 독립리뷰 추가P1/P2 없음.
+**최신0.2.5/code21은 PC 검증·휴대폰 설치·Public 공개 완료**다.709703bytes, SHA256 `6095BC8C22BD49AACA348E7D1C048301A9E229C92288D1620439F047179E16B2`로 고정했다.356시험·빌드·lint0오류/기존3경고·LIVE_TREE_LIFECYCLE 포함 정적가드 PASS.10:39 동일 APK API26/33/34 계측74/74/73,10:40 code21 설치·접근성bound·prefs·설치해시 PASS. 최종 조회 원복 독립리뷰 추가P1/P2 없음.
 
-**Current0.2.5/code21 is PC-verified and phone-installed, but unpublished.** Its709703-byte frozen APK matches the SHA-256 above. Final build/356 tests/lint/static guards,74/74/73 exact-APK emulator checks and phone binding/preferences/hash passed. Final review reported no additionalP1/P2 findings.
+**Current0.2.5/code21 is PC-verified, phone-installed and publicly released.** Its709703-byte frozen APK matches the SHA-256 above. Final build/356 tests/lint/static guards,74/74/73 exact-APK emulator checks and phone binding/preferences/hash passed. Final review reported no additionalP1/P2 findings.
 
-**code21 공식 YouTube10연속 PASS**:10:40:41→10:47:45.702,424.5초,확인0→10/세대6,수동 입력·앱 전환 없음,라이브0. 전환1~10 화면을 모두 육안 확인해 서로 다른 정상 전체화면 영상·플로팅과 올바른 이동을 확인했다. code20 외부 중단/개별 라이브/목표 이후 추가 관측을 합산하지 않는다. 약10:50 플로팅X 전체OFF 확인,10:51 업데이트 자동조회 선택ON 복원·UI/저장값 확인. code21 라이브 개별 재시험·20연속은 미완료이고 D-021은 미수정이다. 현재미게시이며 다음 단계는 최종 공개·CI·익명APK·해시 일치 확인이다.
+**code21 공식 YouTube10연속 PASS**:10:40:41→10:47:45.702,424.5초,확인0→10/세대6,수동 입력·앱 전환 없음,라이브0. 전환1~10 화면을 모두 육안 확인해 서로 다른 정상 전체화면 영상·플로팅과 올바른 이동을 확인했다. code20 외부 중단/개별 라이브/목표 이후 추가 관측을 합산하지 않는다. 약10:50 플로팅X 전체OFF 확인,10:51 업데이트 자동조회 선택ON 복원·UI/저장값 확인. code21 라이브 개별 재시험·20연속은 미완료이고 D-021은 미수정이다. 공개·CI·익명 배포파일·해시 일치 확인은 완료했으며 상세 결과는 위 공개 기록을 따른다.
 
-**Code21 passed the official10-transition YouTube run** in424.5 seconds(10:40:41→10:47:45.702),confirmation0→10,generation6,no manual input/app changes,zero live skips. All10 transition screens were visually reviewed. Code20 trials and post-target observations are not added. FloatingX stopped execution around10:50;the automatic-update preference was restored to ON and checked in UI/storage at10:51. Individual code21 live retests,20-transition completion and D-021 remain separate limitations. Publication/CI/anonymous download/hash checks are the next stage and have not yet occurred.
+**Code21 passed the official10-transition YouTube run** in424.5 seconds(10:40:41→10:47:45.702),confirmation0→10,generation6,no manual input/app changes,zero live skips. All10 transition screens were visually reviewed. Code20 trials and post-target observations are not added. FloatingX stopped execution around10:50;the automatic-update preference was restored to ON and checked in UI/storage at10:51. Individual code21 live retests,20-transition completion and D-021 remain separate limitations. Publication, CI and anonymous asset/hash checks passed as recorded above.
 
-**0.2.5/code20 확정 후보, 미게시**다. 고정 APK725487bytes, SHA256 `EF59D4E40E192A89D5B207741B03CCE08FA11AC1079DC61C7776C19A1D3D60EB`. cleanup 포함 최종356제품시험·빌드·lint0오류/기존3경고,10:30 동일 후보 API26/33/34 계측74/74/73 PASS. 휴대폰 설치 준비·설정 보존·설치본 해시도 PASS했다. 이전 cleanup 전 시험을 최종 결과로 대신한 것이 아니다.
+## 과거 code20·18 후보 / Historical candidates
 
-**Unpublished0.2.5/code20** is now frozen at725487bytes with the SHA-256 above. Its final cleanup-inclusive356-test run, build, lint(0 errors/3 existing warnings),74/74/73 exact-candidate emulator checks and phone installation/preferences/hash passed.
+**0.2.5/code20은 당시 확정된 미게시 후보**다. 고정 APK725487bytes, SHA256 `EF59D4E40E192A89D5B207741B03CCE08FA11AC1079DC61C7776C19A1D3D60EB`. cleanup 포함 최종356제품시험·빌드·lint0오류/기존3경고,10:30 동일 후보 API26/33/34 계측74/74/73 PASS. 휴대폰 설치 준비·설정 보존·설치본 해시도 PASS했다. 이전 cleanup 전 시험을 최종 결과로 대신한 것이 아니다.
 
-실기기5초 지연은10:30:29 대기→34 요청→35 확인1·일반25초 영상 진입,0초/반복0회는10:34:31 준비→33 요청→34 확인2→3,라이브OFF는10:33:33~39 요청2/확인2 유지로 각각PASS했다. 메인 화면에 권한 경고가 없음을 육안 확인했다. 새10연속은10:35:28 확인기준3/세대30에서 시작해2회 확인 후10:37:17 외부 앱 전환으로 중단됐으며, 새 Public·CI·익명 재다운로드도 미수행이다.
+**Unpublished0.2.5/code20** was frozen at725487bytes with the SHA-256 above. Its final cleanup-inclusive356-test run, build, lint(0 errors/3 existing warnings),74/74/73 exact-candidate emulator checks and phone installation/preferences/hash passed.
 
-Device5-second delay, immediate skipping at zero normal plays, and live-OFF waiting each passed; the main UI showed no permission warning. The10-transition run began separately at10:35:28 from confirmation baseline3/generation30 and ended externally at10:37:17 after two confirmations. Publication, release CI and anonymous redownload are pending.
+실기기5초 지연은10:30:29 대기→34 요청→35 확인1·일반25초 영상 진입,0초/반복0회는10:34:31 준비→33 요청→34 확인2→3,라이브OFF는10:33:33~39 요청2/확인2 유지로 각각PASS했다. 메인 화면에 권한 경고가 없음을 육안 확인했다. 새10연속은10:35:28 확인기준3/세대30에서 시작해2회 확인 후10:37:17 외부 앱 전환으로 중단됐으며, code20의 Public·CI·익명 재다운로드는 당시 미수행으로 보존한다.
+
+Device5-second delay, immediate skipping at zero normal plays, and live-OFF waiting each passed; the main UI showed no permission warning. The10-transition run began separately at10:35:28 from confirmation baseline3/generation30 and ended externally at10:37:17 after two confirmations. Code20 was not published; those publication checks were unperformed at that checkpoint.
 
 code19의 라이브ON 조건부 조회는 중간안이다. code20은 라이브OFF에서도 일반→라이브 전환을 확인하고 pending 중 조회형태를 유지하도록 옵션과 조회 조건을 분리했다. 전체실행ON·YouTube선택·전면YouTube에서 확장하고 다른 앱/전체OFF는 기존 조회,모드 변경 후 이전 root 폐기,failClosed/onDestroy 기본 조회 원복이다. 새 권한은 없다.
 
@@ -61,7 +77,7 @@ HTTPS·정확한호스트/저장소 경로 허용목록·매리다이렉트 검�
 
 계측 후 접근성 enabled가 남아 있어도 서비스가 실제로 bound 상태인 것은 아니다. D-031처럼 계측에 의한 강제 종료가 확인되면 원인을 구분한 뒤 수동 OFF→ON 재연결과 상태 복구를 확인한다. 이유 없이 권한을 반복 설정하도록 안내하지 않으며, 계측 후유증을 제품 코드 크래시로 단정하지 않는다.
 
-검증 한계: 동일 서명 APK의 정상 설치와 서명 비교 소스 리뷰는 수행했다. **다른 키로 서명한 실물 APK의 설치 전 거부 시험은 미실행**이며 자동시험 PASS로 포함하지 않는다. code20의 최종 빌드·기기 설치·개별 라이브 시험은 통과했으며 남은 연속·게시 상태는 [검증 기록](VERIFICATION.md)을 따른다. code18 합성 계측은 실제 YouTube 노드 노출을 검증하지 못했으므로 기기에서 같은 조회 조건을 확인하는 단계를 생략하지 않는다.
+검증 한계: 동일 서명 APK의 정상 설치와 서명 비교 소스 리뷰는 수행했다. **다른 키로 서명한 실물 APK의 설치 전 거부 시험은 미실행**이며 자동시험 PASS로 포함하지 않는다. code20의 개별 라이브 시험과 공개code21의10연속·배포 검증은 각각 통과했으며 남은 개별 라이브 재시험·20연속 상태는 [검증 기록](VERIFICATION.md)을 따른다. code18 합성 계측은 실제 YouTube 노드 노출을 검증하지 못했으므로 기기에서 같은 조회 조건을 확인하는 단계를 생략하지 않는다.
 
 ## 근거
 

@@ -1,11 +1,11 @@
 # 쇼츠 자동 넘김 · ShortsLoop 0.2.5 (시험판 / Prerelease)
 
-**0.2.5(code21)는 검증·공개 준비 중입니다.** [Android 버전별 기능 안내](docs/COMPATIBILITY.md), GitHub 인앱 업데이트, 사용 빈도에 따른 메뉴 배치와 선택형 YouTube 라이브 미리보기 넘김을 통합했습니다. 구형 OS에서는 지원하지 않는 화면 분석만 비활성화하고 기본 기능은 유지합니다. 최종 검증·게시 결과는 [VERIFICATION](docs/VERIFICATION.md) 참조.<br>
-**0.2.5 (code21) is undergoing verification and release preparation.** It combines [per-Android feature guidance](docs/COMPATIBILITY.md), in-app GitHub updates, reordered settings and optional YouTube live-preview skipping. Unsupported visual analysis does not disable basic features. See VERIFICATION for final test and publication results.
+**0.2.5(code21) 공개 시험판입니다.** [Android 버전별 기능 안내](docs/COMPATIBILITY.md), GitHub 인앱 업데이트, 사용 빈도에 따른 메뉴 배치와 선택형 YouTube 라이브 미리보기 넘김을 통합했습니다. 구형 OS에서는 지원하지 않는 화면 분석만 비활성화하고 기본 기능은 유지합니다. 빌드·356제품시험·일반 YouTube10연속 및 공개 파일 동일성을 확인했습니다. [검증과 한계](docs/VERIFICATION.md).<br>
+**0.2.5(code21) is a public prerelease.** It combines [per-Android feature guidance](docs/COMPATIBILITY.md), in-app GitHub updates, reordered settings and optional YouTube live-preview skipping. Unsupported visual analysis does not disable basic features. Build,356 product tests,ten consecutive ordinary YouTube transitions and public-artifact parity passed. See the linked verification record for limits.
 
-일반 YouTube 쇼츠와 Instagram 릴스를 정한 횟수만큼 보고 다음 영상으로 넘기는 Android 시험판입니다. 이전 **0.2.4는 Public 공개판**이며 **20연속 전환 시험은 미완료**입니다. 안정성을 보장하지 않으며 과거 결과로 0.2.5를 검증한 것으로 보지 않습니다.
+일반 YouTube 쇼츠와 Instagram 릴스를 정한 횟수만큼 보고 다음 영상으로 넘기는 Android 시험판입니다. **20연속 전환 시험은 미완료**입니다. 모든 영상·기기에서의 안정성을 보장하지 않으며 이전 버전의 결과와 이번 검증을 구분합니다.
 
-An experimental Android app that advances supported YouTube Shorts and Instagram Reels after a chosen number of plays. **The previous 0.2.4 is a public prerelease; its 20-consecutive-transition test remains incomplete.** Reliability is not guaranteed, and historical results do not verify 0.2.5.
+An experimental Android app that advances supported YouTube Shorts and Instagram Reels after a chosen number of plays. **Twenty-consecutive-transition testing remains incomplete.** Reliability across every video/device is not guaranteed; historical results remain separate from this release's checks.
 
 **진행 정보 없는 Instagram 영상만 시간제로 넘김.** 기본 OFF·10초, 숫자 입력과 ＋/－로 5~60초를 1초씩 조절합니다. 정상 진행 정보가 있는 영상과 YouTube는 기존 재생 횟수대로 넘깁니다. 반복 2회/시간 10초이면 정상 영상은 2회, 정보 없는 대상 영상은 **총 10초** 뒤 이동합니다. 완주 횟수나 영상 길이를 알아내는 기능은 아닙니다. [설정·안전 동작·검증](docs/TIMED_FALLBACK.md).
 
@@ -19,7 +19,7 @@ An experimental Android app that advances supported YouTube Shorts and Instagram
 
 **The existing visual-assist trial remains optional.** It is OFF by default, separately consented, Android 14+, and RAM-only. Timed fallback takes priority when both are enabled, preserving the visual preference. Learning can add plays; exact total N is not guaranteed.
 
-[0.2.5 공개 예정 / Planned release, not yet published](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.5) · [이전 0.2.4 다운로드 / Previous release](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.4) · [검증 / Verification](docs/VERIFICATION.md)
+[0.2.5 다운로드 / Download](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.5) · [이전 0.2.4 / Previous release](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.4) · [검증 / Verification](docs/VERIFICATION.md)
 
 ## 주요 기능 / Features
 
@@ -47,8 +47,8 @@ An experimental Android app that advances supported YouTube Shorts and Instagram
 Android 8.0(API26) 이상이 설치 대상입니다. 공식 YouTube 설치 안내는 Android 9 이상이며 Instagram의 최소 OS는 확인되지 않아 기기 Play 스토어의 호환 여부를 확인해야 합니다. API29부터 타일 상태줄, API33부터 인앱 타일 추가 요청, API34부터 화면 분석 시험을 지원합니다. [지원표와 근거](docs/COMPATIBILITY.md). 과거 실기기 시험은 Galaxy Z Fold8 / Android17에서 했으며 모든 기기를 보장하지 않습니다. 인앱 언어는 현재 한국어입니다.<br>
 The app minimum is Android 8.0/API26. YouTube's official requirement is Android 9+; Instagram's minimum is unverified, so check its device Play Store listing. Tile subtitles require API29, in-app tile-add requests API33, and visual assist API34. See the linked support table and sources. Earlier device tests used Galaxy Z Fold8 / Android17, not every device. The interface is currently Korean.
 
-1. **0.2.5가 공개된 뒤** Release의 개발 서명 APK와 SHA256을 확인해 설치하세요. 현재 이 문서는 공개 준비 안내이며, 위 예정 링크는 게시 전에는 열리지 않을 수 있습니다. Play Store 배포본이 아닙니다. **0.2.4에는 인앱 업데이트가 없으므로 0.2.5 최초 설치는 브라우저 등에서 APK를 직접 받아 덮어쓰기 설치해야 합니다.**<br>
-   **After 0.2.5 is published**, download its development-signed APK and verify the release SHA256. The planned link may be unavailable before publication. This is not a Play Store release. **0.2.4 has no updater: manually download and install 0.2.5 over the existing app first.**
+1. 위0.2.5 Release에서 개발 서명 APK를 내려받고 첨부 SHA256을 확인해 설치하세요. Play Store 배포본이 아닙니다. **0.2.4에는 인앱 업데이트가 없으므로 0.2.5 최초 설치는 브라우저 등에서 APK를 직접 받아 덮어쓰기 설치해야 합니다.**<br>
+   Download the development-signed APK from the0.2.5 release above and verify its SHA256. This is not a Play Store release. **0.2.4 has no updater: manually download and install0.2.5 over the existing app first.**
 2. 신뢰할 수 있는 출처인지 확인한 뒤 Android 설치 안내에 따릅니다. 출처를 알 수 없는 앱 설치 허용이 필요할 수 있습니다. 기존 YouTube·Instagram은 수정하지 않습니다.<br>
    Verify the source and follow Android's installation prompts, including permission to install from that source if needed. YouTube and Instagram are not modified.
 3. 앱을 열고 **사용할 앱**을 선택한 뒤 **일반 영상 · 횟수로 넘김**에서 반복 횟수 `2` 입력 → **입력한 횟수 적용** 또는 키보드 완료. 시간제·광고·라이브는 각각 별도 항목에서 켭니다.<br>
@@ -102,8 +102,8 @@ This option applies only to explicitly recognized live previews inside YouTube S
 대기 시간은 **0~60초, 기본 0초**입니다. 0초는 인식·안전 확인 후 바로 넘기기, 예를 들어 5초는 인식 후 5초 기다리기입니다. 숫자 입력 후 완료/‘입력한 라이브 시간 적용’을 누르거나 −/+로 1초씩 바꿉니다. 빈칸·부호·소수·61 이상은 적용하지 않습니다. **반복 0회(일반 반복 중지)와 라이브 0초(바로 넘기기)는 다른 설정**입니다.<br>
 The wait is **0–60 seconds, initially 0**. Zero means advance after recognition and safety checks; five waits five seconds after recognition. Type a value and press Done/Apply, or use one-second −/+ controls. Empty, signed, fractional or over-60 input is rejected. **Zero plays stops normal repetition; zero live seconds means immediate skipping.**
 
-일반 영상 N회·Instagram 시간제는 바꾸지 않습니다. 일반 라이브 시청 화면이나 ‘라이브’라는 글자만으로 판단하지 않으며, 부분 표시·댓글·메뉴·불명확한 화면에서는 기다립니다. 방송 참여 버튼은 누르지 않습니다. 다음 페이지를 확실히 구분하지 못하면 중복 이동 대신 안전 정지할 수 있습니다. 새 권한·OCR·화면/소리 분석은 사용하지 않습니다. 현재 code21은 실기기 검증·공개 전입니다. [동작과 한계](docs/LIVE_SKIP.md).<br>
-Normal repeat counting and Instagram timers are unchanged. Ordinary live watch screens or the word “live” alone are insufficient; partial, blocked or ambiguous pages wait. No join button is clicked. Uncertain page changes can safety-stop instead of issuing duplicate moves. No new permission, OCR, image or audio analysis is used. code21 remains under verification and unpublished.
+일반 영상 N회·Instagram 시간제는 바꾸지 않습니다. 일반 라이브 시청 화면이나 ‘라이브’라는 글자만으로 판단하지 않으며, 부분 표시·댓글·메뉴·불명확한 화면에서는 기다립니다. 방송 참여 버튼은 누르지 않습니다. 다음 페이지를 확실히 구분하지 못하면 중복 이동 대신 안전 정지할 수 있습니다. 새 권한·OCR·화면/소리 분석은 사용하지 않습니다. code20에서 라이브0초·5초·OFF를 실제 확인했고, 조회 설정 원복을 보강한 code21에서는 일반 YouTube10연속을 통과했습니다. code21의 개별 라이브3조건은 재시험하지 않았습니다. [동작과 한계](docs/LIVE_SKIP.md).<br>
+Normal repeat counting and Instagram timers are unchanged. Ordinary live watch screens or the word “live” alone are insufficient; partial, blocked or ambiguous pages wait. No join button is clicked. Uncertain page changes can safety-stop instead of issuing duplicate moves. No new permission, OCR, image or audio analysis is used. Code20 passed actual0-second/5-second/OFF live trials. Code21 hardens query cleanup and passed ten consecutive ordinary YouTube transitions; those three live trials were not repeated on code21.
 
 ## 배터리 제한 없음 / Unrestricted battery setup
 
@@ -184,8 +184,8 @@ Linux / GitHub Actions:
 
 APK: `app/build/outputs/apk/debug/app-debug.apk`.
 
-0.2.5(code21)의 최종 시험 수·실기기 결과·공개 APK 해시는 아직 확정 기록 전입니다. 최종 검증·게시 결과는 [VERIFICATION](docs/VERIFICATION.md) 참조. 아래 수치는 **이전 0.2.4의 이력**이며 새 업데이트 경로의 PASS로 사용하지 않습니다.<br>
-Final 0.2.5 (code21) test counts, phone outcomes and public APK hash are not yet recorded here. See VERIFICATION. The following numbers are **historical 0.2.4 results**, not validation of the new updater.
+0.2.5(code21): **빌드·제품356시험·lint0오류/기존3경고, Android8/13/14 계측74/74/73개 PASS**. 실제 Android17에서 설치·접근성 연결·설정 보존·동일 APK 해시 및 일반 YouTube10연속 자동 전환(424.5초)을 확인했습니다. 10개에 라이브는 없었으며20연속은 미완료입니다. 고정 APK709703bytes, SHA-256은 [0.2.5 릴리스 기록](docs/releases/v0.2.5.md), 최종 게시 확인은 [VERIFICATION](docs/VERIFICATION.md) 참조. 아래는 **이전 0.2.4의 이력**입니다.<br>
+0.2.5(code21): **build,356 product tests,lint0 errors/3 existing warnings and74/74/73 Android8/13/14 emulator checks passed**. Android17 installation,accessibility binding,preferences,exact-APK hash and ten consecutive ordinary YouTube transitions(424.5 seconds) passed. No live preview occurred;20 transitions remain incomplete. The frozen APK is709703 bytes; see the linked release record for SHA-256 and VERIFICATION for publication checks. The following results are **historical0.2.4 evidence**.
 
 최종 0.2.4(code13): **제품 범위 227개 JUnit·빌드 PASS, lint 오류 0/경고 4**. 광고 독립·UI 변경을 포함한 APK의 서명과 휴대폰 설치본 SHA256 일치를 확인했습니다. [릴리스 기록](docs/releases/v0.2.4.md). Windows 한글 경로의 Gradle 시험 실행기 문제는 동일 컴파일 결과의 직접 JUnit 실행으로 우회했습니다.<br>
 Final 0.2.4 (code13): **227 product tests and build PASS; lint 0 errors/4 warnings**. The APK includes independent ads and grouped UI; signature verification and installed-APK SHA256 matching passed. See release notes. Direct JUnit works around the Windows Unicode-path Gradle test-worker issue.

@@ -1,12 +1,26 @@
 # 디버그·재발방지 대장
 
+## 2026-08-28 · code21 공개 검증 / Publication verification
+
+2026-08-28 10:57 KST에 **0.2.5/code21을 기존 Public 저장소의 시험판으로 공개**했다. [v0.2.5 Release](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.5), main·태그 기준 코드 커밋 `689ea8f704792e5bc2dcf3a9089a5f5a3481fdf5`, draft=false/prerelease=true. [CI33134278633](https://github.com/fullmetalsonic/shorts-loop/actions/runs/33134278633) 성공: 내려받은 보고서356시험·실패0·오류0·건너뜀0, CI lint0오류/2경고(로컬 기존3경고와 구분). 익명 릴리스HTTP200 및 배포파일3개(APK709703bytes/SHA96bytes/JSON287bytes)의 원본 대비 크기·SHA-256 일치를 확인했다. 이후 문서 정리는 제품 소스·APK를 바꾸지 않는다.
+
+**Version0.2.5/code21 was published as a Public prerelease at10:57 KST on2026-08-28**, from code commit `689ea8f704792e5bc2dcf3a9089a5f5a3481fdf5` and tagv0.2.5. CI33134278633 succeeded with356 tests and zero failures/errors/skips; CI lint reported0 errors/2 warnings, separately from3 local warnings. Anonymous release access returnedHTTP200 and all three uploaded assets matched their originals byte-for-byte and by SHA-256. Subsequent documentation changes do not alter product source or the APK.
+
+공개 후10:58~10:59, 설치된code21 앱의 업데이트 확인을 실제 실행해 새 업데이트 없음 안내·조회 시각 갱신을 확인했다. 실제 Public HTTPS 조회와 현재 버전 안내는PASS이며 새 버전 다운로드/설치 재시험은 아니다. 업데이트 자동조회ON·전체실행OFF를 유지했다.
+
+At10:58–10:59, the installed code21 app successfully checked the public release over HTTPS, displayed no applicable newer update and updated its attempt timestamp. This verifies current-version checking, not a new-version download or installation. Automatic checking remained ON and overall execution OFF.
+
+배포 APK SHA-256 `6095BC8C22BD49AACA348E7D1C048301A9E229C92288D1620439F047179E16B2`. v2서명·기존 인증서 유지,메타데이터21/0.2.5/min26와10:51 설치본 동일성PASS. 공개 후보169개 민감정보 제외 독립감사와224개 로컬 링크 검사(누락0)를 확인했다. 세부 수치는 [검증 원장](VERIFICATION.md)을 따른다. 이 게시 확인은 D-021 수정·code21 라이브 개별 재시험·20연속 완료를 뜻하지 않는다. 메일 발송 없음.
+
+EN: APK signature/certificate continuity,21/0.2.5/min26 metadata and installed parity passed. The169-file publication audit and224 local links passed. Publication does not resolve D-021 or establish individual code21 live retests or twenty consecutive transitions. No email was sent.
+
 ## 2026-08-28 · code21 조회 원복 보강·PC/설치 검증 / Cleanup and installation verification
 
 독립 리뷰로 차단 상태에서 확장 플래그가 다시 켜지는 경로와 반복0/별도 동작 없는 idle 원복을 보강했다. code21 고정709703bytes/SHA256 `6095BC8C22BD49AACA348E7D1C048301A9E229C92288D1620439F047179E16B2`,356시험·빌드·lint0오류/기존3경고·LIVE_TREE_LIFECYCLE 정적가드 PASS.10:39 같은 APK의 API26/33/34 계측74/74/73,10:40 휴대폰 설치/버전21/접근성bound/설정보존/설치해시 PASS. 최종 조회 원복 독립리뷰 추가P1/P2 없음.
 
-code21 일반 YouTube10연속은10:40:41→10:47:45.702/424.5초/확인기준0→10/세대6으로 PASS했다. 수동 입력·앱 전환 없이 진행했고 라이브 이동0회다. 전환1~10 화면을 모두 육안 대조해 정상 전체화면의 서로 다른 영상·플로팅·올바른 이동을 확인했다. 약10:50 플로팅X 전체OFF 확인,업데이트 자동조회 복원은 예정. code20 외부 중단·개별 라이브 또는 목표 이후 추가 관측을 공식10회에 합산하지 않는다. code21 라이브 개별 재시험은 아직 없으며 D-033의 해당 실제 근거는 아래code20 시험과 구분한다. D-021은 미수정·20연속은 미완료이고 새 Public 검증은 예정이다.
+code21 일반 YouTube10연속은10:40:41→10:47:45.702/424.5초/확인기준0→10/세대6으로 PASS했다. 수동 입력·앱 전환 없이 진행했고 라이브 이동0회다. 전환1~10 화면을 모두 육안 대조해 정상 전체화면의 서로 다른 영상·플로팅·올바른 이동을 확인했다. 약10:50 플로팅X 전체OFF 확인,10:51 업데이트 자동조회ON 복원·UI/저장값 확인. code20 외부 중단·개별 라이브 또는 목표 이후 추가 관측을 공식10회에 합산하지 않는다. code21 라이브 개별 재시험은 아직 없으며 D-033의 해당 실제 근거는 아래code20 시험과 구분한다. D-021은 미수정·20연속은 미완료이고 Public 검증은 위 공개 기록과 구분해 확인했다.
 
-EN: Code21 passed the final cleanup build,356 tests,lint/static guards,74/74/73 emulator checks,phone installation/binding/preferences/hash and final review. Its separate10-transition normal-YouTube run passed in424.5 seconds with confirmation0→10,generation6,no manual input/app changes and zero live skips. All10 transition screens passed visual review. FloatingX stopped execution around10:50;update-preference restoration is pending. Code20 evidence and post-target observations are not added. Code21 individual live retests and20-transition completion remain unverified;D-021 is unchanged.
+EN: Code21 passed the final cleanup build,356 tests,lint/static guards,74/74/73 emulator checks,phone installation/binding/preferences/hash and final review. Its separate10-transition normal-YouTube run passed in424.5 seconds with confirmation0→10,generation6,no manual input/app changes and zero live skips. All10 transition screens passed visual review. FloatingX stopped execution around10:50;the automatic-update preference was restored ON at10:51. Code20 evidence and post-target observations are not added. Code21 individual live retests and20-transition completion remain unverified;D-021 is unchanged.
 
 ## D-033 · 조사·제품 접근성 조회 플래그 불일치 · code18 실기기 FAIL, code20 원인 수정·실기기 PASS
 
@@ -20,7 +34,7 @@ EN: Code21 passed the final cleanup build,356 tests,lint/static guards,74/74/73 
 - 자동시험: 기존352에 조회정책4개를 더한356제품시험이 cleanup 전 및 cleanup 포함 최종 재빌드에서 각각 PASS했다. 최종 lint0오류/기존3경고, 동일 후보 API26/33/34 계측74/74/73 PASS. 제품 플래그로 실행한 실제 라이브 인식·5초/0초·OFF 대기 검증은 아래처럼 별도 기록한다.
 - 실기기 재시험:5초 지연은10:30:29 대기→34 요청→35 확인누계1·25초 일반 영상 진입 PASS. 라이브OFF는10:33:33~39 같은 라이브 인식·blocked=false·요청2/확인2 유지 PASS.0초/반복0회는10:34:31 조회 준비→33 요청→34 확인2→3으로 독립 동작 PASS. 실제 메인 UI에 권한 경고가 없음을 육안 확인했다.
 - 산출물/설치: code20 고정725487bytes, SHA256 `EF59D4E40E192A89D5B207741B03CCE08FA11AC1079DC61C7776C19A1D3D60EB`. 휴대폰 설치 준비·재생 설정 보존·설치본 해시 PASS. code18의738945bytes/실제 인식FAIL은 보존한다.
-- 상태/한계: D-033의 확인된 원인은 위 실기기 범위에서 수정·재시험PASS. 새10연속은10:35:28/확인기준3/세대30에서 시작해2회 확인 후10:37:17 외부 앱 전환으로 중단됐으며, D-021 일반 경계·모든 UI/장시간 문제의 해결을 뜻하지 않는다. Public 미게시.
+- 상태/한계: D-033의 확인된 원인은 위 실기기 범위에서 수정·재시험PASS. 새10연속은10:35:28/확인기준3/세대30에서 시작해2회 확인 후10:37:17 외부 앱 전환으로 중단됐으며, D-021 일반 경계·모든 UI/장시간 문제의 해결을 뜻하지 않는다. code20은 당시 미게시 후보이며 현재 공개판code21과 구분한다.
 
 EN: Code18 failed real live recognition because the read-only probe included non-important accessibility views while the product used default flags. The same live screen exposed49 default nodes without the marker and101 expanded nodes with it. Code20 limits expanded retrieval to overall execution in selected foreground YouTube, independently of the live-skip option, keeps default retrieval for Instagram/other/OFF states, and discards old roots after mode changes. No new permission. The final code20 build/356 tests,74/74/73 emulator checks and phone installation/hash passed. Device5-second delay, immediate skipping at zero normal plays, and live-OFF waiting passed, resolving the confirmed flag mismatch in these cases. The10-transition run ended externally after two confirmations; code18's failure and D-021 are preserved.
 

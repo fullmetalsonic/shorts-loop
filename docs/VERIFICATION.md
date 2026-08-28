@@ -1,8 +1,39 @@
 # 검증 기록 · ShortsLoop 0.2.5
 
-## 2026-08-28 · 현재 code21 확정 후보 / Current frozen candidate
+## 2026-08-28 · v0.2.5 공개 검증 완료 / Public release verification
 
-code21은 차단 상태의 확장 조회 재활성화 금지와 반복0/별도 동작 없는 idle 플래그 원복을 보강한 **0.2.5 확정 후보**다. 고정 APK **709703bytes**, SHA-256 `6095BC8C22BD49AACA348E7D1C048301A9E229C92288D1620439F047179E16B2`. 최종 소스·같은 APK로 아래 결과를 확인했으며 code20 수치를 재사용하지 않는다.
+검증 기준은 공개 코드 커밋 `689ea8f704792e5bc2dcf3a9089a5f5a3481fdf5`(main·태그v0.2.5)과 동일한 code21 APK다. 이후 문서 정리는 제품 소스·APK를 바꾸지 않는다.
+
+| 검사 / Check | 결과 / Result | 확인 범위 / Evidence |
+|---|---|---|
+| 저장소·릴리스 / Repository and release | PASS | Public, [v0.2.5](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.5),2026-08-28 10:57 KST,draft=false/prerelease=true |
+| 코드 CI / Code CI | PASS | [33134278633](https://github.com/fullmetalsonic/shorts-loop/actions/runs/33134278633) success; 내려받은 보고서356시험·실패0·오류0·건너뜀0 /356 tests,0 failures/errors/skips |
+| CI Lint | PASS | 0오류·2경고. 아래 로컬0오류·기존3경고와 구분 /0 errors,2 warnings, separate from local3 warnings |
+| 익명 릴리스 접근 / Anonymous release access | PASS | HTTP200 |
+| 배포파일 / Uploaded assets | PASS | APK709703bytes + SHA96bytes + 업데이트JSON287bytes,총3개. 자동생성 소스 압축본 제외 / Three uploaded files, excluding generated source archives |
+| 익명 재다운로드 / Anonymous redownload | PASS | 3개 파일 각각 원본 크기·SHA-256 일치 / Every downloaded asset matches its original size and SHA-256 |
+| APK·설치본 동일성 / APK and installed parity | PASS | 공개 APK709703bytes,아래 SHA-256;10:51 설치본과 일치 / Published and installed APK match |
+| APK 서명 / APK signature | PASS | v2서명 검증·기존 인증서 유지 / v2 verification and existing certificate retained |
+| 업데이트 메타데이터 / Update metadata | PASS | versionCode21/versionName0.2.5/minSdk26 |
+| 공개 대상 독립감사 / Independent publication audit | PASS | 169개 후보의 개인정보·키·원시자료·절대경로 제외 확인 /169 candidate files checked for excluded sensitive content |
+| 문서 링크 / Documentation links | PASS | 로컬 링크224개,누락0 /224 local links,0 missing |
+| 공개 후 제품 업데이트 조회 / Post-release in-app update check | PASS | 10:58~10:59 실제 수동 조회·새 업데이트 없음 안내·조회 시각 갱신. 자동조회ON/전체실행OFF 유지 |
+| 메일 / Email | 미발송 / Not sent | 이번 배포에 포함하지 않음 / Not part of this delivery |
+
+공개 APK SHA-256: `6095BC8C22BD49AACA348E7D1C048301A9E229C92288D1620439F047179E16B2`.
+서명 인증서 SHA-256: `3604d3a1cc1f4e8f772d718cf8b9cba5adfd3650708cf169660b653e28b69632`.
+
+공개 후10:58~10:59, 설치된code21 앱의 업데이트 확인을 실제 실행해 새 업데이트 없음 안내·조회 시각 갱신을 확인했다. 실제 Public HTTPS 조회와 현재 버전 안내는PASS이며 새 버전 다운로드/설치 재시험은 아니다. 업데이트 자동조회ON·전체실행OFF를 유지했다.
+
+EN: Public prerelease0.2.5/code21 was verified against code commit `689ea8f704792e5bc2dcf3a9089a5f5a3481fdf5` and the unchanged APK. CI passed356 tests with no failures/errors/skips; CI lint0/2 is separate from local lint0/3. Anonymous release access and all three original/downloaded asset size/hash comparisons passed, with the existing signing certificate retained. Subsequent documentation changes do not alter product source or the APK. At10:58–10:59, the installed code21 app successfully checked the public release over HTTPS, displayed no applicable newer update and updated its attempt timestamp. This verifies current-version checking, not a new-version download or installation. Automatic checking remained ON and overall execution OFF.
+
+code21 일반 YouTube10연속PASS와 공개 완료를 code21 라이브0초/5초/OFF 개별 재시험(NOT RUN),20연속 미완료 또는 D-021 미수정의 해결로 확대하지 않는다. 개별 라이브PASS는 아래code20 이력이다.
+
+EN: Publication and ten normal YouTube transitions do not establish individual code21 live retests, twenty consecutive transitions or a fix for D-021. Individual live passes below belong to code20.
+
+## 2026-08-28 · 공개 code21 로컬·실기기 검증 / Released code21 local and device verification
+
+code21은 차단 상태의 확장 조회 재활성화 금지와 반복0/별도 동작 없는 idle 플래그 원복을 보강한 **공개0.2.5 산출물**이다. 고정 APK **709703bytes**, SHA-256 `6095BC8C22BD49AACA348E7D1C048301A9E229C92288D1620439F047179E16B2`. 최종 소스·같은 APK로 아래 결과를 확인했으며 code20 수치를 재사용하지 않는다.
 
 | 검사 / Check | 결과 / Result | 범위 / Scope |
 |---|---|---|
@@ -20,13 +51,13 @@ code21은 차단 상태의 확장 조회 재활성화 금지와 반복0/별도 �
 | 업데이트 자동조회 선택 복원 / Restore update preference | PASS |10:51 실제 UI에서ON 복원, UI·저장값 확인 / Restored ON via UI and checked in storage |
 | 20연속 / Twenty consecutive transitions | 미완료 / Incomplete | 이번 공식 목표10회와 구분 |
 | code21 라이브0초/5초/OFF 개별 / Individual live retests | NOT RUN | 아래 개별 라이브PASS는code20의 근거 |
-| 새 Public·CI·공개 재다운로드 / Publication | NOT RUN | 현재미게시·공개CI/익명자산/해시 확인 예정 |
+| Public·CI·공개 재다운로드 / Publication | PASS | 위 공개 검증 표 참조 / See publication evidence above |
 
 code21 공식10연속은 결과 집계의PASS와 전환1~10 화면의 실제 육안 대조를 모두 확인했다. 수동 입력·앱 전환 없이 확인기준0→10,같은 세대6으로 진행했으며 모두 일반 영상이고 라이브 이동은0이다. code20의 외부 중단2회나 개별 라이브 시험,목표 이후 추가 관측을 합산하지 않는다. 새 라이브0초/5초/OFF 개별 시험은code21에서 미실행이므로 code20의 근거와 구분한다. D-021은 미수정이며20연속 완료로 확대하지 않는다.
 
-The final **code21** artifact passed build,356 product tests,lint,static guards and74/74/73 emulator checks;phone version/binding/preferences/hash and final review also passed. The separate code21 run **passed10 consecutive normal-video transitions** in424.5 seconds(10:40:41→10:47:45.702),confirmation0→10,generation6,with no manual input or app change and no live skips. All10 transition screens were visually reviewed. Post-target observations are excluded. FloatingX stopped overall execution around10:50. The update preference was restored ON at10:51. Code21 individual live retests and publication checks remain pending;D-021 and20-transition completion are unresolved.
+The final **code21** artifact passed build,356 product tests,lint,static guards and74/74/73 emulator checks;phone version/binding/preferences/hash and final review also passed. The separate code21 run **passed10 consecutive normal-video transitions** in424.5 seconds(10:40:41→10:47:45.702),confirmation0→10,generation6,with no manual input or app change and no live skips. All10 transition screens were visually reviewed. Post-target observations are excluded. FloatingX stopped overall execution around10:50. The update preference was restored ON at10:51. Code21 individual live retests remain unperformed;D-021 and20-transition completion are unresolved. Publication checks passed as recorded above.
 
-## 2026-08-28 · code20 확정 후보·실기기 검증 / Code20 verification
+## 2026-08-28 · 과거 code20 미게시 후보·실기기 검증 / Historical unpublished code20 verification
 
 **0.2.5/code20, 미게시.** cleanup을 포함한 확정 APK는 **725487bytes**, SHA-256 `EF59D4E40E192A89D5B207741B03CCE08FA11AC1079DC61C7776C19A1D3D60EB`이다. 같은 후보를 에뮬레이터와 휴대폰에서 확인했다. 초기 cleanup 전356시험과 후속 cleanup 포함 최종356시험을 구분하며 아래는 후자의 결과다.
 

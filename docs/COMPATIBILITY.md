@@ -1,8 +1,8 @@
 # Android 버전별 기능 / Android compatibility
 
-대상: **0.2.5(code21), 호환성·인앱 업데이트·메뉴 배치·YouTube 라이브 미리보기를 통합한 시험판**. 현재 검증·공개 준비 중입니다. code14 호환성 후보 및 이전 공개판0.2.4 결과는 별도 이력입니다. 최종 검증·게시 결과는 [VERIFICATION](VERIFICATION.md) 참조.
+대상: **0.2.5(code21), 호환성·인앱 업데이트·메뉴 배치·YouTube 라이브 미리보기를 통합한 시험판**. 2026-08-28 Public 시험판으로 공개했습니다. code14 호환성 후보 및 이전 공개판0.2.4 결과는 별도 이력입니다. 최종 검증·게시 결과는 [VERIFICATION](VERIFICATION.md) 참조.
 
-Scope: **0.2.5 (code21), integrating compatibility, in-app updates, reordered settings and YouTube live-preview skipping**. Verification and publication are in progress. The code14 compatibility candidate and public 0.2.4 results are historical, not verification of this build. See VERIFICATION for final test and publication results.
+Scope: **0.2.5 (code21), integrating compatibility, in-app updates, reordered settings and YouTube live-preview skipping**. Published as a public prerelease on2026-08-28. The code14 compatibility candidate and public 0.2.4 results are historical, not verification of this build. See VERIFICATION for final test and publication results.
 
 ## 지원 원칙 / Policy
 
@@ -51,9 +51,9 @@ The updater is available from the existing API26 app minimum, independently of t
 
 **Checking, downloading and installing are separate actions.** `INTERNET` is restricted to GitHub update information/APKs, not uploading videos, accounts or viewing history. `REQUEST_INSTALL_PACKAGES` enables the installer hand-off; the user must grant source permission and confirm installation in Android. Device policy may block installation and is not bypassed. There is no broad storage permission, notification permission or unattended installation.
 
-설치 버튼을 누르면 전체 실행만 OFF로 바꾸고 다른 설정은 보존합니다. 설치 허용 화면에서 돌아온 뒤 설치를 다시 눌러야 하며 취소 후 실행도 자동 재시작하지 않습니다. **0.2.4에는 업데이트 기능이 없어 0.2.5 최초 설치는 같은 서명 APK를 직접 내려받아 덮어쓰기 설치해야 합니다.** 공개 전에는 예정 릴리스가 없을 수 있습니다. [단계별 사용법](USER_GUIDE.md).
+설치 버튼을 누르면 전체 실행만 OFF로 바꾸고 다른 설정은 보존합니다. 설치 허용 화면에서 돌아온 뒤 설치를 다시 눌러야 하며 취소 후 실행도 자동 재시작하지 않습니다. **0.2.4에는 업데이트 기능이 없어 0.2.5 최초 설치는 같은 서명 APK를 직접 내려받아 덮어쓰기 설치해야 합니다.** [단계별 사용법](USER_GUIDE.md).
 
-Pressing Install turns main execution OFF while preserving other settings. After granting source permission, return and press Install again. Cancelling never auto-restarts execution. **0.2.4 has no updater: initially download and install the same-signed 0.2.5 APK manually over it.** The planned release may not yet be available. See the detailed guide for steps.
+Pressing Install turns main execution OFF while preserving other settings. After granting source permission, return and press Install again. Cancelling never auto-restarts execution. **0.2.4 has no updater: initially download and install the same-signed 0.2.5 APK manually over it.** See the detailed guide for steps.
 
 ## 공식 근거와 한계 / Sources and limits
 
