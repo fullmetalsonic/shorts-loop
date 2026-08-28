@@ -1,6 +1,12 @@
 # 통합 업데이트 계획 · 2026-08-28
 
-## 최신 0.2.6/code28 · Public 시험판 검증 완료 / Published and verified
+## 최신 0.2.7/code29 · 정식 배포 / Stable distribution
+
+기존 패키지·서명·설치하한API26·업데이트 메타데이터 형식은 유지한다. 플로팅 표시만 수정한 동일APK726467bytes,SHA256 `809CD1EF1287209E23A31896B00FEFF9585511319939FC8113CBC2B1876DAF1A`를 배포한다. GitHub 시험판 표시는 해제하되 선택형 화면 분석은 실험 기능으로 유지한다. 게시·CI·익명 다운로드 동일성 상태는 [0.2.7 릴리스 기록](releases/v0.2.7.md)에 누적한다.
+
+EN: Stable0.2.7/code29 retains the package,signer,minSdk26 and update-metadata contract. Publish the verified726467-byte APK with the SHA256 above,not a CI-resigned binary. GitHub pre-release is false;optional visual assistance remains experimental. Publication,CI and anonymous-download parity are tracked in the release record.
+
+## 이전 0.2.6/code28 · Public 시험판 검증 완료 / Previous published pre-release
 
 **0.2.6/code28 공개 시험판(pre-release)을 게시하고 공개 파일 검증까지 완료했다.** YouTube의 같은 창·pager·전체 페이지에서 현재 행이 요청 행보다 정확히1 증가하는 근거를 보강했다. 최종 빌드·468JUnit·정적 가드 PASS,로컬lint0오류/기존3경고,동일APK API26/33/34 계측233/233/232 PASS와 설치·설정 보존·접근성·런타임·해시 일치를 확인했다. YouTube20회는148.6초 동안 요청20/확인20(일반4·긴 영상15·라이브1),수동0·실패0·복구0으로 PASS했다. 같은 길이 영상 쌍은 이 실기기20회에 없었으므로 해당 조건의 실기기 재현 성공을 주장하지 않는다.
 

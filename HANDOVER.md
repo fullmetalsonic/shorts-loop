@@ -1,6 +1,12 @@
 # ShortsLoop · 기술 인수인계 / Technical handover
 
-## 최신 0.2.6/code28 · Public 시험판 검증 완료 / Published and verified
+## 최신 0.2.7/code29 · 작은 플로팅 잘림 수정 / Compact-label fix
+
+72×56dp를 유지한 채 실제 폭 기반 자동 글자 크기 조절과 X 아래 공간 활용으로 ‘긴영상’ 잘림을 수정했다. 빌드·468JUnit·정적 가드 PASS,lint0오류/기존3경고,API26/33/34 계측5568/5568/5567항목 PASS,실폰 표시·탭·드래그·X·설치 설정 보존·동일APK 해시 확인. 독립 검토 P1/P2 0건. 감지·카운트·넘김 로직은 변경하지 않았다. 정식 배포 상태·CI·공개 파일 검증은 [0.2.7 릴리스 기록](docs/releases/v0.2.7.md)을 따른다. 아래0.2.6은 과거 기록이다. [상세 결과·한계](docs/FLOATING_LAYOUT_FIX.md),[D-036](docs/DEBUG_LOG.md).
+
+EN:0.2.7/code29 fixes label clipping without enlarging the72×56dp overlay. Build/468JUnit/static checks,native5568/5568/5567 assertions and physical display/tap/drag/close checks passed;no P1/P2 found in independent review. Detection/count/swipe logic is unchanged. See the release record for stable publication/CI/public-file verification. The0.2.6 records below are historical.
+
+## 이전 0.2.6/code28 · Public 시험판 검증 완료 / Previous published pre-release
 
 **0.2.6/code28 공개 시험판(pre-release)을 게시하고 공개 파일 검증까지 완료했다.** YouTube의 같은 창·pager·전체 페이지에서 현재 행이 요청 행보다 정확히1 증가하는 근거를 보강했다. 최종 빌드·468JUnit·정적 가드 PASS,로컬lint0오류/기존3경고,동일APK API26/33/34 계측233/233/232 PASS와 설치·설정 보존·접근성·런타임·해시 일치를 확인했다. YouTube20회는148.6초 동안 요청20/확인20(일반4·긴 영상15·라이브1),수동0·실패0·복구0으로 PASS했다. 같은 길이 영상 쌍은 이 실기기20회에 없었으므로 해당 조건의 실기기 재현 성공을 주장하지 않는다.
 

@@ -72,6 +72,7 @@ public final class CompatibilityInstrumentation extends Instrumentation {
                 require(FeatureSupportPolicy.instagramFeature(true, true), "Basic Instagram capability remains available");
                 checks += LiveUiChecks.run(activity, store);
                 checks += LongVideoUiChecks.run(activity, store);
+                checks += com.fullmetalsonic.shortsloop.overlay.FloatingLayoutChecks.run(activity, store);
             });
             VisualAssistController controller = VisualAssistController.create(null, null);
             require(controller != null && !controller.active(), "Factory loads safely on runtime OS");

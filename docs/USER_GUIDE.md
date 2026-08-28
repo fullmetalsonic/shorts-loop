@@ -1,6 +1,9 @@
-# 사용 설명서 · ShortsLoop 0.2.6 공개 시험판
+# 사용 설명서 · ShortsLoop 0.2.7 정식 릴리스
 
-## 현재 0.2.6/code28 · Public 시험판 공개 / Published pre-release
+0.2.7은 플로팅 크기72×56dp와 조작법을 유지하면서 ‘긴영상’ 등의 글자 잘림을 수정합니다. 사용법과 자동 넘김 정책은0.2.6과 같습니다. 정식 릴리스라도 선택형 화면 분석은 실험 기능이며,기기·호스트별 인식 제약은 유지됩니다. [0.2.7 배포·검증 기록](releases/v0.2.7.md).<br>
+Stable0.2.7 fixes floating-label clipping without changing the72×56dp size,controls or0.2.6 playback policies. Optional visual assistance remains experimental,and device/host recognition limitations still apply. See the0.2.7 release record.
+
+## 이전 0.2.6/code28 · Public 시험판 기록 / Previous pre-release
 
 **0.2.6/code28 공개 시험판(pre-release)을 게시하고 공개 파일 검증까지 완료했다.** YouTube의 같은 창·pager·전체 페이지에서 현재 행이 요청 행보다 정확히1 증가하는 근거를 보강했다. 최종 빌드·468JUnit·정적 가드 PASS,로컬lint0오류/기존3경고,동일APK API26/33/34 계측233/233/232 PASS와 설치·설정 보존·접근성·런타임·해시 일치를 확인했다. YouTube20회는148.6초 동안 요청20/확인20(일반4·긴 영상15·라이브1),수동0·실패0·복구0으로 PASS했다. 같은 길이 영상 쌍은 이 실기기20회에 없었으므로 해당 조건의 실기기 재현 성공을 주장하지 않는다.
 

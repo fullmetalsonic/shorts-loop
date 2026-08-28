@@ -2,10 +2,8 @@ package com.fullmetalsonic.shortsloop.overlay;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -23,7 +21,7 @@ import com.fullmetalsonic.shortsloop.core.LongVideoPolicy;
 import com.fullmetalsonic.shortsloop.data.SettingsStore;
 
 public final class FloatingController {
-    private static final int WIDTH_DP = 72, HEIGHT_DP = 56;
+    private static final int WIDTH_DP = FloatingContent.WIDTH_DP, HEIGHT_DP = FloatingContent.HEIGHT_DP;
     public interface Listener { void cycle(); void close(); void interaction(boolean dragging); }
     private final Context context;
     private final SettingsStore store;
@@ -45,24 +43,9 @@ public final class FloatingController {
     @SuppressLint({"ClickableViewAccessibility", "RtlHardcoded"})
     public void show() {
         if (root != null) return;
-        root = new FrameLayout(context);
-        GradientDrawable background = new GradientDrawable();
-        background.setColor(Color.argb(128, 9, 20, 35)); background.setCornerRadius(dp(18));
-        background.setStroke(dp(1), Color.argb(90, 116, 220, 255));
-        root.setBackground(background);
-        number = new TextView(context);
-        number.setTextColor(Color.WHITE); number.setTextSize(21); number.setGravity(Gravity.CENTER);
-        number.setSingleLine(true); number.setPadding(dp(2), 0, dp(2), 0);
-        number.setAutoSizeTextTypeUniformWithConfiguration(12, 21, 1, android.util.TypedValue.COMPLEX_UNIT_SP);
-        number.setId(R.id.floating_count); number.setFocusable(true); number.setClickable(true);
-        root.addView(number, new FrameLayout.LayoutParams(dp(48), dp(HEIGHT_DP), Gravity.START | Gravity.TOP));
-        Button close = new Button(context);
-        close.setId(R.id.floating_close); close.setText(R.string.close_symbol);
-        close.setTextColor(Color.WHITE); close.setTextSize(16); close.setPadding(0, 0, 0, 0);
-        close.setMinWidth(0); close.setMinimumWidth(0); close.setMinHeight(0); close.setMinimumHeight(0);
-        close.setBackgroundColor(Color.TRANSPARENT); close.setContentDescription(context.getString(R.string.close_description));
-        // Compact exception: X is 24dp; count/drag remains at least 48dp.
-        root.addView(close, new FrameLayout.LayoutParams(dp(24), dp(24), Gravity.END | Gravity.TOP));
+        root = new FloatingContent(context);
+        number = root.findViewById(R.id.floating_count);
+        Button close = root.findViewById(R.id.floating_close);
         close.setOnClickListener(view -> listener.close());
         number.setOnClickListener(view -> listener.cycle());
         number.setOnTouchListener((view, event) -> {
@@ -127,6 +110,8 @@ public final class FloatingController {
     }
     public void configurationChanged() {
         if (root == null) return;
+        ((FloatingContent) root).refreshMetrics();
+        params.width = dp(WIDTH_DP); params.height = dp(HEIGHT_DP);
         measureArea(); restorePosition(); manager.updateViewLayout(root, params);
     }
     private void restorePosition() {

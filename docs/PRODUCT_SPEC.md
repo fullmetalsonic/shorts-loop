@@ -1,6 +1,10 @@
-# 제품 기준 · ShortsLoop 0.2.6
+# 제품 기준 · ShortsLoop 0.2.7
 
-## 현재 0.2.6/code28 · Public 시험판 공개 / Published pre-release
+0.2.7/code29는 정식 배포 버전으로,플로팅 외곽72×56dp·X24×24dp와 탭/드래그/종료 의미를 유지하고 X 아래 전체폭을 사용해 글자 잘림을 방지한다. 감지·카운트·넘김 계약과 기본값은0.2.6 그대로다. 정식 배포가 모든 기기/호스트의 동작 보증을 뜻하지 않으며 선택형 화면 분석의 실험 표시는 유지한다. [표시 기준](FLOATING_LAYOUT_FIX.md),[배포 상태](releases/v0.2.7.md).
+
+EN: Stable0.2.7/code29 preserves the72×56dp overlay,24×24dp X and existing interactions,using the full width below X to prevent clipping. Detection,counting,advance policies and defaults remain unchanged from0.2.6. Stable distribution is not an all-device/host guarantee;optional visual assistance remains experimental.
+
+## 이전 0.2.6/code28 · Public 시험판 기록 / Previous pre-release
 
 **0.2.6/code28 공개 시험판(pre-release)을 게시하고 공개 파일 검증까지 완료했다.** YouTube의 같은 창·pager·전체 페이지에서 현재 행이 요청 행보다 정확히1 증가하는 근거를 보강했다. 최종 빌드·468JUnit·정적 가드 PASS,로컬lint0오류/기존3경고,동일APK API26/33/34 계측233/233/232 PASS와 설치·설정 보존·접근성·런타임·해시 일치를 확인했다. YouTube20회는148.6초 동안 요청20/확인20(일반4·긴 영상15·라이브1),수동0·실패0·복구0으로 PASS했다. 같은 길이 영상 쌍은 이 실기기20회에 없었으므로 해당 조건의 실기기 재현 성공을 주장하지 않는다.
 

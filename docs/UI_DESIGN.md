@@ -1,4 +1,10 @@
-# UI·인간공학 기준 · ShortsLoop 0.2.6
+# UI·인간공학 기준 · ShortsLoop 0.2.7
+
+## 0.2.7/code29 · 플로팅 크기 유지·글자 잘림 수정 / Compact-label correction
+
+외곽72×56dp·X24×24dp·반투명·기존 조작은 유지한다. 숫자/문구를 X 아래 전체폭으로 배치하고 실제 공간 안에 들어가는 가장 큰 글꼴을 사용한다. ‘긴영상’ 축약 없이 실폰에서 전체 표시 확인. 큰 글꼴 배율0.85–2와 RTL/굵은 글꼴의 실제 경계 검사 PASS. 기존 X의 작은 터치영역 한계는 남는다. **아래0.2.6의 잘림 기록은 과거 버전 기록**이며 이번 로컬후보에서 수정했다. [검증·미실행 범위](FLOATING_LAYOUT_FIX.md).
+
+EN: The local0.2.7 candidate preserves the72×56dp window and24×24dp X,using the full width below X and the largest fitting text size. Physical long-label display and native font-scale/RTL/bold bounds checks passed. Existing small-target accessibility limitations remain. Clipping described in0.2.6 records below is historical.
 
 ## 최신 0.2.6/code28 · Public 시험판 검증 완료 / Published and verified
 

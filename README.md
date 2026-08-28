@@ -1,6 +1,9 @@
-# 쇼츠 자동 넘김 · ShortsLoop 0.2.6 (공개 시험판 / Public pre-release)
+# 쇼츠 자동 넘김 · ShortsLoop 0.2.7
 
-## 현재 0.2.6/code28 · Public 시험판 공개 / Published pre-release
+**0.2.7/code29**는 플로팅72×56dp를 유지하면서 ‘긴영상’ 잘림을 수정한 정식 배포 버전입니다. 빌드·468JUnit·Android8/13/14 계측·휴대폰 표시/조작 검증을 마쳤습니다. 게시 상태와 CI·공개 파일 검증은 [0.2.7 릴리스 기록](docs/releases/v0.2.7.md),구체적인 검증 범위와 한계는 [플로팅 수정 기록](docs/FLOATING_LAYOUT_FIX.md)을 확인하세요. ‘화면 분석 보조’는 여전히 선택형 실험 기능입니다.<br>
+**0.2.7/code29** is the stable-distribution version fixing label clipping while preserving the72×56dp overlay. Build,468JUnit,Android8/13/14 native checks and physical display/interaction checks passed. See the release record for publication/CI/public-file verification and the floating report for scope and limits. Optional visual assistance remains experimental.
+
+## 이전 0.2.6/code28 · Public 시험판 기록 / Previous pre-release
 
 **0.2.6/code28 공개 시험판(pre-release)을 게시하고 공개 파일 검증까지 완료했다.** YouTube의 같은 창·pager·전체 페이지에서 현재 행이 요청 행보다 정확히1 증가하는 근거를 보강했다. 최종 빌드·468JUnit·정적 가드 PASS,로컬lint0오류/기존3경고,동일APK API26/33/34 계측233/233/232 PASS와 설치·설정 보존·접근성·런타임·해시 일치를 확인했다. YouTube20회는148.6초 동안 요청20/확인20(일반4·긴 영상15·라이브1),수동0·실패0·복구0으로 PASS했다. 같은 길이 영상 쌍은 이 실기기20회에 없었으므로 해당 조건의 실기기 재현 성공을 주장하지 않는다.
 
@@ -48,7 +51,7 @@ An experimental Android app that advances supported YouTube Shorts and Instagram
 
 **The existing visual-assist trial remains optional.** It is OFF by default, separately consented, Android 14+, and RAM-only. Timed fallback takes priority when both are enabled, preserving the visual preference. Learning can add plays; exact total N is not guaranteed.
 
-[최신0.2.6 다운로드 / Latest0.2.6 download](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.6) · [이전0.2.5 / Previous0.2.5](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.5) · [검증 / Verification](docs/VERIFICATION.md)
+[0.2.7 정식 릴리스 / Stable0.2.7](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.7) · [이전0.2.6 / Previous0.2.6](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.6) · [검증 / Verification](docs/VERIFICATION.md)
 
 ## 주요 기능 / Features
 
@@ -277,6 +280,8 @@ This README is the bilingual user guide. Detailed development and test records b
 - [새 시작점 재인식·카운트 복구 / Fresh-start count recovery](docs/PLAYBACK_RECOVERY.md)
 - [제품 기준 / Behavior contract](docs/PRODUCT_SPEC.md)
 - [UI·인간공학 기준 / UI and usability](docs/UI_DESIGN.md)
+- [0.2.7 플로팅 잘림 수정·검증 / Compact-label fix and verification](docs/FLOATING_LAYOUT_FIX.md)
+- [0.2.7 정식 릴리스 기록 / Stable release record](docs/releases/v0.2.7.md)
 - [검증 / Verification](docs/VERIFICATION.md)
 - [디버그 대장 / Debug log](docs/DEBUG_LOG.md)
 - [누적이력 / Changelog](docs/CHANGELOG.md)

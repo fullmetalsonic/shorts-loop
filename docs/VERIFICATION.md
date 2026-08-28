@@ -1,4 +1,10 @@
-# 검증 기록 · ShortsLoop 0.2.6
+# 검증 기록 · ShortsLoop 0.2.7
+
+## 0.2.7/code29 · 플로팅 표시 수정 / Floating presentation fix
+
+BUILD PASS,468JUnit PASS,lint0오류/기존3경고,API26/33/34 실제 계측5568/5568/5567검사항목 PASS. 기존 잘림 재현 및 실제 glyph 경계 검사를 추가했다. 동일 APK 설치본·서명·설치 전후 설정·접근성 연결 확인과 실폰 ‘긴영상’/숫자·탭·드래그·X 검증 완료. 독립 소스 리뷰 P1/P2 0건. 새 연속10/20시험은 미실행. APK726467bytes,SHA256 `809CD1EF1287209E23A31896B00FEFF9585511319939FC8113CBC2B1876DAF1A`. [상세 실행기록·제약](FLOATING_LAYOUT_FIX.md),[정식 게시·CI·공개 파일 검증](releases/v0.2.7.md).
+
+EN:0.2.7/code29 passes build,468JUnit,static guards and5568/5568/5567 native assertions. Lint0 errors/3 existing warnings. Actual glyph bounds,legacy clipping reproduction and physical display/tap/drag/X checks passed with matching installed APK. Independent source review found no P1/P2. No new10/20-transition endurance test;see the reports for limitations and stable-publication checks.
 
 ## 최신 0.2.6/code28 · Public 시험판 검증 완료 / Published and verified
 

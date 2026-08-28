@@ -1,5 +1,18 @@
 # 디버그·재발방지 대장
 
+## D-036 · 작은 플로팅 ‘긴영상’ 잘림 / Compact long-video label clipping
+
+- 증상·재현: 공개0.2.6의72×56dp 플로팅에서 ‘긴영상’ 첫 글자가 일부 잘림. 기존48dp 글자뷰와 singleLine 설정을 Android 계측에서 재현해 실제 글자 폭 초과를 확인.
+- 직접 원인: singleLine이 가로 스크롤을 켜 autosize가 실제 폭 대신 큰 가상 폭을 사용. X 아래 빈 공간도 글자에 활용하지 않음.
+- 확인 증거·영향 범위: 실제 TextView 측정과 실폰 화면. 카운트/넘김 실패가 아니라 플로팅 표현 영역 문제이며 긴 숫자·상태 라벨에도 같은 위험.
+- 잘못된 기존 접근: 자동 크기 설정이 있다는 사실과 getText 문자열 일치만 확인. 실제 배치·glyph 경계를 검사하지 않아 시각적 결함을 놓침.
+- 수정: 외곽72×56/X24×24 유지. 글자는 전체폭에 좌우6/위24/아래4dp, maxLines1·horizontalScrollingfalse·autosize8–21sp. X8–16sp. 표시 모듈 분리 및 설정변경 시 metrics 재적용, 상태/리스너/위치 유지.
+- 자동 예방: 실제 FloatingContent의16개 상태 전환×5배율×LTR/RTL×기본/굵은 글꼴. 전체문자·line/ink 경계·X 비겹침·고정 크기 검사. 이전 결함 재현 assertion도 유지.
+- 재시험: code29 빌드·468JUnit·정적 가드 PASS,lint0오류/기존3경고. API26/33/34 계측5568/5568/5567항목 PASS. 초기 분리된 시험뷰의 비동기 클릭 검사는 큐가 없어 실패했고, 제품 변경 없이 동기식 hit-routing fixture로 교정했다. 이후 실폰의 실제 탭/드래그/X를 따로 확인. 실폰 ‘긴영상’ 전부 보임·숫자 표시·설치 해시/설정/접근성 유지 PASS. 독립 리뷰 P1/P2 0건.
+- 한계·상태: 로컬 설치 완료. 실시간 시스템 배율 변경과 비대칭 혼합 RTL 문자열 육안 순서는 미검증. [상세 검증](FLOATING_LAYOUT_FIX.md),[정식 배포 기록](releases/v0.2.7.md).
+
+EN: Horizontally scrolling single-line text defeated real-width autosizing;string-only tests missed the visual defect. Code29 preserves outer dimensions and interactions while using the full width below X. Actual glyph/layout assertions,legacy reproduction and physical display/touch checks passed. The first detached-fixture asynchronous-click check failed and was corrected as a test-harness issue;real controller interactions were separately checked on the handset. See the linked reports for evidence,limits and stable publication.
+
 ## D-035 후속 · code27 행 번호 진단·code28 YouTube 한정 후보 / Native-row probe and targeted candidate
 
 - 상태: code28 Public pre-release 공개·공개 파일 검증 완료. 최종468JUnit·빌드·정적 가드·API26/33/34 계측233/233/232 PASS,lint0오류/기존3경고.설치 후 전체 기존설정 비교보존·접근성 연결·런타임·해시일치 PASS다. YouTube20회는13:08:46~13:11:14.291/148.6초,요청20/확인20(일반4·긴15·라이브1),수동/실패/복구0으로 PASS했다.전후0~20화면을육안대조하고정확한행+1을관측했다. code26 Instagram10회 PASS는 유지하되 code28 재실행으로 쓰지 않는다.

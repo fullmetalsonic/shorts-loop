@@ -1,6 +1,12 @@
 # Android 버전별 기능 / Android compatibility
 
-## 최신 0.2.6/code28 · Public 시험판 검증 완료 / Published and verified
+## 0.2.7/code29 · 호환 범위 유지 / Unchanged compatibility
+
+정식0.2.7의 설치 하한/API별 기능은0.2.6과 같다. 플로팅 표시 수정의 동일APK API26/33/34 계측5568/5568/5567항목과 실제Android17 표시/조작 검증을 완료했다. 이 수치는 호스트별 새로운 연속시험이 아니다. [0.2.7 배포·검증](releases/v0.2.7.md).
+
+EN: Stable0.2.7 retains the0.2.6 minimum OS and per-API capabilities. Exact-APK native checks passed5568/5568/5567 assertions on API26/33/34,with physical Android17 display/interaction checks. These are not new host endurance runs.
+
+## 이전 0.2.6/code28 · Public 시험판 검증 완료 / Previous published pre-release
 
 **0.2.6/code28 공개 시험판(pre-release)을 게시하고 공개 파일 검증까지 완료했다.** YouTube의 같은 창·pager·전체 페이지에서 현재 행이 요청 행보다 정확히1 증가하는 근거를 보강했다. 최종 빌드·468JUnit·정적 가드 PASS,로컬lint0오류/기존3경고,동일APK API26/33/34 계측233/233/232 PASS와 설치·설정 보존·접근성·런타임·해시 일치를 확인했다. YouTube20회는148.6초 동안 요청20/확인20(일반4·긴 영상15·라이브1),수동0·실패0·복구0으로 PASS했다. 같은 길이 영상 쌍은 이 실기기20회에 없었으므로 해당 조건의 실기기 재현 성공을 주장하지 않는다.
 
