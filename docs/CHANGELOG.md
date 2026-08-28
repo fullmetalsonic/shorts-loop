@@ -4,6 +4,8 @@
 
 YouTube 광고 준비 UI·미지원 안내·독립 대기시간 저장을 설치용 업데이트에 포함한다. 실제 YouTube 광고 감지·넘김은 비활성이고 기존 자동화는 유지한다. [릴리스·검증](releases/v0.5.1.md)·[사용법·남은 실폰 시험](APP_SETTINGS_0.5.1.md). / Installable preparation UI update, without enabling unsupported YouTube ad automation.
 
+v0.5.1 Public 최신 Release 게시 완료. 제품72a18de/CI33219880910 SUCCESS, APK782378bytes, 두 변형705JUnit씩, 세 OS native 및 API26 업데이트53개 설정 보존 PASS. 공개3파일·인앱업데이트code35·비로그인 해시 일치 PASS. / Installable update published and verified; physical playback remains unrun.
+
 ## APK 미배포 · YouTube 광고 준비 소스 / Source-only preparation
 
 YouTube 광고 설정·저장 및 미연결 전환 검증 모듈을 준비했다. 공개 Android 자료는 일반 광고와 협찬 고지를 구분하지만 실제 Shorts 광고의 접근성 구조는 미확보다. 자동 기능은 미지원·비활성으로 두고 준비 소스·시험·문서만 공개 범위에 포함한다. 기존 v0.5.0 APK·태그·인앱 업데이트 유지, 신규 설치용 APK 없음. [검증·공개 범위·필요 표본](YOUTUBE_ADS_PREPARATION.md). / Source-only preparation with a disabled control and unconnected transition helper; physical evidence is still required. No replacement APK or new in-app update.
