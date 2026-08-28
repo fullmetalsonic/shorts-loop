@@ -1,5 +1,8 @@
 # 쇼츠 자동 넘김 · ShortsLoop 0.2.7
 
+**최신 정식 릴리스 공개 완료.** [0.2.7 다운로드](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.7) · GitHub 빌드/468시험 PASS · 공개APK 원본해시 일치. 인앱 **업데이트 · 앱 정보 → 업데이트 확인**에서도 확인할 수 있습니다.<br>
+**Latest stable release is public.** GitHub build/468 tests passed;the public APK matches the verified original. Check for updates from the in-app update section or use the0.2.7 release link.
+
 **0.2.7/code29**는 플로팅72×56dp를 유지하면서 ‘긴영상’ 잘림을 수정한 정식 배포 버전입니다. 빌드·468JUnit·Android8/13/14 계측·휴대폰 표시/조작 검증을 마쳤습니다. 게시 상태와 CI·공개 파일 검증은 [0.2.7 릴리스 기록](docs/releases/v0.2.7.md),구체적인 검증 범위와 한계는 [플로팅 수정 기록](docs/FLOATING_LAYOUT_FIX.md)을 확인하세요. ‘화면 분석 보조’는 여전히 선택형 실험 기능입니다.<br>
 **0.2.7/code29** is the stable-distribution version fixing label clipping while preserving the72×56dp overlay. Build,468JUnit,Android8/13/14 native checks and physical display/interaction checks passed. See the release record for publication/CI/public-file verification and the floating report for scope and limits. Optional visual assistance remains experimental.
 

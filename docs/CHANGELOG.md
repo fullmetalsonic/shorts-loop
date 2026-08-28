@@ -2,6 +2,9 @@
 
 ## 0.2.7/code29 · 플로팅 잘림 수정 / Floating-label correction
 
+2026-08-28 **정식 릴리스 공개 완료**(Public,prerelease=false,latest=v0.2.7). 제품5125b33·CI33143291193 SUCCESS와 공개3파일 크기/해시 일치 확인. [최종 배포 기록](releases/v0.2.7.md).<br>
+Stable release published;product5125b33,CI33143291193 and anonymous verification of all3 assets passed.
+
 플로팅72×56dp 유지,글자 전체폭·X 아래 영역 사용,가로 스크롤 해제와 실제 폭 기준 autosize로 ‘긴영상’ 잘림 수정. 실제 글자 경계·큰 글꼴·RTL·굵은 글꼴·상태 변경 회귀검사 추가.468JUnit 및 API26/33/34 계측5568/5568/5567항목 PASS,실폰 표시/터치·독립 리뷰 완료. 정식 릴리스로 배포하며 게시·CI·다운로드 검증은 [릴리스 기록](releases/v0.2.7.md)을 따른다. 기존0.2.6 APK는 변경하지 않는다. [원인·검증·한계](FLOATING_LAYOUT_FIX.md).
 
 EN: Fixed compact floating-label clipping without enlarging the window. Added actual ink-boundary,large-font,RTL,bold and state-transition checks.468JUnit and5568/5568/5567 native assertions passed,with physical display/touch checks and independent review. Stable publication/CI/download checks are tracked in the release record;the existing0.2.6 APK is unchanged.

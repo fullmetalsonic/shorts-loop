@@ -2,6 +2,10 @@
 
 ## 최신 0.2.7/code29 · 작은 플로팅 잘림 수정 / Compact-label fix
 
+**정식 게시 검증 완료:**2026-08-28 13:59:45KST Public·draft=false·prerelease=false·latest=v0.2.7. 제품commit/tag5125b3399702a6b3d6c1e86ea45fa0e9ddfe1bf4/v0.2.7,CI33143291193 SUCCESS(32suites468tests,실패/오류/건너뜀0,lint0/2).13:59:51KST 익명 APK/SHA/JSON 크기·SHA256 동일성,HTTP200,인앱 릴리스 목록과 최신 정식API 확인 PASS. 후속 문서 커밋은 태그/APK를 바꾸지 않는다. 메일 미발송.
+
+EN: Stable publication verified:Public,draft=false,prerelease=false,latest=v0.2.7. Product tag5125b33,CI33143291193 success and anonymous APK/checksum/JSON parity passed. Follow-up documentation does not change the tag/APK. No email sent.
+
 72×56dp를 유지한 채 실제 폭 기반 자동 글자 크기 조절과 X 아래 공간 활용으로 ‘긴영상’ 잘림을 수정했다. 빌드·468JUnit·정적 가드 PASS,lint0오류/기존3경고,API26/33/34 계측5568/5568/5567항목 PASS,실폰 표시·탭·드래그·X·설치 설정 보존·동일APK 해시 확인. 독립 검토 P1/P2 0건. 감지·카운트·넘김 로직은 변경하지 않았다. 정식 배포 상태·CI·공개 파일 검증은 [0.2.7 릴리스 기록](docs/releases/v0.2.7.md)을 따른다. 아래0.2.6은 과거 기록이다. [상세 결과·한계](docs/FLOATING_LAYOUT_FIX.md),[D-036](docs/DEBUG_LOG.md).
 
 EN:0.2.7/code29 fixes label clipping without enlarging the72×56dp overlay. Build/468JUnit/static checks,native5568/5568/5567 assertions and physical display/tap/drag/close checks passed;no P1/P2 found in independent review. Detection/count/swipe logic is unchanged. See the release record for stable publication/CI/public-file verification. The0.2.6 records below are historical.
