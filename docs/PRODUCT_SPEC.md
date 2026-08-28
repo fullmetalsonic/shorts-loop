@@ -1,4 +1,15 @@
-# 제품 기준 / Product contract · ShortsLoop 0.4.0
+# 제품 기준 / Product contract · ShortsLoop 0.5.0
+
+## 0.5.0 우선 계약 / Current contract
+
+- 홈에는 세 앱 진입과 공통 설정,상세에는 해당 앱 선택·반복/플로팅 방식·지원 규칙을 둔다. 숫자 초안·스크롤·회전을 보존하고 다른 앱 값을 수정하지 않는다. / Home separates shared settings from retained per-app details.
+- TikTok SurfaceView/TextureView,광고·사진 동시 증거,정확한 사진 번호를 지원한다. 광고ON 우선,OFF이면 적격 일반/사진 규칙을 적용한다. 광고 지연0.0–9.9/0.1,사진0–10/각3,시간제2–60/3,긴 영상1–3600/60이며 토글은 기본OFF다. / TikTok adds opt-in independent special rules and known structures.
+- 비율 진행을 초로 추정하지 않는다. 긴 영상은 전용 seek control의 정확한 경과/전체 시계와 실제 순방향 진행이 있어야 한다. / No inferred duration;long filtering requires a genuine clock and fresh forward progress.
+- TT 광고/타이머/긴 영상/일반 준비 상태는 게시물·pager·미디어·피드번호·렌더러 키를 포함한다. 사진 전체 타이머는 정상 장 변경을 보존하되 pager/피드번호 변경에서 새로 시작한다. / Source changes reset prepared evidence;whole-photo timing survives only normal within-post slides.
+- TT 세로 이동은 같은 창/pager,안정된 다른 게시물 AND 다른 미디어,알려진 피드번호 정확+1을 확인한다. 진행값 목적지는 실제 전진,알려진 무시계/사진/광고는 안정된 원천을 확인한다. 수평은 같은post/pager/피드번호와 사진번호 정확+1을 확인한다. 실패는 전체OFF→ON 전까지 재시도하지 않는다. / Strict vertical/horizontal proof and hard stops replace blind retries.
+- IG 기존 설정키·모든호스트 설정·서명·권한·OS하한은 유지한다. TT특수키만host.tiktok으로 분리한다. TT LIVE/visual/다른변형은 미지원이다. / Preserve existing keys/signing/permissions/API limits;new TikTok specials are isolated.
+
+[사용법](APP_SETTINGS_0.5.0.md)·[검증](VERIFICATION.md)·[새실폰 점검](FIELD_TEST_0.5.0.md). 아래0.4.0 이하 충돌 계약은 해당 버전의 과거 기록이다. / Conflicting contracts below are historical.
 
 ## 현재0.4.0/code33 계약 / Current contract
 

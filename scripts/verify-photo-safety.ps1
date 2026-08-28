@@ -15,7 +15,7 @@ if (-not $photoService.Contains('store != null && store.enabled() && !state.bloc
 foreach ($photoGuard in @('if (photoTransition.pending()) {', 'else if (unresolvedPhotoAttempt && store.enabled())',
     'photos.reset(); photoTransition.reset();', 'if (photoTransition.pending()) { failClosed("photo.failed"); return; }',
     'if (!accepted) { failClosed("photo.failed"); return; }', 'snapshot.photo == null ? null : snapshot.photo.position',
-    'store.enabled() && store.instagramEnabled() && store.photoEnabled()', 'if (snapshot.photo != null) { observePhoto(snapshot, now); return; }')) {
+    'store.enabled() && store.isSelected(activePackage) && store.photoEnabled()', 'if (snapshot.photo != null) { observePhoto(snapshot, now); return; }')) {
     if (-not $photoService.Contains($photoGuard)) { throw "Photo safety wiring missing: $photoGuard" }
 }
 if (-not $photoService.Contains('!photoRequestPageKey.isEmpty() && !snapshot.photoPageKey.isEmpty() && !photoRequestPageKey.equals(snapshot.photoPageKey)')) {

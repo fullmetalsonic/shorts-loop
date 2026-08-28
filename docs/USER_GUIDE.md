@@ -1,6 +1,20 @@
-# 사용 설명서 / User guide · ShortsLoop 0.4.0
+# 사용 설명서 / User guide · ShortsLoop 0.5.0
 
-## 0.4.0 빠른 사용법 / Current quick guide
+## 0.5.0 현재 사용법 / Current guide
+
+홈에서 YouTube·Instagram·TikTok 버튼→해당 앱 사용ON→반복/특수 옵션을 설정하고, 홈 공통 권한을 준비한 뒤 하단 전체 실행을 켠다. 이전의 편집 탭과 별도 사용 앱 선택 영역은 앱별 상세 화면으로 통합했다. 뒤로가기는 실행을 켜지 않으며 미완성 숫자는 자동 적용하지 않는다.
+
+Open a host from the home buttons,enable it and configure its rules;prepare shared permissions and start master execution. Separate editor tabs/host selection are replaced by per-app pages. Back navigation never starts execution or silently applies drafts.
+
+TikTok도 광고 대기0.0–9.9초/0.1단위,사진 전체·한 장 각각0–10초/기본3초,적격 무진행 영상2–60초/기본3초,알려진 총길이의 긴 영상 필터를 지원한다. 광고OFF는 광고 전용 넘김만 끄며 다른 적격 일반/사진 규칙은 적용 가능하다. 실제 길이가 없으면 긴 영상 필터는 적용되지 않는다. TikTok LIVE/화면 분석은 미지원이다.
+
+TikTok gains independent ad/photo/clockless/known-duration settings. AdsOFF disables the ad-specific rule,not other eligible rules. Unknown duration cannot qualify for long filtering;TikTok LIVE/visual remain unsupported.
+
+화면별 버튼·입력 예·오류·복구는 [앱별 상세 설명서](APP_SETTINGS_0.5.0.md),[새 실사용 점검표](FIELD_TEST_0.5.0.md),[릴리스](releases/v0.5.0.md)를 따른다. 새 실폰 자동 넘김은NOT RUN이며 아래0.4.0 안내는 과거 UI 기록이다.
+
+See the linked per-app guide for controls,examples,validation and recovery. New physical automation is unrun;the0.4.0 section below describes the historical UI.
+
+## 이전0.4.0 빠른 사용법 / Historical quick guide
 
 게시·최종 APK 상태는 [0.4.0 릴리스](releases/v0.4.0.md),검사 결과는 [검증 원장](VERIFICATION.md)을 확인하세요. 이번 버전은 폰 연결 종료 후 PC 검증으로 준비하며 신규 TikTok·세 앱 실폰 자동 넘김은 아직 미검증입니다.
 

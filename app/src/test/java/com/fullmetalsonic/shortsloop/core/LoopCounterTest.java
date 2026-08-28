@@ -13,6 +13,17 @@ public class LoopCounterTest {
         through(1, 35); assertTrue(sample(0).advance); assertFalse(sample(1).advance); assertFalse(sample(0).advance);
     }
     @Test public void singlePlayMode() { counter.setTarget(1); through(0, 35); assertTrue(sample(0).advance); }
+    @Test public void emittedCompletionRequiresSameFreshSourceAtDispatch() {
+        counter.setTarget(1); through(0, 35); assertTrue(sample(0).advance);
+        assertTrue(counter.permitsAdvance(new Progress(0, 35), "video-A", now));
+        assertTrue(counter.permitsAdvance(new Progress(1, 35), "video-A", now + 500));
+        assertFalse(counter.permitsAdvance(new Progress(0, 35), "video-B", now));
+        assertFalse(counter.permitsAdvance(new Progress(0, 40), "video-A", now));
+        assertFalse(counter.permitsAdvance(new Progress(0, 35), "video-A", now - 1));
+        assertFalse(counter.permitsAdvance(new Progress(0, 35), "video-A", now + 1501));
+        assertFalse(counter.permitsAdvance(new Progress(20, 35), "video-A", now + 500));
+        counter.reset(); assertFalse(counter.permitsAdvance(new Progress(0, 35), "video-A", now));
+    }
     @Test public void threeFullPlaysAreNotClampedToTwo() {
         counter.setTarget(3); through(0, 35);
         assertEquals(2, sample(0).current); through(1, 35);

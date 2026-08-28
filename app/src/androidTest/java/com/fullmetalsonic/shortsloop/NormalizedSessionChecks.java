@@ -6,7 +6,10 @@ import android.graphics.Rect;
 import com.fullmetalsonic.shortsloop.core.AdvanceGate;
 import com.fullmetalsonic.shortsloop.core.NormalizedLoopCounter;
 import com.fullmetalsonic.shortsloop.core.NormalizedProgress;
-import com.fullmetalsonic.shortsloop.core.NormalizedTransition;
+import com.fullmetalsonic.shortsloop.core.TikTokPageTransition;
+import com.fullmetalsonic.shortsloop.core.PhotoReelPolicy;
+import com.fullmetalsonic.shortsloop.core.PhotoReelTracker;
+import com.fullmetalsonic.shortsloop.detection.PhotoFrame;
 import com.fullmetalsonic.shortsloop.core.PlaybackRestart;
 import com.fullmetalsonic.shortsloop.core.Progress;
 import com.fullmetalsonic.shortsloop.data.SettingsStore;
@@ -43,7 +46,7 @@ public final class NormalizedSessionChecks {
             int siblingGeneration = (Integer)get(ig, "generation");
 
             YouTubeSnapshot initial = frame("A", "media-A", 7, .02);
-            NormalizedTransition.Frame mapped = mapped(tt, initial);
+            TikTokPageTransition.Frame mapped = mapped(tt, initial);
             require(mapped != null && mapped.page.equals("A") && mapped.media.equals("media-A")
                     && mapped.pager.equals("pager") && mapped.index == 7 && mapped.fraction == .02,
                     "Session carries normalized units and independent identity keys");
@@ -65,6 +68,8 @@ public final class NormalizedSessionChecks {
             require(!countKey.equals(countKey(tt, initial.withNormalizedIdentity("new-pager", "media-A", 7))),
                     "Reused page/media under another pager resets count identity");
             require(countKey.equals(countKey(tt, initial)), "A-B-A counter key returns to original without invented sequence tokens");
+            require(!countKey.equals(countKey(tt, initial.withContentIdentity("tiktok-render:SurfaceView"))),
+                    "Renderer changes reset count evidence without inventing a new source-node identity");
 
             require(same(tt, initial, frame("A", "media-A", 7, .03)), "Small same-page forward sample stays comparable");
             discard(tt, initial, frame("A", "media-B", 7, .03), "Independent media changed");
@@ -107,6 +112,7 @@ public final class NormalizedSessionChecks {
             require(siblingGate.pending() && (Integer)get(ig, "generation") == siblingGeneration,
                     "Direct TikTok settings dispatch leaves sibling object alone");
             noInput(ig, "Sibling fixtures");
+            specialPolicies(tt, scoped, root);
             return checks;
         } catch (ReflectiveOperationException error) { throw new AssertionError("Normalized session safety wiring", error); }
         finally {
@@ -115,13 +121,13 @@ public final class NormalizedSessionChecks {
         }
     }
     private void arm(HostPlaybackSession session, YouTubeSnapshot value) throws ReflectiveOperationException {
-        ((NormalizedTransition)get(session, "normalizedTransition")).begin(mapped(session, value), 1000);
+        ((TikTokPageTransition)get(session, "tiktokTransition")).begin(mapped(session, value), 1000);
         ((AdvanceGate)get(session, "gate")).begin(value.identity, -1, 1000);
         set(session, "pendingNormalized", true);
         set(session, "unresolvedNormalizedAttempt", true);
     }
     private void assertCleared(HostPlaybackSession session, String label) throws ReflectiveOperationException {
-        require(!((NormalizedTransition)get(session, "normalizedTransition")).pending(), label + ": strict tracker cancelled");
+        require(!((TikTokPageTransition)get(session, "tiktokTransition")).pending(), label + ": strict tracker cancelled");
         require(!((AdvanceGate)get(session, "gate")).pending(), label + ": shared gate cancelled");
         require(!(Boolean)get(session, "pendingNormalized"), label + ": normalized pending flag cleared");
         require(!((NormalizedLoopCounter)get(session, "normalizedCounter")).pendingAdvance(), label + ": emitted completion cleared");
@@ -140,8 +146,97 @@ public final class NormalizedSessionChecks {
         require((Integer)get(session, "advanceRequests") == 0 && (Integer)get(session, "confirmedAdvances") == 0,
                 label + ": no OS request or fabricated transition confirmation");
     }
-    private static NormalizedTransition.Frame mapped(HostPlaybackSession session, YouTubeSnapshot value) throws ReflectiveOperationException {
-        return (NormalizedTransition.Frame)call(session, "normalizedFrame", new Class<?>[]{YouTubeSnapshot.class}, value);
+    private static TikTokPageTransition.Frame mapped(HostPlaybackSession session, YouTubeSnapshot value) throws ReflectiveOperationException {
+        return (TikTokPageTransition.Frame)call(session, "normalizedFrame", new Class<?>[]{YouTubeSnapshot.class}, value);
+    }
+    private void specialPolicies(HostPlaybackSession session, SettingsStore tt, SettingsStore root) throws ReflectiveOperationException {
+        root.enabled(true); tt.enabled(true); tt.target(1); tt.skipAds(false); tt.timedFallback(true); tt.photoEnabled(true);
+        tt.skipLong(true); tt.longVideoSeconds(60);
+        YouTubeSnapshot clockless = special(false, true, null, null);
+        YouTubeSnapshot dotAd = special(true, false, null, null);
+        YouTubeSnapshot timedAd = special(true, true, null, null);
+        YouTubeSnapshot clock = special(false, false, new Progress(2, 120), null);
+        YouTubeSnapshot adClock = special(true, false, new Progress(2, 120), null);
+        YouTubeSnapshot adNormalized = frame("A", "media-A", 7, .02).withAd(true);
+        PhotoFrame picture = new PhotoFrame(new Rect(0, 200, 1000, 1400), new PhotoReelPolicy.Position(4, 5));
+        YouTubeSnapshot photoAd = special(true, false, null, picture);
+        require(candidate(session, "timedCandidate", clockless), "Known clockless TikTok has an opt-in timer");
+        require(candidate(session, "timedCandidate", timedAd), "Ad opt-out permits a proven ordinary clockless ad video");
+        require(!candidate(session, "timedCandidate", dotAd), "Dot advertisement never becomes ordinary fallback");
+        require(!candidate(session, "timedCandidate", photoAd), "Photo cannot become video fallback");
+        require(!candidate(session, "timedCandidate", frame("A", "m", 7, 0)), "Valid zero range is progress, not missing progress");
+        require(!candidate(session, "timedCandidate", clock), "Real seconds exclude fallback");
+        require(mapped(session, adNormalized) != null, "Ad opt-out keeps valid ordinary normalized playback");
+        require(candidate(session, "longCandidate", clock) && candidate(session, "longCandidate", adClock),
+                "Actual known duration enables the long filter even on opted-out ads");
+        require(!candidate(session, "longCandidate", adNormalized), "Normalized units never become seconds");
+        require(!same(session, adNormalized, adNormalized.withAd(false)), "Raw ad type change cancels deferred work");
+        require(!same(session, photoAd, photoAd.withAd(false)), "Raw photo ad type change cancels deferred work");
+        require(same(session, photoAd, photoAd), "Same indexed photo ad remains comparable");
+        String photoTimer = (String)call(session, "photoTimingIdentity", new Class<?>[]{YouTubeSnapshot.class}, photoAd);
+        require(photoTimer.equals(call(session, "photoTimingIdentity", new Class<?>[]{YouTubeSnapshot.class},
+                photoAd.withNormalizedIdentity("pager", "media-B", 7))), "Whole-post timer survives normal media slide changes");
+        for (YouTubeSnapshot changed : new YouTubeSnapshot[]{photoAd.withNormalizedIdentity("new", "media-A", 7),
+                photoAd.withNormalizedIdentity("pager", "media-A", 8)})
+            require(!photoTimer.equals(call(session, "photoTimingIdentity", new Class<?>[]{YouTubeSnapshot.class}, changed)),
+                    "Photo timer resets for pager/feed-index changes");
+        require(!same(session, photoAd, photoAd.withNormalizedIdentity("other-pager", "media-A", 7)),
+                "Photo deferred action cannot move to another pager");
+        require(!same(session, photoAd, photoAd.withNormalizedIdentity("pager", "media-A", 8)),
+                "Photo deferred action cannot use another feed index");
+        set(session, "photoRequestPagerKey", "pager"); set(session, "photoRequestBounds", page()); set(session, "photoRequestIndex", 7);
+        require(photoScope(session, photoAd, PhotoReelTracker.Action.SLIDE), "Horizontal movement keeps feed index");
+        require(!photoScope(session, photoAd, PhotoReelTracker.Action.REEL), "Same feed index cannot prove vertical move");
+        require(photoScope(session, photoAd.withNormalizedIdentity("pager", "media-B", 8), PhotoReelTracker.Action.REEL),
+                "Vertical photo movement permits exact next feed index");
+        for (int index : new int[]{-1, 6, 7, 9}) require(!photoScope(session, photoAd.withNormalizedIdentity("pager", "media-B", index),
+                PhotoReelTracker.Action.REEL), "Missing/backward/skipped index cannot prove photo move");
+        require(!photoScope(session, photoAd.withNormalizedIdentity("other", "media-B", 8), PhotoReelTracker.Action.REEL),
+                "Different pager cannot confirm a photo move");
+        String preparation = (String)call(session, "preparationIdentity", new Class<?>[]{YouTubeSnapshot.class}, clockless);
+        String secondsKey = (String)call(session, "ordinaryCounterKey", new Class<?>[]{YouTubeSnapshot.class}, clockless);
+        for (YouTubeSnapshot changed : new YouTubeSnapshot[]{clockless.withIdentity("B"),
+                clockless.withNormalizedIdentity("other", "media-A", 7), clockless.withNormalizedIdentity("pager", "media-B", 7),
+                clockless.withNormalizedIdentity("pager", "media-A", 8), clockless.withContentIdentity("renderer-changed")}) {
+            require(!preparation.equals(call(session, "preparationIdentity", new Class<?>[]{YouTubeSnapshot.class}, changed)),
+                    "Changed page/pager/media/index/renderer resets prepared time evidence");
+            require(!secondsKey.equals(call(session, "ordinaryCounterKey", new Class<?>[]{YouTubeSnapshot.class}, changed)),
+                    "Changed source resets actual-seconds count evidence too");
+        }
+        require(transitionFrame(session, photoAd).fraction == -1 && transitionFrame(session, dotAd).fraction == -1,
+                "Known photo/ad destinations are represented without fabricated clocks");
+        require(transitionFrame(session, clock).fraction == 2.0 / 120, "Actual seconds can confirm forward playback");
+        require(transitionFrame(session, new YouTubeSnapshot(null, "unknown", page(), "").inWindow(7, window())) == null,
+                "Unknown snapshot has no TikTok transition authority");
+        require(transitionFrame(session, clockless.withNormalizedIdentity("", "media", -1)) == null,
+                "Missing independent pager key cannot confirm movement");
+        tt.skipAds(true);
+        require(mapped(session, adNormalized) == null && !candidate(session, "timedCandidate", timedAd)
+                && !candidate(session, "longCandidate", adClock), "Enabled ad policy takes precedence over normal rules");
+        tt.target(0);
+        require(!candidate(session, "timedCandidate", clockless), "Count zero stops TikTok fallback");
+        require(candidate(session, "longCandidate", clock), "Count zero preserves explicit long-video filter");
+        require((Boolean)call(session, "adSkippingEnabled", new Class<?>[0])
+                && (Boolean)call(session, "photoSkippingEnabled", new Class<?>[0]), "Ads and photos are independent of count zero");
+        root.enabled(false);
+        require(!candidate(session, "timedCandidate", clockless) && !candidate(session, "longCandidate", clock)
+                && !(Boolean)call(session, "adSkippingEnabled", new Class<?>[0])
+                && !(Boolean)call(session, "photoSkippingEnabled", new Class<?>[0]), "Execution OFF stops all TikTok policies");
+        session.onSharedPreferenceChanged(root.preferences, "enabled");
+        noInput(session, "All special policy fixtures are read-only");
+    }
+    private static boolean candidate(HostPlaybackSession session, String name, YouTubeSnapshot value) throws ReflectiveOperationException {
+        return (Boolean)call(session, name, new Class<?>[]{YouTubeSnapshot.class}, value);
+    }
+    private static boolean photoScope(HostPlaybackSession session, YouTubeSnapshot value, PhotoReelTracker.Action action) throws ReflectiveOperationException {
+        return (Boolean)call(session, "samePhotoRequestScope", new Class<?>[]{YouTubeSnapshot.class, PhotoReelTracker.Action.class}, value, action);
+    }
+    private static TikTokPageTransition.Frame transitionFrame(HostPlaybackSession session, YouTubeSnapshot value) throws ReflectiveOperationException {
+        return (TikTokPageTransition.Frame)call(session, "tiktokFrame", new Class<?>[]{YouTubeSnapshot.class}, value);
+    }
+    private static YouTubeSnapshot special(boolean ad, boolean clockless, Progress clock, PhotoFrame photo) {
+        return YouTubeSnapshot.tiktokPage("A", page(), clock, null, ad, clockless, photo)
+                .withNormalizedIdentity("pager", "media-A", 7).withPhotoPageKey("media-A").inWindow(7, window());
     }
     private static String countKey(HostPlaybackSession session, YouTubeSnapshot value) throws ReflectiveOperationException {
         return (String)call(session, "normalizedCounterKey", new Class<?>[]{YouTubeSnapshot.class}, value);

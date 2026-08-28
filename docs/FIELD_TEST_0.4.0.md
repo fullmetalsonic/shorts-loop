@@ -1,5 +1,7 @@
 # 0.4.0 실사용 점검표 / Field checks
 
+후속2026-08-29: 설치0.4.0의 TikTok 카운트0을 실기기에서 재현했다. 진행값이 있어도 SurfaceView 인식이 누락되는 경우가 확인됐으며 아직 제품 수정 전이다. 아래는 성공 보고가 아닌 시험 절차다. [26피드 진단](TIKTOK_DEVICE_DIAGNOSIS_0.4.0.md). / Follow-up: physical TikTok count0 reproduced,renderer fix pending. The steps below are not a pass report.
+
 대상은 **ShortsLoop 0.4.0/code33**입니다. 아래는 아직 실시하지 않은 실폰 점검 순서이며 성공 기록이 아닙니다. USB·무선 디버깅 없이 앱 업데이트 후 확인할 수 있습니다. 차량을 운전하거나 보행 중 화면 조작이 위험한 상황에서는 시험하지 마세요.
 
 For **ShortsLoop 0.4.0/code33**. This is an unrun field checklist, not a pass report. No debugging connection is required. Test while stationary and safe, never while driving or in unsafe walking conditions.

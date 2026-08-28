@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="photo_title">인스타그램 사진 릴스</string>
+    <string name="photo_title">사진 콘텐츠</string>
     <string name="photo_independent">반복 횟수와 별도 적용 · 0회에서도 동작</string>
-    <string name="photo_toggle">사진 릴스 자동 넘김</string>
-    <string name="photo_mode_whole">릴스 통째로 넘기기</string>
-    <string name="photo_mode_each">한 장씩 보고 다음 릴스로</string>
-    <string name="photo_whole_seconds">통째 넘김 대기시간 (초)</string>
+    <string name="photo_toggle">사진 자동 넘김</string>
+    <string name="photo_mode_whole">게시물 통째로 넘기기</string>
+    <string name="photo_mode_each">한 장씩 보고 다음 게시물로</string>
+    <string name="photo_whole_seconds">통째 넘김 시간(초)</string>
     <string name="photo_slide_seconds">사진 한 장당 보기 시간 (초)</string>
-    <string name="photo_fallback">장 번호 확인 불가 시 통째로 넘기기</string>
-    <string name="photo_help">모드는 하나만 선택하며, 두 시간은 각각 0~10초로 따로 저장합니다. 기본값은 둘 다 3초입니다. 0초는 끄기가 아니라 안전한 화면 확인 후 즉시 넘김입니다.\n한 장씩 보기에서는 마지막 사진도 설정한 시간만큼 보고 다음 릴스로 넘어갑니다. 장 번호를 읽지 못하면 선택에 따라 통째 넘김 시간을 적용하거나 대기합니다.\n댓글·메뉴·불명확한 화면과 혼합 게시물의 영상 항목에서는 대기합니다. 사진 이동을 확인하지 못하면 안전정지합니다. 자동 넘김 실행을 끄면 모든 모드가 중지됩니다.</string>
+    <string name="photo_fallback">장 번호를 읽을 수 없으면 통째로 넘기기</string>
+    <string name="photo_help">모드는 하나만 선택하며, 두 시간은 각각 0~10초로 따로 저장합니다. 초기값은 둘 다 3초입니다. 0초는 끄기가 아니라 안전 확인 후 즉시 넘김입니다.\n한 장씩 보기에서는 마지막 사진도 같은 시간만큼 보고 다음 게시물로 넘어갑니다. 장 번호를 읽지 못하면 선택에 따라 통째 넘김 시간을 적용하거나 대기합니다.\n댓글·메뉴·불명확한 화면과 혼합 콘텐츠에서는 대기합니다. 사진 이동 확인 실패 시 안전정지합니다. 전체 실행을 끄면 모든 모드가 멈춥니다.</string>
     <string name="photo_seconds_error">0~10 사이의 정수를 입력하세요.</string>
     <string name="photo_seconds_apply">입력한 사진 시간 적용</string>
     <string name="photo_decrease">%1$s 줄이기</string>
     <string name="photo_increase">%1$s 늘리기</string>
     <string name="flo_photo">사진</string>
     <string name="photo_status_remaining">%1$s · %2$d초</string>
-    <string name="state_photo_ready">사진 릴스 감지</string>
-    <string name="state_photo_waiting">안정된 사진 릴스 확인 중</string>
-    <string name="state_photo_disabled">사진 릴스 · 사진 자동 넘김 꺼짐</string>
-    <string name="state_photo_whole">사진 릴스 · 통째 넘김 대기</string>
-    <string name="state_photo_each">사진 릴스 · 한 장씩 보기</string>
+    <string name="state_photo_ready">사진 게시물 감지</string>
+    <string name="state_photo_waiting">안정된 사진 게시물 확인 중</string>
+    <string name="state_photo_disabled">사진 게시물 · 사진 자동 넘김 꺼짐</string>
+    <string name="state_photo_whole">사진 게시물 · 통째 넘김 대기</string>
+    <string name="state_photo_each">사진 게시물 · 한 장씩 보기</string>
     <string name="state_photo_fallback">장 번호 확인 불가 · 통째 넘김 대기</string>
     <string name="state_photo_index_missing">장 번호 확인 불가 · 대기</string>
     <string name="state_photo_confirming">사진 또는 릴스 이동 확인 중</string>

@@ -82,6 +82,12 @@ public final class YouTubeSnapshot {
     public YouTubeSnapshot withPhotoPageKey(String value) {
         return new YouTubeSnapshot(progress, identity, page, reason, ad, visualCandidate, live, windowId, windowBounds, contentIdentity, photo, value == null ? "" : value, normalizedProgress, normalizedPagerKey, normalizedMediaKey, normalizedPageIndex);
     }
+    /** Policy-only copy. Preserve the original reader snapshot for fresh source/type verification. */
+    public YouTubeSnapshot withAd(boolean value) {
+        return new YouTubeSnapshot(progress, identity, page, reason, value, visualCandidate, live,
+                windowId, windowBounds, contentIdentity, photo, photoPageKey, normalizedProgress,
+                normalizedPagerKey, normalizedMediaKey, normalizedPageIndex);
+    }
     public boolean recognized() { return page != null && identity != null && !identity.isEmpty(); }
     public boolean usable() { return progress != null && page != null && !ad && !live; }
     public boolean normalizedUsable() {
@@ -89,6 +95,14 @@ public final class YouTubeSnapshot {
     }
     public static YouTubeSnapshot normalizedVideo(String identity, Rect page, NormalizedProgress progress) {
         return new YouTubeSnapshot(null, identity, page, "", false, false, false, -1, null, "", null, "", progress);
+    }
+    /** Retains overlapping advertising/photo evidence; session settings choose the policy. */
+    public static YouTubeSnapshot tiktokPage(String identity, Rect page, Progress clock,
+            NormalizedProgress normalized, boolean ad, boolean clocklessEligible, PhotoFrame photo) {
+        String reason = ad ? "ads.waiting" : photo != null ? "photo.ready"
+                : normalized != null || clock != null ? "" : "tiktok.no_progress";
+        return new YouTubeSnapshot(clock, identity, page, reason, ad, clocklessEligible, false,
+                -1, null, "", photo, "", normalized);
     }
     public YouTubeSnapshot withNormalizedIdentity(String pagerKey, String mediaKey, int pageIndex) {
         return new YouTubeSnapshot(progress, identity, page, reason, ad, visualCandidate, live, windowId,

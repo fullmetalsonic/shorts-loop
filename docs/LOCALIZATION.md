@@ -1,4 +1,8 @@
-# 한국어·영어 안내 / Korean and English · ShortsLoop 0.4.0
+# 한국어·영어 안내 / Korean and English · ShortsLoop 0.5.0
+
+0.5.0의홈/앱별상세/광고·사진·시간·긴영상안내도한영으로제공한다. 시스템첫언어한국어→한국어,그밖→영어계약과기존값보존은유지한다. [앱별설명](APP_SETTINGS_0.5.0.md)·[현재검증](VERIFICATION.md). 이전버전의스크린샷/검사수치는새빌드의증거가아니다.
+
+Version0.5.0 localizes home,per-app pages and rule guidance while preserving system-language selection and settings. Earlier screenshots/results are not new-build evidence.
 
 ## 현재0.4.0/code33 표시 / Current display
 

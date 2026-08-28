@@ -8,11 +8,11 @@ import static org.junit.Assert.*;
 /** Synthetic structure only; not a TikTok app or device end-to-end test. */
 public class TikTokStructurePolicyTest {
     private static final String P = TikTokStructurePolicy.PREFIX;
-    private static TikTokStructurePolicy.Node n(String id, String type, int parent, boolean visible) {
+    static TikTokStructurePolicy.Node n(String id, String type, int parent, boolean visible) {
         return new TikTokStructurePolicy.Node(P + id, type, parent, 0, 0, 1000, 1600,
                 visible, false, false, false, false, false, false);
     }
-    private static List<TikTokStructurePolicy.Node> ordinary() {
+    static List<TikTokStructurePolicy.Node> ordinary() {
         List<TikTokStructurePolicy.Node> nodes = new ArrayList<>();
         nodes.add(n("root", "android.widget.FrameLayout", -1, true)); // 0
         nodes.add(n("viewpager_container", "android.widget.LinearLayout", 0, true)); // 1
@@ -47,9 +47,10 @@ public class TikTokStructurePolicyTest {
         List<TikTokStructurePolicy.Node> nodes = ordinary(); nodes.add(n("zb1", "android.widget.FrameLayout", 4, false));
         assertTrue(TikTokStructurePolicy.inspect(nodes).accepted());
     }
-    @Test public void hiddenZeroRangeIsNotClocklessAutomation() {
+    @Test public void hiddenRangeOnlyQualifiesAnOtherwiseKnownOrdinaryPage() {
         List<TikTokStructurePolicy.Node> nodes = ordinary(); nodes.set(12, n("vb6", "android.widget.SeekBar", 11, false));
-        assertEquals("tiktok.no_progress", TikTokStructurePolicy.inspect(nodes).reason);
+        TikTokStructurePolicy.Match match = TikTokStructurePolicy.inspect(nodes);
+        assertTrue(match.accepted()); assertTrue(match.ordinary); assertEquals(-1, match.seek);
     }
     @Test public void twoVisiblePagesOrPagersAreRejected() {
         List<TikTokStructurePolicy.Node> nodes = ordinary(); nodes.set(4, n("view_rootview", "android.widget.FrameLayout", 3, true));

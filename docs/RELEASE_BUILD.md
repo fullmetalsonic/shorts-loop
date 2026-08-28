@@ -1,6 +1,10 @@
-# 배포 APK 빌드·검사 / Distribution build and checks · 0.4.0
+# 배포 APK 빌드·검사 / Distribution build and checks · 0.5.0
 
-## 현재0.4.0/code33 산출물 / Current artifact
+현재배포는0.5.0/code34,파일명shorts-loop-v0.5.0.apk다. 기존패키지/전체서명·non-debuggable·API26하한을유지하고,커밋후빌드→revision대조→원본APK/메타데이터/체크섬고정→공개다운로드동일성을검사한다. [현재결과](releases/v0.5.0.md). 아래0.4.0의숫자는과거산출물이며절차는그대로적용한다.
+
+Current delivery uses0.5.0/code34 and the existing signer. Build committed sources,verify embedded revision,freeze all three assets and compare public downloads.0.4.0 artifact values below are historical.
+
+## 이전0.4.0/code33 산출물 / Historical artifact
 
 최종 배포 이름은 `shorts-loop-v0.4.0.apk`이며 기존 패키지·서명을 유지한 non-debuggable release를 사용한다. 소스를 먼저 확정한 뒤 빌드하고 APK 내장 revision·versionName0.4.0/versionCode33·minSdk26·서명 집합을 대조한다. debug APK나 네이티브시험 APK를 배포 파일로 혼동하지 않는다.
 

@@ -1,10 +1,10 @@
 <resources>
     <string name="tiktok_tap_quick">Repeat on/off\n0 ↔ configured plays</string>
     <string name="ui_tiktok">TikTok</string>
-    <string name="tiktok_count_helper">0 stops TikTok automation · Maximum 99 plays\nStarting mid-video may wait for its next beginning. An unconfirmed skip stays stopped until you restart this host or turn execution off and on.</string>
+    <string name="tiktok_count_helper">0 stops ordinary repeat and the timer · Maximum 99 plays\nEnabled ads, photos and known long-video rules remain independent. Starting mid-video waits for a new beginning.</string>
     <string name="ui_tiktok_missing">TikTok · Not installed</string>
     <string name="mw_tiktok_repeat">TikTok only · Count complete plays using readable progress in the recommendation feed.</string>
-    <string name="tiktok_capabilities">TikTok (com.ss.android.ugc.trill) only. No timer for unreadable progress, and no ad, LIVE, photo or long-video skipping. Unknown screens wait. Real-device auto-advance and three-app playback still need validation.</string>
+    <string name="tiktok_capabilities">Recommendation-feed videos use readable progress. Separate options below handle recognized ads, photo posts, unreadable-progress videos and known long videos. Unknown screens wait; real-device validation is still needed.</string>
     <string name="ad_delay_title">Wait before skipping (seconds)</string>
     <string name="ad_delay_decrease">Decrease ad wait by 0.1 seconds</string>
     <string name="ad_delay_increase">Increase ad wait by 0.1 seconds</string>

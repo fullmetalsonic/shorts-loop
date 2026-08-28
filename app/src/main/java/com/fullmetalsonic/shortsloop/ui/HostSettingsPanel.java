@@ -7,12 +7,15 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Switch;
 import com.fullmetalsonic.shortsloop.R;
 import com.fullmetalsonic.shortsloop.data.SettingsStore;
 
 /** A retained editor tree per host: switching tabs never commits or replaces a draft. */
 public final class HostSettingsPanel {
     public final LinearLayout root;
+    public final LinearLayout special;
+    public final Switch activation;
     public final CountEditor count;
     public final LongVideoPanel longVideo;
     public final TextView applied, state;
@@ -30,6 +33,11 @@ public final class HostSettingsPanel {
         boolean instagram = SettingsStore.INSTAGRAM_PACKAGE.equals(host), tiktok = SettingsStore.TIKTOK_PACKAGE.equals(host);
         root = UiTheme.column(c);
         root.setId(tiktok ? R.id.mw_tiktok_settings : instagram ? R.id.mw_instagram_settings : R.id.mw_youtube_settings);
+        LinearLayout enabledCard = UiTheme.card(c, root, c.getString(R.string.host_activation_title));
+        activation = SettingsScreen.toggle(c, c.getString(R.string.host_activation_toggle),
+                tiktok ? R.id.app_tiktok : instagram ? R.id.app_instagram : R.id.app_youtube);
+        enabledCard.addView(activation);
+        enabledCard.addView(UiTheme.text(c, c.getString(R.string.host_activation_help), 13, UiTheme.MUTED, false));
         LinearLayout repeat = UiTheme.card(c, root, c.getString(R.string.ui_repeat_title));
         repeat.addView(UiTheme.text(c, c.getString(tiktok ? R.string.mw_tiktok_repeat : instagram ? R.string.mw_instagram_repeat : R.string.mw_youtube_repeat), 14, UiTheme.MUTED, false));
         UiTheme.space(c, repeat, 12);
@@ -42,7 +50,7 @@ public final class HostSettingsPanel {
         if (tiktok) repeat.addView(UiTheme.text(c, c.getString(R.string.tiktok_capabilities), 13, UiTheme.MUTED, false));
         LinearLayout longCard = UiTheme.card(c, root, c.getString(R.string.long_video_card_title));
         longVideo = new LongVideoPanel(c, initialSeconds, longListener); longCard.addView(longVideo);
-        if (tiktok) { longCard.setVisibility(View.GONE); longVideo.setAvailable(false); }
+        special = UiTheme.column(c); root.addView(special);
         LinearLayout taps = UiTheme.card(c, root, c.getString(R.string.mw_host_floating_title));
         taps.addView(UiTheme.text(c, c.getString(R.string.mw_host_floating_help), 13, UiTheme.MUTED, false));
         tapModes = new RadioGroup(c); tapModes.setOrientation(RadioGroup.VERTICAL);

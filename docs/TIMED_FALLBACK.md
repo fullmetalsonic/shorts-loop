@@ -1,4 +1,10 @@
-# 진행 정보 없는 릴스 시간제 넘김 / Clockless Reels timeout · 0.4.0
+# 진행 정보 없는 영상 시간제 넘김 / Clockless timeout · 0.5.0
+
+0.5.0은Instagram과TikTok에각각독립된시간제를제공한다. 기본OFF,미설정3초,2–60초정수이며판별2초는총시간에포함된다. 알려진일반영상/시계·유효비율없음/안전한현재창에만적용한다. 반복0에서는중지한다. TT준비키는post/pager/media/index를포함하고다른영상의대기시간을이어쓰지않는다. 광고전용넘김ON일때광고가우선하며,OFF인광고는일반구조자격이있을때만시간제가가능하다. 점광고/사진/모르는화면은일반타이머로넘기지않는다.
+
+Independent Instagram/TikTok timers defaultOFF with3s when unset and whole2–60s including qualification. They require positively identified safe clockless videos,count>0 and stable source evidence. Ad skipping takes priority;ad opt-out permits timing only for otherwise eligible ordinary structures. Dot ads,photos and unknown screens never qualify.
+
+[사용법](APP_SETTINGS_0.5.0.md)·[검증](VERIFICATION.md). 아래Instagram전용설명은이전버전계약이다. / Earlier Instagram-only descriptions below are historical.
 
 ## 현재 설정 / Current setting
 

@@ -14,6 +14,9 @@ public final class PhotoReelPanel extends LinearLayout {
     public final TextView support;
     private final RadioButton wholeChoice, eachChoice;
     public PhotoReelPanel(Context c) {
+        this(c, false);
+    }
+    public PhotoReelPanel(Context c, boolean tiktok) {
         super(c); setOrientation(VERTICAL); setId(R.id.photo_panel);
         addView(UiTheme.text(c, c.getString(R.string.photo_independent), 14, UiTheme.CYAN, true));
         toggle = toggle(c, R.string.photo_toggle, R.id.photo_toggle); addView(toggle);
@@ -22,15 +25,24 @@ public final class PhotoReelPanel extends LinearLayout {
         wholeChoice = choice(c, R.string.photo_mode_whole, R.id.photo_mode_whole);
         eachChoice = choice(c, R.string.photo_mode_each, R.id.photo_mode_each);
         modes.addView(wholeChoice); modes.addView(eachChoice); addView(modes);
-        whole = new PhotoSecondsEditor(c, R.id.photo_whole_input, R.id.photo_whole_minus, R.id.photo_whole_plus, R.id.photo_whole_apply, R.string.photo_whole_seconds);
-        slide = new PhotoSecondsEditor(c, R.id.photo_slide_input, R.id.photo_slide_minus, R.id.photo_slide_plus, R.id.photo_slide_apply, R.string.photo_slide_seconds);
+        whole = new PhotoSecondsEditor(c, tiktok ? R.id.tt_photo_whole_input : R.id.photo_whole_input,
+                tiktok ? R.id.tt_photo_whole_minus : R.id.photo_whole_minus, tiktok ? R.id.tt_photo_whole_plus : R.id.photo_whole_plus,
+                tiktok ? R.id.tt_photo_whole_apply : R.id.photo_whole_apply, R.string.photo_whole_seconds);
+        slide = new PhotoSecondsEditor(c, tiktok ? R.id.tt_photo_slide_input : R.id.photo_slide_input,
+                tiktok ? R.id.tt_photo_slide_minus : R.id.photo_slide_minus, tiktok ? R.id.tt_photo_slide_plus : R.id.photo_slide_plus,
+                tiktok ? R.id.tt_photo_slide_apply : R.id.photo_slide_apply, R.string.photo_slide_seconds);
         UiTheme.space(c, this, 10); addView(whole); UiTheme.space(c, this, 10); addView(slide);
         fallback = toggle(c, R.string.photo_fallback, R.id.photo_fallback); addView(fallback);
         addView(UiTheme.text(c, c.getString(R.string.photo_help), 13, UiTheme.MUTED, false));
+        if (tiktok) {
+            int[] before = {R.id.photo_panel,R.id.photo_toggle,R.id.photo_modes,R.id.photo_mode_whole,R.id.photo_mode_each,R.id.photo_fallback};
+            int[] after = {R.id.tt_photo_panel,R.id.tt_photo_toggle,R.id.tt_photo_modes,R.id.tt_photo_mode_whole,R.id.tt_photo_mode_each,R.id.tt_photo_fallback};
+            for (int i=0;i<before.length;i++) findViewById(before[i]).setId(after[i]);
+        }
     }
     public void render(SettingsStore store, boolean available) {
         toggle.setEnabled(available); toggle.setChecked(store.photoEnabled() && available);
-        modes.check(store.photoMode() == PhotoReelPolicy.EACH ? R.id.photo_mode_each : R.id.photo_mode_whole);
+        modes.check(store.photoMode() == PhotoReelPolicy.EACH ? eachChoice.getId() : wholeChoice.getId());
         wholeChoice.setEnabled(available); eachChoice.setEnabled(available);
         whole.render(store.photoWholeSeconds(), available); slide.render(store.photoSlideSeconds(), available);
         fallback.setChecked(store.photoFallback()); fallback.setEnabled(available && store.photoMode() == PhotoReelPolicy.EACH);
@@ -39,6 +51,7 @@ public final class PhotoReelPanel extends LinearLayout {
         if (store.photoMode() == PhotoReelPolicy.WHOLE) return whole.commit();
         return slide.commit() && (!store.photoFallback() || whole.commit());
     }
+    public boolean isEachChoice(int id) { return id == eachChoice.getId(); }
     private static Switch toggle(Context c, int label, int id) {
         Switch view = new Switch(c); view.setId(id); view.setText(label); view.setTextSize(16); view.setSingleLine(false);
         view.setTextColor(UiTheme.TEXT); view.setMinHeight(UiTheme.dp(c, 52)); view.setSwitchPadding(UiTheme.dp(c, 16));

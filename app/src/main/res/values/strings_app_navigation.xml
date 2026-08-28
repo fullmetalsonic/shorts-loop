@@ -1,0 +1,18 @@
+<resources>
+    <string name="ui_execution_title_compact">Run all</string>
+    <string name="home_summary">Choose an app, then adjust its settings.</string>
+    <string name="home_apps_title">App settings</string>
+    <string name="home_apps_help">Enable each app and choose its rules here. The bottom switch starts or stops all selected apps.</string>
+    <string name="host_open_settings">%1$s settings</string>
+    <string name="host_open_description">Open %1$s settings. %2$s</string>
+    <string name="host_home_missing">Not installed</string>
+    <string name="host_home_disabled">Not enabled</string>
+    <string name="host_home_enabled">Enabled</string>
+    <string name="host_home_master_off">Selected · Execution off</string>
+    <string name="host_home_summary">%1$s · Repeat %2$d</string>
+    <string name="host_back_home">‹ Home</string>
+    <string name="host_activation_title">Use this app</string>
+    <string name="host_activation_toggle">Enable automation for this app</string>
+    <string name="host_activation_help">This selects the app; the bottom switch controls all execution. Changes to switches apply immediately. Finish or apply typed numbers to save them.</string>
+    <string name="host_rules_ready">Applies only to this app. Overall execution must be on.</string>
+</resources>

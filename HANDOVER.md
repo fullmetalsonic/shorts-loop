@@ -1,5 +1,27 @@
 # ShortsLoop · 기술 인수인계 / Technical handover
 
+## 0.5.0/code34 · 앱별 설정 및 TikTok 확장 / Current checkpoint
+
+요구범위구현완료: 홈3개앱버튼/개별상세/공통분리,TT SurfaceView·광고/사진/적격무진행/실제총길이규칙. 기존설정·서명보존,새권한없음. source/page/pager/media/index재검증과hard-stop을유지하고독립리뷰P2(사진scope·준비시간/카운트키누락)를회귀검사와함께보완했다.
+
+Implemented per-app pages and evidence-backed TikTok rules,with preserved settings/signer and no new permissions. Independent review issues in photo scope and prepared source keys are fixed with regression checks.
+
+PC빌드/685JUnit(debug·release)/API26·33·34초기네이티브검사PASS. 마지막UI문구/큰글씨보완후최종산출물검증·게시기록은[검증](docs/VERIFICATION.md),[0.5.0릴리스](docs/releases/v0.5.0.md)를따른다. 새실폰자동넘김은NOT RUN이다. 개인기기캡처/로그는공개하지않는다.
+
+Initial PC checks pass;final delivery status is in the linked records. New-build physical automation remains unrun. Private device evidence is not published.
+
+[앱별상세설명](docs/APP_SETTINGS_0.5.0.md)·[실사용점검](docs/FIELD_TEST_0.5.0.md)·[제품기준](docs/PRODUCT_SPEC.md)·[TikTok진단](docs/TIKTOK_DEVICE_DIAGNOSIS_0.4.0.md)·[누적이력](docs/CHANGELOG.md).
+
+[화면·사용성 검토](docs/UI_AUDIT_0.5.0.md): 앱별 진입·설정 분리, 큰 글씨 하단 보강과 검증 한계를 기록한다. / UI audit records navigation, large-text changes and limits.
+
+아래0.4.0이하의현재/대기/미구현문구는과거시점이다. / Relative statuses below belong to historical checkpoints.
+
+## 2026-08-29 후속 · TikTok 실기기 실패 진단 / Physical diagnosis
+
+설치0.4.0/code33의 공개APK 해시 일치를 확인하고26개 서로 다른 피드를 비교했다. 일반 영상18개 중9개는 진행값이 증가하지만 SurfaceView를 현재 제품의 TextureView 전용 조건이 거부해 카운트0이다. 다른9개는 유효 진행값이 없었다. 광고8개에는 점만 있는 캐러셀·단일 이미지·번호 있는 사진형도 포함된다. 번호 있는 사진형의 수동4→3→4→5/총5,이미지A→B→A→C를 확인했으나 자동 성공은0이다. [상세 진단과 보강안](docs/TIKTOK_DEVICE_DIAGNOSIS_0.4.0.md),[D-047](docs/DEBUG_LOG.md#d-047--tiktok-렌더-인식-누락--renderer-detection-gap). 제품·설정·권한 변경/설치/게시 없음. 아래 공개 당시 실폰NOT RUN은 과거 체크포인트이며 현재 성공으로 재사용하지 않는다.
+
+EN: The installed release hash matches. A26-page physical survey reproduces ordinary SurfaceView rejection, separates clockless/advertising/photo types and verifies manual indexed-photo reversals. Product automatic requests/confirmations remain0;no product patch/install/publication. See the diagnostic report;release-time NOT RUN statements below are historical.
+
 ## 0.4.0/code33 · 공개 완료 / Public delivery checkpoint
 
 2026-08-29 Public 공개 완료. 제품/태그46e84e5/v0.4.0,APK763322bytes/D8E10BC3…987BBA,CI33188268354 SUCCESS. debug/release638JUnit씩,최종APK API26/33/34 native38122/38130/37741,공개3파일 바이트·해시·GitHubdigest/익명HTTP200/latest/인앱feed PASS. 상세는 [0.4.0 원장](docs/releases/v0.4.0.md)과 [검증 원장](docs/VERIFICATION.md)을 따른다. 새 실폰 자동 넘김은NOT RUN이며 휴대폰 설치본은 이 작업에서 변경하지 않았다.

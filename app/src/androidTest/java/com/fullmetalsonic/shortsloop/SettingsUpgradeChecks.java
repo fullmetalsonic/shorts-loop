@@ -10,7 +10,7 @@ import android.os.Bundle;
 import com.fullmetalsonic.shortsloop.data.SettingsStore;
 import java.util.Map;
 
-/** Test APK only: preserve typed per-host preferences across the public code32 to code33 update. */
+/** Test APK only: preserve typed per-host preferences across the public code33 to code34 update. */
 final class SettingsUpgradeChecks {
     @SuppressWarnings("deprecation")
     static Bundle run(Instrumentation test, String phase) {
@@ -25,12 +25,14 @@ final class SettingsUpgradeChecks {
             SharedPreferences identity = target.getSharedPreferences("upgrade_test_identity", 0);
             SettingsStore store = new SettingsStore(target);
             if ("seed".equals(phase)) {
-                require(info.versionCode == 32 && "0.3.0".equals(info.versionName), "Start with frozen code32");
+                require(info.versionCode == 33 && "0.4.0".equals(info.versionName), "Start with frozen code33");
                 require((info.applicationInfo.flags & ApplicationInfo.FLAG_DEBUGGABLE) == 0, "Previous public release is not debuggable");
                 store.enabled(false); store.ceiling(7); store.target(3); store.tapMode(0); store.target(3);
                 store.floatingEnabled(true); store.position(0.22f, 0.71f);
                 store.selectedApp(SettingsStore.YOUTUBE_PACKAGE, true);
                 store.selectedApp(SettingsStore.INSTAGRAM_PACKAGE, true);
+                store.selectedApp(SettingsStore.TIKTOK_PACKAGE, true);
+                store.adDelayTenths(13);
                 store.skipAds(true); store.skipLive(true); store.liveDelaySeconds(4);
                 store.skipLong(true); store.longVideoSeconds(73);
                 store.timedFallback(true); store.fallbackSeconds(17); store.visualAssist(false);
@@ -40,6 +42,8 @@ final class SettingsUpgradeChecks {
                 SettingsStore ig = store.forHost(SettingsStore.INSTAGRAM_PACKAGE);
                 yt.ceiling(7); yt.target(3); yt.skipLong(true); yt.longVideoSeconds(73); yt.position(.22f, .71f);
                 ig.ceiling(5); ig.target(2); ig.skipLong(false); ig.longVideoSeconds(83); ig.position(.62f, .31f);
+                SettingsStore tt = store.forHost(SettingsStore.TIKTOK_PACKAGE);
+                tt.ceiling(4); tt.target(1); tt.position(.32f, .61f);
                 store.dualMode(true);
                 require(store.preferences.edit().commit(), "Flush target preferences");
                 require(target.getSharedPreferences("updates", 0).edit().putBoolean("automatic", false).commit(), "Disable fixture network checks");
@@ -48,7 +52,7 @@ final class SettingsUpgradeChecks {
                         .putString("signer", info.signatures[0].toCharsString()).putBoolean("seeded", true).commit(), "Save identity");
             } else if ("verify".equals(phase)) {
                 require(identity.getBoolean("seeded", false), "Seed phase is required");
-                require(info.versionCode == 33 && "0.4.0".equals(info.versionName), "Updated to code33");
+                require(info.versionCode == 34 && "0.5.0".equals(info.versionName), "Updated to code34");
                 require((info.applicationInfo.flags & ApplicationInfo.FLAG_DEBUGGABLE) == 0, "Release debugging is disabled");
                 require(info.applicationInfo.uid == identity.getInt("uid", -1), "Package UID preserved");
                 require(info.signatures.length == 1 && info.signatures[0].toCharsString().equals(identity.getString("signer", "")), "Signing identity preserved");
@@ -67,16 +71,19 @@ final class SettingsUpgradeChecks {
                 for (Map.Entry<String, ?> entry : baseline.getAll().entrySet())
                     require("host_settings_version".equals(entry.getKey()) || entry.getValue().equals(store.preferences.getAll().get(entry.getKey())),
                             "Migration preserves every legacy value and type");
-                require(store.preferences.getInt("host_settings_version", 0) == 2, "Only schema counter advances");
+                require(store.preferences.getInt("host_settings_version", 0) == 2, "Existing schema remains unchanged");
                 SettingsStore tiktok = store.forHost(SettingsStore.TIKTOK_PACKAGE);
-                require(!store.tiktokEnabled() && tiktok.target() == 2 && tiktok.ceiling() == 2
+                require(store.tiktokEnabled() && tiktok.target() == 1 && tiktok.ceiling() == 4
+                        && tiktok.x() == .32f && tiktok.y() == .61f
                         && !tiktok.skipAds() && !tiktok.skipLong() && !tiktok.skipLive() && !tiktok.photoEnabled(),
-                        "TikTok starts unselected with no inherited special actions");
-                require(store.adDelayTenths() == 0 && store.fallbackSeconds() == 17,
-                        "New ad delay defaults to zero and existing timeout is not overwritten");
+                        "TikTok selection/count/position survive without inherited special actions");
+                require(store.adDelayTenths() == 13 && store.fallbackSeconds() == 17
+                        && tiktok.adDelayTenths() == 0 && tiktok.fallbackSeconds() == 3 && !tiktok.timedFallback()
+                        && tiktok.photoWholeSeconds() == 3 && tiktok.photoSlideSeconds() == 3,
+                        "Instagram timing survives while new TikTok rules keep independent defaults");
                 require(instagram.photoEnabled() && instagram.photoMode() == 1
                         && instagram.photoWholeSeconds() == 4 && instagram.photoSlideSeconds() == 6
-                        && instagram.photoFallback() && !youtube.photoEnabled(), "Photo settings stay Instagram-only");
+                        && instagram.photoFallback() && !youtube.photoEnabled(), "Legacy photo settings stay with Instagram");
                 youtube.ceiling(9);
                 SettingsStore reopened = new SettingsStore(target);
                 require(reopened.forHost(SettingsStore.YOUTUBE_PACKAGE).ceiling() == 9

@@ -1,5 +1,20 @@
 # 누적이력
 
+## 0.5.0/code34 · 앱별 상세 및 TikTok 확장
+
+- [화면·사용성 감사](UI_AUDIT_0.5.0.md): 기존 3개 화면 관측, 우선순위별 개선, 큰 글씨 하단 재검토. / Baseline screenshots, prioritized changes and large-text review.
+
+- 홈3개앱진입과개별선택·규칙,공통실행/플로팅/권한/업데이트분리. 초안·회전·스크롤·한국어/영어보존. / Per-app navigation and retained state.
+- TT SurfaceView지원,광고0.1초지연,사진전체/각장,적격clockless,실제총길이필터. 광고OFF에서도적격일반규칙사용. / Opt-in TikTok special rules with ad opt-out semantics.
+- source키누락/사진pager·index확인/ShortsReader접두사불일치를보강하고합성·네이티브회귀추가. 외부광고가로입력차단및실패후OFF/ON유지. / Fresh identity,strict transitions and regression tests.
+- [앱별설명](APP_SETTINGS_0.5.0.md),[현장점검](FIELD_TEST_0.5.0.md),[릴리스](releases/v0.5.0.md),제품/사용법/계획/호환성/빌드/README/인수인계갱신. 새실폰자동넘김NOT RUN. 최종시험/공개는[검증](VERIFICATION.md)에기록. / Updated docs;physical automation remains unrun.
+
+## 2026-08-29 · 0.4.0 후속 실기기 진단 / Post-release diagnosis
+
+26개 서로 다른 TikTok 피드를 비교해 SurfaceView 인식 누락과 진행정보 없는 유형을 구분했다. 광고의 가로 입력이 외부 페이지로 이동한 사례를 복구하고, 다른 사진형의 분리 장 번호4→3→4→5와 이미지 왕복 식별을 확인했다. [진단 문서](TIKTOK_DEVICE_DIAGNOSIS_0.4.0.md)·D-047·인수인계·검증/현장점검 기록을 갱신했다. 개발 전용 읽기 프로브만 변경했고 제품/APK/설정/권한/공개 버전은 그대로다. 자동 성공0,수정 후 시험NOT RUN,추가 게시 없음.
+
+EN: A26-page physical survey identifies renderer rejection and clockless/special-content distinctions, including manually verified indexed-photo reversals and an unsafe horizontal ad-navigation counterexample. Only diagnostic tooling/docs changed. No product fix, automatic success, new release or publication.
+
 ## 0.4.0/code33 · 2026-08-29 공개 완료 / Public delivery
 
 기준0.3.0 이후 계획을 다음 범위로 구현하고 공개했다. 제품46e84e5/v0.4.0,CI33188268354 SUCCESS,동일 서명 APK·업데이트메타데이터·체크섬의 익명 다운로드/바이트 일치까지 확인했다. 최종 산출물 결과는 [릴리스 원장](releases/v0.4.0.md)과 [검증 원장](VERIFICATION.md)이 우선하며 새 실폰 시험은NOT RUN이다.

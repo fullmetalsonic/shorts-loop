@@ -107,7 +107,14 @@ final class LocalizationChecks {
                 String where = language + " font=" + scale;
                 require(commits[0] == 0, "Constructing localized UI never saves settings: " + where);
                 require(!screen.execution.isChecked(), "Localized UI never starts execution: " + where);
-                require(screen.youtube.getText().toString().equals(context.getString(R.string.ui_youtube)),
+                require(screen.compactFooter == (scale >= 1.5f), "Large-font footer uses compact copy only at 1.5x or above: " + where);
+                require(screen.executionTitle.getText().toString().equals(context.getString(scale >= 1.5f
+                        ? R.string.ui_execution_title_compact : R.string.ui_execution_title)), "Footer title follows font-size variant: " + where);
+                require(screen.executionTitle.getContentDescription().toString().equals(context.getString(R.string.ui_execution_title)),
+                        "Compact footer keeps the complete accessibility title: " + where);
+                if (scale >= 1.5f) require(screen.executionTitle.getLineCount() == 1 && screen.status.getLineCount() == 1,
+                        "Large-font footer title and initial status each fit one line at 320dp: " + where);
+                require(screen.youtube.getText().toString().equals(context.getString(R.string.host_activation_toggle)),
                         "Localized host label: " + where);
                 require(screen.execution.getContentDescription().toString().equals(context.getString(R.string.ui_execution_description)),
                         "Localized execution accessibility label: " + where);
@@ -116,20 +123,21 @@ final class LocalizationChecks {
                 inspect(screen.root, language.equals("en"), where);
                 render(activity, screen.root, "localization-" + language + "-" + scale + "-main.png");
 
-                for (String host : new String[]{SettingsStore.INSTAGRAM_PACKAGE, SettingsStore.TIKTOK_PACKAGE}) {
+                for (String host : new String[]{SettingsStore.YOUTUBE_PACKAGE, SettingsStore.INSTAGRAM_PACKAGE, SettingsStore.TIKTOK_PACKAGE}) {
                     screen.showHost(host);
                     measure(screen.root, dp(context, 320), dp(context, 800));
                     inspect(screen.root, language.equals("en"), where + " " + host);
                     ScrollView previewScroll = findScroll(screen.root);
-                    View focus = host.equals(SettingsStore.INSTAGRAM_PACKAGE) ? screen.adDelay : screen.tiktokSettings.root;
+                    View focus = host.equals(SettingsStore.INSTAGRAM_PACKAGE) ? screen.adDelay
+                            : host.equals(SettingsStore.TIKTOK_PACKAGE) ? screen.tiktokSettings.root : screen.youtubeSettings.root;
                     Rect previewArea = new Rect(); focus.getDrawingRect(previewArea);
                     previewScroll.offsetDescendantRectToMyCoords(focus, previewArea);
                     previewScroll.scrollTo(0, previewArea.top);
                     render(activity, screen.root, "localization-" + language + "-" + scale
-                            + (host.equals(SettingsStore.INSTAGRAM_PACKAGE) ? "-ads.png" : "-tiktok.png"));
+                            + (host.equals(SettingsStore.INSTAGRAM_PACKAGE) ? "-ads.png" : host.equals(SettingsStore.TIKTOK_PACKAGE) ? "-tiktok.png" : "-youtube.png"));
                     previewScroll.scrollTo(0, 0);
                 }
-                screen.showHost(SettingsStore.YOUTUBE_PACKAGE);
+                screen.showHome();
 
                 Button help = screen.root.findViewById(R.id.help_toggle);
                 require(help.performClick(), "Help expands: " + where);

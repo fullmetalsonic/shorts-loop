@@ -95,7 +95,7 @@ try {
         'YouTubePageStepPolicy.permits(longRequestRow, longCurrentRow)',
         'youtubeContent && YouTubePageStepPolicy.next(longRequestRow, longCurrentRow)',
         'longRequestRow = readYouTubeRow(fresh);',
-        'if (longCandidate(snapshot)) {', 'if (due) advanceLong(snapshot);',
+        'if (longCandidate(snapshot)) {', 'if (due) { longDueAt = now; advanceLong(snapshot); }',
         'longVideo.consume();', 'dispatchPageSwipe(fresh, false, true);',
         'LiveTransitionPolicy.accepts(longRequestedAt, event.getEventTime()',
         'longRequestPager != null && longRequestPager.equals(source)',
@@ -152,8 +152,8 @@ try {
         throw 'Seconds editor raw-input/validation guard changed.'
     }
     foreach ($taskGuard in @(
-        '&& InstagramReader.PACKAGE.equals(activePackage) && value != null && !value.usable()',
-        '&& value.visualCandidate && !value.ad && value.recognized()',
+        '&& specialHost() && value != null && value.progress == null && value.normalizedProgress == null',
+        '&& value.photo == null && !value.live && value.visualCandidate && !ordinarySnapshot(value).ad && value.recognized()',
         'if (!timedCandidate(snapshot)) timed.reset();',
         '|| store.timedFallback()',
         'ClocklessTimeoutTracker.Result result = timed.observe(key, store.fallbackSeconds(), now);',
@@ -175,9 +175,9 @@ try {
     }
     'TIMED_PENDING_LABEL_AUDIT=PASS'
     if (-not $taskService.Contains('if (store.target() == 0 && !adSkippingEnabled() && !liveSkippingEnabled() && !longSkippingEnabled() && !photoSkippingEnabled())') -or
-        -not $taskService.Contains('AdSkipPolicy.enabled(store.enabled(), store.skipAds(), store.instagramEnabled())') -or
+        -not $taskService.Contains('AdSkipPolicy.enabled(store.enabled(), store.skipAds(), store.isSelected(activePackage))') -or
         $taskService -notmatch '(?s)if \(store.target\(\) == 0\) \{\s*counter.reset\(\); timed.reset\(\); visual.reset\(\);[^}]+return;' -or
-        $taskService.IndexOf('if (snapshot.ad) {') -gt $taskService.IndexOf('if (store.target() == 0) {') -or
+        $taskService.IndexOf('if (snapshot.ad && (adSkippingEnabled() || !TikTokReader.PACKAGE.equals(activePackage))) {') -gt $taskService.IndexOf('if (store.target() == 0) {') -or
         $taskService.IndexOf('if (store.target() == 0) {') -gt $taskService.IndexOf('if (timedCandidate(snapshot)) {')) {
         throw 'Independent ads must run before the zero-play guard; timers must stay behind it.'
     }
@@ -206,16 +206,16 @@ try {
     }
     'LIVE_TREE_LIFECYCLE_AUDIT=PASS'
     foreach ($taskGuard in @('if (pendingNormalized) { failClosed("error.advance"); return; }',
-        'normalizedTransition.inspect(normalizedFrame(snapshot), now)',
+        'tiktokTransition.inspect(tiktokFrame(snapshot), now)',
         'normalizedCounter.permitsAdvance(verified.normalizedProgress, normalizedCounterKey(verified), SystemClock.uptimeMillis())',
-        'TikTokReader.findPager(root, fresh.page, fresh.windowId)',
+        'TikTokReader.findPager(root, fresh, fresh.windowId)',
         'else if (unresolvedNormalizedAttempt && store.enabled())',
-        'normalizedTransition.cancel(); pendingNormalized = false;',
-        'if (!snapshot.ad) adDelay.reset();', 'if (store.adDelayTenths() == 0) advanceAd(snapshot);',
+        'tiktokTransition.cancel(); pendingNormalized = false;',
+        'if (!snapshot.ad || !adSkippingEnabled()) adDelay.reset();', 'if (store.adDelayTenths() == 0) advanceAd(snapshot);',
         'AdDelayTracker.Result delay = adDelay.observe(key, store.adDelayTenths(), now);')) {
         if (-not $taskService.Contains($taskGuard)) { throw "Multi-host/timing protection missing: $taskGuard" }
     }
-    if ($taskService.IndexOf('if (TikTokReader.PACKAGE.equals(activePackage)) {') -lt $taskService.IndexOf('if (store.target() == 0) {')) {
+    if ($taskService.IndexOf('if (TikTokReader.PACKAGE.equals(activePackage) && ordinarySnapshot(snapshot).normalizedUsable()) {') -lt $taskService.IndexOf('if (store.target() == 0) {')) {
         throw 'Normalized repeat must remain disabled by count zero.'
     }
     $taskTikTokReader = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/java/com/fullmetalsonic/shortsloop/detection/TikTokReader.java') -Raw
@@ -223,6 +223,16 @@ try {
         throw 'TikTok detection cannot guess seconds or perform input.'
     }
     'MULTI_HOST_TIMING_WIRING_AUDIT=PASS'
+    foreach ($taskGuard in @('case TIMED: return timedCandidate(value);',
+        'value.progress == null && value.normalizedProgress == null',
+        'value.photo == null && !value.live', 'ordinarySnapshot(value).usable()',
+        'tiktokTransition.begin(tiktokFrame(verified), now);',
+        'unresolvedNormalizedAttempt = true;',
+        'SystemClock.uptimeMillis() - longDueAt <= 900',
+        'windowGuard.allowsSemantic(getWindows(), verified.windowId, verified.windowBounds, verified.page)')) {
+        if (-not $taskService.Contains($taskGuard)) { throw "TikTok special-content safety changed: $taskGuard" }
+    }
+    'TIKTOK_SPECIAL_POLICY_WIRING_AUDIT=PASS'
     if ($taskService.Contains('allowsInput(getWindows(), fresh.windowId, fresh.windowBounds, fresh.page)') -or
         ([regex]::Matches($taskService, 'allowsSemantic\(getWindows\(\), fresh.windowId, fresh.windowBounds, fresh.page\)')).Count -ne 2) {
         throw 'Semantic ad/TikTok actions must not treat the full page as a physical touch corridor.'

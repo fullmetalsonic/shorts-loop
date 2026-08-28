@@ -1,5 +1,31 @@
 # 디버그·재발방지 대장
 
+## D-048 · TikTok 확장과 이전 원천 상태 계승 / Stale source state during expansion
+
+- 증상/재현: 합성같은page에pager/media/index를교체하거나사진피드번호를뒤로바꿀때준비타이머·일반카운터또는사진확인이이전근거를재사용할위험. / Synthetic reused-page changes exposed stale preparation/confirmation risks.
+- 원인/영향: 새TT분기에서IG용단일identity키를재사용하고photo소스비교에pager/feedindex가빠져있었다. YT/IG키는변경하지않았다. / Newly expanded TikTok paths omitted independent source metadata.
+- 잘못된 접근: 숫자나콘텐츠가다르다는이유만으로새페이지로확정하거나이전타이머를유지. / Do not confirm from a lone changed number or retain stale timing.
+- 수정: TT post/pager/media/index/renderer 준비키,사진scope/pager/index확인,초단위completion의fresh due확인,ShortsReader고정접두사정규화. 사진whole타이머는같은게시물슬라이드변경만보존. / Added complete preparation keys,exact photo scope,read-only due validation and fixed-prefix normalization.
+- 재발방지: LoopCounterTest·NormalizedSessionChecks·TikTokNodeChecks·TikTokPageTransitionTest·SettingsStore100단계광고값/호스트분리검사. / Unit/native synthetic regressions cover scope,rollback,missing metadata and settings.
+- 결과: 초기685JUnit및3OS native PASS,독립재리뷰P1/P2 0. 새실폰자동넘김NOT RUN.[검증](VERIFICATION.md). / Synthetic/native checks pass;physical automation remains unrun.
+
+## D-047 후속 · 0.5.0 구현 / Implementation follow-up
+
+SurfaceView/TextureView합산1개·기존페이지보호로원인수정,광고/사진전용양성분류추가. 합성구조와Android노드매핑회귀PASS. 단관측한실제TikTok창에서새APK자동전환은아직NOT RUN. 아래미수정/계획표현은0.4.0진단시점이다.
+
+The renderer gap is fixed with bounded matching and dedicated ad/photo classification. Synthetic/framework mapping checks pass;new physical TikTok automation is unrun. Pending-fix wording below is historical.
+
+## D-047 · TikTok 렌더 인식 누락 / Renderer detection gap
+
+- 상태: 0.4.0/code33 실기기 실패 원인 확인, 제품 미수정. / Reproduced, not fixed.
+- 증상·재현: 단독 추천 피드/반복1/실행ON/접근성 연결 상태에서 진행값이 증가해도 카운트0. / Count0 despite forward progress and connected service.
+- 직접 원인: 현재 일반 영상의 SurfaceView를 TextureView 전용 미디어 조건이 거부한다. 같은 버전의 과거 TextureView 관측을 전체 렌더 방식으로 일반화했다. 렌더 선택이 바뀐 이유는 미확정이다. / SurfaceView is rejected by TextureView-only matching;selection causation remains unknown.
+- 증거·영향:26피드 중 일반18개(유효 진행9/무진행9),광고8개. 자동 요청/확정0,설치APK 공개해시 일치. YT/IG 동일 원인으로 확대하지 않는다. / Survey and artifact parity are recorded separately from successful automation.
+- 잘못된 접근: 모든 미디어/미인식 화면 허용,광고의 비율 진행을 일반 영상으로 취급,점5개/하단 메뉴5열을 사진 장수로 추정,입력 후 화면 확인 없이 가로 입력 연속 실행. / Avoid broad acceptance,ad misclassification,fabricated indices and unchecked chained inputs.
+- 수정안: 렌더2종 합산1개와 기존 현재 페이지/범위/특수 보호 유지. 번호 있는 사진은 별도 현재/전체+독립이미지+안정형상 확인. 제품 구현은 아직 하지 않았다. / Proposed narrowly guarded renderer and separate photo policy only.
+- 자동 재발방지 계획: Surface/Texture 각각,둘 동시,이웃 미디어,숨긴 진행값,광고의 정상 범위,사진 번호소실/왕복/애니메이션/마지막장,변경된 창·페이지의 대기 입력 폐기. 아직 제품시험에 추가하지 않았다. / Proposed regression cases, not implemented tests.
+- 재시험: 개발 프로브 컴파일/실행 및 독립 근거 검토 완료. 제품 수정 후 자동 넘김은NOT RUN. [상세 근거](TIKTOK_DEVICE_DIAGNOSIS_0.4.0.md). / Diagnostic tooling/evidence review complete;fixed physical automation unrun.
+
 ## 0.4.0/code33 현재 상태 / Current scope
 
 1.3초 시작 상한·시간설정·다중 호스트·제한적 TikTok 경로를 구현했다. 현재 검사와 게시 여부는 [검증](VERIFICATION.md),[0.4.0 기록](releases/v0.4.0.md)을 따른다. D-044의 늦은 시작 표본 경로를 보완했으나 별도 초기화 호출 원인과 YouTube 동일 원인은 미확정이다. `resetReason`은 원인 구분을 위한 진단이며 실폰 해결 증거가 아니다.

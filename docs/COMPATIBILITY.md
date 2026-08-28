@@ -1,6 +1,10 @@
-# Android 버전별 기능 / Android compatibility · 0.4.0
+# Android 버전별 기능 / Android compatibility · 0.5.0
 
-## 현재0.4.0/code33 호환 범위 / Current compatibility
+0.5.0은API26설치하한·타일API29/33·실험적화면분석API34경계를유지한다. TT기본/특수규칙은선택된지원패키지와읽을수있는관측구조가전제이며,OS설치가능성이감지성공보장은아니다. 새실폰세앱동시재생은NOT RUN.[현재검증](VERIFICATION.md)·[현재릴리스](releases/v0.5.0.md). 아래0.4.0 OS설명은여전히적용되지만해당시험수치는과거기록이다.
+
+Version0.5.0 keeps the same API boundaries. TikTok depends on its supported package and recognized structures,not just OS compatibility. New physical triple playback is unrun;prior test counts remain historical.
+
+## 이전0.4.0/code33 호환 범위 / Prior compatibility
 
 앱 설치 하한은Android8.0/API26,compile/target35이며 변경하지 않는다. 타일 상태줄API29+,타일 추가 요청API33+,선택형 실험적 화면 분석API34+ 경계는 그대로다. 그보다 낮은 OS에서는 수동 타일 등록 등 기존 안내를 제공하고 미지원 기능을 활성화하지 않는다.
 

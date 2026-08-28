@@ -1,4 +1,8 @@
-# 업데이트·배포 계획 · ShortsLoop 0.4.0
+# 업데이트·배포 계획 · ShortsLoop 0.5.0
+
+현재목표0.5.0/code34. 홈의공통업데이트메뉴에서고정Public GitHub를확인한다. 기존메타데이터/크기/SHA256/패키지/전체서명/OS/상위code검사와Android수동설치,설치전전체실행OFF를유지한다. [현재릴리스](releases/v0.5.0.md)·[검증](VERIFICATION.md). 아래0.4.0이하결과는과거기록이다.
+
+Current target0.5.0/code34 retains validated,manual installation from the fixed public source;the shared update menu is on home. Earlier artifact/test results below are historical.
 
 ## 0.4.0/code33 전달 계약 / Delivery contract
 

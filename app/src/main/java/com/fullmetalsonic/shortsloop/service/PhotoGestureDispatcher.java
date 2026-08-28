@@ -19,8 +19,11 @@ final class PhotoGestureDispatcher {
     static boolean samePhoto(YouTubeSnapshot a, YouTubeSnapshot b) {
         return a != null && b != null && a.photo != null && b.photo != null && a.recognized() && b.recognized()
                 && a.windowId == b.windowId && Objects.equals(a.windowBounds, b.windowBounds)
+                && a.ad == b.ad && a.live == b.live
                 && Objects.equals(a.identity, b.identity) && Objects.equals(a.page, b.page)
                 && Objects.equals(a.photoPageKey, b.photoPageKey)
+                && Objects.equals(a.normalizedPagerKey, b.normalizedPagerKey)
+                && a.normalizedPageIndex == b.normalizedPageIndex
                 && a.photo.image.equals(b.photo.image) && a.photo.position.equals(b.photo.position);
     }
     static boolean dispatch(HostPlaybackSession service, ShortsReader reader, YouTubeWindowGuard guard,
@@ -28,13 +31,17 @@ final class PhotoGestureDispatcher {
             AccessibilityService.GestureResultCallback callback, Handler handler) {
         AccessibilityNodeInfo root = service.getHostRoot();
         List<AccessibilityNodeInfo> pagers = Collections.emptyList();
+        AccessibilityNodeInfo tiktokPager = null;
         try {
-            if (!store.enabled() || !store.photoEnabled() || !store.instagramEnabled() || root == null || !root.refresh()
-                    || !InstagramReader.PACKAGE.contentEquals(root.getPackageName() == null ? "" : root.getPackageName())) return false;
+            String host = store.hostPackage();
+            boolean tiktok = TikTokReader.PACKAGE.equals(host);
+            if (!store.enabled() || !store.photoEnabled() || !store.isSelected(host) || root == null || !root.refresh()
+                    || (!tiktok && !InstagramReader.PACKAGE.equals(host))
+                    || !host.contentEquals(root.getPackageName() == null ? "" : root.getPackageName())) return false;
             Rect window = guard.allowedBounds(service.getWindows(), root.getWindowId());
             if (window == null || !window.equals(expected.windowBounds)) return false;
             YouTubeSnapshot fresh = reader.read(root, store).inWindow(root.getWindowId(), window);
-            if (!samePhoto(expected, fresh)) return false;
+            if (!samePhoto(expected, fresh) || (fresh.ad && store.skipAds())) return false;
             if (action == PhotoReelTracker.Action.SLIDE) {
                 if (!fresh.photo.position.known() || fresh.photo.position.current() >= fresh.photo.position.total()) return false;
                 Rect picture = fresh.photo.image;
@@ -52,6 +59,15 @@ final class PhotoGestureDispatcher {
                 return false;
             }
             if (action != PhotoReelTracker.Action.REEL) return false;
+            if (tiktok) {
+                tiktokPager = TikTokReader.findPager(root, fresh, fresh.windowId);
+                if (tiktokPager == null) return false;
+                YouTubeSnapshot verified = reader.read(root, store).inWindow(root.getWindowId(), window);
+                return samePhoto(fresh, verified) && store.enabled() && store.photoEnabled()
+                        && !(verified.ad && store.skipAds())
+                        && guard.allowsSemantic(service.getWindows(), verified.windowId, verified.windowBounds, verified.page)
+                        && service.performScroll(tiktokPager);
+            }
             pagers = root.findAccessibilityNodeInfosByViewId(InstagramReader.PAGER_ID);
             AccessibilityNodeInfo chosen = null;
             for (AccessibilityNodeInfo node : pagers) if (node.isVisibleToUser()) {
@@ -64,6 +80,7 @@ final class PhotoGestureDispatcher {
             Rect bounds = new Rect(); chosen.getBoundsInScreen(bounds);
             return bounds.contains(fresh.page) && service.performScroll(chosen);
         } finally {
+            YouTubeReader.recycle(tiktokPager);
             for (AccessibilityNodeInfo pager : pagers) YouTubeReader.recycle(pager);
             YouTubeReader.recycle(root);
         }

@@ -143,13 +143,19 @@ final class TripleHostChecks {
 
     private void unsupportedSpecials(SettingsStore root, SettingsStore tt, HostPlaybackSession session) throws ReflectiveOperationException {
         root.skipAds(true); root.photoEnabled(true); root.skipLive(true); root.timedFallback(true); root.visualAssist(true);
-        tt.skipLong(true);
+        tt.skipAds(false); tt.photoEnabled(false); tt.timedFallback(false); tt.skipLong(false);
         require(!tt.skipAds() && !tt.photoEnabled() && !tt.skipLive() && !tt.timedFallback() && !tt.visualAssist() && !tt.skipLong(),
                 "TikTok never inherits Instagram/YouTube special capabilities");
         for (String method : new String[]{"adSkippingEnabled", "photoSkippingEnabled", "liveSkippingEnabled", "longSkippingEnabled"})
             require(!(Boolean)call(session, method, new Class<?>[0]), "Unsupported TikTok policy remains inactive: " + method);
         for (String key : new String[]{"skip_ads", "ad_delay_tenths", "timed_fallback", "fallback_seconds", "photo_enabled", "skip_live"})
             require(!SettingsStore.affectsHost(key, HostRegistry.TIKTOK), "Other-host special edits do not reset TikTok");
+        tt.skipAds(true); tt.photoEnabled(true); tt.timedFallback(true); tt.skipLong(true);
+        require(tt.skipAds() && tt.photoEnabled() && tt.timedFallback() && tt.skipLong(), "TikTok specials can be independently opted in");
+        for (String method : new String[]{"adSkippingEnabled", "photoSkippingEnabled", "longSkippingEnabled"})
+            require((Boolean)call(session, method, new Class<?>[0]), "Supported TikTok policy activates independently: " + method);
+        require(!tt.skipLive() && !tt.visualAssist(), "Unobserved TikTok LIVE and visual modes remain unavailable");
+        tt.skipAds(false); tt.photoEnabled(false); tt.timedFallback(false); tt.skipLong(false);
     }
 
     private void failuresAndDeferred(SettingsStore root, SettingsStore[] stores, RuntimeState.HostState[] states,

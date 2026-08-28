@@ -26,6 +26,14 @@ public final class LoopCounter {
     public String diagnostic() { return diagnostic; }
 
     public void setTarget(int target) { this.target = ModePolicy.sanitize(target); reset(); }
+    /** Read-only validation of an emitted completion against a fresh source before deferred input. */
+    public boolean permitsAdvance(Progress progress, String videoIdentity, long now) {
+        if (!emitted || target <= 0 || previous == null || progress == null || !progress.valid()
+                || !Objects.equals(identity, videoIdentity) || Math.abs(previous.duration - progress.duration) > .5
+                || now < previousAt || now - previousAt > 1500) return false;
+        double delta = progress.position - previous.position;
+        return delta >= 0 && delta <= .5 + (now - previousAt) / 1000.0 * 2.25;
+    }
     public void reset() {
         completed = 0; previous = null; identity = null; wholeCycle = false;
         covered = 0; emitted = false; previousAt = 0; cycleStartedAt = 0;

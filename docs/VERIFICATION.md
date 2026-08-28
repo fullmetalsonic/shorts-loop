@@ -1,5 +1,21 @@
 # 검증 기록 · ShortsLoop
 
+## 0.5.0/code34 · 현재 검증 / Current verification
+
+초기후보 빌드·release lint PASS,제품JUnit debug/release각685 PASS,정적권한/번역395키·108상태/광고0/시간제/사진/TT전환/배포안전PASS. API26/33/34초기native31647/31653/31362 PASS. 독립코드리뷰에서발견한P2 source키·사진scope보강완료,잔여P1/P2 0. 마지막UI문구·큰글씨보완후최종확인은다음체크포인트에기록한다.
+
+Initial build/lint,685 tests per variant,static safety/localization and API26/33/34 native checks pass. Independent review findings were fixed. Final artifact checks after the last UI refinements are recorded at the next checkpoint.
+
+검증범위는합성구조·실제Android UI/설정/서비스연결논리이며,실제TikTok창의노드refresh/스크롤자동전환성공이아니다. 새폰설치/소셜자동넘김/세앱실재생은NOT RUN. [실기기점검](FIELD_TEST_0.5.0.md)·[릴리스](releases/v0.5.0.md).
+
+These tests do not prove actual social-app node refresh or automatic advances. New phone installation/playback/triple-host tests are unrun.
+
+## 2026-08-29 후속 실폰 · TikTok 실패 재현 / Physical failure reproduced
+
+공개0.4.0/code33와 설치APK SHA256 일치 PASS. 단독TikTok/반복1/실행ON에서26개 서로 다른 피드의 유형 조사 완료. 일반 진행값이 있는9개도 SurfaceView 인식 누락으로 카운트0,제품 자동 요청/확정0. 수동 사진4→3→4→5 및 최종 세로 전환은 자동 성공이 아니다. **틱톡 자동 넘김 실기기 검증: 실패 재현, 수정 미실행.** 개발 전용 읽기 프로브 컴파일/DEX/API37 실행 완료. 제품 BUILD/회귀 N/A(제품 변경 없음),수정 후 자동10연속·YT/IG·다중 창 NOT RUN. [범위·근거·한계](TIKTOK_DEVICE_DIAGNOSIS_0.4.0.md).
+
+EN: Installed/public APK parity passes. A26-page physical survey reproduces ordinary renderer rejection with zero automatic requests/confirmations. Manual photo navigation is not automation success. Probe compilation/dex/read execution pass;no product patch or fixed-device test. PC results below remain historical evidence for the same released artifact.
+
 ## 현재0.4.0/code33 · PC 검증 / Current PC verification
 
 제품/태그 `46e84e5`/`v0.4.0`,최종763322-byte APK SHA256 `D8E10BC33664E83ED602F82168F2049D576FF1404E5415E83225D2C673987BBA`를 고정했다. 이 APK의 API26/33/34 native **38122/38130/37741 PASS**이며638JUnit debug/release·정적 검사·380한영쌍/108상태·release lint 오류0/경고13·서명 연속성·내장revision 일치·debug APK 게시 거부 검사도 통과했다. CI/익명 다운로드의 최종 상태는 [0.4.0 릴리스 원장](releases/v0.4.0.md)을 따른다. 과거 버전의 실제 폰 성공을0.4.0 시험으로 재사용하지 않는다.

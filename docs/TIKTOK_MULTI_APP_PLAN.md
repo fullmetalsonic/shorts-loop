@@ -1,4 +1,12 @@
-# TikTok·세 앱·시간 설정 기획과 구현 상태 / Plan and implementation status · 0.4.0
+# TikTok·세 앱·시간 설정 기획과 구현 상태 / Plan and implementation status · 0.5.0
+
+## 0.5.0 업데이트 / Current implementation
+
+SurfaceView 누락 보완,광고0.1초 단위 대기,사진전체/각장/번호없음fallback,적격 무진행2–60초,실제총길이긴영상 및 앱별상세UX를 구현했다. 기존다중호스트분리/입력직렬화는유지한다. TikTok LIVE·비율기반길이추정·광고점표시가로입력은추가하지않는다. 자세한동작은[제품기준](PRODUCT_SPEC.md),[앱별설명](APP_SETTINGS_0.5.0.md)을따른다.
+
+Implemented renderer support,independent ad/photo/clockless/known-duration rules and per-app settings. Existing multi-host isolation remains. No TikTok LIVE,duration guesses or horizontal dot-ad input.
+
+이전26피드관측은원인/구조증거다. 새APK실폰자동넘김은NOT RUN이고,[현장점검](FIELD_TEST_0.5.0.md)과[검증](VERIFICATION.md)에분리한다. 아래0.4.0의특수규칙미지원은과거상태다. / Prior observations are structural evidence;new physical automation is unrun. Older unsupported-rule statements describe0.4.0.
 
 ## 2026-08-29 구현 체크포인트 / Implementation checkpoint
 

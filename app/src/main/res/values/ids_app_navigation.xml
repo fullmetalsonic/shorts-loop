@@ -1,0 +1,35 @@
+<resources>
+    <item name="settings_scroll" type="id" />
+    <item name="settings_home" type="id" />
+    <item name="host_back_home" type="id" />
+    <item name="host_detail_title" type="id" />
+    <item name="open_youtube_settings" type="id" />
+    <item name="open_instagram_settings" type="id" />
+    <item name="open_tiktok_settings" type="id" />
+    <item name="tt_skip_ads" type="id" />
+    <item name="tt_ad_support" type="id" />
+    <item name="tt_timed_fallback" type="id" />
+    <item name="tt_timed_support" type="id" />
+    <item name="tt_ad_delay_input" type="id" />
+    <item name="tt_ad_delay_minus" type="id" />
+    <item name="tt_ad_delay_plus" type="id" />
+    <item name="tt_ad_delay_apply" type="id" />
+    <item name="tt_fallback_seconds_input" type="id" />
+    <item name="tt_fallback_seconds_minus" type="id" />
+    <item name="tt_fallback_seconds_plus" type="id" />
+    <item name="tt_fallback_seconds_apply" type="id" />
+    <item name="tt_photo_panel" type="id" />
+    <item name="tt_photo_toggle" type="id" />
+    <item name="tt_photo_modes" type="id" />
+    <item name="tt_photo_mode_whole" type="id" />
+    <item name="tt_photo_mode_each" type="id" />
+    <item name="tt_photo_fallback" type="id" />
+    <item name="tt_photo_whole_input" type="id" />
+    <item name="tt_photo_whole_minus" type="id" />
+    <item name="tt_photo_whole_plus" type="id" />
+    <item name="tt_photo_whole_apply" type="id" />
+    <item name="tt_photo_slide_input" type="id" />
+    <item name="tt_photo_slide_minus" type="id" />
+    <item name="tt_photo_slide_plus" type="id" />
+    <item name="tt_photo_slide_apply" type="id" />
+</resources>

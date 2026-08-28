@@ -29,8 +29,8 @@ public final class ClocklessTimeoutPolicy {
         return seconds >= MIN_SECONDS ? seconds : null;
     }
 
-    /** The caller must additionally prove a clockless Instagram page and safe visible window. */
-    public static boolean enabled(boolean execution, int target, boolean instagramSelected, boolean optedIn) {
-        return execution && target > 0 && target <= ModePolicy.MAX_COUNT && instagramSelected && optedIn;
+    /** The caller must additionally prove a supported clockless page and safe visible host window. */
+    public static boolean enabled(boolean execution, int target, boolean hostSelected, boolean optedIn) {
+        return execution && target > 0 && target <= ModePolicy.MAX_COUNT && hostSelected && optedIn;
     }
 }
