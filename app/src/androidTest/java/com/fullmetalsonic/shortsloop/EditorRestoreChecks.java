@@ -42,4 +42,3 @@ final class EditorRestoreChecks {
     }
     private static void require(boolean ok, String message) { if (!ok) throw new AssertionError(message); }
 }
-

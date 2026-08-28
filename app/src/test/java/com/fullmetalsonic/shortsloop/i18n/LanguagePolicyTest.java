@@ -13,4 +13,3 @@ public class LanguagePolicyTest {
             assertEquals("en", LanguagePolicy.select(language));
     }
 }
-
