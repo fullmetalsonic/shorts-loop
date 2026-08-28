@@ -2,6 +2,9 @@
 
 ## 현재0.2.8/code30 · 배포·버전 표시 정리 / Release presentation
 
+**게시·공개 검증 완료:**2026-08-28 14:34:29KST Public·draft=false·prerelease=false·latest=v0.2.8. 제품af1ab39·태그4b5647c(문서만 추가), CI33144962247 SUCCESS(debug/release각468시험).14:34:35KST 공개3파일 크기·SHA256 일치와설치본동일성 확인. 최종 APK647418bytes·SHA256`FAA554B16AD5A374A07057FDF2F2195931F77AE77ACC67E2E154A366108F012C`. 메일 미발송.<br>
+Published and public-file parity verified;product source/tag commits are distinguished. No email sent.
+
 앱 두곳을 이름·버전만 표시하도록 수정하고, 기존 단일 서명을 유지하는 non-debuggable release 빌드·게시 차단검사를 추가했다. 현재 사용 문서와 과거 기록을 분리했다. 제품468JUnit·정적가드, API26/33/34 동일APK 계측5572/5572/5571 및 이전29→30 덮어 설치·설정19개 보존, 휴대폰 설치·두라벨/도움말·접근성·런타임13개·플로팅 탭/X·해시 검사를 통과했다. 로컬lint0오류/기존3경고. 공개/CI/최종파일 상태는 [0.2.8 릴리스 기록](docs/releases/v0.2.8.md)을 따른다.
 
 EN: Neutral labels, non-debuggable release packaging with the existing signer, publication guards and current/history separation are implemented.468 product tests, native5572/5572/5571 assertions,19-preference emulator upgrades and scoped phone checks passed. Full phone private-preference reading is intentionally unavailable. Publication/CI/final artifact status is tracked in the release record.

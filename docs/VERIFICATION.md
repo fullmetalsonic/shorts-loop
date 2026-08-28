@@ -2,6 +2,9 @@
 
 ## 현재0.2.8/code30 / Current verification
 
+제품CI33144962247 SUCCESS:debug/release각32suites·468tests·실패/오류/건너뜀0,lint각0오류/2경고. Public v0.2.8 게시 후 익명3파일 크기·SHA256·GitHub digest·조회API·HTTP200 확인 PASS. 최종 설치 APK와 공개 APK의 SHA256은 `FAA554B16AD5A374A07057FDF2F2195931F77AE77ACC67E2E154A366108F012C`로 동일하다.<br>
+Product CI passed both variants;anonymous public-file and installed-artifact parity passed. Exact source/tag identities and timing are in the release record.
+
 배포 release 빌드·468JUnit·정적 가드 PASS, lint0오류/기존3경고. API26/33/34 같은 배포 APK의 실제 계측5572/5572/5571항목 PASS. 세 OS에서 이전0.2.7/code29→0.2.8/code30 덮어 설치,19개 설정의 타입·값 전체·UID·서명 보존, 실행OFF·디버깅OFF를 확인했다. 첫 upgrade fixture는 별도 test 패키지의 저장소에 쓰려다 UID 차이로 baseline저장이 실패했다. 제품 문제가 아니며 테스트코드만 대상 앱의 fixture전용 저장소를 사용하도록 고친 후 세 OS 모두 재시험했다.
 
 휴대폰은 release 설치·두 버전 라벨/펼친 사용법/실험 경고 육안 확인·접근성 바인딩·런타임13개 비교·플로팅 위치/탭1→0→1/X종료·설치 해시 일치 PASS. private설정 전체를 읽지 않았고 `run-as`는 의도대로 거절된다. 현재 실행OFF. 독립 변경 리뷰 P1/P2 발견0건이며 전체 서명집합·실제 unsigned출력 선택도 보강했다. 감지/카운트/넘김 코드 변경은 없고 새 호스트10/20연속·설치화면E2E는 미실행이다.

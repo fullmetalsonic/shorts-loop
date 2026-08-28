@@ -12,8 +12,11 @@ The footer uses `ShortsLoop 0.2.8`,and the update card uses `설치 버전 0.2.8
 
 Update selection is unchanged:exclude drafts from the fixed repository's public release feed,but **include published prereleases** with valid metadata,a higher versionCode and compatible OS. Size,SHA256,package,version and the installed signer set are checked before Android's final installation confirmation. Neutral version wording does not imply excluding prereleases.
 
-0.2.8 다운로드는 아직 제공하지 않습니다. [이전 공개0.2.7](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.7) · [현재 검증 상태](docs/VERIFICATION.md) · [배포 점검 기록](docs/RELEASE_PRESENTATION_AUDIT.md).<br>
-The0.2.8 download is not yet available. Earlier releases and the current verification/audit records are linked above.
+[0.2.8 APK 다운로드](https://github.com/fullmetalsonic/shorts-loop/releases/download/v0.2.8/shorts-loop-v0.2.8.apk) · [릴리스](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.8) · [검증 상태](docs/VERIFICATION.md) · [배포 점검](docs/RELEASE_PRESENTATION_AUDIT.md).<br>
+Download0.2.8 above. Public publication, product CI and anonymous APK/checksum/metadata parity were verified.
+
+APK **647418 bytes**, SHA256 `FAA554B16AD5A374A07057FDF2F2195931F77AE77ACC67E2E154A366108F012C`. Android8.0 이상, 기존 앱 위로 설치하세요. GitHub Public·draft=false·prerelease=false, 2026-08-28 공개 검증 완료. 새 호스트 연속시험을 수행한 업데이트는 아닙니다.<br>
+Android8.0+; install over the existing app. Published in the Public repository with draft/prerelease false and verified on2026-08-28. This update does not claim a new host endurance run.
 
 ## 주요 기능 / Features
 

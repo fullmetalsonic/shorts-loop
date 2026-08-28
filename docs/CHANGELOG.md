@@ -2,6 +2,9 @@
 
 ## 0.2.8/code30 · 버전 표시·배포 빌드 정리 / Version presentation and distribution
 
+2026-08-28 Public 게시·제품CI33144962247·공개3파일 크기/해시 확인 완료. 제품af1ab39,태그v0.2.8→4b5647c(문서만 추가). [배포 기록](releases/v0.2.8.md).<br>
+Public publication, product CI and all three public-asset checks completed.
+
 두 버전 표시를 앱명·번호만 남기는 방식으로 수정했다. 실제 화면 분석 실험 안내는 유지한다. 같은 단일 서명을 사용하는 non-debuggable release 빌드, 디버깅 APK 출고 거절, 실제 라벨 계측검사, debug/release CI, 기존 설정 덮어 설치 검사와 소스 커밋 일치 검사를 추가했다. 현재 문서와 과거 기록도 분리했다. 감지·반복·자동 넘김·업데이트 선택 정책은 변경하지 않았다.
 
 468JUnit·정적가드·로컬lint(0오류/기존3경고), API26/33/34 계측5572/5572/5571, 세OS19설정·UID·서명 보존, 휴대폰 두라벨·사용법·접근성·13런타임설정·플로팅 탭/X·설치해시 검사를 수행했다. 새로운 호스트 연속시험은 미실행. 최종 source/artifact/CI/공개 상태는 [0.2.8 기록](releases/v0.2.8.md), 절차는 [배포 빌드](RELEASE_BUILD.md), D-037/038 수정 근거는 [감사](RELEASE_PRESENTATION_AUDIT.md)를 따른다.
