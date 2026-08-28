@@ -23,7 +23,7 @@ The distributor supplies these environment variables locally; never commit keys/
 ./gradlew.bat --no-daemon :app:assembleRelease :app:compileReleaseUnitTestJavaWithJavac :app:lintRelease :app:assembleDebug :app:assembleDebugAndroidTest
 ./scripts/verify.ps1 -SkipBuild -BuildType release
 ./scripts/verify-release-safety.ps1 -Apk app/build/outputs/apk/release/app-release.apk -DebugApk app/build/outputs/apk/debug/app-debug.apk
-./scripts/prepare-release.ps1 -Apk app/build/outputs/apk/release/app-release.apk
+./scripts/prepare-release.ps1 -Apk app/build/outputs/apk/release/app-release.apk -OutputSuffix final
 ```
 
 예상 결과: 제품 JUnit·정적 검사 PASS, `DEBUG_APK_PUBLICATION_REJECTION=PASS`, `RELEASE_LABEL_AND_DEBUGGABLE_AUDIT=PASS`. 제품 소스를 먼저 커밋한 뒤 배포 빌드를 다시 생성한다. 준비 스크립트는 기존 단일 서명·패키지·버전·크기, 제품 소스 미커밋 변경 부재, APK 내 소스 revision과 HEAD 일치를 검사하고 새 폴더에 APK/SHA256/업데이트JSON을 생성한다. 디버깅 허용 APK는 폴더를 만들기 전에 거절한다. 기존 폴더를 보존하면서 새 검증본을 만들 때는 `-OutputSuffix final`을 사용할 수 있다.
@@ -41,8 +41,8 @@ CI without signing environment variables builds an unsigned release and tests bo
 Replace `emulator-NNNN` with a disposable emulator ID. Do not run instrumentation on a personal phone. Obtain the previous0.2.7 APK from its release and verify its checksum.
 
 ```powershell
-./scripts/verify-release-upgrade.ps1 -Device emulator-NNNN -PreviousApk <previous-0.2.7.apk> -ReleaseApk artifacts/release-v0.2.8-code30/shorts-loop-v0.2.8.apk
-./scripts/verify-compat-emulator.ps1 -Device emulator-NNNN -Apk artifacts/release-v0.2.8-code30/shorts-loop-v0.2.8.apk -ExpectRelease
+./scripts/verify-release-upgrade.ps1 -Device emulator-NNNN -PreviousApk <previous-0.2.7.apk> -ReleaseApk artifacts/release-v0.2.8-code30-final/shorts-loop-v0.2.8.apk
+./scripts/verify-compat-emulator.ps1 -Device emulator-NNNN -Apk artifacts/release-v0.2.8-code30-final/shorts-loop-v0.2.8.apk -ExpectRelease
 ```
 
 업데이트 시험은 이전 APK에 다양한 설정을 저장하고, 제거 없이 새 APK를 설치한 뒤 설정 전체의 타입·값, UID·서명·버전, 실행OFF와 디버깅OFF를 확인한다. 표시 시험은 실제 설치 버전과 두 라벨의 정확한 일치 및 실험 경고 유지를 확인한다. 자동 넘김 실기기 연속시험과는 구분한다.

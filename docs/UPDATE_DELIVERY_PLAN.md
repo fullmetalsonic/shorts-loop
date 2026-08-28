@@ -10,7 +10,7 @@
 
 The footer uses `ShortsLoop 0.2.8`,and the update card uses `설치 버전 0.2.8` (installed version),without release-grade suffixes. Neutral wording is not a substitute for verifying `debuggable=false` or feature coverage. Optional **visual-assistance experimental warnings,separate consent and the Android14+ restriction** remain.
 
-배포는 non-debuggable release APK를 사용하고 기존 signer·패키지·최소OS·업데이트 metadata 형식을 유지한다. 예상 APK 이름은`shorts-loop-v0.2.8.apk`이며 최종 파일·해시는 검증 후 확정한다. CI에서 다른 키로 다시 서명한 APK로 바꾸지 않는다. 설치 전 전체 실행만OFF로 하고 나머지 설정을 보존한다. 새 권한·영상 데이터 수집·업데이트 조회 정책 변경은 포함하지 않는다.
+배포는 non-debuggable release APK를 사용하고 기존 signer·패키지·최소OS·업데이트 metadata 형식을 유지한다. APK 이름은`shorts-loop-v0.2.8.apk`이며 최종 파일·해시는 [릴리스 기록](releases/v0.2.8.md)에 확정한다. CI에서 다른 키로 다시 서명한 APK로 바꾸지 않는다. 설치 전 전체 실행만OFF로 하고 나머지 설정을 보존한다. 새 권한·영상 데이터 수집·업데이트 조회 정책 변경은 포함하지 않는다.
 
 ## 유지할 제품 범위
 
@@ -42,7 +42,7 @@ HTTPS·정확한호스트/저장소 경로 허용목록·매리다이렉트 검�
 - 로컬 검증: `scripts/verify.ps1 -BuildType release`.
 - 로컬 서명 APK: `app/build/outputs/apk/release/app-release.apk`.
 - 배포 안전 검사: `scripts/verify-release-safety.ps1 -Apk app/build/outputs/apk/release/app-release.apk -DebugApk app/build/outputs/apk/debug/app-debug.apk`. 비교용 debug APK는 별도 개발용 빌드로 준비한다.
-- 포장: `scripts/prepare-release.ps1 -Apk app/build/outputs/apk/release/app-release.apk` → `artifacts/release-v0.2.8-code30/shorts-loop-v0.2.8.apk`, SHA256텍스트, 업데이트JSON. 기존 출력은 덮어쓰지 않는다.
+- 포장: `scripts/prepare-release.ps1 -Apk app/build/outputs/apk/release/app-release.apk -OutputSuffix final` → `artifacts/release-v0.2.8-code30-final/shorts-loop-v0.2.8.apk`, SHA256텍스트, 업데이트JSON. 제품 소스 커밋 후 다시 빌드하며 기존 출력은 덮어쓰지 않는다.
 - 기존 키를 사용하는 로컬 환경만 서명하며 비밀값은 저장소·CI·공개 문서에 두지 않는다. CI의 서명 없는 release 빌드/시험/lint와 debug 검증은 로컬 서명 배포물 검사와 구분한다.
 - 위 경로와 명령이 있다는 사실은 시험 완료나 공개 성공을 뜻하지 않는다.
 
