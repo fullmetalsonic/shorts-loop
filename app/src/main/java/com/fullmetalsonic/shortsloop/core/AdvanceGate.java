@@ -9,11 +9,14 @@ public final class AdvanceGate {
     private String identity;
     private double duration;
     private boolean pageChanged;
+    private String liveCandidate;
+    private long liveCandidateAt;
     public void begin(String identity, double duration, long now) {
         this.identity = identity; this.duration = duration; started = now; pending = true; pageChanged = false;
+        liveCandidate = null; liveCandidateAt = -1;
     }
     public void pageChanged() { if (pending) pageChanged = true; }
-    public void cancel() { pending = false; pageChanged = false; }
+    public void cancel() { pending = false; pageChanged = false; liveCandidate = null; liveCandidateAt = -1; }
     public boolean pending() { return pending; }
     /** A non-terminal UI change must fail, not silently forget an in-flight request. */
     public State interrupt() {
@@ -45,6 +48,19 @@ public final class AdvanceGate {
                 && !Objects.equals(identity, newIdentity)) {
             cancel(); return State.CONFIRMED;
         }
+        return State.WAITING;
+    }
+    /** Live-to-live needs an independently observed pager-index change as well as a stable different node key.
+     * A rebuilt accessibility subtree or changing CTA alone must never acknowledge another swipe.
+     */
+    public State inspectLivePage(String newIdentity, long now) {
+        if (!pending) return State.IDLE;
+        if (now - started >= 4500) { cancel(); return State.FAILED; }
+        boolean different = identity != null && !identity.isEmpty() && newIdentity != null && !newIdentity.isEmpty()
+                && !Objects.equals(identity, newIdentity);
+        if (!pageChanged || !different) { liveCandidate = null; liveCandidateAt = -1; return State.WAITING; }
+        if (!newIdentity.equals(liveCandidate)) { liveCandidate = newIdentity; liveCandidateAt = now; }
+        if (now - started >= 1200 && now - liveCandidateAt >= 300) { cancel(); return State.CONFIRMED; }
         return State.WAITING;
     }
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- AGP replaces this name with the selected testInstrumentationRunner. Bootstrap opts in. -->
+    <instrumentation
+        android:name="com.fullmetalsonic.shortsloop.updates.UpdateInstallInstrumentation"
+        android:targetPackage="com.fullmetalsonic.shortsloop"
+        android:functionalTest="true"
+        android:handleProfiling="false"
+        android:label="Manual updater verification (test APK only)" />
+</manifest>

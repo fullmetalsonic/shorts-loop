@@ -1,8 +1,8 @@
 # 음향 반복 후보 시험 / Audio pattern trial
 
-## 목적과 승인 / Purpose and approval
+## 목적과 범위 / Purpose and scope
 
-2026-08-27 내부 재생음 수신을 확인한 뒤 사용자가 “계속해”로 다음 분석 단계를 승인했다. 별도 **쇼츠 오디오 시험 0.2-audio-pattern**에서 소리의 반복 주기 후보를 계산한다. 기존 ShortsLoop 제품은 교체하지 않는다. 기존60초 제한과 Instagram UID + MEDIA 범위, OS 수동 승인 절차를 유지한다.
+2026-08-27 내부 재생음 수신을 확인한 뒤 반복 주기 분석을 별도 **쇼츠 오디오 시험 0.2-audio-pattern**으로 확장했다. 소리의 반복 주기 후보를 계산하며 기존 ShortsLoop 제품은 교체하지 않는다. 기존60초 제한과 Instagram UID + MEDIA 범위, OS 수동 승인 절차를 유지한다.
 
 This diagnostic extension estimates repeating audio periods. It does not identify a video ending, count complete plays, or advance Reels. The main ShortsLoop app remains unchanged.
 
@@ -72,20 +72,20 @@ Keep one audible Reel throughout each session and temporarily disable the existi
 
 ### 첫 기기 세션 / First device session
 
-20:30~31 사용자 새OS승인 세션. 시작 준비 조작과 화면 전환이 겹쳤고 이후 일시정지 화면 및 오디오 플레이어 paused를 직접 확인했다. 전체60초를 같은소리의 연속재생으로 볼 수 없어 **주기 정확도 대조에서 제외**한다. 재생조작의 책임이나 모든무음 원인을 단정하지 않는다.
+20:30~31 새 OS캡처 동의로 시작한 세션. 시작 준비 조작과 화면 전환이 겹쳤고 이후 일시정지 화면 및 오디오 플레이어 paused를 직접 확인했다. 전체60초를 같은소리의 연속재생으로 볼 수 없어 **주기 정확도 대조에서 제외**한다. 이 관측만으로 모든 무음 원인을 단정하지 않는다.
 
 - 최종60.045초/957600표본/2839읽기구간/521신호구간/비영0표본18.36%,최대-11.49dBFS/peak17220.
 - 후보0초/특징383/초기화3,`SILENT_OR_NARROW_GAP`. 분석CPU221ms/최장호출7ms는 이 불완전세션의 값이며 배터리수명 측정이 아니다.
 - running=false·60초자동종료, 서비스 소멸 및MediaProjection=null 확인. 기존자동넘김은OFF였으며 자동스와이프없음.
-- 증거는 `private/device-tests/audio-pattern-v02a-run1.jsonl` 및 비공개화면. `before-consent`/`consent` 이름의 자료는 실제로 사용자승인 **후** 생성되어 파일명으로 승인시점을 판단하면 안 된다.
+- 증거는 `private/device-tests/audio-pattern-v02a-run1.jsonl` 및 비공개화면. `before-consent`/`consent` 이름의 자료는 실제로 OS캡처 동의 **후** 생성되어 파일명으로 동의시점을 판단하면 안 된다.
 
 The first run acquired audio but included pauses, so it cannot validate period accuracy. No repeat candidate was accepted. Capture stopped automatically and the projection was released.
 
 ### 두 번째 세션·화면 대조 / Second session and visual control
 
-사용자가 다시 승인한 두 번째 세션에서 진단자는 재생 화면을 탭하지 않았다. 관측은48.366초 시점과59.987초~종료 구간에 한정되어 초기 전구간 비조작 재생을 직접 증명하지는 않는다. 최종60.162초/958272표본/2804블록/2356신호블록/비영0표본84.29%,최대-10.75dBFS/peak17226. 특징578/초기화1/후보0,`NO_DISTINCT_REPEAT`,분석CPU919ms/최장16ms. 종료 후 서비스없음·Projection=null·IG플레이어started/실제재생화면 확인. 신호 수신은 되지만 이 세션의 최종 주기 후보는 확보하지 못했다.
+두 번째 세션도 새 OS캡처 동의 후 시작했으며 관측 중 재생 화면 탭은 없었다. 관측은48.366초 시점과59.987초~종료 구간에 한정되어 초기 전구간 비조작 재생을 직접 증명하지는 않는다. 최종60.162초/958272표본/2804블록/2356신호블록/비영0표본84.29%,최대-10.75dBFS/peak17226. 특징578/초기화1/후보0,`NO_DISTINCT_REPEAT`,분석CPU919ms/최장16ms. 종료 후 서비스없음·Projection=null·IG플레이어started/실제재생화면 확인. 신호 수신은 되지만 이 세션의 최종 주기 후보는 확보하지 못했다.
 
-이후 기존 RAM 화면프로브를 별도60초 실행했다.240프레임/평균움직임24.800,최저오차 후보10.400초(오차10.988/198쌍),다음20.950초(오차16.665/156쌍). 화면 반복의 후보이며 정확한 길이나 오디오 주기가 아니다. 사용자는10초 미만처럼 보인다고 제보했다. **길어서 검출하지 못했다고 단정하지 않는다.** 기존제품은OFF를 확인한 뒤 프로브를 실행했고, 접근성 연결 재생성으로 제품누계가0으로 초기화되었다. 이전6/6과 합산하지 않는다.
+이후 기존 RAM 화면프로브를 별도60초 실행했다.240프레임/평균움직임24.800,최저오차 후보10.400초(오차10.988/198쌍),다음20.950초(오차16.665/156쌍). 화면 반복의 후보이며 정확한 길이나 오디오 주기가 아니다. 육안 추정은10초 미만이었지만 실제 길이의 계측값은 아니다. **길어서 검출하지 못했다고 단정하지 않는다.** 기존제품은OFF를 확인한 뒤 프로브를 실행했고, 접근성 연결 재생성으로 제품누계가0으로 초기화되었다. 이전6/6과 합산하지 않는다.
 
 증거: `private/device-tests/audio-pattern-v02a-run2-tail.jsonl`, `private/instagram-probe/audio-pattern-v02a-visual-control.txt`, 비공개 실제화면. 화면프로브는 기기/로컬JAR SHA2561B84C87A46364449D2D48F2BDDDD4EE0814B81067798082720B1B715CA27E416 일치. 프로브의 원프레임/PCM/특징 배열은 미저장하고 집계만 남겼다. 별도UI확인용 스크린샷은 private에 보관한다.
 
@@ -102,9 +102,9 @@ The first run acquired audio but included pauses, so it cannot validate period a
 
 ### 진단판 설치·실제 관측 / Diagnostic build and actual observation
 
-0.2.1-audio-diagnostics/code3 후보A,APK88989bytes,SHA256 `093881C3C8539762930A5389A764A1776A502E6A324D6D7D96864D8F912AC24F`. USB설치·버전조회·기기설치본pull해시일치. 빌드/시험컴파일/lint PASS(0오류6경고:기존5+진단UI문자열결합), 기존38+진단10=48시험PASS, 범위/연결 정적검사 및독립리뷰PASS. 주작업자가 통합빌드와48시험을 직접 실행했다.
+0.2.1-audio-diagnostics/code3 후보A,APK88989bytes,SHA256 `093881C3C8539762930A5389A764A1776A502E6A324D6D7D96864D8F912AC24F`. USB설치·버전조회·기기설치본pull해시일치. 빌드/시험컴파일/lint PASS(0오류6경고:기존5+진단UI문자열결합), 기존38+진단10=48시험PASS, 범위/연결 정적검사 및독립리뷰PASS. 통합빌드와48시험은 실제 실행한 결과다.
 
-사용자 직접 새OS승인 후20:42:04.779~20:43:00.857에1.072~57.169초 관측36표본,20:43:20.637에최종집계조회. 관측 중 탭/스와이프없음. 같은릴스 실제화면/IG플레이어started 확인. 최종60.167초/958272표본/2795블록/2724신호블록/비영0표본97.48%/최대-10.79dBFS/peak17225. 서비스소멸·Projection=null로 종료확인.
+기기에서 새 OS캡처에 직접 동의한 후20:42:04.779~20:43:00.857에1.072~57.169초 관측36표본,20:43:20.637에최종집계조회. 관측 중 탭/스와이프없음. 같은릴스 실제화면/IG플레이어started 확인. 최종60.167초/958272표본/2795블록/2724신호블록/비영0표본97.48%/최대-10.79dBFS/peak17225. 서비스소멸·Projection=null로 종료확인.
 
 | 진단 수치 | 실제 값 | 해석 |
 |---|---:|---|
@@ -123,7 +123,7 @@ Evidence stays private: `audio-diagnostics-v021a-run1.jsonl`, `audio-diagnostics
 
 시험 후 / After testing:20:46:34~36 **기존실행ON·목표/기준1·광고/플로팅ON·visualOFF·blocked=false**로복원했다. 휴대폰음량0·IG자체음소거아이콘확인후재생복원. 종료후이미다른릴스로이동되어원래시험영상으로되돌리지않았다. 현재도정보없는릴스0표시이며근본수정이아니다. `audio-diagnostics-v021a-restored.jsonl`과실제화면으로확인. 종료UI는후보없음/598특징,스크롤하단572/598유효·마지막탈락과현재판정의구분을육안확인했다. 원PCM/특징은종료시비우고진단집계만RAM에남는다.
 
-기존 제품의 미연결 VisualSequenceTracker2FAIL은 이 시험으로 해결되지 않는다. 새 Public 게시·메일 발송 없음.
+기존 제품의 미연결 VisualSequenceTracker2FAIL은 이 시험으로 해결되지 않는다. 이 진단 시험의 새 Public 게시는 없음.
 
 ## 조사 근거 / Research references
 

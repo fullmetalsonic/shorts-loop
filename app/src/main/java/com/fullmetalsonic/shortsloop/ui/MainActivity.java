@@ -16,9 +16,12 @@ import android.view.View;
 import android.widget.Toast;
 import com.fullmetalsonic.shortsloop.R;
 import com.fullmetalsonic.shortsloop.core.ModePolicy;
+import com.fullmetalsonic.shortsloop.core.FeatureSupportPolicy;
+import com.fullmetalsonic.shortsloop.core.LiveSkipPolicy;
 import com.fullmetalsonic.shortsloop.data.SettingsStore;
 import com.fullmetalsonic.shortsloop.service.RuntimeState;
 import com.fullmetalsonic.shortsloop.tile.ShortsTileService;
+import com.fullmetalsonic.shortsloop.updates.UpdateController;
 
 public final class MainActivity extends Activity {
     private static final String YOUTUBE = "com.google.android.youtube", INSTAGRAM = "com.instagram.android";
@@ -27,23 +30,33 @@ public final class MainActivity extends Activity {
     private SettingsScreen screen;
     private boolean rendering;
     private AlertDialog visualAssistDialog;
+    private UpdateController updater;
     private final Runnable refresh = new Runnable() {
         @Override public void run() { render(); handler.postDelayed(this, 500); }
     };
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState); store = new SettingsStore(this);
         screen = new SettingsScreen(this, store.ceiling(), value -> { store.ceiling(value); render(); },
-                store.fallbackSeconds(), value -> { store.fallbackSeconds(value); render(); });
+                store.fallbackSeconds(), value -> { store.fallbackSeconds(value); render(); },
+                store.liveDelaySeconds(), value -> { store.liveDelaySeconds(value); render(); });
         setContentView(screen.root);
+        updater = new UpdateController(this, screen.updates, screen.updateBanner, screen::showUpdates);
+        screen.setupJump.setOnClickListener(v -> screen.showSetup(RuntimeState.connected && !hasInstalledSelection()));
         screen.youtube.setOnCheckedChangeListener((v, checked) -> { if (!rendering) { store.selectedApp(YOUTUBE, checked); render(); } });
         screen.instagram.setOnCheckedChangeListener((v, checked) -> { if (!rendering) { store.selectedApp(INSTAGRAM, checked); render(); } });
         screen.timedFallback.setOnCheckedChangeListener((v, checked) -> {
             if (rendering) return;
             if (!checked) { store.timedFallback(false); render(); return; }
-            if (!store.instagramEnabled() || !screen.seconds.commit()) { render(); return; }
+            if (!FeatureSupportPolicy.instagramFeature(installed(INSTAGRAM), store.instagramEnabled()) || !screen.seconds.commit()) { render(); return; }
             store.timedFallback(true); render();
         });
         screen.skipAds.setOnCheckedChangeListener((v, checked) -> { if (!rendering) { store.skipAds(checked); render(); } });
+        screen.live.toggle.setOnCheckedChangeListener((v, checked) -> {
+            if (rendering) return;
+            if (!checked) { store.skipLive(false); render(); return; }
+            if (!installed(YOUTUBE) || !store.youtubeEnabled() || !screen.live.commit()) { render(); return; }
+            store.skipLive(true); render();
+        });
         screen.visualAssist.setOnCheckedChangeListener((v, checked) -> {
             if (rendering) return;
             if (!checked) { store.visualAssist(false); render(); return; }
@@ -58,6 +71,7 @@ public final class MainActivity extends Activity {
             if (!checked) { store.enabled(false); render(); return; }
             if (!screen.count.commit()) { render(); return; }
             if (store.ceiling() > 0 && store.timedFallback() && store.instagramEnabled() && !screen.seconds.commit()) { render(); return; }
+            if (store.skipLive() && store.youtubeEnabled() && installed(YOUTUBE) && !screen.live.commit()) { render(); return; }
             if (!store.hasSelectedApps()) { toast("사용할 앱을 하나 이상 선택해 주세요."); render(); return; }
             if (!(store.youtubeEnabled() && installed(YOUTUBE)) && !(store.instagramEnabled() && installed(INSTAGRAM))) {
                 toast("선택한 앱이 설치되어 있지 않습니다."); render(); return;
@@ -74,44 +88,76 @@ public final class MainActivity extends Activity {
                 .setPositiveButton(R.string.open_settings, (dialog, which) -> open(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))).show());
         screen.overlayButton.setOnClickListener(v -> open(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()))));
         screen.tileButton.setOnClickListener(v -> addTile());
+        screen.tileButton.setText(FeatureSupportPolicy.tileAddRequest(Build.VERSION.SDK_INT)
+                ? R.string.compat_tile_add_button : R.string.compat_tile_manual_button);
         render();
     }
     private void render() {
         if (screen == null) return;
         rendering = true;
         try {
+            boolean youtubeInstalled = installed(YOUTUBE), instagramInstalled = installed(INSTAGRAM);
+            boolean instagramReady = FeatureSupportPolicy.instagramFeature(instagramInstalled, store.instagramEnabled());
+            boolean youtubeReady = youtubeInstalled && store.youtubeEnabled();
             screen.count.render(store.ceiling());
-            screen.seconds.render(store.fallbackSeconds()); screen.seconds.setAvailable(store.instagramEnabled());
+            screen.seconds.render(store.fallbackSeconds()); screen.seconds.setAvailable(instagramReady);
+            screen.live.render(store.liveDelaySeconds()); screen.live.setAvailable(youtubeReady);
+            screen.live.toggle.setChecked(store.skipLive() && youtubeReady);
+            screen.live.support.setText(!youtubeInstalled ? R.string.live_youtube_missing
+                    : !store.youtubeEnabled() ? R.string.live_youtube_select : R.string.live_youtube_ready);
             screen.applied.setText(store.target() == store.ceiling() ? "현재 적용: " + store.target() + "회" : "기준 " + store.ceiling() + "회 · 플로팅 현재 " + store.target() + "회");
             screen.youtube.setChecked(store.youtubeEnabled()); screen.instagram.setChecked(store.instagramEnabled());
-            screen.youtube.setEnabled(installed(YOUTUBE)); screen.instagram.setEnabled(installed(INSTAGRAM));
-            screen.instagram.setText(installed(INSTAGRAM) ? "Instagram 릴스" : "Instagram 릴스 · 미설치");
-            screen.timedFallback.setChecked(store.timedFallback()); screen.timedFallback.setEnabled(store.instagramEnabled());
-            screen.skipAds.setChecked(store.skipAds()); screen.skipAds.setEnabled(store.instagramEnabled());
-            screen.visualAssist.setChecked(store.visualAssist()); screen.visualAssist.setEnabled(visualAssistAvailable());
+            screen.youtube.setEnabled(youtubeInstalled); screen.instagram.setEnabled(instagramInstalled);
+            screen.youtube.setText(youtubeInstalled ? "YouTube 쇼츠" : "YouTube 쇼츠 · 미설치");
+            screen.instagram.setText(instagramInstalled ? "Instagram 릴스" : "Instagram 릴스 · 미설치");
+            screen.timedFallback.setChecked(store.timedFallback() && instagramReady); screen.timedFallback.setEnabled(instagramReady);
+            screen.skipAds.setChecked(store.skipAds() && instagramReady); screen.skipAds.setEnabled(instagramReady);
+            screen.timedSupport.setText(CompatibilityPanel.instagramReason(this, instagramInstalled, store.instagramEnabled()));
+            screen.adSupport.setText(CompatibilityPanel.instagramReason(this, instagramInstalled, store.instagramEnabled()));
+            screen.visualAssist.setChecked(FeatureSupportPolicy.visualChecked(Build.VERSION.SDK_INT, instagramInstalled, store.instagramEnabled(), store.visualAssist()));
+            screen.visualAssist.setEnabled(visualAssistAvailable());
+            screen.visualSupport.setText(CompatibilityPanel.visualReason(this, Build.VERSION.SDK_INT, instagramInstalled, store.instagramEnabled(), store.visualAssist()));
             screen.floating.setChecked(store.floatingEnabled()); screen.floatingDetails.setVisibility(store.floatingEnabled() ? View.VISIBLE : View.GONE);
             screen.tapModes.check(store.tapMode() == ModePolicy.TOGGLE ? R.id.tap_quick : R.id.tap_rotary);
             boolean active = store.enabled(); screen.execution.setChecked(active);
             long timedRemaining = RuntimeState.timedRemainingSeconds;
+            boolean adsActive = store.skipAds() && instagramReady, liveActive = store.skipLive() && youtubeReady;
+            String liveStatus = LiveSkipPolicy.STATUS_DELAYED.equals(RuntimeState.status) && timedRemaining > 0
+                    ? getString(R.string.live_remaining, timedRemaining) : RuntimeState.status;
+            String zeroStatus = getString(R.string.zero_features_short,
+                    getString(adsActive ? R.string.feature_on_short : R.string.feature_off_short),
+                    getString(liveActive ? R.string.feature_on_short : R.string.feature_off_short));
             screen.status.setText(!active ? "꺼짐 · 준비되면 켜 주세요" : RuntimeState.blocked ? RuntimeState.status
-                    : store.target() == 0 ? store.skipAds() && store.instagramEnabled()
-                        ? "켜짐 · 광고만 넘김 / 일반·시간제 중지" : "켜짐 · 일반·시간제 중지 / 광고 꺼짐"
+                    : store.target() == 0 ? zeroStatus + (LiveSkipPolicy.isLiveStatus(RuntimeState.status) ? "\n" + liveStatus : "")
+                    : LiveSkipPolicy.isLiveStatus(RuntimeState.status) ? liveStatus
                     : timedRemaining >= 0 ? "시간제 · " + timedRemaining + "초 남음 · " + RuntimeState.status
                     : RuntimeState.current + "/" + store.target() + " · " + RuntimeState.status);
+            screen.status.setContentDescription(active && !RuntimeState.blocked && store.target() == 0
+                    ? screen.status.getText() + ". " + LiveSkipPolicy.zeroCountStatus(adsActive, liveActive)
+                    : screen.status.getText());
             screen.status.setTextColor(RuntimeState.blocked ? UiTheme.WARNING : active ? UiTheme.CYAN : UiTheme.MUTED);
             boolean access = RuntimeState.connected, overlay = Settings.canDrawOverlays(this);
-            screen.permissionStatus.setText(!access ? "접근성 연결이 필요합니다. 아래 버튼을 눌러 주세요."
+            screen.permissionStatus.setText(!access ? getString(R.string.accessibility_reconnect_help)
                     : store.floatingEnabled() && !overlay ? "접근성 연결됨 · 플로팅 표시 권한이 필요합니다."
                     : store.floatingEnabled() ? "사용 준비 완료 · 접근성 및 플로팅 연결됨" : "사용 준비 완료 · 플로팅 권한 없이 사용 가능");
             screen.accessButton.setVisibility(access ? View.GONE : View.VISIBLE);
+            screen.accessButton.setText(R.string.accessibility_reconnect_action);
             screen.overlayButton.setVisibility(store.floatingEnabled() && !overlay ? View.VISIBLE : View.GONE);
+            screen.setupJump.setVisibility(!access || (store.floatingEnabled() && !overlay) || !hasInstalledSelection() ? View.VISIBLE : View.GONE);
+            screen.setupJump.setText(!access ? R.string.accessibility_reconnect_banner : R.string.setup_needed_banner);
         } finally { rendering = false; }
     }
     private boolean installed(String pkg) {
         try { getPackageManager().getApplicationInfo(pkg, 0); return true; }
         catch (android.content.pm.PackageManager.NameNotFoundException e) { return false; }
     }
-    private boolean visualAssistAvailable() { return Build.VERSION.SDK_INT >= 34 && store.instagramEnabled(); }
+    private boolean hasInstalledSelection() {
+        return (store.youtubeEnabled() && installed(YOUTUBE)) || (store.instagramEnabled() && installed(INSTAGRAM));
+    }
+    private boolean visualAssistAvailable() {
+        return FeatureSupportPolicy.visualAvailability(Build.VERSION.SDK_INT, installed(INSTAGRAM), store.instagramEnabled())
+                == FeatureSupportPolicy.Availability.AVAILABLE;
+    }
     private void confirmVisualAssist() {
         if (visualAssistDialog != null) return;
         visualAssistDialog = new AlertDialog.Builder(this)
@@ -133,8 +179,12 @@ public final class MainActivity extends Activity {
                         getString(R.string.tile_label), Icon.createWithResource(this, R.drawable.ic_loop), getMainExecutor(),
                         result -> toast(getString(result == StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ADDED
                                 || result == StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ALREADY_ADDED ? R.string.tile_added : R.string.tile_not_added)));
-            } catch (RuntimeException ignored) { toast(getString(R.string.tile_manual)); }
-        } else toast(getString(R.string.tile_manual));
+            } catch (RuntimeException ignored) { showManualTileHelp(); }
+        } else showManualTileHelp();
+    }
+    private void showManualTileHelp() {
+        new AlertDialog.Builder(this).setTitle(R.string.compat_tile_manual_button)
+                .setMessage(R.string.tile_manual).setPositiveButton(android.R.string.ok, null).show();
     }
     private void open(Intent intent) { try { startActivity(intent); } catch (RuntimeException ignored) { toast(getString(R.string.settings_unavailable)); } }
     private void toast(String text) { Toast.makeText(this, text, Toast.LENGTH_LONG).show(); }
@@ -149,10 +199,16 @@ public final class MainActivity extends Activity {
     @Override protected void onResume() {
         super.onResume();
         screen.battery.refresh();
+        updater.onResume();
         handler.removeCallbacks(refresh); handler.post(refresh);
     }
-    @Override protected void onPause() { handler.removeCallbacks(refresh); super.onPause(); }
+    @Override protected void onPause() { handler.removeCallbacks(refresh); if (updater != null) updater.onPause(); super.onPause(); }
+    @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == UpdateController.INSTALL_REQUEST && updater != null) updater.onInstallResult();
+    }
     @Override protected void onDestroy() {
+        if (updater != null) updater.close();
         if (visualAssistDialog != null) {
             visualAssistDialog.setOnDismissListener(null);
             visualAssistDialog.dismiss(); visualAssistDialog = null;

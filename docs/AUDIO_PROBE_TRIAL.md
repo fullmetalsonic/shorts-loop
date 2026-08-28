@@ -1,10 +1,10 @@
 # 내부 오디오 수신 시험 / Internal audio capture probe
 
-후속: 사용자 “계속해” 승인으로 [음향 반복 후보·0.2.1 진단 시험](AUDIO_PATTERN_TRIAL.md)을 구현·설치했다.48합성시험은통과했지만실제릴스후보검출은미해결이다. 아래0.1 수신 결과는 입력 가능성의 근거이며 반복 인식 성공을 뜻하지 않는다.
+후속 [음향 반복 후보·0.2.1 진단 시험](AUDIO_PATTERN_TRIAL.md)을 구현·설치했다.48합성시험은통과했지만실제릴스후보검출은미해결이다. 아래0.1 수신 결과는 입력 가능성의 근거이며 반복 인식 성공을 뜻하지 않는다.
 
 ## 범위 / Scope
 
-2026-08-27 사용자 “그래 해봐” 승인에 따라 `audio-probe`를 별도 앱으로 분리했다. 앱 이름은 **쇼츠 오디오 시험**, 버전 `0.1-audio-probe`, 패키지는 `com.fullmetalsonic.shortsloop.audioprobe`다. 기존 ShortsLoop를 교체하지 않고 기존 설정·권한도 변경하지 않는다.
+2026-08-27 `audio-probe`를 별도 진단 앱으로 분리했다. 앱 이름은 **쇼츠 오디오 시험**, 버전 `0.1-audio-probe`, 패키지는 `com.fullmetalsonic.shortsloop.audioprobe`다. 기존 ShortsLoop를 교체하지 않고 기존 설정·권한도 변경하지 않는다.
 
 This separate diagnostic app checks whether Instagram playback audio actually reaches Android AudioPlaybackCapture. It does not replace ShortsLoop or implement audio-based auto-advance.
 
@@ -44,13 +44,13 @@ Signal presence is not a detected loop or video boundary. Silence alone cannot d
 
 후보A 구현/빌드/13단위시험/정적 권한·수집범위 검사/독립 코드 리뷰 완료. lint0오류5경고(target35,백업규칙안내,진단아이콘미지정,한국어문구2건). 실제 USB설치/시작화면/권한창 표시 확인. APK56943bytes, SHA256 `0B3760F91D1B74AA60A2793159D281C103D710F0F6F754288E7FE5E7E4001174`; 설치본을 다시 내려받아 일치 확인.
 
-19:04~05 체크포인트: `RECORD_AUDIO` 미허용, `running=false/samples=0`, 사용자 OS권한창 대기. 실제 PCM 수신·60초 종료·OS중지·잠금·재시작 기기시험은 **미실행**. 전체 자동 넘김20개 연속 조건과 별개이며 새 Public 게시·메일 없음. 시험 앱의 긴 수치는 세로 스크롤로 확인하며 주요 조작 버튼은 최초 화면에서 보인다. 기존 플로팅이 제목 일부를 가리키지만 버튼은 가리지 않으며 기존 앱 설정을 변경하지 않았다.
+19:04~05 체크포인트: `RECORD_AUDIO` 미허용, `running=false/samples=0`, OS권한창 대기. 실제 PCM 수신·60초 종료·OS중지·잠금·재시작 기기시험은 **미실행**. 전체 자동 넘김20개 연속 조건과 별개이며 이 단계의 새 Public 게시는 없음. 시험 앱의 긴 수치는 세로 스크롤로 확인하며 주요 조작 버튼은 최초 화면에서 보인다. 기존 플로팅이 제목 일부를 가리키지만 버튼은 가리지 않으며 기존 앱 설정을 변경하지 않았다.
 
 Scoped command: `scripts/verify-audio-probe.ps1` (Android SDK35/JDK17+). The existing unconnected main-app VisualSequenceTracker prototype still has2 failing tests; this diagnostic module does not fix or hide them. See [검증 기록](VERIFICATION.md) and [기존 조사](INSTAGRAM_TIMING_RESEARCH_2026-08-27.md).
 
 ## 기기 수신 시험 / Device capture test
 
-2026-08-27 20:10~20:15, 사용자가 OS오디오권한·캡처승인한 뒤 후보A 그대로 시험했다. 코드수정·새APK설치없음. 아래는 해당기기의 해당영상에서 얻은 결과이며 모든 릴스나 YouTube 지원 결과가 아니다.
+2026-08-27 20:10~20:15, OS오디오권한·캡처 동의를 기기에서 직접 허용한 뒤 후보A 그대로 시험했다. 코드수정·새APK설치없음. 아래는 해당기기의 해당영상에서 얻은 결과이며 모든 릴스나 YouTube 지원 결과가 아니다.
 
 | 세션/조건 | 실제 관측 | 판정 |
 |---|---|---|
@@ -62,7 +62,7 @@ Scoped command: `scripts/verify-audio-probe.ps1` (Android SDK35/JDK17+). The exi
 Both sessions ended automatically. The service was absent and `MediaProjection=null` after each run. The second run produced nonzero Instagram PCM after unmuting Instagram and resuming playback. This establishes input feasibility, not an audio loop or a video boundary.
 
 - Android 진단에서 시험앱 입력은 `REMOTE_SUBMIX`, `not silenced`; RECORD_AUDIO=true. 첫시도미디어음량0/양성대조미디어음량1, IG자체음소거아이콘은 별도 확인했다. 볼륨0과 IG음소거를 독립적으로 모두 조합한시험은 아니므로 “폰볼륨0이면반드시수신불가”로 확대하지 않는다.
-- 2번째세션은 사용자가 새로 시작·승인한 상태를 관측했으며 진단자가 OS승인창을누르거나 토큰을재사용하지않았다. 첫시험음량상승은60초종료후라 양성대조로세지않았다.
+- 2번째세션은 기기에서 직접 새로 시작하고 캡처에 동의한 세션이다. OS동의의 자동 부여나 토큰 재사용은 없었다. 첫시험음량상승은60초종료후라 양성대조로세지않았다.
 - 기존앱은계속실행중이었으며일반이동누계5/5→6/6을관측했다. 오디오시험의20개연속또는정확N결과로계산하지않는다. 양성신호구간의영상은새릴스이며,그영상에서마지막기존앱상태는 `재생 정보 없음`/현재0으로확인했다. 이전duration29.632초는새영상의측정값이아니다.
 - 시험 후 미디어음량0·IG자체음소거·재생복원. 기존ShortsLoop실행ON/목표1/화면분석OFF 유지. 캡처세션은종료되었으며 오디오권한만사용자허용상태로남는다.
 - 남은검증: 재생→일시정지→재생의온전한양성/음성/양성대조,OS수동중지/잠금종료,긴음악의반복주기,후렴오판방지,무음대체경로,다른영상/YouTube,배터리영향. **자동넘김통합이나 반복판별은아직없음**.

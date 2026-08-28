@@ -1,23 +1,40 @@
 # ShortsLoop project rules
 
-- Kotlin/Compose나 외부 서비스 없이 Java/native Android 시험판으로 시작한다.
-- core에는 Android 의존성을 두지 않는다. 감지, 저장, overlay, service, tile, UI를 분리한다.
-- 사용자 승인: 0/1/2 설정, 0→1→2→0 순환, 현재/설정 숫자 표시, 반투명 이동/위치저장 플로팅, X 종료, 빠른 설정 ON/OFF.
-- 2026-08-27 업데이트 승인: 기준0~99 숫자입력/화살표, 현재값과기준분리, 두탭모드,72dp급소형플로팅/작은X절충,표시선택,YouTube/Instagram선택,실행토글,남색·청록·보라아이콘/직관적네이티브UI. 하단고정실행토글/키보드가림/터치범위를실기기검사한다.
-- 본격 아이콘/브랜딩 디자인은 실제 성능 확인 이후에 진행한다.
-- 개인정보/영상 제목/계정/시청이력은 저장하지 않는다. 인터넷 권한을 추가하지 않는다.
-- 휴대폰 설치 및 접근성/오버레이 권한 부여는 별도 사용자 확인 후 수행한다. ADB로 권한을 몰래 부여하지 않는다.
-- 실제 스와이프가 검증되기 전에는 자동 넘김 E2E를 PASS로 보고하지 않는다.
-- 2026-08-27 추가 승인: Instagram의 명시적 광고표시를 인식하면 재생완주 없이 넘기는 별도 토글. 기본OFF, 실행OFF/0회/IG미선택에서는 동작하지 않는다. 재생바 부재만으로 광고판정 금지. 광고 CTA를 클릭하지 않고 릴스 페이지 이동만 요청한다.
-- 변경과 검증은 HANDOVER.md, docs/CHANGELOG.md, docs/VERIFICATION.md에 누적 기록한다.
-- 0.2.2 승인: 자기 앱 배터리 절전 예외 조회·수동 설정 안내·자기 앱 설정 바로가기. 새 권한, 자동 시스템 정책 변경, 자동 실행 재시작은 하지 않는다.
-- 2026-08-27 최종 사용자 요청: 최신 버전 Public GitHub 게시 승인, 추가 휴대폰 디버깅은 보류. 미해결 D-019/D-021을 안정성 완료로 표시하지 않는다.
-- 2026-08-27 후속 요청으로 USB 디버깅·대체 방법 조사·반복시험 재개. 최신 완료 기준은 수동 이동/중간 재시작 없이 일반 영상20개 이상 실제 자동 넘김 성공 후에만 새 빌드 Public 게시. 광고 이동과 일반 영상 N회 성공을 분리한다. 새 화면 캡처 capability와 시험 APK 설치는 별도 확인하며, 화면 주기 추정을 정확한 N회 재생으로 바꾸어 보고하지 않는다.
-- 직전 캡처 capability/시험 APK/추가재생 안내에 사용자가 가능한 방법을 시도하라고 승인하여0.2.3-visual-test를 진행. 기본OFF·별도동의·IG무시간단일영상·API34창캡처·RAM전용·정확N회불보장·20연속후공개 조건. 세부 계약은 docs/VISUAL_ASSIST_TRIAL.md.
-- 오디오 비교 질문 뒤 사용자 “그래 해봐”로 내부재생음 수신 시험 승인. 별도 audio-probe 앱에서 RECORD_AUDIO/MediaProjection/FGS 사용, OS 동의는 사용자 직접 조작. Instagram UID+MEDIA만/RAM집계/60초 제한, 마이크 입력·화면프레임·파일저장·전송·자동넘김 없음. 기존 앱 권한은 그대로. docs/AUDIO_PROBE_TRIAL.md 참조.
-- 내부 PCM 수신 성공 안내 뒤 “계속해”로 별도 시험 앱의 음향 반복 후보 분석 승인. 기존60초·같은권한·IG한정 유지, 음향특징RAM비교/종료삭제. 후보주기와영상끝은구분하며제품자동넘김통합·새공개전에영향검토/실제검증필요. 음소거·비트·후렴·수신공백을검증한다.
-- 2026-08-27 시간제 보조 승인: Instagram의 진행정보 없는 안전한 단일영상만 기본15초·숫자입력·±1초(5~120),별도기본OFF토글. 정상진행/다음처음재생대기0은기존N회,YouTube불변. 0회/실행OFF/IG미선택/댓글/메뉴/일시정지/잠금/창·앱변경은타이머초기화. 시간은반복횟수와별개이며완주불보장. 별도캡처·음향권한없음,화면분석보조와동시ON이면시간제우선. 수동개입없는20개실제넘김은시간제/정상N/광고로분리기록하며정확N회성공으로혼합하지않음. docs/TIMED_FALLBACK.md 참조.
-- 위 시간제 승인 후 사용자가 기본10초·최대60초로 변경 지시. 최신 기준은 **기본10초,5~60초,±1초**다. 기존15초/120초범위는후보A의과거기준이며후보B부터대체한다.
-- 2026-08-27 최신 배포 기준 변경: 사용자가 “광고도 잘 넘기면 성공”으로 명확히 지시했다. **정상 N회 + 10초 시간제 + 광고 넘김을 모두 합친 연속20회 성공**을 Public 게시 기준으로 한다. 종류별 수치는 기록하되 광고를 합계에서 빼지 않는다. 수동 이동/중간 실행 재시작은 연속 성공에 넣지 않는다. “성공하면 깃에 공개해”로 기존 Public 저장소 업데이트를 다시 승인했다.
-- 이어 사용자 “너무 길다, 그냥 된 것 같으니까 올려”로 이번 Public 시험판의20회 완료 대기를 면제했다.20성공으로 꾸미지 않고 관측된 결과·미검증을 그대로 공개한다.
-- 최종 추가 승인: 광고는 반복 횟수와 독립. 메인실행ON+광고옵션ON+IG선택이면0회에서도광고넘김. 일반N/시간제/화면분석은0회에서중지,메인OFF는전부중지. UI를사용앱/일반횟수/진행정보없는시간제/광고/플로팅/준비/실험으로분류하고광고영역에0회가능·별도조건을명시한다.
+## Structure and scope
+
+- Java/native Android, minSdk26, compile/target35. Keep core Android-independent.
+- Separate detection, playback policy, settings, overlay, accessibility service, tile, UI and updates.
+- Preserve existing artifacts and settings. Do not refactor unrelated features.
+- Record technical decisions, changes, tests, regressions and remaining limitations in the linked project documents.
+
+## Product contract
+
+- Repeat count 0–99, typed input and arrows. Floating tap modes: 0→1→…→configured count→0, or 0↔configured count.
+- Zero stops normal repeat, clockless timer and visual analysis. Instagram ads remain independent when execution, host selection and ad option are ON.
+- YouTube live previews are a separate opt-in(default OFF); delay0–60(default0), zero means immediate after safe page settlement, not off. Live skipping remains independent of ordinary count0 and stops with overall executionOFF.
+- Live detection uses the dedicated preview element, full single-page/window guards and RAM-only node identity, never titles/CTA/viewer counts. A live-to-live transition requires fresh same-pager index evidence plus a different stable page key. Reused/ambiguous nodes fail closed; do not bypass transition confirmation.
+- Execution OFF stops all automation. Floating display is optional; moving it preserves its position, and X stops execution.
+- Timer fallback is Instagram-only for eligible clockless single videos: default OFF, initial10 seconds, range5–60. It is a timeout, not a precise playback count.
+- Normal progress uses the existing repeat counter. Menus, pause, lock, app/window changes and unconfirmed transitions retain their safety guards.
+- Visual assistance is experimental, opt-in, API34+ only, with RAM-only window analysis. Unsupported OS/host choices remain saved but inactive.
+- API33+ can request tile addition; older OS shows manual instructions. API29+ tile subtitle, older OS state label.
+- The unconnected VisualSequence and separate audio-probe experiments are not product features. Their failures cannot be counted as product PASS.
+
+## Permissions, privacy and installation
+
+- Accessibility and overlay permission changes require explicit user action; never secretly grant permissions through ADB.
+- INTERNET is limited to fixed Public GitHub update lookup/download; no video, account or viewing-history upload.
+- REQUEST_INSTALL_PACKAGES connects to the Android installer. Source permission and final install confirmation are manual.
+- No background updater, notification permission, silent install, token, arbitrary endpoint or product QA bypass.
+- Before installation stop execution only and preserve other settings.
+- Validate update metadata, size, SHA256, package, version, OS and the complete current signer set. Android performs final installation validation.
+- Do not publish private keys, personal screenshots, raw device logs, credentials, conversations or unnecessary local paths.
+
+## Verification and release
+
+- Follow [verification](docs/VERIFICATION.md), [compatibility](docs/COMPATIBILITY.md) and [update delivery](docs/UPDATE_DELIVERY_PLAN.md).
+- Do not describe a UI smoke test or requested swipe as confirmed social-app auto-advance.
+- Existing intermittent detection limitations and uncompleted20-transition endurance testing remain visible.
+- Compare source/build identity, installed APK, public release asset and hashes. Preserve the existing release signing identity.
+- Publish only when explicitly requested; never infer email permission from a GitHub release request.
+- Public documentation contains technical requirements, usage, change history and evidence, not conversational approval transcripts.

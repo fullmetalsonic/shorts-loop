@@ -6,6 +6,7 @@ import com.fullmetalsonic.shortsloop.core.ModePolicy;
 import com.fullmetalsonic.shortsloop.core.PositionPolicy;
 import com.fullmetalsonic.shortsloop.core.SettingsPolicy;
 import com.fullmetalsonic.shortsloop.core.ClocklessTimeoutPolicy;
+import com.fullmetalsonic.shortsloop.core.LiveSkipPolicy;
 
 public final class SettingsStore {
     public static final String YOUTUBE_PACKAGE = "com.google.android.youtube";
@@ -59,6 +60,10 @@ public final class SettingsStore {
     public boolean youtubeEnabled() { return booleanValue("youtube_enabled", true); }
     public boolean instagramEnabled() { return booleanValue("instagram_enabled", false); }
     public boolean skipAds() { return booleanValue("skip_ads", false); }
+    public boolean skipLive() { return booleanValue("skip_live", false); }
+    public int liveDelaySeconds() {
+        return LiveSkipPolicy.sanitizeSeconds(intValue("live_delay_seconds", LiveSkipPolicy.DEFAULT_SECONDS));
+    }
     public boolean visualAssist() { return booleanValue("visual_assist", false); }
     public boolean timedFallback() { return booleanValue("timed_fallback", false); }
     public int fallbackSeconds() {
@@ -87,6 +92,10 @@ public final class SettingsStore {
 
     public void floatingEnabled(boolean value) { preferences.edit().putBoolean("floating_enabled", value).apply(); }
     public void skipAds(boolean value) { preferences.edit().putBoolean("skip_ads", value).apply(); }
+    public void skipLive(boolean value) { preferences.edit().putBoolean("skip_live", value).apply(); }
+    public void liveDelaySeconds(int value) {
+        preferences.edit().putInt("live_delay_seconds", LiveSkipPolicy.clamp(value)).apply();
+    }
     public void visualAssist(boolean value) { preferences.edit().putBoolean("visual_assist", value).apply(); }
     public void timedFallback(boolean value) { preferences.edit().putBoolean("timed_fallback", value).apply(); }
     public void fallbackSeconds(int value) {

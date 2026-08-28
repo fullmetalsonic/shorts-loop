@@ -1,173 +1,97 @@
-# 인수인계 · ShortsLoop
+# ShortsLoop · 기술 인수인계 / Technical handover
 
-## 최신 · 0.2.4 기능별 UI·0회 광고 독립, Public 공개 완료
+## 최신 검증 체크포인트 / Latest verification checkpoint
 
-최신 사용자 승인은 광고를 반복 횟수와 분리하고 설정을 기능별 카드로 분류한 뒤 Public에 게시하는 것이다. 20연속 대기는 사용자가 면제했으며 성공으로 기록하지 않는다. 메인ON+Instagram선택+광고ON이면0회에서도 광고만 넘김; 일반N/시간제/화면보조는0에서중지,메인OFF는전부중지. 시간제 기본10초/5~60/±1 유지. [릴리스 기록](docs/releases/v0.2.4.md).
+**현재 후보는0.2.5/code21, PC 검증·실기기 설치 PASS, 미게시**다. 고정 APK709703bytes, SHA256 `6095BC8C22BD49AACA348E7D1C048301A9E229C92288D1620439F047179E16B2`.356JUnit·빌드·lint0오류/기존3경고·정적가드(LIVE_TREE_LIFECYCLE 포함),10:39 동일 APK의 API26/33/34 계측74/74/73 PASS.10:40 휴대폰code21 설치·접근성 bound·재생 설정 보존·설치본 해시 PASS. 최종 조회 원복 독립리뷰에서 추가P1/P2 없음.
 
-최종 code13/name0.2.4,681624bytes,SHA256 `D2846EB1F935F5886DEE37CC5D2EA877C7E58DB0019EC0286E8AFEFA7DB92944`. BUILD·제품JUnit227·lint(0오류/4경고)·정적검사PASS. 설치본pull동일,APK v2서명검증PASS. 미연결VisualSequence 구현/시험은제품소스집합에서명시제외,DEX부재확인; 원본/별도20중2FAIL을보존한다. 오디오시험APK는배포하지않는다.
+**Current0.2.5/code21 is PC-verified and phone-installed, but unpublished.** Its frozen709703-byte APK matches the SHA-256 above. Build,356 tests, lint(0 errors/3 existing warnings), static guards and74/74/73 exact-APK emulator checks passed; phone version/accessibility binding/preferences/hash checks passed at10:40. Final cleanup review found no additionalP1/P2 findings.
 
-21:49~51 최종APK에서 횟수0·시간제ON10·광고ON·전체ON: 일반영상15초관측동안요청0,수동으로다음광고에진입한뒤21:50:40.446광고요청1→21:50:41.529확인1,이후21:51:14까지일반영상자동넘김없음·timerinactive·blocked=false. 광고ON/OFF 및메인OFF의추가확인/설정복구는검증기록참조. 기능별카드·0회설명·광고전용상태·하단전체토글 실제화면육안확인. 원시증거private/device-tests/release024-* 및private/device-captures/release024-*.
+**code21 YouTube10연속 자동 전환 PASS**:10:40:41→10:47:45.702,424.5초,확인기준0→10,세대6 유지. 수동 입력·앱 전환 없이 일반 영상10개를 자동으로 넘겼고 라이브 이동은0회다. 전환1~10 화면을 모두 육안 대조해 서로 다른 정상 전체화면 영상·플로팅과 올바른 이동 방향을 확인했다. 목표 이후 관측분은 공식10회에 더하지 않는다. 약10:50 플로팅X로 전체실행OFF 확인. 10:51 업데이트 자동조회 선택을ON으로 복원하고 UI와 저장값을 확인했다.
 
-아래 A/B 및오디오의‘최신’은과거체크포인트다. B별도21:32~37비조작구간은5전환(정상3/시간제1/광고1),20미완료이며이전구간/최종APK와합산하지않는다. 최종기기설정은기준/현재1·두앱/광고/플로팅/시간제ON10·화면보조OFF·전체ON복원,33.932초정상N1→37.900초전환확인. 메일없음.
+code21 라이브0초/5초/OFF 개별 재시험은 NOT RUN으로 아래code20 근거와 구분한다. D-021은 미수정,20연속 검증도 미완료다. 현재미게시이며 공개·CI·익명 다운로드/해시 확인은 후속 수행한다.
 
-게시완료:main소스2e89114/tagv0.2.4,Public비초안시험판. GitHub CI33074271656 제품227실패0/빌드/lint0오류3경고PASS. 익명릴리스HTTP200·APK재다운로드681624bytes/SHA원본·설치본일치/v2서명검증PASS. 첨부는제품APK+SHA256뿐. 후속문서커밋은게시증거만갱신하고앱/산출물은불변. [공개 릴리스](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.4).
+**Code21 passed10 consecutive YouTube auto-transitions** from10:40:41 to10:47:45.702(424.5 seconds),confirmation0→10,generation6,without manual input or app changes. All10 transition screens were visually checked: distinct normal full-screen videos,visible floating control and correct movement. No live preview was skipped. Observations after the target are excluded from the official count. FloatingX stopped overall execution around10:50; the automatic-update preference was restored to ON and checked in UI/storage at10:51. Code21 individual live retests,20 consecutive transitions and publication checks remain incomplete; D-021 is not fixed.
 
-## 최신 · 0.2.4-timed-test B 구현·설치, 20개 연속 검증은 미완료
+이전 개별 라이브 검증 후보는 **0.2.5/code20, 빌드·핵심 라이브 실기기 시험 PASS, 미게시**다. cleanup을 포함한356제품시험·빌드·lint0오류/기존3경고, 동일 후보 API26/33/34 에뮬레이터74/74/73검사를 통과했다. 휴대폰 설치 준비·설정 보존·설치본 해시도 일치했다. 실제 라이브5초 지연·0초/반복0회 독립 동작·라이브OFF 대기를 각각 확인했다. 새10연속 시험은10:35:28에 시작해2회 확인 후10:37:17 외부 앱 전환으로 중단됐다. 제품 감지FAIL이나10PASS가 아니다. [검증 기록](docs/VERIFICATION.md), [D-033](docs/DEBUG_LOG.md).
 
-사용자 후속 변경으로 최신 기준은 기본 10초, 범위 5~60초, ±1초다. Instagram의 진행 정보 없는 안전한 단일 영상만 선택형 타이머를 사용한다. 정상 N회·YouTube는 유지하고 새 권한은 없다. [동작 계약·검증](docs/TIMED_FALLBACK.md). 설정/UI·순수 타이머·서비스 통합을 분리해 구현했다. 기존 audio 앱과 미연결 실험의 2개 실패는 그대로 보존했다.
+The device-tested **0.2.5/code20** passed its final build,356 product tests, lint(0 errors/3 existing warnings),74/74/73 exact-candidate emulator checks and phone installation/preferences/hash checks. Actual5-second delay, immediate skipping at zero normal plays, and live-OFF waiting passed separately. A new10-transition run began at10:35:28 and ended externally at10:37:17 after two confirmations. The candidate is unpublished.
 
-B는 code12, 659665bytes, SHA256 `29CEEE11A5F1101692BA3ED7122446C02349F5A94B7D0D75A6481CD4627D07D6`. 연결 범위 225시험·빌드·lint(0오류/4경고)·정적 검사 PASS, USB 설치본 해시 일치. 실제 60초 저장/상한 + 차단/61 거부/10 복구/업데이트 설정 보존을 확인했다. 21:22:43 체크포인트: B 일반6개 연속(정상5/시간제1), 광고1 별도, 요청7/확인7·blocked=false. 실행ON·목표1·두 앱/광고/플로팅ON·화면분석OFF·시간제ON 10초를 유지했다. 원시 로그는 private/device-tests/timed-v024-b-*.
+## code20 검증 산출물과 동작 / Verified code20 artifact and behavior
 
-A의 15초 시험은 일반 12개 연속(시간제8+정상4), 광고1 별도다. 20개 전에 사용자 설정 변경에 따른 B 설치로 중단했다. A/B를 합산하지 않는다. 전체 JUnit은 기존 미연결 실험 2개 실패 때문에 전체 PASS가 아니다. 새 Public 게시·메일 없음.
+고정 APK: **725487bytes**, SHA256 `EF59D4E40E192A89D5B207741B03CCE08FA11AC1079DC61C7776C19A1D3D60EB`. 이 code20 산출물과 code18 실패 후보를 혼합하지 않는다. 최종 게시·CI·공개 재다운로드는 아직 수행하지 않았으며 [릴리스](docs/releases/v0.2.5.md)에 후속 기록한다.
 
-남은 검증: B의20개 연속·YouTube 실제 회귀·시간제 중 일시정지/댓글/잠금/회전/플로팅/0회 조작과 복귀. 해당 분기의 단위/코드 검사는 했지만 이번 B 기기 E2E를 PASS라고 하지 않는다. 설명서·105개 로컬 문서 링크·private/artifacts 제외·독립 리뷰 확인 완료.
+Frozen code20 APK: **725487bytes**, with the SHA-256 above matching the installed artifact. It is not interchangeable with code18 or a subsequent rebuild; release/CI/public-download verification is pending.
 
-## 최신 ·0.2.1-audio-diagnostics 실제 후보검증 탈락 확인
+code20은 전체실행ON·YouTube선택·전면YouTube에서 라이브 옵션과 무관하게 확장 조회한다. 라이브OFF도 일반→라이브 진입을 인식하고 넘김만 차단한다. Instagram/다른 앱/전체OFF는 기존 조회, 모드 변경 시 이전 root 폐기, failClosed/onDestroy에서 명시 원복이다. 새 권한은 없다.
 
-새권한/제품자동넘김통합 없이 시험앱 진단만 보강. code3 후보A88989bytes·SHA256093881C3C8539762930A5389A764A1776A502E6A324D6D7D96864D8F912AC24F,USB설치본일치. 빌드/lint(0오류6경고)/48시험/정적검사/독립리뷰 PASS. 기기시작·결과·스크롤화면육안확인,카운터와과거탈락문구확인. [전체실측과한계](docs/AUDIO_PATTERN_TRIAL.md).
+Code20 expands retrieval during overall execution in selected foreground YouTube, independently of the skip option, preserving live recognition when skipping is OFF. Other hosts/overallOFF use default retrieval; mode changes discard the old root and failClosed/onDestroy restore defaults. No new permission.
 
-20:42~43 사용자 새승인·진단자 비조작 세션:60.167초/958272표본/2724신호블록/598특징중572유효,작은소리14·좁은대역12,history/gap리셋0. 검색119/최근품질거부6/거친후보없음2/개별평가거부776,후보0. WHOLE_QUALITY·FLAT_MINIMUM 기록. **수신/권한/계속되는초기화가아니라후보선택·검증단계의미검출**로좁혔지만진짜주기의어느검사가실패했는지는미확정. 화면10.4초는후보이며사용자10초미만제보를정확길이로반박하지않는다. 다음연구는주기구간별선택/거부집계로상위8개선별편향과평가조건을분리하는것;임계값만완화하지않는다.
+code19는 라이브ON만 확장 조회하던 중간안이다. 후속 리뷰에서 라이브OFF의 전환 확인과 pending 중 조회형태 변경에 따른 거짓 identity 위험을 찾아 code20으로 보강했다. 초기356시험은 cleanup 전 체크포인트였고 **최종 cleanup 포함 재빌드와356시험도 PASS**했다.
 
-서비스종료·Projection=null확인.20:46:34~36 기존실행ON/목표·기준1/광고·플로팅ON/visualOFF/blockedfalse복원. 미디어음량0·IG자체음소거아이콘확인후재생복원. 종료후다른릴스로이동되어원래시험영상으로되돌리지않음. 현재다른릴스도정보없음0표시,기존문제해결아님. 화면프로브가접근성을재생성해누계0/0이며이전6/6과합산금지. main미연결2FAIL/20연속미달유지,새Public게시·메일없음. 아래0.2기기대기는과거체크포인트다.
+Code19 remains an intermediate live-ON-only proposal. Code20 resolved the live-OFF recognition and pending tree-shape risks; the final cleanup-inclusive build and356-test rerun passed.
 
-## 최신 ·0.2-audio-pattern 설치·38시험 통과 / 실제 주기 대조 미완료
+## 과거 체크포인트 / Historical checkpoints
 
-사용자 “계속해” 승인으로 별도시험앱에 RAM 음향특징/3~25초 반복후보를 구현했다. [범위·사용법·성공기준](docs/AUDIO_PATTERN_TRIAL.md). 60초 제한·같은권한·IG UID+MEDIA·OS 사용자동의 유지, 제품자동넘김통합 없음. 한정모듈 빌드/lint(0오류5경고)/38시험/정적검사/독립리뷰 PASS. 0.2-audio-pattern/code2 후보A USB설치 및 설치본 해시 일치:65389bytes, SHA25667350933EAA04EA4A178CA3B5494086A93089CDCF0FB1236ED7A2A5B09D1C6C1.
+- code16: Android 설치창의15→16 업데이트·재생 설정 보존·설치 해시 확인. 당시 고정 APK703134bytes, SHA256 `6FA61EA51C04AF5A8246E21183C7F4D9FDF0564FEEF5794553BEBEF7C1F4EFE1`. 이후 같은 소스 재빌드는 ZIP 바이트가 달랐지만 내부22항목은 각각 동일했다. 이는 code18 산출물의 검증값이 아니다.
+- code16의 YouTube10연속 시험은2개 확인 뒤 라이브 미리보기에서FAIL. 후속 일반→동일 라이브2회 재진입에서 전용 노드를 문구보다 먼저 관측했다. 당시에는 라이브 기능 미구현이었으며 이 실패를 새 시험과 합산하지 않는다.
+- code18: 라이브 구현 후보738945bytes, SHA256 `941532517058CB8553EFE5DB34ED1762426C468B2D66F88A567CE788E306C54D`.352시험/에뮬레이터/설치는 PASS지만 조회 플래그 불일치로 실제 라이브 인식FAIL. 배포본이 아니다.
+- code17: 접근성 재연결 안내 UI 후보. 당시 기기 설치 전·게시 전 체크포인트이며 현재 후보가 아니다. 과거 시험 결과는 [검증 원장](docs/VERIFICATION.md)에 보존한다.
 
-20:30~31 첫세션은 재생 조작이 겹쳐 중간 일시정지되어 **주기 정확도 판정에서 제외**. 최종60.045초/957600표본/521신호구간/최대-11.49dBFS,후보0/초기화3/분석CPU221ms/최장7ms. 일시정지 화면과 오디오 플레이어 paused 확인,60초 종료 및Projection=null확인. 다음은 사용자 새승인 후 같은영상 비조작60초 대조. 현재 준비상태는 기존실행OFF·미디어음량1·IG소리ON이며 시험종료시 원래실행ON·음량0·IG음소거·재생을 복원해야 한다. 기존 main미연결2FAIL/20연속미달 유지,새Public게시/메일없음.
+Code16 updater checks and its failed2-of10 YouTube run, plus the code17 UI-only checkpoint, remain historical. None verifies the later code20 artifact; code18's real recognition failure is preserved separately.
 
-## 최신 · 내부 오디오 수신 시험 승인·분리 구현
+## 동작 계약 / Product contract
 
-### 20:15 후속 · 실제 내부 소리 수신 확인
+- 일반 진행정보: 설정한 총 재생 횟수0–99. 중간 진입은 다음 처음 재생부터 카운트.
+- 진행정보 없는 적격 Instagram 단일영상: 시간제 선택 시10초 기본/5–60초. 정확한 완주 횟수가 아님.
+- 0회: 일반 반복·시간제·화면분석 중지. 선택 앱의 Instagram 광고·YouTube 라이브 옵션은 전체 실행ON일 때 각각 독립 적용.
+- 라이브: 기본OFF·0~60초/기본0초, 전용 노드·안정된 단일 페이지·전면창 검증. 제목/CTA/시청자 수는 식별 근거가 아니며 같은 노드 재사용 시 안전 정지할 수 있음.
+- 전체 실행OFF: 광고·라이브 포함 전부 중지. 플로팅은 선택 사항, 두 가지 탭 모드와 위치 저장.
+- 설정 순서: 횟수→시간제→광고→YouTube 라이브→플로팅→사용 앱→사용 준비→업데이트·앱 정보→실험→도움말.
+- 준비가 부족하거나 새 버전이 있을 때만 상단 안내. 전체 실행은 하단 고정.
+- API26 기본 기능, API29 타일 상태줄, API33 타일 추가 요청, API34 창 화면 분석. 공식 호스트 앱의 OS 지원은 별개.
+- 업데이트: 고정 GitHub 공개 릴리스/시험판, 앱 진입 시 최대 하루 한 번 선택 조회, 수동 조회·다운로드·설치. OS 확인 수동, 설치 전 실행OFF, 설정 유지.
+- 인터넷은 업데이트 조회/다운로드에만 사용. 영상·계정·시청이력 수집/업로드 없음.
 
-사용자 OS승인 후 후보A 그대로 2세션 관측. 첫세션60.080초/955248표본/신호0, 당시 미디어음량0·IG오디오재생기미관측. 두번째새승인세션에서 45.635초까지0, IG자체음소거해제+재생 후56.711초 신호492구간/최대-11.07dBFS/peak17222. 최종60.172초/957600표본/신호648구간/비영0표본22.99%. 양쪽 모두 서비스소멸·MediaProjection=null로 자동종료 확인. [상세 대조/한계](docs/AUDIO_PROBE_TRIAL.md#기기-수신-시험--device-capture-test).
+## 검증과 제한 / Verification and limits
 
-수신입력 REMOTE_SUBMIX not silenced 확인. 실제마이크입력/소리파일/전송없음. 승인창은대신조작하지않았고2번째는사용자가재시작한세션을관측. OS음량0·IG음소거·재생복원.20:14:51 기존C실행ON/목표1/visualOFF/blockedfalse/일반요청6확인6,현재릴스정보없음0표시. 기존시계값29.632초는새영상유효길이로사용금지. 오디오반복판정/자동넘김/20연속은미달유지,코드·APK변경/공개/메일없음. 다음은 별도시험앱 내 RAM 음향특징·주기후보와 음소거한계 검증, 제품자동넘김통합전계획·영향검토필요.
+code18 제품352JUnit·빌드 PASS, lint0오류/기존3경고. 동일 고정 APK로 API26/33/34 에뮬레이터74/74/73검사 PASS. 실제 휴대폰 ADB 업데이트 설치·기존 접근성의 설치 후 재연결·재생 설정 보존·설치본 해시 일치 PASS. 이는 새 권한 자동 부여나 전체 실행 자동 시작을 뜻하지 않는다. code18 라이브 인식은 FAIL이며 정식0/5초 실제 넘김·10연속은 NOT RUN이다. code20의 새 검증은 위 체크포인트와 검증 원장에 별도 기록하며 에뮬레이터 계측은 소셜앱 자동 넘김 E2E가 아니다.
 
-사용자 “그래 해봐”로 새권한을 포함한 내부소리 수신 확인 승인. 별도 `:audio-probe` 앱 `0.1-audio-probe` 후보A 구현/13단위시험/빌드/lint(0오류5경고)/정적검사/독립리뷰 후 USB설치. [범위·사용법](docs/AUDIO_PROBE_TRIAL.md). APK56943bytes, SHA2560B3760F91D1B74AA60A2793159D281C103D710F0F6F754288E7FE5E7E4001174,기기에서pull한설치본일치.
+독립 리뷰의 최종 root 재검증, 요청 전 오래된 pager 인덱스 배제, 일반 쇼츠의 기존 null-child/600노드 수집 유지, 동일 uptime 안정 상태 보존을 수정했다. 해당 회귀는352제품시험에 포함된다. code16의274시험·47/47/46계측·36개 설치 사전검사·OS15→16 설치·기존 GitHub 자산 다운로드 결과는 과거 이력으로 별도 보존한다.
 
-19:04~05 당시 체크포인트: 시험앱 시작버튼을 눌러 **사용자 오디오 권한창 대기**, RECORD_AUDIO=false/running=false/samples0이었다. 당시 다음 단계는 사용자허용→캡처승인→Instagram소리있는릴스재생→60초수신/종료확인이었다. 최신결과는위20:15기록참조. 승인창은 대신 누르지 않는다. 기존C설치본/설정/권한불변. 이번 단계는 수신 가능성만 검증하며 반복판정/자동넘김 미구현. main 미연결 VisualSequenceTracker2FAIL 유지,20연속조건미달/새공개·메일없음.
+게시 전 신규 버전 응답은 테스트 APK 전용 fixture이며 실제 GitHub에서 미공개 파일을 받은 것으로 보고하지 않는다. 제품에는 테스트 후크/fixture 자산이 없다. 공개 후 익명 다운로드와 메타데이터 확인을 추가한다.
 
-## 최신 작업 ·0.2.3-visual-test 화면 보조 구현 중
+기존 D-019/D-021 간헐 중지·특수 창·호스트 UI 변경·장시간 및20회 연속 시험 미완료는 유지한다. code18은 라이브 감지를 추가하지만 일반 영상 반복 경계 문제를 고친 버전이 아니다. code16 당시17→0 관측을 code18 새 증거로 바꾸지 않으며 code18 D-021 재시험도 미완료다. VisualSequence 별도 실험20개 중18통과2실패는 제품에서 제외된다. 오디오 실험은 별도 앱이며 통합하지 않았다.
 
-### 18:53 체크포인트 · 사용자 오디오 비교 질문
+## 개발·재현 / Development
 
-- 설치본은C유지, 화면분석 시험OFF/기존실행ON·목표/기준1·두앱/광고/플로팅ON으로복원.18:53:27~30 visualEnabled=false/frames517고정,정상시간12.439→14.933/34.084초.현재0은중간재생복귀후첫시작대기다.
-- C 누적실제전환4/4,광고/화면추정0/0.중간수동이동이있어연속4개가아니며최대확인연속2개. 13개비교대상까지진행(수동+자동혼재),모두완주PASS아님.
-- 새 **VisualSequenceTracker.java/Test.java는미연결실험코드**.별도Java17컴파일PASS,20시험중18PASS/2FAIL(39.15→37.35잘못추정,13.7초지터+노이즈학습실패).controller연결/새APK빌드·설치없음.따라서아래193PASS는C소스시점이며현재후속실험파일까지전체PASS가아니다.통합하지말것.
-- 사용자음악/배경음질문에공식문서+현재IG패키지허용flag/최근USAGE_MEDIA확인.[조사](docs/INSTAGRAM_TIMING_RESEARCH_2026-08-27.md).실제오디오수신은미실행,RECORD_AUDIO/MediaProjection/포그라운드서비스추가권한은승인질문단계.녹음·다른앱변경·공개·메일없음.
+- JDK17 이상, SDK35/BuildTools35.0.0, Gradle8.9/AGP8.7.3.
+- Windows 한글 경로의 Gradle test worker 제약은 `scripts/verify.ps1`의 직접 JUnit으로 검증. CI는 Linux 표준 Gradle 시험.
+- 호환성 계측은 `scripts/verify-compat-emulator.ps1`로 에뮬레이터에서만 실행.
+- `-PupdaterBootstrap`는 설치 시험용code15/전용 계측 runner를 선택한다. 최신 수정 대상은code21이며 code18은 보존된 이전 후보이다.
+- 테스트 APK의 `final-update.apk` 자산은 로컬 시험용이며 Git/제품 APK에서 제외.
+- `scripts/prepare-release.ps1 -Apk <tested.apk>`는 버전·기존서명 검증 후 APK/업데이트JSON/SHA 산출. 기존 출력 덮어쓰기 금지.
+- 실제 자동넘김 관측 중 UIAutomator는 접근성 연결에 간섭하므로 사용하지 않는다. 개인 화면·로그는 비공개로 보관한다.
 
-사용자가 앞선 화면 캡처 capability/시험설치/추가재생 한계 안내에 이어 가능한 방식을 시도하도록 승인. [시험 계약·검증 순서](docs/VISUAL_ASSIST_TRIAL.md)에 범위 기록. 기존시간 우선,기본OFF/별도동의/IG단일무시간영상만/API34창캡처/RAM전용/학습후추정N/엄격다른identity확인을구현하고A/B/C설치시험했다.현재C=662205bytes/SHA25659C7CD4BCFDC35698348447C635FBD42AA7FF0BE27E124072DA0CCFAE1A97BC2,설치본일치,193시험/빌드/lintPASS.
+## 문서 색인 / Documentation index
 
-A의라우터메타데이터누락(D-023)은B수정후실제캡처진입.그러나움직임작은영상학습불가/다른영상주기후보검증실패로화면추정이동0.기존시간기반2개연속자동이동후다음무시간영상정체,20개기준미달. C까지는단일앵커방식이며전체구간상관비교의별도코어를추가시험준비중이다. [기기수치·구간·제한](docs/VERIFICATION.md). 새공개/메일없음.아래C차의승인대기/제품미수정은과거이력이다.
-
-## 최신 후속 · D-022 화면 주기 실험·20개 연속 기준 미달 (2026-08-27)
-
-- 최신 요청: 더 넓은 방법 조사/실기기 반복시험,20개 이상 문제없이 자동 진행한 경우에만 새 빌드 Public 게시. 과거 디버그 보류보다 우선한다. **미해결, 새 제품 빌드·설치·게시 없음.**
-- 숫자 이벤트 수집은 재생 중18초0건, 수동 일시정지 양성 대조에서9건 수집했지만 시간 숫자는 미확보. 화면 분석은 문제A10.4초 후보를 독립 두 실행에서 재현, 다른 무재생바B14.75초 후보, 정상D의 실제16.205초와 약16.2초 후보 대조. 정지 화면32표본은 Java 후보0. [전체 조사·출처·한계](docs/INSTAGRAM_TIMING_RESEARCH_2026-08-27.md).
-- 위 도구는 앱 밖의 RAM 전용 조사이며 자동 제스처가 없다. 원본 영상/특징값 저장·업로드 없음. 현재 방식은 약2.1주기 학습을 요구하고 영상 내부 반복을 구분하지 못하므로 정확한N1/N2로 바로 연결할 수 없다. 새 화면 캡처 capability·시험 APK 설치 및 보조 방식의 추가 재생 한계는 사용자에게 설명/질문했으며 승인 답변 대기.
-- 기존0.2.2 실행ON 복원 후18:00:33~18:01:25 비조작 시험:16.205초 정상 영상1회 자동 이동(요청/확인1/1), 바로 다음에서0/1·재생 정보 없음 재현. 광고0회. **20개 연속 조건 실패: 성공1회 후 다음 영상 정체**, 수동 이동으로 실패를 제외하지 않았다. 구간 사이 관측 공백은 원시 기록에 유지.
-- 최종 확인: 실행ON, 목표/기준1, 두앱선택, 광고/플로팅ON, blocked=false. 멈춘 영상은 그대로 두었다. 앱 연결은 살아 있으며 이전 position/duration을 새 영상 시간으로 사용하지 않는다.
-- 조사 Java 컴파일/dex 및 수학3개 합성 시험, 실기기 대조·독립 코드/증거 리뷰 실시. 제품 전체 빌드·Unit·lint·수정 후 E2E는 미실행. 기존 D-019/D-021/D-022 미해결. 개인 화면과 원시 출력은 private에만 보관, 메일 없음.
-
-## 최신 후속 · D-022 대체 시간원 조사 (2026-08-27, 제품 미수정)
-
-- 사용자 “방법 있으면 시도/인터넷 검색” 승인으로 공식 API·공개 구현 조사 및 실제 문제/정상 대조 수행. [조사 결과·대안](docs/INSTAGRAM_TIMING_RESEARCH_2026-08-27.md)에 출처와 한계 기록.
-- 새 개발용 [TimingProbe](scripts/probes/InstagramTimingProbe.java)로 문제114노드4표본 RangeInfo/선택 시간형식/state0 확인. 일시정지 조작 UI에서도 초기3표본 시간원 미검출. 보강된 동일 도구의 정상 대조는10.707→13.132/26.1초. 당시 MediaSession에IG없음. 정확한 N회용 대체 시간원 미확보, 모든 내부 시간원 부재를 보장하는 것은 아님.
-- 제품 코드·설치·권한 변경 없음. 최종 조사 JAR 컴파일/dex·해시 대조·실기기 출력 확인, 독립 지적 반영 후 재조회. 초 간격 보조 모드는 반복 횟수 요구와 다르므로 미구현/선택 필요.
-- 17:41:41~44 실행ON 복원,10.014→12.848/26.1초 감지. 목표/기준1·두앱선택·광고/플로팅ON 유지. 프로브 전후 서비스 누계 분리. 새 문서/개발도구는 로컬만, GitHub/메일 미실행.
-
-## 최신 진단 · 일부 Instagram 카운트 0 대기 (D-022, 2026-08-27)
-
-- USB 연결 후 실제 설치본0.2.2/code9 확인. 12개 라벨 비교 구간 중02/05에서 `재생 정보 없음 · 이 릴스는 수동 넘김 필요`, 현재0/목표1을 관측. 나머지10구간은 시간 진행과 현재1을 확인했으며 모든 영상의 완주를 기다린 시험은 아님. 수동 다음 이동 후 재시작 없이 정상 집계 복구.
-- 추가 문제 장면에서 자체 실행을 잠시 끈 뒤 기존 읽기 전용 프로브로 분리 조회: 두 장면 각각14표본에서 정확한 `com.instagram.android:id/scrubber` 미검출. 정상 대조 장면은 같은 도구로26.1초 RangeInfo 확인. 현재 reader의 시간원 미검출 → usable=false → 카운트 초기화/0 표시 경로 확인. 모든 대체 시간 정보 부재나 영구 미노출을 뜻하지 않음.
-- 원본 제보 링크의 동일 콘텐츠 재현은 미실행. 실패 구간의 blocked=false와 계속되는 폴링은 D-019 안전정지/앱 전체 동결과 다름. 실패 시 남아 있는 이전 position/duration은 새 콘텐츠의 유효값으로 해석하지 않음.
-- 분리 프로브 후 서비스가 재생성되어 누계가 초기화됨. 실행ON 복원, 두 앱 선택·현재/기준1·광고ON·플로팅ON 보존. 17:27:19~23 복원 로그는11.207→15.640/26.1초 정상 진행, 현재0은 중간 재생부터 켰을 때의 `다음 처음 재생부터 계산` 대기.
-- [D-022 상세](docs/DEBUG_LOG.md), [검증 기록](docs/VERIFICATION.md), [누적이력](docs/CHANGELOG.md) 갱신. 독립 증거 리뷰 완료. 제품 코드·설치·권한 변경 없음, 새 빌드/전체 회귀 미실행, 이번 진단은 로컬만 기록. 대체 시간원 조사 및 감지 불가 표시 보완은 다음 작업이며 구현하지 않음.
-
-## 최신 체크포인트 · 0.2.2 공개 시험판 게시 (2026-08-27)
-
-- [Public 저장소](https://github.com/fullmetalsonic/shorts-loop), [v0.2.2 prerelease/APK](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.2) 공개 완료. 소스 커밋95a4239844ba35a929b2719e8e935b7eb2d3ea14에 태그 고정, 이후 문서만 배포 증거 갱신.
-- [소스 CI](https://github.com/fullmetalsonic/shorts-loop/actions/runs/33049522094) SUCCESS: Linux Gradle 빌드/시험148(실패·오류·skip0)/lint0오류1경고. Windows 직접JUnit 우회와 별도 검증. 노드20·setup-java4 폐기 안내 경고는 남지만 실행 통과.
-- 비로그인 저장소/Release HTTP200, 공개 APK 재다운로드627713bytes·SHA25638A283A6780295BB30E1482ED2535C5FE4204B4B5F0180D2C3326D60E3675B58 일치, checksum파일 일치. 개발 APK v2서명 검증 PASS. 배포 완료가 기기 안정성 완료를 뜻하지 않음.
-
-- 사용자 승인: 자체 앱 배터리 제한 없음 적용·안내 메뉴 추가. 이후 "최신버전 깃에 올려줘 공개로, 디버그는 나중에" 승인으로 추가 휴대폰 시험 중단. 아래 과거 가시성 대기/조치 미실행 기록은 당시 이력이며 현재 상태가 아님.
-- 자체 앱만 제한 없음 적용 후 deviceidle 예외 등록과 kernel frozen=0 확인. 약56초 PiP 대기50표본에서 응답 유지, 전체 화면 복귀 후 별도 재시작 없이 시간 감지 재개. 장시간 효과/모든 정지 해결은 미검증.
-- 0.2.2/code9: BatterySetupPanel 추가, 설정 복귀 시 PowerManager 상태 재조회, 수동 안내 후 자기 앱 상세 설정만 열기. 새 권한·자동 정책 변경·자동 실행 재시작 없음.
-- 로컬 assembleDebug/시험 컴파일/lint PASS(0오류2경고), 직접JUnit148 PASS, 5개 정적 안전 검사 PASS. 새 배터리 UI 독립 정적 리뷰 PASS. 게시 당시에는0.2.2 휴대폰 설치·새 메뉴 실제 터치/시각/복귀 흐름·재생 회귀를 사용자 요청으로 미실행했으며 당시 마지막 설치본은0.2.1. 이후 D-022 USB 진단에서 실제0.2.2 설치를 확인했으나 새 메뉴 전체 시험으로 확대하지 않음.
-- 미해결 D-019:16:12 요청18/확인16의 전환 실패 안전정지 재관측(frozen=0). D-021:18초 영상의16→0 경계를 탐색으로 오인하여 카운트 누락. 추가 수정/디버깅은 보류. 안정판으로 표시하지 않는다.
-- 한영 README 사용 설명, 개발·검증 기록, [0.2.2 릴리스](docs/releases/v0.2.2.md), GitHub Actions 구성 추가. Public 최초 게시 승인 및 게시 완료. 결과는 검증/누적이력에 기록.
-- 공개 대상 제외: private/, artifacts/, 빌드/캐시/SDK 경로, 실제 화면·로그, 참고 사진 원본, 서명 개인키. 메일 요청/발송 없음.
-
-## 최신 진단 체크포인트 · YouTube 간헐 정지 (2026-08-27)
-
-**후속 확정(16:04~16:05):** 전체 화면 복귀 후 서비스 무응답의 실제 프로세스 동결 확인. 자체 앱 cgroup.freeze=1/events frozen=1, Samsung Freecess 동결 목록/시간 기록 일치.15:56:30 Bg동결→16:01:08 접근성Binder로 잠깐해제→16:01:14 재동결.16:03:59 진단SIGQUIT으로 잠깐해제 후6초 뒤 재동결. D-020에 증거/독립리뷰/제한 기록. 반복횟수 누적이 원인이라는 증거 없음. 아래 isFrozen=false는 ActivityManager 상태일 뿐 커널동결을 배제하지 못함. 다음은 사용자 승인 후 자체 앱 절전 예외 비교 시험이며 아직 설정/코드 변경 없음. 최초15:46 D-019 실패까지 동결원인으로 단정 금지.
-
-후속15:56 사용자 작은 창 시험: 홈+YouTube PiP(mode=pinned) 확인. 첫 진단은launcher대기,blocked=false,누계16/15. 이후 브라우저 전면에서 서비스 dumpsys IOException: Timeout 반복(ADB/PID/접근성 등록은 유지). 창/토글 조작 없이 조사. 다음은 사용자가 YouTube 전체 화면으로 복귀하고 실행 토글을 건드리지 않은 상태에서 응답/자동 넘김 복구 비교. 크래시나 PiP 직접 원인으로 아직 확정하지 말 것.
-
-사용자 불안정 제보에 따라0.2.1 설치본을 그대로 진단. 요청11/확인10 뒤 `넘김 확인 실패` 안전정지가 지속됨을 확인했다. 접근성 연결 정상이며 두 앱 reader는 별도, 실패를 일으킨 최초 창/제스처 조건은 미확정이다. 과거 설정 화면에는 YouTube PiP가 남아 있었으므로 완전히 종료했다고 단정한 설명을 정정한다. 최종 Instagram 캡처에 PiP가 없다는 것과 프로세스 종료는 다르다.
-
-진단자가 자체 빠른 설정 타일OFF→ON 후 패널을 닫고15:52~15:54 비조작 관측: YouTube59→58→15→11초, 추가요청/확인3/3 성공. 코드/APK/권한 변경 없음. 근본 원인 해결이 아니라 정지 해제 후 제한된 복구 시험이며 [D-019](docs/DEBUG_LOG.md)에 남겼다. 플로팅OFF 상태에서 실패가 잘 드러나지 않는 UX와 실패 순간의 진단 정보 부족은 개선 검토 대상이다. 설정창 개방은 시험자 조작이며 자동 제스처가 아님.
-
-GitHub 게시 요청은 접수했으나 새 저장소 Public/Private 선택 응답 대기. 저장소 생성·커밋·게시·메일 없음. 한영 README 확대 작업은 진단 우선으로 미완료, 기존 README 유지.
-
-## 현재 체크포인트 · 광고 즉시 넘김 0.2.1 (2026-08-27)
-
-잠금은 해제되어 0.2.0 UI 기기시험을 수행했다. 숫자/플로팅/선택/토글 기본흐름을 확인하고 라디오 행·컨테이너 강조를 보완했다. 최신 소스/설치본은 0.2.1 candidate-c, 644,351bytes, SHA-256 `8932952A74FBCB6B131A6D020DA8385CEF86701B231EB4AB996F092E9B7B1799`. 설치본 재추출 일치 및 apksigner v2 PASS. 아래 0.2.0 잠금 대기는 과거 이력이다.
-
-광고 바로 넘기기 토글 기본OFF, 실행ON/1회이상/IG선택 조건. 우하단 광고 표시 및 CTA 카드 포함 영상광고 실제 OFF→ON 이동→일반26.799초 N1→37.313초 재개 PASS(candidate-b). 0회에서 광고 정지 및 candidate-c IG미선택 대기 확인. 폰에서 광고OFF는 광고 수동 넘김임을 안내한다. 전체 광고100% 지원, 별도 팝업 자동 닫기, 캡션 #광고 기반 협찬 차단은 구현하지 않았다.
-
-최종 build/lint(0 errors,2 warnings)/직접JUnit148/권한·모듈·입력·전환보호 연결 검사 PASS. 독립 리뷰 P2인 전환중회전·드래그 보호취소를 interruptSession→failClosed로 수정/재리뷰 PASS, 미해결P1/P2 0. 실제 pending순간 회전·드래그는 미실행. 최신 YouTube/최종 설정 상태는 [검증](docs/VERIFICATION.md)을 확인한다.
-
-최종c 실제 YouTube43→5→43초 N1·타일OFF/ON·IG미선택 대기 PASS. Instagram 복귀 시 추가 광고요청1/확인1 후20.454초 일반릴스 재개 확인(v021c-final-state). 최종 실행ON·현재/기준1·두앱선택·광고ON·플로팅OFF. artifacts/shorts-loop-v0.2.1-debug.apk 보존, 개발 서명이며 외부 게시 없음.
-
-하단 고정 UX는 언제든 실행상태 확인/중지 목적. 사용자가 직관성을 질문하여 높이 축소·전체자동넘김 명칭을 제안했으나 변경 승인은 없어 그대로 유지했다. 팝업 문의는 릴스 내 CTA 카드와 별도 창 팝업을 구분하여 설명했고 별도 창 조작은 구현하지 않았다.
-
-## 이전 상태 · 0.2.0 (잠금 해제 전 이력)
-
-- 사용자 진행 승인 및 '인간공학적으로 직관적인 인앱' 요청 반영. 숫자0~99/화살표, 두 탭 모드, 앱 다중 선택, 선택적 플로팅, 소형 반투명72×56, 하단 고정 실행/빠른 설정 토글, 아이콘·네이티브 UI 구현.
-- 최종 소스 빌드/lint PASS(0 errors,2 warnings), 직접 JUnit120·권한/모듈·입력 구성 검사 PASS. 독립 검토자120 재실행 및 코드 재리뷰 PASS. null root·위젯 복원·붙여넣기 필터 위험 수정(D-011~013).
-- **설치 완료지만 0.2.0 실제 화면/키보드/플로팅/YouTube 회귀/Instagram 자동 넘김 E2E 미실행. 휴대폰 보안 잠금으로 조작 불가.** 사용자에게 잠금만 해제해 달라고 요청했으며 보안 잠금을 우회하지 않음.
-- 최신 APK: app/build/outputs/apk/debug/app-debug.apk,634,888bytes. candidate-c와 설치본 재추출 SHA-256 모두 A2F01BA87B7203B2B80047BE0861F0AE5F4B433B078DBFA000C69A1E9EDE44BE. apksigner v2 검증 PASS.
-- 설치 후 서비스:0.2.0,connected=true,enabled=false,target=ceiling=2,tapMode=0,floating=true,requests=confirmed=0. 예전 설정/위치는 migration,21개 메모리 저장소 시험과 설치 후 실제 값으로 확인. 디스크 쓰기/프로세스 복구 E2E는 별도 필요.
-- 빌드 시 OldTargetApi와 비어 있는 mipmap-anydpi-v26 폴더의 ObsoleteSdkInt 경고2개. 폴더 제거는 도구 정책에 의해 차단되어 재시도하지 않음. 기능 오류로 숨기거나 경고0으로 표시하지 않음.
-- Figma 미사용. 내장 image_gen으로 승인 아이콘 투명 전경 생성/적용, 원본 보존. 디자인/입력/설정/감지/서비스 책임 분리 유지.
-- GitHub/메일 미수행. 이전 APK·증거·문서 이력 보존. private/ 실제 화면과 개인기기 자료는 공개 금지.
-
-## 이전 상태 · 0.1.5 및 사전 조사 (이력)
-
-- 2026-08-27 추가 요구 조사: 숫자 입력/화살표, 두 플로팅 탭 모드, 작고 투명한 플로팅, 선택적 표시, 실행 토글, YouTube/Instagram 선택, 참고 이미지 스타일 아이콘. [업데이트 설계](docs/UPDATE_PLAN_2026-08-27.md)는 구현 승인 대기. Instagram 두 릴스의 숫자 진행/반복 경계와 ADB 다음 넘김 관측, 아이콘 시안 생성 완료. 설치 앱/권한은 미변경이며 제품 자동 넘김 E2E와 구분.
-- 2026-08-27: 0.1.5 설치. 0.1.4에서 카운트 고정/과민 초기화 수정 후 목표2의52초 두 번 완주와 목표1의21/45/30초3개 연속 자동 넘김 PASS. 0.1.5는 빠른 설정/입력초점 창 보호 추가. 디자인은 보류.
-- 사용자 요구사항과 동작 계약: [제품 기준](docs/PRODUCT_SPEC.md).
-- 무선 ADB에서 Fold8 / Android 17 / YouTube 21.33.322 확인.
-- 구현 전 읽기 전용 관찰: SeekBar 설명의 전체/현재 시간, 35초 영상의 33→0 및 35→0 반복 확인. 이 증거는 제작 앱의 성공 증거가 아니다.
-- 사용자가 설치·실행 시험 승인했으며 접근성/오버레이 권한 직접 설정. 이후 0.1.0→0.1.1 진단→0.1.2 캐시 갱신→0.1.3 초기화 원인 진단→0.1.4 시간 갱신 지연 보정 설치.
-- assembleDebug/lintDebug PASS(경고1), 직접 JUnit 61 PASS, 0.1.5 독립 코드 리뷰 및 최종 요구사항·증거 대조 PASS. Gradle 기본 test task의 클래스 로딩 오류는 별도 FAIL(환경)로 기록.
-- 산출물: `artifacts/shorts-loop-v0.1.5-debug.apk` (50,055 bytes). SHA-256은 검증 기록 참조. 설치APK재추출 일치, 과거 산출물 보존.
-- 독립 리뷰 지적 2건 수정: 짧은 영상 탐색 오인, 전환 중 조회공백의 보호 해제. 회귀시험 포함.
-- GitHub/메일 미수행.
-- 0.1.5 최종 회귀: 빠른 설정 열기 대기/복귀 후42초 영상1/2→2/2→다음36초 영상1/2 확인. 시험 종료로X OFF, 목표2·위치·타일 보존. 잠금/폴드/장시간/모든 비포커스 팝업 검증은 남음.
-
-## 문서 색인
-
-- [화면 분석 보조 시험 계약](docs/VISUAL_ASSIST_TRIAL.md)
-- [최신0.2.2 공개 시험판 릴리스](docs/releases/v0.2.2.md)
-- [한영 사용자 안내](README.md)
-
-- [광고 즉시 넘김·지원 범위](docs/ADS_PLAN_2026-08-27.md)
-- [UI·인간공학 기준](docs/UI_DESIGN.md)
-- [아이콘 적용 자산·편집 프롬프트](assets/icon-concepts/ADAPTIVE_ASSET.md)
-- [업데이트 설계·Instagram 조사·아이콘 시안](docs/UPDATE_PLAN_2026-08-27.md)
+- [한영 소개·사용법](README.md)
+- [상세 사용 설명서](docs/USER_GUIDE.md)
 - [제품 기준](docs/PRODUCT_SPEC.md)
+- [UI·인간공학 기준](docs/UI_DESIGN.md)
+- [Android 호환성](docs/COMPATIBILITY.md)
+- [업데이트 전달 계약](docs/UPDATE_DELIVERY_PLAN.md)
+- [검증 기록](docs/VERIFICATION.md)
+- [디버그·재발방지 대장](docs/DEBUG_LOG.md)
 - [누적이력](docs/CHANGELOG.md)
-- [검증](docs/VERIFICATION.md)
-- [디버그·재발방지](docs/DEBUG_LOG.md)
-- [사용 설명서](docs/USER_GUIDE.md)
+- [0.2.5 릴리스](docs/releases/v0.2.5.md)
+- [0.2.4 릴리스](docs/releases/v0.2.4.md)
+- [시간제 보조](docs/TIMED_FALLBACK.md)
+- [라이브 미리보기 넘김](docs/LIVE_SKIP.md)
+- [화면 분석 실험](docs/VISUAL_ASSIST_TRIAL.md)
+- [오디오 실험](docs/AUDIO_PROBE_TRIAL.md)
+- [Instagram 진행정보 조사](docs/INSTAGRAM_TIMING_RESEARCH_2026-08-27.md)
+- [아이콘 자산](assets/icon-concepts/ADAPTIVE_ASSET.md)
 
-## 다음 단계
+## 다음 확인 / Follow-up
 
-0.2.2 공개 배포 이후 사용자가 USB 디버깅을 재개했다. 최신 D-022 조사와20개 연속 기준은 문서 상단을 따른다. 화면 분석을 제품에 넣는 새 capability/설치는 별도 승인 대기이며, 승인 전 제품 변경·추가 공개를 진행하지 않는다. D-019/D-021, 배터리 메뉴 전체 실제 흐름은 별도 미해결/미검증이다.
-
-이미 끝낸 UI/광고 시험을 반복하지 않고 VERIFICATION의 남은 항목을 대상으로 한다. 무진행 일반 릴스·연속 광고·미확인 요청 순간 회전/드래그·폴드·큰 글꼴·장시간 및 모든 특수 팝업은 추가 검증 대상. 권한 제거/별도 팝업 닫기/하단 재설계는 임의로 수행하지 않는다. 실제 폰 시험 시 사용자 조작과 자동 요청의 증거를 구분한다.
-
-설치/자동 넘김 시험은 승인되었다. 새 권한이나 다른 앱 설정은 변경하지 않는다. 실제 앱 기능 관측 중 UIAutomator를 쓰지 않는다(접근성 연결에 간섭). 서비스 dumpsys 진단과 활성 패널을 명시한 screencap만 사용하며 private/ 결과는 외부 공개 금지. 진단 position/duration은 마지막 정상값이므로 status와 함께 해석한다. 미실행 항목을 PASS로 보고하지 않는다.
+D-033의 code20 인식·5초/0초·OFF 시험은 통과했으나10연속은2회 확인 후 외부 앱 전환으로 중단됐다. code21의 PC·설치·일반 YouTube10연속은 PASS이며 개별 라이브 재시험·20연속은 미완료다. 업데이트 자동조회ON 복원은10:51 확인했으며 공개 검증이 다음 단계다. D-021 등 일반 영상 한계는 유지한다. 게시 단계에서 릴리스·CI·메타데이터·익명 APK·설치본 일치를 확인해야 하며 현재는 미게시다. 제조사별 절전/타일·폴더블·장시간은 남은 검증이다. 메일 발송은 하지 않았다.

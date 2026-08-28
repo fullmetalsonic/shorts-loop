@@ -14,13 +14,21 @@ import java.util.Locale;
 public final class YouTubeReader {
     public static final String PACKAGE = "com.google.android.youtube";
     private static final String PREFIX = PACKAGE + ":id/";
+    private final YouTubeLiveReader liveReader = new YouTubeLiveReader();
 
     public YouTubeSnapshot read(AccessibilityNodeInfo root) {
-        if (root == null || !PACKAGE.contentEquals(root.getPackageName() == null ? "" : root.getPackageName()))
+        if (root == null || !PACKAGE.contentEquals(root.getPackageName() == null ? "" : root.getPackageName())) {
+            liveReader.interrupt();
             return YouTubeSnapshot.unavailable("유튜브 쇼츠 대기");
+        }
         List<AccessibilityNodeInfo> nodes = new ArrayList<>();
-        collect(root, nodes);
+        List<Integer> parents = new ArrayList<>();
         try {
+            boolean complete = collect(root, nodes, parents, -1);
+            // Only live skipping needs a complete-tree audit. Normal counting retains
+            // its existing bounded, null-child-tolerant collection behavior.
+            YouTubeSnapshot live = liveReader.read(nodes, parents, complete);
+            if (live != null) return live;
             Rect page = null;
             boolean reel = false, timeBar = false;
             Progress progress = null;
@@ -66,14 +74,22 @@ public final class YouTubeReader {
                 || lower.contains("comment_entry") || lower.contains("menu_list")
                 || lower.contains("dialog") || (node.isFocused() && node.isEditable());
     }
-    private void collect(AccessibilityNodeInfo node, List<AccessibilityNodeInfo> nodes) {
-        if (nodes.size() >= 600) return;
+    private boolean collect(AccessibilityNodeInfo node, List<AccessibilityNodeInfo> nodes,
+            List<Integer> parents, int parent) {
+        if (nodes.size() >= 600) return false;
+        int index = nodes.size();
         nodes.add(node);
-        for (int i = 0; i < node.getChildCount() && nodes.size() < 600; i++) {
+        parents.add(parent);
+        boolean complete = true;
+        for (int i = 0; i < node.getChildCount(); i++) {
+            if (nodes.size() >= 600) return false;
             AccessibilityNodeInfo child = node.getChild(i);
-            if (child != null) collect(child, nodes);
+            if (child == null) { complete = false; continue; }
+            if (!collect(child, nodes, parents, index)) complete = false;
         }
+        return complete;
     }
+    public void close() { liveReader.close(); }
     private static String string(CharSequence value) { return value == null ? "" : value.toString(); }
     private static String digest(String value) {
         if (value.isEmpty()) return "";

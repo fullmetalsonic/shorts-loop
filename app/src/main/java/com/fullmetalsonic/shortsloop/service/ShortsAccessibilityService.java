@@ -1,6 +1,7 @@
 package com.fullmetalsonic.shortsloop.service;
 
 import android.accessibilityservice.AccessibilityService;
+import android.accessibilityservice.AccessibilityServiceInfo;
 import android.accessibilityservice.GestureDescription;
 import android.app.KeyguardManager;
 import android.content.SharedPreferences;
@@ -21,6 +22,10 @@ import com.fullmetalsonic.shortsloop.core.ModePolicy;
 import com.fullmetalsonic.shortsloop.core.SessionPolicy;
 import com.fullmetalsonic.shortsloop.core.ClocklessTimeoutPolicy;
 import com.fullmetalsonic.shortsloop.core.ClocklessTimeoutTracker;
+import com.fullmetalsonic.shortsloop.core.LiveSkipPolicy;
+import com.fullmetalsonic.shortsloop.core.LiveSkipTracker;
+import com.fullmetalsonic.shortsloop.core.LiveTransitionPolicy;
+import com.fullmetalsonic.shortsloop.core.LiveTreePolicy;
 import com.fullmetalsonic.shortsloop.data.SettingsStore;
 import com.fullmetalsonic.shortsloop.detection.YouTubeReader;
 import com.fullmetalsonic.shortsloop.detection.YouTubeSnapshot;
@@ -40,6 +45,7 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
     private final LoopCounter counter = new LoopCounter();
     private final AdvanceGate gate = new AdvanceGate();
     private final ClocklessTimeoutTracker timed = new ClocklessTimeoutTracker();
+    private final LiveSkipTracker live = new LiveSkipTracker();
     private final ShortsReader reader = new ShortsReader();
     private final YouTubeWindowGuard windowGuard = new YouTubeWindowGuard();
     private SettingsStore store;
@@ -57,15 +63,22 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
     private boolean pendingAd;
     private boolean pendingVisual;
     private boolean pendingTimed;
+    private boolean pendingLive, unresolvedLiveAttempt;
+    private int liveRequests, confirmedLive;
+    private int liveRequestWindow = -1, liveRequestIndex = -1;
+    private long liveRequestedAt = -1, lastPollAt;
+    private Rect liveRequestWindowBounds;
+    private AccessibilityNodeInfo liveRequestPager;
     private int timedRequests, confirmedTimed;
     private int visualRequests, confirmedVisual;
     private String activePackage = "";
     private final Runnable poll = new Runnable() {
         @Override public void run() {
             if (store == null) return;
+            lastPollAt = SystemClock.uptimeMillis();
             try { tick(); }
             catch (RuntimeException ignored) { failClosed("화면 조회 오류 · 껐다 켜 주세요"); }
-            if (store != null && store.enabled()) handler.postDelayed(this, store.target() == 0 && !adSkippingEnabled() ? 900
+            if (store != null && store.enabled()) handler.postDelayed(this, store.target() == 0 && !adSkippingEnabled() && !liveSkippingEnabled() ? 900
                     : visual != null && visual.active() ? 450 : 300);
         }
     };
@@ -76,7 +89,7 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         store.enabled(false);
         RuntimeState.connected = true; RuntimeState.blocked = false; RuntimeState.current = 0;
         RuntimeState.status = "꺼짐";
-        visual = new VisualAssistController(this, new VisualAssistController.Host() {
+        visual = VisualAssistController.create(this, new VisualAssistController.Host() {
             @Override public boolean stillEligible(YouTubeSnapshot expected) { return visualEligible(expected); }
             @Override public void result(YouTubeSnapshot expected, VisualLoopTracker.Result result) {
                 if (!visualEligible(expected)) { visual.reset(); return; }
@@ -96,10 +109,17 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
     }
     @Override public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
         if ("floating_enabled".equals(key)) { updateFloating(); return; }
+        // Only explicit execution OFF/ON may re-arm an unconfirmed live request.
+        // A floating count tap can first interrupt the gesture and then change target.
+        if ("enabled".equals(key)) unresolvedLiveAttempt = false;
+        else if (unresolvedLiveAttempt && store.enabled()) {
+            failClosed("라이브 전환 중 설정 변경 · 전체 실행을 껐다 켜 주세요"); return;
+        }
         if ("target".equals(key) || "enabled".equals(key) || "ceiling".equals(key)
                 || "tap_mode".equals(key) || "youtube_enabled".equals(key) || "instagram_enabled".equals(key)
                 || "skip_ads".equals(key) || "visual_assist".equals(key)
-                || "timed_fallback".equals(key) || "fallback_seconds".equals(key)) applySettings();
+                || "timed_fallback".equals(key) || "fallback_seconds".equals(key)
+                || "skip_live".equals(key) || "live_delay_seconds".equals(key)) applySettings();
     }
     private void updateFloating() {
         if (!store.enabled() || !store.floatingEnabled()) floating.hide();
@@ -111,6 +131,7 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         ShortsTileService.refresh(this);
     }
     private void applySettings() {
+        configureLiveTree(activePackage);
         handler.removeCallbacks(poll); invalidate();
         RuntimeState.blocked = false; counter.setTarget(store.target());
         if (!store.enabled()) {
@@ -129,8 +150,10 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
     private void tick() {
         if (!store.enabled() || RuntimeState.blocked) return;
         if (store.floatingEnabled() && !Settings.canDrawOverlays(this)) { store.enabled(false); return; }
-        // With zero plays, keep reading ONLY when the separately opted-in ad feature needs it.
-        if (store.target() == 0 && !adSkippingEnabled()) { invalidate(); publish(0, zeroCountStatus()); return; }
+        // Zero ordinary plays still permits independently opted-in ads and live previews.
+        if (store.target() == 0 && !adSkippingEnabled() && !liveSkippingEnabled()) {
+            clearLayoutQuery(); invalidate(); publish(0, zeroCountStatus()); return;
+        }
         if (!screenAvailable() || interacting || SystemClock.uptimeMillis() < holdUntil) {
             if (gate.pending()) { failClosed("전환 중 화면 변경 · 다시 켜 주세요"); return; }
             invalidate(); publish(0, "화면·조작 대기"); return;
@@ -142,13 +165,14 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
             // Ads have no clock. Only a structurally identified, different page
             // can confirm them; a stale page event alone never confirms another ad.
             // A newly appearing clock on the SAME visual page is not a page transition.
-            AdvanceGate.State state = (pendingVisual || pendingTimed)
+            AdvanceGate.State state = pendingLive ? inspectLiveTransition(snapshot, now)
+                    : (pendingVisual || pendingTimed)
                     ? gate.inspectRecognizedPage(snapshot.recognized() ? snapshot.identity : "", now)
                     : snapshot.usable()
                     ? gate.inspect(snapshot.identity, snapshot.progress.duration, now)
                     : snapshot.recognized() ? gate.inspectRecognizedPage(snapshot.identity, now) : gate.unavailable(now);
             if (state == AdvanceGate.State.WAITING) {
-                publish(pendingAd || pendingTimed ? 0 : store.target(), pendingAd ? "광고 넘김 확인 중"
+                publish(pendingAd || pendingTimed || pendingLive ? 0 : store.target(), pendingLive ? LiveSkipPolicy.STATUS_CONFIRMING : pendingAd ? "광고 넘김 확인 중"
                         : pendingTimed ? "시간제 · 다음 영상 확인 중" : "다음 영상 확인 중"); return;
             }
             if (state == AdvanceGate.State.FAILED) { failClosed("넘김 확인 실패 · 껐다 켜 주세요"); return; }
@@ -156,11 +180,24 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
                 confirmedAdvances++; if (pendingAd) confirmedAds++;
                 if (pendingVisual) confirmedVisual++;
                 if (pendingTimed) confirmedTimed++;
-                pendingAd = false; pendingVisual = false; pendingTimed = false;
+                if (pendingLive) { confirmedLive++; unresolvedLiveAttempt = false; releaseLiveRequest(); }
+                pendingAd = false; pendingVisual = false; pendingTimed = false; pendingLive = false;
                 counter.reset(); visual.reset(); timed.reset();
             }
         }
         if (!timedCandidate(snapshot)) timed.reset();
+        if (!snapshot.live) live.reset();
+        if (snapshot.live) {
+            counter.reset(); timed.reset(); visual.reset(); lastPosition = -1; lastDuration = -1;
+            if (!liveCandidate(snapshot)) { live.reset(); publish(0, "라이브 · 자동 넘김 꺼짐"); return; }
+            String key = snapshot.identity + "|" + snapshot.windowId + "|" + snapshot.page.toShortString()
+                    + "|" + snapshot.windowBounds.toShortString();
+            LiveSkipTracker.Result result = live.observe(key, store.liveDelaySeconds(), now);
+            publishState(0, store.liveDelaySeconds() == 0 ? LiveSkipPolicy.STATUS_IMMEDIATE : LiveSkipPolicy.STATUS_DELAYED,
+                    result.remainingSeconds());
+            if (result.due()) advanceLive(snapshot);
+            return;
+        }
         if (snapshot.ad) {
             visual.reset();
             counter.reset(); lastPosition = -1; lastDuration = -1;
@@ -206,11 +243,26 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
             if (SessionPolicy.packageChanged(activePackage, pkg)) {
                 interruptSession(); lastPageIndex = -1; activePackage = pkg;
             }
+            // The live container is not important-for-accessibility in YouTube.
+            // Reacquire after a query-mode change; do not mix two tree shapes.
+            if (configureLiveTree(pkg)) return YouTubeSnapshot.unavailable("라이브 화면 조회 준비");
             Rect window = root == null ? null : windowGuard.allowedBounds(getWindows(), root.getWindowId());
             if (window == null)
                 return YouTubeSnapshot.unavailable("다른 창·빠른 설정·작은 화면 · 대기");
             return reader.read(root, store).inWindow(root.getWindowId(), window);
         } finally { YouTubeReader.recycle(root); }
+    }
+    private boolean configureLiveTree(String packageName) {
+        AccessibilityServiceInfo info = getServiceInfo();
+        if (info == null || store == null) return false;
+        boolean include = LiveTreePolicy.includeLayoutNodes(store.enabled() && !RuntimeState.blocked,
+                store.youtubeEnabled(), packageName);
+        int flag = AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS;
+        int flags = include ? info.flags | flag : info.flags & ~flag;
+        if (flags == info.flags) return false;
+        info.flags = flags;
+        setServiceInfo(info);
+        return true;
     }
     private boolean screenAvailable() {
         return getSystemService(PowerManager.class).isInteractive() && !getSystemService(KeyguardManager.class).isKeyguardLocked();
@@ -218,8 +270,63 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
     private boolean adSkippingEnabled() {
         return store != null && AdSkipPolicy.enabled(store.enabled(), store.skipAds(), store.instagramEnabled());
     }
+    private boolean liveSkippingEnabled() {
+        return store != null && LiveSkipPolicy.enabled(store.enabled(), store.skipLive(), store.youtubeEnabled());
+    }
+    private boolean liveCandidate(YouTubeSnapshot value) {
+        return liveSkippingEnabled() && YouTubeReader.PACKAGE.equals(activePackage) && value != null && value.live
+                && value.recognized() && value.windowId >= 0 && value.windowBounds != null && value.windowBounds.contains(value.page);
+    }
     private String zeroCountStatus() {
-        return adSkippingEnabled() ? "광고만 자동 넘김 · 일반·시간제 중지" : "0회 · 반복·시간제 중지, 광고 꺼짐";
+        return LiveSkipPolicy.zeroCountStatus(adSkippingEnabled(), liveSkippingEnabled());
+    }
+    private AdvanceGate.State inspectLiveTransition(YouTubeSnapshot value, long now) {
+        if (value.windowId != liveRequestWindow || value.windowBounds == null
+                || !value.windowBounds.equals(liveRequestWindowBounds)) return gate.inspectLivePage("", now);
+        if (value.live) return gate.inspectLivePage(value.recognized() ? value.identity : "", now);
+        return value.usable() ? gate.inspectRecognizedPage(value.identity, now) : gate.inspectLivePage("", now);
+    }
+    private void releaseLiveRequest() {
+        YouTubeReader.recycle(liveRequestPager); liveRequestPager = null;
+        liveRequestedAt = -1; liveRequestWindow = liveRequestIndex = -1; liveRequestWindowBounds = null;
+    }
+    private void advanceLive(YouTubeSnapshot original) {
+        if (!liveCandidate(original) || RuntimeState.blocked || gate.pending() || interacting || !screenAvailable()
+                || SystemClock.uptimeMillis() < holdUntil) return;
+        YouTubeSnapshot fresh = snapshot();
+        if (RuntimeState.blocked || !liveCandidate(fresh) || !Objects.equals(original.identity, fresh.identity)
+                || original.windowId != fresh.windowId || !original.page.equals(fresh.page)
+                || !original.windowBounds.equals(fresh.windowBounds)) { live.reset(); return; }
+        AccessibilityNodeInfo root = getRootInActiveWindow();
+        java.util.List<AccessibilityNodeInfo> pagers = java.util.Collections.emptyList();
+        try {
+            if (root == null || root.getWindowId() != fresh.windowId || !root.refresh()
+                    || !YouTubeReader.PACKAGE.contentEquals(root.getPackageName() == null ? "" : root.getPackageName())) { live.reset(); return; }
+            Rect currentWindow = windowGuard.allowedBounds(getWindows(), root.getWindowId());
+            if (currentWindow == null || !currentWindow.equals(fresh.windowBounds)) { live.reset(); return; }
+            YouTubeSnapshot verified = reader.read(root, store).inWindow(root.getWindowId(), currentWindow);
+            if (!liveCandidate(verified) || !Objects.equals(fresh.identity, verified.identity)
+                    || !fresh.page.equals(verified.page) || !screenAvailable() || RuntimeState.blocked) { live.reset(); return; }
+            pagers = root.findAccessibilityNodeInfosByViewId("com.google.android.youtube:id/reel_recycler");
+            AccessibilityNodeInfo chosen = null;
+            for (AccessibilityNodeInfo node : pagers) if (node.isVisibleToUser()) {
+                if (chosen != null) { live.reset(); return; }
+                chosen = node;
+            }
+            if (chosen == null || !chosen.refresh() || !chosen.isVisibleToUser() || chosen.getWindowId() != verified.windowId
+                    || !"com.google.android.youtube:id/reel_recycler".equals(chosen.getViewIdResourceName())
+                    || !YouTubeReader.PACKAGE.contentEquals(chosen.getPackageName() == null ? "" : chosen.getPackageName())) { live.reset(); return; }
+            Rect pagerBounds = new Rect(); chosen.getBoundsInScreen(pagerBounds);
+            if (!pagerBounds.contains(verified.page)) { live.reset(); return; }
+            releaseLiveRequest();
+            liveRequestPager = AccessibilityNodeInfo.obtain(chosen);
+            liveRequestWindow = fresh.windowId; liveRequestIndex = lastPageIndex;
+            liveRequestWindowBounds = new Rect(fresh.windowBounds);
+            dispatchPageSwipe(verified, true);
+        } finally {
+            for (AccessibilityNodeInfo pager : pagers) YouTubeReader.recycle(pager);
+            YouTubeReader.recycle(root);
+        }
     }
     private boolean visualEligible(YouTubeSnapshot expected) {
         if (store == null || !store.enabled() || !store.visualAssist() || !store.instagramEnabled()
@@ -328,6 +435,10 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         YouTubeSnapshot fresh = snapshot();
         if (!fresh.usable() || !Objects.equals(original.identity, fresh.identity)
                 || original.progress.duration != fresh.progress.duration) { invalidate(); return; }
+        if (RuntimeState.blocked || gate.pending()) return;
+        dispatchPageSwipe(fresh, false);
+    }
+    private void dispatchPageSwipe(YouTubeSnapshot fresh, boolean forLive) {
         Rect page = fresh.page;
         Rect overlay = floating.bounds();
         float startY = page.top + page.height() * 0.75f;
@@ -342,13 +453,16 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         Path path = new Path(); path.moveTo(x, startY); path.lineTo(x, endY);
         GestureDescription gesture = new GestureDescription.Builder()
                 .addStroke(new GestureDescription.StrokeDescription(path, 0, 280)).build();
-        gate.begin(fresh.identity, fresh.progress.duration, SystemClock.uptimeMillis());
+        long requestAt = SystemClock.uptimeMillis();
+        gate.begin(fresh.identity, forLive ? -1 : fresh.progress.duration, requestAt);
+        pendingLive = forLive;
+        if (forLive) { liveRequestedAt = requestAt; liveRequests++; unresolvedLiveAttempt = true; }
         int requestGeneration = generation;
         advanceRequests++;
         boolean accepted = dispatchGesture(gesture, new GestureResultCallback() {
             @Override public void onCompleted(GestureDescription description) {
                 // Completion means the gesture ran, not that YouTube changed videos.
-                if (generation == requestGeneration) publish(store.target(), "다음 쇼츠 확인 중");
+                if (generation == requestGeneration) publish(forLive ? 0 : store.target(), forLive ? LiveSkipPolicy.STATUS_CONFIRMING : "다음 쇼츠 확인 중");
             }
             @Override public void onCancelled(GestureDescription description) {
                 if (generation == requestGeneration) failClosed("넘김 취소됨 · 껐다 켜 주세요");
@@ -359,6 +473,16 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
     @Override public void onAccessibilityEvent(AccessibilityEvent event) {
         if (store == null || !store.enabled() || event == null) return;
         String eventPackage = event.getPackageName() == null ? "" : event.getPackageName().toString();
+        if (!RuntimeState.blocked && (liveSkippingEnabled() || pendingLive)
+                && store.isSelected(eventPackage) && YouTubeReader.PACKAGE.equals(eventPackage)) {
+            int type = event.getEventType();
+            if (type == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED
+                    || (type == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED && (live.active() || pendingLive))
+                    || type == AccessibilityEvent.TYPE_VIEW_SCROLLED) {
+                handler.removeCallbacks(poll);
+                handler.postDelayed(poll, Math.max(0, 100 - (SystemClock.uptimeMillis() - lastPollAt)));
+            }
+        }
         if (!store.isSelected(eventPackage) || !eventPackage.equals(activePackage)) return;
         if (event.getEventType() != AccessibilityEvent.TYPE_VIEW_SCROLLED
                 && event.getEventType() != AccessibilityEvent.TYPE_VIEW_CLICKED) return;
@@ -366,6 +490,10 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         if (source == null) return;
         try {
             String id = source.getViewIdResourceName();
+            if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_CLICKED
+                    && YouTubeReader.PACKAGE.equals(eventPackage) && (live.active() || pendingLive)) {
+                interruptSession(); holdUntil = SystemClock.uptimeMillis() + 900;
+            }
             if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_CLICKED
                     && InstagramReader.PACKAGE.equals(eventPackage)
                     && ((visual != null && visual.active()) || timed.active())) {
@@ -378,15 +506,25 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
             if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_SCROLLED
                     && ("com.google.android.youtube:id/reel_recycler".equals(id) || InstagramReader.PAGER_ID.equals(id))) {
                 int index = event.getFromIndex();
-                if (index >= 0 && lastPageIndex >= 0 && index != lastPageIndex) {
-                    if (gate.pending()) gate.pageChanged(); else invalidate();
+                if (pendingLive && gate.pending()) {
+                    // A rejected late event must not poison the baseline used by a subsequent fresh event.
+                    if (source.refresh() && LiveTransitionPolicy.accepts(liveRequestedAt, event.getEventTime(),
+                            SystemClock.uptimeMillis(), liveRequestWindow, source.getWindowId(), liveRequestIndex, index,
+                            liveRequestPager != null && liveRequestPager.equals(source))) {
+                        gate.pageChanged(); lastPageIndex = index;
+                    }
+                } else {
+                    if (index >= 0 && lastPageIndex >= 0 && index != lastPageIndex) {
+                        if (gate.pending()) gate.pageChanged(); else invalidate();
+                    }
+                    if (index >= 0) lastPageIndex = index;
                 }
-                if (index >= 0) lastPageIndex = index;
             }
         } finally { YouTubeReader.recycle(source); }
     }
     private void invalidate() {
-        generation++; counter.reset(); gate.cancel(); pendingAd = false; pendingVisual = false; pendingTimed = false;
+        generation++; counter.reset(); gate.cancel(); pendingAd = false; pendingVisual = false; pendingTimed = false; pendingLive = false;
+        live.reset(); releaseLiveRequest();
         timed.reset(); RuntimeState.timedRemainingSeconds = -1;
         if (visual != null) visual.reset(); RuntimeState.current = 0;
     }
@@ -395,7 +533,12 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         else invalidate();
     }
     private void failClosed(String message) {
-        invalidate(); RuntimeState.blocked = true; publish(0, message); ShortsTileService.refresh(this);
+        invalidate(); RuntimeState.blocked = true; clearLayoutQuery(); publish(0, message); ShortsTileService.refresh(this);
+    }
+    private void clearLayoutQuery() {
+        // The framework may already be disconnecting. There must be no gesture or
+        // recovery attempt here, and failure to contact it must not restart polling.
+        try { configureLiveTree(""); } catch (RuntimeException ignored) { }
     }
     private void publish(int current, String message) {
         publishState(current, message, -1);
@@ -412,9 +555,11 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
     @Override public void onInterrupt() { if (store != null) store.enabled(false); }
     @Override public void onDestroy() {
         handler.removeCallbacksAndMessages(null); invalidate();
+        clearLayoutQuery();
         RuntimeState.connected = false; RuntimeState.current = 0; RuntimeState.status = "서비스 연결 안 됨";
         if (store != null) { store.preferences.unregisterOnSharedPreferenceChangeListener(this); store.enabled(false); }
         if (floating != null) floating.hide();
+        reader.close();
         store = null; ShortsTileService.refresh(this); super.onDestroy();
     }
     /** Shell diagnostics: numeric playback state only, no title, URL, account or UI tree. */
@@ -430,6 +575,8 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         writer.println("ceiling=" + (store == null ? -1 : store.ceiling()) + " tapMode=" + (store == null ? -1 : store.tapMode())
                 + " floating=" + (store != null && store.floatingEnabled()) + " app=" + activePackage);
         writer.println("ads=" + (store != null && store.skipAds()) + " adRequests=" + adRequests + " adConfirmed=" + confirmedAds);
+        writer.println("skipLive=" + (store != null && store.skipLive()) + " liveDelaySeconds=" + (store == null ? 0 : store.liveDelaySeconds())
+                + " liveRequests=" + liveRequests + " liveConfirmed=" + confirmedLive + " pendingLive=" + pendingLive + " " + live.diagnostic());
         writer.println("timedEnabled=" + (store != null && store.timedFallback())
                 + " timedSeconds=" + (store == null ? -1 : store.fallbackSeconds())
                 + " timedRemaining=" + RuntimeState.timedRemainingSeconds

@@ -1,5 +1,113 @@
 # 디버그·재발방지 대장
 
+## 2026-08-28 · code21 조회 원복 보강·PC/설치 검증 / Cleanup and installation verification
+
+독립 리뷰로 차단 상태에서 확장 플래그가 다시 켜지는 경로와 반복0/별도 동작 없는 idle 원복을 보강했다. code21 고정709703bytes/SHA256 `6095BC8C22BD49AACA348E7D1C048301A9E229C92288D1620439F047179E16B2`,356시험·빌드·lint0오류/기존3경고·LIVE_TREE_LIFECYCLE 정적가드 PASS.10:39 같은 APK의 API26/33/34 계측74/74/73,10:40 휴대폰 설치/버전21/접근성bound/설정보존/설치해시 PASS. 최종 조회 원복 독립리뷰 추가P1/P2 없음.
+
+code21 일반 YouTube10연속은10:40:41→10:47:45.702/424.5초/확인기준0→10/세대6으로 PASS했다. 수동 입력·앱 전환 없이 진행했고 라이브 이동0회다. 전환1~10 화면을 모두 육안 대조해 정상 전체화면의 서로 다른 영상·플로팅·올바른 이동을 확인했다. 약10:50 플로팅X 전체OFF 확인,업데이트 자동조회 복원은 예정. code20 외부 중단·개별 라이브 또는 목표 이후 추가 관측을 공식10회에 합산하지 않는다. code21 라이브 개별 재시험은 아직 없으며 D-033의 해당 실제 근거는 아래code20 시험과 구분한다. D-021은 미수정·20연속은 미완료이고 새 Public 검증은 예정이다.
+
+EN: Code21 passed the final cleanup build,356 tests,lint/static guards,74/74/73 emulator checks,phone installation/binding/preferences/hash and final review. Its separate10-transition normal-YouTube run passed in424.5 seconds with confirmation0→10,generation6,no manual input/app changes and zero live skips. All10 transition screens passed visual review. FloatingX stopped execution around10:50;update-preference restoration is pending. Code20 evidence and post-target observations are not added. Code21 individual live retests and20-transition completion remain unverified;D-021 is unchanged.
+
+## D-033 · 조사·제품 접근성 조회 플래그 불일치 · code18 실기기 FAIL, code20 원인 수정·실기기 PASS
+
+- 증상/재현: code18 실제 YouTube 라이브 미리보기에서 라이브 인식 대기가 지속돼 자동 이동하지 못했다. 빌드·합성 계측·설치 성공과 별개의 실기기 기능 FAIL이다.
+- 직접 원인: 조사 프로브는 `FLAG_INCLUDE_NOT_IMPORTANT_VIEWS`를 사용했으나 제품 기본 조회는 사용하지 않았다. 따라서 프로브에서 보인 전용 라이브 요소가 제품 트리에 없었다.
+- 확인 증거: 동일 라이브 화면에서3초씩 읽기 전용 대조. 기본 조회49노드·전용 `immersive_live_preview_player` 없음, 확장 조회101노드·전용 노드 있음. 제목/계정/원시 화면은 공개하지 않는다.
+- 영향 범위: 해당 YouTube 라이브 구조의 제품 감지. 기존 D-032 전환 확인 설계와 D-021 일반 반복 경계는 별도로 추적한다. 전체 앱·모든 YouTube 버전에서도 같은 수가 나온다는 의미가 아니다.
+- 잘못된 접근: 프로브와 제품의 조회 조건이 같은지 확인하지 않고 노드 존재 증거를 제품에서 그대로 얻을 수 있다고 가정한 것. 합성 노드 계측을 실제 호스트의 노드 노출 검증으로 대신할 수 없다.
+- 중간안(code19): 라이브ON일 때만 확장 조회했다. 이 안은 라이브OFF의 일반→라이브 확인을 막고 pending 중 조회형태 변경에 따른 거짓 identity 위험이 있어 최종안으로 사용하지 않는다.
+- 수정(code20): 전체실행ON·YouTube선택·전면YouTube일 때 라이브 옵션과 무관하게 확장 조회한다. 옵션OFF는 넘김만 차단한다. Instagram·기타 앱·전체OFF에서는 기존 조회를 유지하고 조회 모드가 바뀌면 이전 root를 폐기하여 새 조건으로 다시 읽는다. failClosed/onDestroy에서 기본 플래그를 명시적으로 복원한다. 새 권한은 추가하지 않는다.
+- 자동시험: 기존352에 조회정책4개를 더한356제품시험이 cleanup 전 및 cleanup 포함 최종 재빌드에서 각각 PASS했다. 최종 lint0오류/기존3경고, 동일 후보 API26/33/34 계측74/74/73 PASS. 제품 플래그로 실행한 실제 라이브 인식·5초/0초·OFF 대기 검증은 아래처럼 별도 기록한다.
+- 실기기 재시험:5초 지연은10:30:29 대기→34 요청→35 확인누계1·25초 일반 영상 진입 PASS. 라이브OFF는10:33:33~39 같은 라이브 인식·blocked=false·요청2/확인2 유지 PASS.0초/반복0회는10:34:31 조회 준비→33 요청→34 확인2→3으로 독립 동작 PASS. 실제 메인 UI에 권한 경고가 없음을 육안 확인했다.
+- 산출물/설치: code20 고정725487bytes, SHA256 `EF59D4E40E192A89D5B207741B03CCE08FA11AC1079DC61C7776C19A1D3D60EB`. 휴대폰 설치 준비·재생 설정 보존·설치본 해시 PASS. code18의738945bytes/실제 인식FAIL은 보존한다.
+- 상태/한계: D-033의 확인된 원인은 위 실기기 범위에서 수정·재시험PASS. 새10연속은10:35:28/확인기준3/세대30에서 시작해2회 확인 후10:37:17 외부 앱 전환으로 중단됐으며, D-021 일반 경계·모든 UI/장시간 문제의 해결을 뜻하지 않는다. Public 미게시.
+
+EN: Code18 failed real live recognition because the read-only probe included non-important accessibility views while the product used default flags. The same live screen exposed49 default nodes without the marker and101 expanded nodes with it. Code20 limits expanded retrieval to overall execution in selected foreground YouTube, independently of the live-skip option, keeps default retrieval for Instagram/other/OFF states, and discards old roots after mode changes. No new permission. The final code20 build/356 tests,74/74/73 emulator checks and phone installation/hash passed. Device5-second delay, immediate skipping at zero normal plays, and live-OFF waiting passed, resolving the confirmed flag mismatch in these cases. The10-transition run ended externally after two confirmations; code18's failure and D-021 are preserved.
+
+## D-032 · YouTube 라이브 미리보기 진입 후 전환 확인 실패 · 개별 라이브 이동 PASS, 연속 검증 미완료
+
+현재 라이브 검증 상태: code21의 일반 영상10연속은PASS지만 라이브 이동0회이므로 라이브 재시험 근거로 쓰지 않는다. code20에서5초·0초/반복0회의 개별 라이브→일반 전환 확인과 라이브OFF 대기가 실제 통과했다. 새10연속은2회 확인 후 외부 중단으로 미완료이므로 D-032 전체를 연속 안정성 완료로 닫지 않는다. 다음은 과거 code18 체크포인트다: code18에서 라이브 감지·독립 옵션·0~60초 지연·전환 보호를 구현했다.352제품시험/빌드/lint·동일 후보 에뮬레이터74/74/73·휴대폰 설치/재연결/설정보존/해시는 통과했다. 다만 최초 실기기 라이브 인식은 D-033의 조회 플래그 불일치로 FAIL했고 정식0초/5초와10연속 시험은 NOT RUN이다. 이 문제를 실기기 해결 완료로 닫지 않는다. 보존 후보738945bytes, SHA256 `941532517058CB8553EFE5DB34ED1762426C468B2D66F88A567CE788E306C54D`. [검증 원장](VERIFICATION.md).
+
+Current live-validation status: code21 passed10 normal transitions with zero live skips, which does not retest live handling. Code20 passed individual5-second/immediate live-to-normal transitions and live-OFF waiting. Its new consecutive run ended externally after two confirmations and remains incomplete. Historical code18 implemented recognition, an independent option, a0–60-second delay and transition guards. Build/product/emulator/install checks passed, but real recognition failed because of the flag mismatch in D-033. At that code18 checkpoint, formal0/5-second and10-transition runs were NOT RUN. D-032 is not closed as endurance-resolved.
+
+### code16 재현·읽기 전용 조사 / Historical reproduction
+
+- 증상/재현: Android17의0.2.5/code16에서 목표1회, 수동 조작 없이 YouTube10연속 자동 전환을 관측했다.2개 전환 확인 뒤3번째 요청으로 라이브 미리보기 화면에 도달했지만 `넘김 확인 실패`로 안전정지했다.
+- 확인 증거: 전환 확인 누계7→9, 요청10/확인9,101.4초에서 시험FAIL. `connected=true`, `blocked=true`였으며 화면은 실제로 다른 라이브 미리보기로 바뀌었다. 원시 로그·개인 화면은 private에만 보관한다. 수동 재진입 조사는 이 자동 연속 시험 성공 횟수에 포함하지 않는다.
+- 직접 원인: YouTubeReader가 정확히1개의 유효 SeekBar를 요구한다. 해당 라이브 화면에는 SeekBar가0개라 식별 가능한 새 페이지를 반환하지 못하며 AdvanceGate의4.5초 확인 제한에 걸린다. 제스처 자체 실패나 접근성 권한 해제로 분류하면 안 된다. 보이지 않는 `reel_time_bar` 래퍼의 존재만으로 실제 재생 시계가 있다고 판단해서도 안 된다.
+- 영향 범위: 일반 쇼츠에서 라이브 미리보기로 전환한 뒤 자동 실행이 차단될 수 있다. 라이브에는 일반 반복 완주 카운트를 적용할 수 없다. 기존 D-021의 끝부분 시간 누락과는 별도 원인이다.
+- 후속 조사: 기존 실행을OFF한 뒤 이전 일반 쇼츠→동일 라이브 미리보기 재진입을2회 읽기 전용 조사했다. 일반 화면은 SeekBar1개/라이브 식별자 없음, 라이브는 SeekBar0개와 `com.google.android.youtube:id/immersive_live_preview_player`가 확인됐다. 이 노드는 `reel_player_page_container` 아래에 있으며 ‘탭하여 라이브 콘텐츠 시청하기’ 문구가 없는 표본에서도 존재했다. 전용 노드는 빨간 라이브 배지보다 먼저 관측되기도 했다.
+- 시간/기하 해석: 두 번째 조사에서 시작 기준1955ms에 화면 하단79px만 보이는 라이브 노드가 이미 존재했다.2511ms에는 전체 페이지와 라이브 배지가 있고 안내 문구는 없었으며5071ms에 문구가 다시 나타났다.2348ms에는 전환 중 이전 문구가 잠시 보인 표본도 있어 이를 최초 노출 지연의 정밀 측정으로 해석하지 않는다. 조사 폴링은120ms이며 제품의 감지/넘김 지연 보장값이 아니다.
+- 잘못된 접근 방지: 제목의 LIVE 문자열, 빨간 색상, 재생바 부재만으로 라이브를 확정하지 않는다. 전용 노드가 화면 일부에 나타났다는 이유만으로 진행 중 스와이프에 두 번째 스와이프를 겹치지 않는다. 라이브 시청 버튼을 눌러 본 방송으로 진입하지 않는다.
+- 당시 수정 제안(조사 시점 미구현): 전면 YouTube 쇼츠의 활성 단일 페이지 아래 전용 라이브 노드를 우선 판별하고, 창/페이지 범위·전환 안정화·현재 터치·기존 pending 보호를 함께 확인한다. 화면 변경 이벤트에 즉시 재조회하고 기존 폴링을 보조로 유지한다. 라이브 페이지 진입 확인과 다음 라이브 넘김 여부를 분리하고 끄기/즉시/지연(초) 설정을 제공한다. 후속 구현은 아래 code18 항목과 구분한다.
+- 당시 자동 재발방지 계획: 일반→라이브 전환 확인, 문구 전 라이브 판별, 가려진/미리 로드된/부분 페이지 제외, 제목만LIVE인 일반영상 제외, 연속 라이브의 서로 다른 페이지 확인, 중복 제스처 방지, 라이브OFF에서 일반 쇼츠 복귀, 팝업/시스템창/잠금 보호를 시험한다. 순수·계측 시험과 실제 기기 시험은 별도 판정한다.
+- 당시 조사 결과: 라이브의 조기 식별 가능성은 해당 기기·YouTube·동일 라이브2회 재진입에서 확인. 당시 감지 기능/자동 넘김 수정은 없었고10연속 시험은FAIL이었다. 조사 전후 서비스 연결을 유지했으며 종료 상태는 `connected=true`, `enabled=false`, `blocked=false`였다.
+- 조사 도구: 제품 앱을 계측하거나 설치하지 않는 별도 셸 프로브. 고정 UI 문구 일치 여부·리소스ID·숫자만 출력하며 제목·계정은 기록하지 않는다. [Android UiAutomation](https://developer.android.com/reference/android/app/UiAutomation#FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)의 기존 접근성 유지 플래그를 사용했다. 이 도구의 결과는 제품 구현 PASS가 아니다.
+
+EN: The historical code16 unattended10-transition run failed after2 confirmations at a clockless live preview. Read-only replay found the dedicated node before the watch-live prompt, including during a partial transition. At that investigation checkpoint, configurable live skipping was not yet implemented. That failure is preserved separately from code18; no10-transition PASS or new release is claimed.
+
+### code18 수정·재발방지 / Implementation and regression protection
+
+- 구현: 전용 리소스ID와 조상 관계·안정된 단일 페이지·전면창을 검사한다. 라이브는 recognized로 반환하되 일반 progress/화면 분석 대상으로 취급하지 않는다. 기본OFF·지연0~60초/기본0초, 일반0회와 독립, 전체OFF는 모두 중지다. 제목/CTA/시청자 수 대신 RAM의 페이지 노드 동일성을 사용한다.
+- P1 최종 재검증: 마지막 root 재조회에서도 대상 창/페이지/라이브 상태를 다시 확인한다. 과거 snapshot의 안전성만으로 현재 제스처를 허용하지 않는다.
+- P2 오래된 인덱스: 라이브→라이브 확인은 요청 이후 같은 창/pager 인덱스 변화와 다른 안정 페이지를 함께 요구한다. 요청 전 이벤트·다른 창/pager·변화 없는/불명 인덱스·이전 요청의 증거 재사용을 거절한다. 거절된 늦은 이벤트가 요청 기준 인덱스를 덮어쓰지 않게 한다.
+- 일반 쇼츠 회귀 방지: null child와600노드 상한에서 일반 경로 전체를 새로 실패시키지 않는다. 수집은 나머지 노드를 계속 처리하며 완전성은 라이브에만 요구한다. 보이는 라이브 표시가 있는 불완전 트리는 거절하고, 없거나 숨겨져 있으면 기존 일반 판독으로 넘긴다.
+- 동일 uptime: 같은 노드/기하/시각의 최종 재조회는 이미 안정화한 상태를 유지하되 시간을 더하지 않는다. 시간 역행·노드/기하 변경은 초기화한다.
+- 자동 시험: YouTubeLivePolicyTest의 부분/숨김/복수/차단/불완전/동일시각 경계, LiveTransitionPolicyTest의 이벤트 신선도, LiveAdvanceGateTest의 요청별 기준과 안정 확인, 라이브 설정/시간/저장 및 Android 계측으로 재발 경로를 검사한다.352제품시험과74/74/73계측 통과는 실제 YouTube 자동 넘김 성공과 별개다.
+- code18 당시 남은 재시험: 최초 라이브 인식 대기 원인 진단, 정식0초/5초 이동, 일반↔라이브/연속 라이브 및10연속 실제 전환. 후속code20에서 인식·0초/5초·OFF 대기는 위 기록처럼 통과했지만 연속 검증은 미완료다. 동일 노드를 다른 방송에 재사용하면 구분하지 못하고 안전 정지할 수 있다. 새 권한·OCR·영상/오디오 수집은 추가하지 않았다.
+
+EN: Code18 adds structural recognition and independent live settings. Review fixes revalidate the final root, reject stale pager evidence, preserve legacy normal collection, and retain settled evidence on equal timestamps without adding time. Automated regression and installation checks passed at code18; later code20 device results are recorded above, separately from the unfinished consecutive run. Reused source nodes may conservatively stop the feature.
+
+## 2026-08-28 · 과거 code16 통합 검증 체크포인트
+
+제품 274시험·빌드·lint 0오류/3경고 PASS. API26/33/34 호환성 계측검사 47/47/46개와 설치 사전검사 각36개 PASS. 실제 Android 17 기기의 설치 사전검사36개, Android 설치창을 통한 code15→16 업데이트와 설정값 보존 PASS. 최종 APK703134bytes 및 설치본 SHA-256 `6FA61EA51C04AF5A8246E21183C7F4D9FDF0564FEEF5794553BEBEF7C1F4EFE1` 일치. 기존 GitHub 공개 자산 다운로드는 API26/API34/실기기 PASS. 이는 게시 전 결과이며 최종 Release·CI·공개 파일 검증은 [검증 기록](VERIFICATION.md)을 따른다. 후속 계측으로 끊긴 실기기 접근성 연결은 D-031의09:31 재시험에서 복구를 확인했다.
+
+## D-031 · 실기기 계측 종료 후 접근성 서비스 미연결 · 수동 재연결 확인
+
+- 증상/재현: 앱 상단의 사용 준비 안내가 지속된다. 접근성 enabled 설정과 오버레이 허용은 남아 있으나 서비스가 실제로 연결되어 있지 않다.
+- 직접 확인/증거: 접근성 진단에서 Bound 목록은 비어 있고 Crashed 목록에 자체 서비스가 있다. exit-info에는09:26:47 `PACKAGE UPDATED`,09:27:22/23 계측 시작·종료 관련 `FORCE STOP` 기록이 있다. Java fatal crash 로그는 확인되지 않았다.
+- 원인 범위: 실제 OS 업데이트 뒤 실행한 네트워크 계측의 시작·종료가 대상 앱과 서비스를 끊었고 Android가 재연결하지 않은 상태다. Crashed 목록만으로 제품 코드의 Java 크래시라고 단정하지 않는다.
+- 영향 범위: 해당 실기기의 접근성 서비스 연결 및 자동 넘김 실행 준비. 업데이트 설치 성공·APK 해시·설정값 보존 결과와 별도로 관리한다.
+- 잘못된 접근: 권한 설정이 켜져 있다는 이유로 서비스 연결도 정상이라고 판단하거나, 원인을 확인하지 않고 권한을 반복 설정하도록 안내하는 것. 실제 설치 뒤 대상 앱을 종료시키는 계측을 다시 실행한 시험 순서도 부적절했다.
+- 대응: 원인을 확인한 뒤 접근성 서비스를 시스템 설정에서 수동 OFF→ON하여 재연결했다. 제품 코드·APK·저장 설정은 변경하지 않았다.
+- 자동 재발방지: 자동 재연결 기능을 추가한 것은 아니다. 시험 절차에서 파괴적 계측 후 enabled 설정·bound 서비스·제품 runtime 상태·실제 사용 흐름을 함께 확인한다. 실기기 최종 설치 이후에는 계측을 재실행하지 않고 네트워크 시험은 설치 전이나 에뮬레이터에서 수행한다. 상태 복구 후 다시 검증한다.
+- 재시험:09:31 수동 OFF→ON 후 `Bound{자체서비스}`, `Crashed{}`, `runtime connected=true`, `enabled=false`, `blocked=false` 확인. 실제 화면에서 상단 사용 준비 바로가기(setupJump)가 사라진 것을 육안 확인했다. 제품 코드 수정 없이 계측 후 연결 상태를 복구한 결과이며, 이 재시험에서 소셜앱 자동 넘김 E2E를 새로 수행한 것은 아니다. [검증 기록](VERIFICATION.md) 참조.
+
+## D-030 · 새 업데이트 경로 캐시·취소·손상 사본 복구 · 0.2.5
+
+- 증상/재현: 캐시에 저장된 후보가 사라짐; 검사가 끝나는 순간 취소하면 설치 준비로 표시될 수 있음; 같은 해시 이름의 0바이트 설치 사본이 남으면 재다운로드 후에도 설치 실패.
+- 직접 원인: 캐시 유효성에 설치 버전 0을 넣어 신규 버전 비교 함수를 오용; 해시 검사 이후 취소 재확인 누락; 기존 설치 사본을 무조건 재사용.
+- 증거/영향: 독립 코드 리뷰에서 재현 경로 확인. 신규 업데이트 경로만 해당하며 기존 소셜앱 감지에는 영향 없음.
+- 잘못된 접근: 캐시 유효성과 실제 설치 버전 비교를 동일시하고, 다운로드 완료를 취소 불가능 시점으로 취급; 사본 파일 존재를 정상 완료로 간주.
+- 수정: 양수 코드 범위로 캐시 검사, 파일 검사 후 및 UI 콜백에서 취소 재확인. 해시별 읽기 전용 설치 사본을 사용하고 정상 사본만 재사용. 손상 사본은 임시 복사본 검증 후 원자 교체하여 복구.
+- 자동 재발방지: UpdateClientChecks 캐시·손상 다운로드·취소 회귀; InstallerArtifactChecks 손상 사본·부분파일·메타데이터·provider 제한 시험. 제품 APK에 시험 자산/계측 경로가 섞이지 않는 정적 검사.
+- 재시험: API26/33/34 설치 사전검사 각각36개, 실제 Android 17 기기36개 PASS. 손상 사본·부분파일 복구, 메타데이터 불일치, provider 쓰기·경로 거부를 확인했다. 실제 OS 설치 code15→16 및 설정값 동일성 PASS. 최종 실행 결과와 설치 증거는 [검증 기록](VERIFICATION.md)을 따른다.
+
+## D-029 · 구형 기기 런처 아이콘 패키징 누락 · 0.2.5
+
+- 증상/재현: API26 실제 에뮬레이터의 앱 상단 아이콘이 비어 있었음.
+- 직접 원인: 소스에는 기본 mipmap이 있으나 기존 증분 빌드의 병합 자원/APK에는 anydpi-v33만 포함됨. 기존 공개0.2.4 APK에서도 같은 누락 확인.
+- 증거: AAPT2 resource dump와 API26 캡처 비교. 소스 존재만 검사해서는 발견할 수 없었음.
+- 영향: API26~32의 런처/앱 헤더 아이콘 표시. 감지 알고리즘 변경 아님.
+- 수정: app:clean 이후 새 빌드로 기본 anydpi와 v33 자원 동시 포함.
+- 자동 재발방지: verify.ps1 PACKAGED_LEGACY_ICON_AUDIT가 완성 APK의 실제 기본 아이콘 구성 검사. 계측시험은 실행 OS에서 drawable 로딩 검증.
+- 재시험: 호환성 최종 후보660843bytes/C52883CD…의 API26/33/34 18/18/17검사 및 API26 실제 아이콘 표시 PASS. 이전660364bytes/05E61E8F… 후보는 보존하되 배포 제외. 이후 통합0.2.5도 패키징 검사 및 API26/33/34 호환성 계측47/47/46개 통과.
+
+## D-028 · 구형 OS 기능 설명·타일 상태 표시 · 호환성 개선
+
+- 증상/재현: API26~28은 Tile.setSubtitle이 없어 기존 고정 라벨만 보였다. 구형 OS는 캡처를 못 쓰는데 공통 권한 안내에는 버전 조건이 없었다. 소스/API 리뷰 확인이며 실기기 크래시 관측이 아니다.
+- 직접 원인/증거: 기존 타일의 상태가 API29+ subtitle에만 전달됨. 창 캡처는 API34 전용인데 공통 설명과 캡처 capability 선언이 모든 기기에 적용됐다.
+- 영향 범위: 구형 타일 상태 전달 및 사용 가능 기능/권한 설명. 기존 스와이프·반복 감지 오류를 해결했다는 뜻이 아니다.
+- 잘못된 접근: API 호출 가드만으로 사용자도 지원 여부를 알 수 있다고 가정. 타일 이름과 긴 상태를 이어 쓰면 실제 상태가 밀릴 위험도 있다.
+- 수정: 구형은 상태를 라벨에 우선, 앱 이름+전체 상태는 접근성 설명 유지. API33 미만은 수동 추가 안내창. API34 전용 클래스와 XML 분리, 구형은 no-op. UI/권한 안내에14+ 조건·미설치·미선택 이유 명시, 저장 선택은 보존.
+- 자동 재발방지: FeatureSupportPolicy 14시험(API28/29·32/33·33/34 경계/저장/미설치/실제광고상태), verify.ps1의capability/신규API격리/팩토리/minSdk/XML동일성 검사. 에뮬레이터 전용 UI·XML·저장·factory 계측시험 추가.
+- 리뷰 수정: 계측시험이API34+IG설치정상문구를오판하는 조건을 정확 리소스별 비교로 수정. 제품 C/H 신규 회귀는 발견하지 못했다.
+- 재시험: 제품241시험·빌드·lint0오류3경고 PASS. 계측 실행 결과/미검증은 [검증 기록](VERIFICATION.md)을 따른다. 실제 서비스 연결·타일 조작·소셜앱 자동넘김과 UI smoke를 혼동하지 않는다.
+
+### 테스트 환경 메모
+
+최신 SDK 명령행 도구의 sdkmanager 배치 래퍼는 세미콜론 패키지를 잘못 분리했다. 공식 android.exe sdk install을 직접 호출했고 avdmanager에는 실제 SDK toolsdir를 지정했다. Windows 한글 AVD 경로에서 qemu-version 쓰기 오류가 관측되어 원래 프로젝트를 옮기지 않고 별도의 ASCII 임시 AVD를 생성했다. 이는 제품 코드 버그가 아니며 원래 자료는 삭제하지 않았다.
+
 ## D-027 · 시간제 실패를 플로팅에서 진행 중으로 표시 · 리뷰 수정
 
 - 증상/재현: 시간제 넘김 요청 거부/범위 실패에서 서비스는안전정지하지만 `status.startsWith("시간제")` 라벨분기가 `다음`을계속표시했다. 실제기기실패재현이아닌소스리뷰에서확인.
@@ -9,16 +117,16 @@
 - 수정: `시간제 · 다음 영상 확인 중` 정확일치일때만 `다음`, 그외기존표시/상세상태복귀. pager package/window/id검사도재확인.
 - 재발방지/재시험: 독립리뷰에서원인과수정재확인,빌드/lint/연결기능224시험PASS. 전체244시험중미연결VisualSequence기존2실패는별개다. 기기요청거부강제재현은미실행.
 
-## D-022 후속 · 정확한 길이 감지 대신 승인된 시간제 대안
+## D-022 후속 · 정확한 길이 감지 대신 제한된 시간제 대안
 
-- 기존정확N회감지문제의원인해결은아니다. 사용자승인에따라별도OFF토글/초입력/±1초로정보없는영상의무한대기를보완한다.
+- 기존정확N회감지문제의원인해결은아니다. 별도OFF토글/초입력/±1초로정보없는영상의무한대기를보완한다.
 - 기본15초/5~120초/초기2초확인포함,실제시간이있으면기존N회우선,중간재생대기0은대체하지않음. 정지/메뉴/창변경시취소,단일pager요청후다른식별정보확인,실패안전정지.
 - 자동방지: 타이머24시험/저장7추가시험,실시간우선·IG한정·0차단·strict확인·입력원문보존정적연결검사. 별도오디오·화면주기실험통합없음.
 - [시간제계약과실제결과](TIMED_FALLBACK.md). 개인정보화면/숫자원시로그는private에보관한다.
 
 ## D-026 · 실제 음향 입력 정상인데 반복 후보 없음 · 진단 보강/미해결
 
-- 증상/재현: 같은짧은IG영상의0.2.1 시험앱60초세션에서유효소리가들어와도최종후보0. 사용자10초미만같다는제보,별도화면10.4초후보는정확길이아님.
+- 증상/재현: 같은짧은IG영상의0.2.1 시험앱60초세션에서유효소리가들어와도최종후보0. 영상이10초미만이라는초기추정은미검증이며별도화면10.4초후보도정확길이아님.
 - 직접확인:598프레임중572유효,초기작은소리14이후증가없음/좁은대역12,history/gap리셋0. 검색119/최근품질거부6/거친후보없음2/개별후보거부776. WHOLE_QUALITY·FLAT_MINIMUM을관측.후보선택·검증단계까지진입후미검출.
 - 확인증거:[음향시험상세](AUDIO_PATTERN_TRIAL.md),private의audio-diagnostics-v021a-run1/final집계. 실제마이크/PCM파일저장없음.
 - 영향:별도음향시험코어의실제콘텐츠미검출. 기존제품자동넘김에연결하지않음.
@@ -42,7 +150,7 @@
 - 증상/재현: audio-probe0.1후보A,OS승인후IG재생중에도PCM모두0. 세션1 955248표본/신호0.
 - 직접 확인: 시험앱RECORD_AUDIO허용/Projection존재/REMOTE_SUBMIX not silenced. 미디어음량0, 이후일시정지UI에IG자체음소거도확인. 실제플레이어캡처금지로판정할증거는없었다.
 - 영향/잘못된접근: 캡처승인이나표본수만으로소리수신성공이라보거나,음소거상태의0만으로캡처불가라고보면잘못된진단. 이둘을구분한다.
-- 조치: 두번째사용자승인세션에서음량1및IG자체음소거해제후재생으로양성대조. 코드/권한우회없음.
+- 조치: 두번째시험세션에서음량1및IG자체음소거해제후재생으로양성대조. 코드/권한우회없음.
 - 증거/재시험: 45.635초까지신호0→56.711초492신호구간/최대-11.07dBFS/peak17222.최종648신호구간/비영0표본22.99%,60.172초자동종료. [상세](AUDIO_PROBE_TRIAL.md#기기-수신-시험--device-capture-test).
 - 재발방지: 기존SignalMeter의무음/미세신호시험과UI의“무음만으로차단단정불가”안내유지. 문서에폰음량과IG자체음소거별도점검추가. 제품의음소거자동탐지/반복계산은미구현이며자동재발방지완료로표현하지않는다.
 - 한계: 미디어음량0/IG소리ON조합은미검증. 이결과는단일영상입력확보이지모든영상/음악주기/정확N/20연속성공이아님. 음량0·IG음소거·재생복원완료.
@@ -62,10 +170,10 @@
 
 - 최신 C차 시험: 숫자 이벤트18초0건, 수동 일시정지 양성 대조9건은 시간값 없음. 화면 주기A10.4초 재현/B14.75초/정상D16.205초→약16.2초는 새로운 후보이나 정확한N회나 종료점 확인이 아님. 정지 화면 기기32표본 Java 후보0, 수학 합성3시험 PASS. 세부 로그/한계는 [조사 문서](INSTAGRAM_TIMING_RESEARCH_2026-08-27.md).
 - 최신 연속 기준 재시험: 18:00:33부터 수동 탭/스와이프·재시작 없이16.205초 영상 정상 집계→18:00:54.650 요청1→18:00:56.036 확인1. 다음 영상은0/1·정보 없음,18:01:25.823까지 후속 창에서도 유지. 광고 이동0.20개 연속 기준 실패, 수동 이동으로 정상만 골라 성공으로 계산하지 않음. 비공개 `d022c-sequence-01.jsonl`, `d022c-sequence-stalled.jsonl`과 화면 대조.16.205초 값은 마지막 정상 영상이며 실패 영상 길이가 아님.
-- 새 접근의 위험/재발방지: 화면 후보는 최소약2.1주기 관측과 실제 시작점 판정이 필요. 영상 내부 반복·부분 일시정지·자막 움직임·수동 전환을 영상 종료로 간주하지 않는다. 기존시간 우선/동일영상·창·연속성/정지·탐색 취소/1요청1확인 보호를 갖춘 별도 보조 기능 검토가 필요. 제품 미구현이므로 자동 재발방지 완료가 아님. 새 캡처 capability/시험 설치 승인은 질문 후 대기, 실행ON·기존 설정 복원.
-- 후속 조사: 사용자 승인 후 [대체 시간원 조사](INSTAGRAM_TIMING_RESEARCH_2026-08-27.md) 실시. 문제 트리의 다른 RangeInfo·선택 시간문구·일시정지 controls·MediaSession에서 쓸 수 있는 대체 시간 미확보. 정상 대조는26.1초 진행값 확인. 새 TimingProbe만 추가, 제품 미수정 유지. 초기 프로브의 전체문자열 매치/자식 갱신 제한은 보강 후 재조회. 출력 절단/조회 중 수동 이동 겹침은 증거 제외, 이벤트 빈 출력은 판정 불가. 전체 내부 시간 부재로 확대하지 않음.
-- 증상: 일부 릴스에 진입하면 현재 회차0/목표1에서 집계·자동 넘김이 멈춤. 처음에는 기기 미연결로 원인 미확정이었으나, 2026-08-27 USB 연결 후0.2.2/code9에서 같은 증상 관측. 원본 제보 링크는 웹 조회 제한·기기 링크 열기 차단으로 직접 재현하지 못했으며 다른 콘텐츠의 증거와 구분함.
-- 재현 방법: 전체 화면 Instagram에서 실행ON·목표1을 유지하고 콘텐츠 내부 상향 수동 스와이프로 다음 릴스 이동, 짧은 서비스 표본과 화면을 비교. 사용자 요청대로 정상/실패가 확인되면 완주를 기다리지 않고 이동. 01~12 라벨 구간 사이 진단 수동 이동11회, 일부 구간 사이에는 제품 자동 이동도 발생했으므로 전체 피드 항목을 빠짐없이 센12회 시험은 아님.
+- 새 접근의 위험/재발방지: 화면 후보는 최소약2.1주기 관측과 실제 시작점 판정이 필요. 영상 내부 반복·부분 일시정지·자막 움직임·수동 전환을 영상 종료로 간주하지 않는다. 기존시간 우선/동일영상·창·연속성/정지·탐색 취소/1요청1확인 보호를 갖춘 별도 보조 기능 검토가 필요. 제품 미구현이므로 자동 재발방지 완료가 아님. 새 캡처 capability 추가/시험 설치는 이 단계에서 미실행, 실행ON·기존 설정 복원.
+- 후속 조사: [대체 시간원 조사](INSTAGRAM_TIMING_RESEARCH_2026-08-27.md) 실시. 문제 트리의 다른 RangeInfo·선택 시간문구·일시정지 controls·MediaSession에서 쓸 수 있는 대체 시간 미확보. 정상 대조는26.1초 진행값 확인. 새 TimingProbe만 추가, 제품 미수정 유지. 초기 프로브의 전체문자열 매치/자식 갱신 제한은 보강 후 재조회. 출력 절단/조회 중 수동 이동 겹침은 증거 제외, 이벤트 빈 출력은 판정 불가. 전체 내부 시간 부재로 확대하지 않음.
+- 증상: 일부 릴스에 진입하면 현재 회차0/목표1에서 집계·자동 넘김이 멈춤. 처음에는 기기 미연결로 원인 미확정이었으나, 2026-08-27 USB 연결 후0.2.2/code9에서 같은 증상 관측. 최초 조사 대상 링크는 웹 조회 제한·기기 링크 열기 차단으로 직접 재현하지 못했으며 다른 콘텐츠의 증거와 구분함.
+- 재현 방법: 전체 화면 Instagram에서 실행ON·목표1을 유지하고 콘텐츠 내부 상향 수동 스와이프로 다음 릴스 이동, 짧은 서비스 표본과 화면을 비교. 감지 시작 여부 비교를 위해 정상/실패가 확인되면 완주를 기다리지 않고 이동. 01~12 라벨 구간 사이 진단 수동 이동11회, 일부 구간 사이에는 제품 자동 이동도 발생했으므로 전체 피드 항목을 빠짐없이 센12회 시험은 아님.
 - 직접 원인: 현재 `InstagramReader`는 알려진 단일 동영상 구조와 `com.instagram.android:id/scrubber` SeekBar의 RangeInfo를 필요로 함. 시간 정보가 없으면 `usable=false`, 서비스의 `invalidate()`가 카운터를 초기화하고0과 대기 사유를 발행. 반복 집계/자동 넘김 판정에 도달하지 않음. 별도 프로브 두 장면에서는 정확한 scrubber 노드 자체 미검출로 좁힘. 앞선02/05의 같은 사유만으로는 노드 부재와 RangeInfo 거부를 구분할 수 없음.
 - 확인 증거: 02/05에서 `재생 정보 없음 · 이 릴스는 수동 넘김 필요`, current=0, connected/enabled=true, blocked/pending=false. generation은 증가하지만 자동 요청/확인 누계는 그대로여서 폴링 중 감지 대기임. 이후 정상 릴스로 수동 이동하면 토글/재시작 없이 current=1과 시간 진행 복구. D-019 전환 실패 안전정지나 앱 전체 동결로 해석하지 않음.
 
@@ -78,7 +186,7 @@
 | 분리 프로브 다음 장면 | 제품OFF에서14표본 scrubber 미검출 | 약0.51~5.76초. 제품이 꺼져 있으므로 이 장면의 제품 카운트 실패까지 확인했다고 하지 않음 |
 | 분리 프로브 정상 대조 | fresh/visible=true, min=0/max=26100/current=10203/type=0 | 같은 도구로26.1초 유효 RangeInfo 확인. 초기 탐색10초로1표본만 확보 |
 
-- 원시 증거(비공개): `private/device-tests/d022-usb-01-start.jsonl`, `d022-usb-02.jsonl`, `d022-usb-02-confirm.jsonl`, `d022-usb-03~12.jsonl` 및 대응 화면. 추가 프로브는 `private/instagram-probe/d022-failed-scrubber.txt`, `d022-next-also-missing.txt`, `d022-normal-scrubber.txt`. 화면에는 계정·콘텐츠가 포함되므로 공개 제외. 프로브의 next-control 파일명은 정상 여부를 뜻하지 않음.
+- 원시 증거(비공개): `비공개 증거 자료`, `d022-usb-02.jsonl`, `d022-usb-02-confirm.jsonl`, `d022-usb-03~12.jsonl` 및 대응 화면. 추가 프로브는 `비공개 증거 자료`, `d022-next-also-missing.txt`, `d022-normal-scrubber.txt`. 화면에는 계정·콘텐츠가 포함되므로 공개 제외. 프로브의 next-control 파일명은 정상 여부를 뜻하지 않음.
 - 시험 분리: 자체 실행OFF 확인 후 기존 읽기 전용 프로브 실행. 로컬/기기 JAR SHA256 일치(`69717DFE9624FFB8E76754B91E825AA515E22AFF43858F5860C884535FFC6B6D`). 프로브는 해당 ID만 조회하며 다른 시간원을 전수 조사하지 않음. 실행기 `OK (1 test)`는 앱 동작 PASS가 아님. 분리 시험 뒤 서비스 재생성·누계 초기화가 있어 시험 전후 누계를 합산하지 않음.
 - 복원: 실행ON, 두 앱 선택·목표/기준1·광고ON·플로팅ON 유지. `d022-restored.jsonl` 17:27:19.474~23.660의8표본에서11.207→15.640/26.1초 정상 진행. 현재0의 사유는 `다음 처음 재생부터 계산`으로, 중간부터 실행한 정상 시작 대기이며 앞선 정보 없음과 다름. 대응 화면 육안 확인.
 - 영향 범위: 현재 reader가 시간 정보를 얻지 못하는 일부 Instagram 릴스. 모든 릴스/모든0표시/원본 링크까지 동일 원인으로 확대하지 않음. 왜 일부 콘텐츠가 이 노드를 제공하지 않는지, 다른 시간원이 있는지는 미확정.
@@ -89,19 +197,20 @@
 
 ## D-021 · 18초 영상16→0 반복을 탐색으로 오인 · 미해결/디버깅 보류
 
+- 후속 code16 관측:19초 일반 영상의17→0(약320ms 관측 간격)에서도 반복 경계 추적 문제가 남았다. 이는 code18 신규 관측이 아니다. 원래18초/16→0 재현을 아래에 보존하며 code18에서 D-021 수정·실기기 재시험을 완료한 것으로 표시하지 않는다.
 - 증상: 재생은 반복되는데 현재 회차/자동 넘김 요청이 늘지 않음.
 - 재현: 전체 화면18초 YouTube 영상, 약300ms 관측에서 마지막 표시16초 후0초로 복귀. 16:10:36.948,16:10:55.578,16:11:13.786에 반복 관측, 간격18.630/18.208초.
 - 직접 원인: LoopCounter의18초영상 끝 경계는17초 이상인데 이전값16이므로 wrap 대신 음수 시간점프 경로에서 집계를 초기화. 왜 앱 표시가16에서 끝나는지(표시 갱신/길이 오차)는 별도 미확정.
-- 증거: private/device-tests/v021f-fullscreen-resume.jsonl65표본. 동일 세대1582/blocked=false/요청16·확인15 유지, jump elapsed307~310ms. 독립 검토자의 기존 컴파일 클래스 재현에서16종료는2회 반복해도현재1/advance0,17종료는정상 누적 확인.
+- 증거: 비공개 증거 자료65표본. 동일 세대1582/blocked=false/요청16·확인15 유지, jump elapsed307~310ms. 독립 검토자의 기존 컴파일 클래스 재현에서16종료는2회 반복해도현재1/advance0,17종료는정상 누적 확인.
 - 영향: 해당 경계 조건의 일반 영상 집계. 전체 영상·Instagram에 동일하게 재현된다고 단정하지 않음.
 - 잘못된 접근: 모든 정지를 배터리나 반복 누적 초과로 설명하거나, 끝 경계 허용폭을 무조건 크게 늘려 수동 탐색까지 완주 처리하는 것.
-- 수정: 없음. 사용자 요청으로 추가 디버깅/자동수정 보류.
+- 수정: 없음. 추가 디버깅/자동수정은 보류 상태.
 - 자동 재발방지 계획:18초/16→0/N1·N2, 수동 되감기, 조회공백, 짧은3초영상600ms 조건을 함께 시험할 것. 아직 새 자동시험 추가 없음.
 - 재시험: 기존 클래스 독립 재현만 수행. 수정 후 실기기 재시험은 미실행.
 
 ## D-020 후속 · 자체 앱 제한 없음 적용, 제한적 개선 확인
 
-- 사용자 승인 후 자체 앱 배터리 '제한 없음' 적용, 예외 목록/커널 frozen=0 확인. 다른 앱/전체 절전 정책/권한 변경 없음.
+- 자체 앱 배터리 '제한 없음' 적용, 예외 목록/커널 frozen=0 확인. 다른 앱/전체 절전 정책/권한 변경 없음.
 - 동일 프로세스에서 실행 재시작 없이 응답 복구. 약56초 PiP+홈 대기50표본 응답 유지와 전체 화면 시간 감지 재개 확인.
 -0.2.2에 배터리 상태와 수동 안내 메뉴 추가. 자체 앱만 열고 상태조회만 하도록 정적 회귀 검사/독립 리뷰 PASS. 앱이 OS 정책을 자동 변경하지 않음.
 - D-019 재발:16:12 요청18/확인16/blocked=true인데 kernel frozen=0. 동결 해소가 전환실패 해소와 같지 않음. 최초 실패 트리거는 아직 미확정.
@@ -109,14 +218,14 @@
 
 ## D-020 · 전체 화면 복귀 후에도 서비스 무응답 · Samsung Freecess 동결 확인, 조치 미실행
 
-- 증상/재현: 사용자 PiP 전환 후15:56부터 서비스 진단 timeout. YouTube 전체 화면 복귀를16:01 실제 캡처와 topResumedActivity로 확인했으나 진단 응답은 회복되지 않음. 실행 토글/앱 설정은 건드리지 않음.
+- 증상/재현: PiP 전환 후15:56부터 서비스 진단 timeout. YouTube 전체 화면 복귀를16:01 실제 캡처와 topResumedActivity로 확인했으나 진단 응답은 회복되지 않음. 실행 토글/앱 설정은 건드리지 않음.
 - 직접 원인/증거: 동일 앱 PID의 cgroup.freeze=1, cgroup.events populated=1/frozen=1을 읽어 실제 프로세스 동결 완료 확인. Samsung `dumpsys activity freecess`의 mFreezedPackages에도 자체 앱이 있음. 이전 ProcessRecord.isFrozen=false는 커널 실제 동결을 반증하지 않으며, 단독으로 동결 배제에 사용하면 안 됨.
-- 시간 증거: 자체 앱 MARs 기록은15:56:30.172 FRZ(Bg),16:01:08.233 UFZ(Binder accessibility),16:01:14.240 FRZ(Bg). 사용자 전체 화면 복귀 시 잠깐 깨더라도 약6초 후 다시 동결된 기록임.
+- 시간 증거: 자체 앱 MARs 기록은15:56:30.172 FRZ(Bg),16:01:08.233 UFZ(Binder accessibility),16:01:14.240 FRZ(Bg). 전체 화면 복귀 시 잠깐 깨더라도 약6초 후 다시 동결된 기록임.
 - 추가 진단: 자체 앱 SIGQUIT을16:03:59.739 요청. 동일 시각 UFZ(Signal), ART Signal Catcher/밀린 dump 출력 확인 후16:04:05.749 FRZ(Bg). 이 구간은 진단 신호로 깨운 것으로 자연 회복 PASS가 아님. EPIPE는 이미 제한시간이 끝난 dump 출력에 대한 후속 오류와 부합하며 최초 정지 원인으로 취급하지 않음.
 - 진단 제한: JDWP 연결 실패, 임시 포워딩 제거. debuggerd는 root 필요 응답으로 중단, root/보안 우회 없음. SIGQUIT은 진단 신호이며 앱 종료/데이터 삭제가 아님. 배터리·절전·권한·설치·앱 소스는 미변경.
 - 영향: 앱 프로세스 전체가 동결되어 YouTube/Instagram 공통 서비스 폴링과 상태 응답이 실행될 수 없음. 단순 재생 횟수 누적 초과의 증거는 없음. D-019의15:46 최초 전환확인 실패까지 동일 원인으로 확대하지 않음.
 - 잘못된 기존 접근: 살아있는PID/접근성등록/ActivityManager isFrozen=false만으로 실행 중이라고 판단. 피해야 할 대응은 카운터만 초기화하거나 확인되지 않은 반복 스와이프를 추가하는 것.
-- 대응 계획: 사용자 승인 후 자체 앱만 백그라운드 절전 예외를 적용하는 비교 시험. 이 설정으로 Freecess 문제가 해결되는지는 미검증이며 기기별 안내·서비스 실행 유지 보완은 별도 구현 범위로 검토. 시스템 전체 절전 기능 비활성화는 하지 않음.
+- 대응 계획: 자체 앱만 백그라운드 절전 예외를 적용하는 비교 시험. 이 설정으로 Freecess 문제가 해결되는지는 미검증이며 기기별 안내·서비스 실행 유지 보완은 별도 구현 범위로 검토. 시스템 전체 절전 기능 비활성화는 하지 않음.
 - 자동 재발방지/재시험: 새로운 제품 수정/시험은 없음. 실기기 회귀 항목에 PiP·다른 앱 전면·전체 화면 복귀·수분 경과 후 서비스 응답/커널 동결/새 자동 요청 비교 추가. 현재 진단은 원인 확인, 수정 및 안정성 검증은 미완료.
 - 독립 리뷰: 제공된 기기 증거와 공식 동결 의미를 대조하여 현재 무응답 해석 타당. 최초 실패·예외설정 효과는 미확정 유지. 검토자는 추가 기기 조작하지 않음.
 - 근거: [Linux cgroup.freeze/events](https://docs.kernel.org/admin-guide/cgroup-v2.html), [Samsung 앱 관리와 예외 설정](https://developer.samsung.com/mobile/app-management.html). 후자는 절전 예외 안내이며 본 기기의 Freecess 해제를 보장하는 자료가 아님.
@@ -125,19 +234,19 @@
 
 ### 추가 작은 창 시험 · 15:56 이후
 
-- 사용자가 작은 창으로 변경. 최초 캡처는 홈 화면+YouTube 영상 창이며 Instagram 메인 화면이 아님. OS task의 mode=pinned, PictureInPictureMode=true로 PiP임을 확인.
+- 작은 창 전환 후 최초 캡처는 홈 화면+YouTube 영상 창이며 Instagram 메인 화면이 아님. OS task의 mode=pinned, PictureInPictureMode=true로 PiP임을 확인.
 - 첫 진단값은 connected/enabled=true,blocked=false,요청16/확인15,app=launcher,선택한 앱 대기. 숫자 position/duration은 이전 마지막 값이며 PiP 재생시간 추적으로 해석하지 않음.
 - 이후 전면 앱은 Samsung Internet으로 관측되었고 제품 서비스 dumpsys가 반복 IOException: Timeout. ADB 연결·PID·접근성 등록은 유지, 자체 프로세스 isFrozen=false,TracerPid=0,crash 버퍼 출력 없음. 이는 진단 응답 실패의 증거이며 곧바로 앱 크래시나 PiP 원인 확정을 뜻하지 않음.
 - observe-device의 이번 연속 관측은 No diagnostic service response로 중단되어 성공 표본으로 세지 않음. 이번 시험에서 입력/설정/권한/설치 변경 없음. 전체 화면 복귀 후 토글을 건드리지 않은 상태의 복구 비교 필요.
 
-- 증상: 사용자에게 YouTube가 됐다가 안 되는 것으로 보임. Instagram 메인 + YouTube 작은 창이 함께 있었음을 사용자가 설명함.
+- 증상: YouTube 자동 넘김이 간헐적으로 동작하지 않음. Instagram 메인 + YouTube 작은 창의 동시 표시 정황이 있었으나 최초 실패 순간의 직접 관측과는 구분함.
 - 관측: 15:46 요청11/확인10/pending 뒤 15:47~15:51 connected=true,enabled=true,blocked=true,요청11/확인10,상태 `넘김 확인 실패 · 껐다 켜 주세요` 유지. 해당 정지 구간의 화면 이동을 제품의 새 자동 요청 성공으로 계산하지 않음.
 - 직접 원인: 마지막 요청의 다른 페이지 확인이 제한시간4.5초 안에 성립하지 않아 failClosed로 진입, 이후 tick이 즉시 반환. 권한 연결은 정상. 최초 확인 실패의 구체적 원인(실제 스와이프 실패/조회 불가/창 상태)은 당시 진단값만으로 구분 불가.
 - 영향: 같은 실행 세션의 자동 넘김이 정지 상태로 남음. 두 앱 reader는 패키지별로 분리되지만 공통 실행의 blocked 상태는 공유함. 플로팅OFF에서 실패 상태가 시청 화면에 드러나지 않음.
 - 잘못된 접근: 한 번 화면이 바뀌거나 과거 회귀시험이 통과했다는 이유로 현재 정상이라고 판단, PiP가 있었던 정황만으로 최초 실패 원인 확정. 이를 철회하고 요청/확인 카운터와 실제 화면을 함께 대조함.
 - 진단/복구: APK·코드·권한은 변경하지 않음. 진단자가 빠른 설정을 열어 자체 타일OFF→ON으로 정지 해제 후 패널을 닫음. 이는 제품 스와이프가 아닌 별도 시험 조작. 제품 제스처는 page의 y75%→25%,280ms 상향이며 화면 최상단에서 시작하지 않음.
 - 재시험: 15:52:03~15:54:24 전체 화면 비조작 관측에서59→58→15→11초 영상, 추가요청3/추가확인3(누계11/10→14/13). 전환 대기·확인 및 다른 영상 화면 확인. 기존 실패1건이 사라진 것처럼 누계를14/14로 기록하지 않음.
-- 증거: private/device-tests/v021c-youtube-regression-report.jsonl, v021d-fullscreen-observation.jsonl, v021d-fullscreen-transition.jsonl, v021d-second-transition.jsonl 및 동일 접두 실제 화면. 시청내용/계정은 공개 문서에 옮기지 않음.
+- 증거: 비공개 증거 자료, v021d-fullscreen-observation.jsonl, v021d-fullscreen-transition.jsonl, v021d-second-transition.jsonl 및 동일 접두 실제 화면. 시청내용/계정은 공개 문서에 옮기지 않음.
 - 자동 재발방지: 기존 AdvanceGate 타임아웃·중단 보호 시험 존재. 이번에는 새 시험/제품 수정 없음. 다음 개선 검토는 실패 순간의 비개인 진단값 보존, 정지 상태 전달, 명시적 재시작 UX이며 미확인 제스처 무조건 재시도는 금지.
 - 판정: 복구 후 해당3회 성공, 간헐 실패의 근본 원인 및 작은 창→전체 화면 회귀 미해결. 전체 안정성 PASS/수정 완료로 승격하지 않음.
 
@@ -160,7 +269,7 @@
 
 ## D-017 · 오른쪽 아래 광고 표시와 CTA 카드가 있는 영상 광고 미감지 · 0.2.1 수정
 
-- 증상/재현: 우하단에 명확한 광고 글자가 있고 더 알아보기 카드가 떠 있는데 일반 영상으로 계산됨. 사용자 제보 화면에서 재현.
+- 증상/재현: 우하단에 명확한 광고 글자가 있고 더 알아보기 카드가 떠 있는데 일반 영상으로 계산됨. 해당 광고의 실제 화면에서 재현.
 - 직접 원인: 최초 종료형 광고에 맞춘 상단·부모와 동일한 bounds 조건만 구현. 영상형 광고는 clips_ufi_component 안의 우하단, 부모 터치영역보다 작은 글자 영역.
 - 증거: 자체 실행 OFF 상태의 UI 구조 조회. id 없는 ViewGroup의 text/description 모두 정확히 광고, 비클릭 자식/클릭 부모, 우하단 동작열 조상. 영상/상품/계정 원문은 문서에 저장하지 않음.
 - 영향/잘못된 접근: 서로 다른 광고 UI를 한 종류로 일반화. 재생바가 있는 광고도 존재하므로 재생바 존재 여부는 광고 판정 근거가 될 수 없음.
@@ -251,7 +360,7 @@
 
 - 증상/재현: 일반 YouTube 쇼츠는 재생/반복되는데 플로팅은 0/2. 0.1.1 서비스 진단 35개 표본에서 52초 영상의 진행시간이 41초로 고정.
 - 직접 원인: SeekBar의 접근성 노드를 재조회해도 캐시가 반환되며, 이 환경에서는 재생 진행마다 캐시가 갱신되지 않았다. 기존 코드는 최신 상태 요청 없이 description을 파싱했다.
-- 확인 증거: private/device-tests/v011-target2-first.jsonl. 같은 화면에서 0.1.2 적용 후 17→19→21초, 51→0초 및 0/2→1/2 확인. 영상 제목/계정은 기록하지 않음.
+- 확인 증거: 비공개 증거 자료. 같은 화면에서 0.1.2 적용 후 17→19→21초, 51→0초 및 0/2→1/2 확인. 영상 제목/계정은 기록하지 않음.
 - 영향: 시간 기반 반복 감지 전체. 시간이 정체되어 조기 넘김 대신 무기한 대기가 발생.
 - 잘못된 기존 접근: getRootInActiveWindow/getChild를 다시 호출하면 자식의 시간 설명도 최신일 것이라는 가정. 구현 전 UIAutomator 관측을 실제 서비스 검증으로 대체할 수 없음.
 - 수정: SeekBar에 refresh()를 요청한 후 성공/가시성을 확인하고 파싱. 실패 시 조회 불가로 처리하여 기존 카운트 초기화·전환 확인 보호 유지.
@@ -274,7 +383,7 @@
 
 - 증상: 0.1.2 시간 갱신 수정 후에도 정상 재생 도중 1/2→0/2 초기화.
 - 재현: 같은 쇼츠에서 반복 관측. 0.1.3 진단 전용 빌드로 `jump from=14.0 to=16.0 elapsedMs=309 generation=3` 확인. 외부 화면 초기화가 아니라 반복기 내부 점프 판정임을 분리.
-- 증거: private/device-tests/v013-reset-reason.jsonl, 19번 표본 이후. 독립 리뷰에서도 14초 중복 표본 후 16초로 바뀌는 입력으로 초기화 재현.
+- 증거: 비공개 증거 자료, 19번 표본 이후. 독립 리뷰에서도 14초 중복 표본 후 16초로 바뀌는 입력으로 초기화 재현.
 - 직접 원인: 매 300ms 폴링의 시간 차이에 1초 오차만 허용하여 YouTube 시간 설명의 2초 단위 지연 갱신을 비정상 전진으로 취급.
 - 영향: 정상 완주를 누적하지 못하여 자동 넘김 불가. 조기 넘김은 관측되지 않았음.
 - 잘못된 기존 접근: 접근성 시간 설명이 재생 시계와 매 표본 정밀하게 동기화된다고 가정.
@@ -287,7 +396,7 @@
 
 - 증상/재현: YouTube 전체화면에서 자동 실행 후 빠른 설정을 펼침. 0.1.4는 여전히 뒤의38→40초 및 반복 시작을 읽음.
 - 직접 원인: getRootInActiveWindow 결과만으로 실제 입력 초점이 있는 전면 창임을 보장하지 못함. 기존 패키지/쇼츠 트리 검사만으로 시스템 창 가림을 판별하지 않음.
-- 확인 증거: private/device-captures/v014-shade-safety.png와 서비스 숫자 진단. 자동 넘김은 실행하기 전 X로 정지, 요청4/확인4 유지.
+- 확인 증거: 비공개 증거 자료와 서비스 숫자 진단. 자동 넘김은 실행하기 전 X로 정지, 요청4/확인4 유지.
 - 영향: 충분히 기다리면 시스템 빠른 설정창에 제스처가 전달될 위험. 관측된 것은 뒤 화면의 추적 지속이며 실제 설정 오조작은 발생하지 않음.
 - 잘못된 기존 접근: active-root 조회 결과를 현재 입력 대상 창과 동일시.
 - 수정: YouTubeWindowGuard에서 창 메타데이터의 입력 초점/ID/앱 창 유형/PiP를 검사. 입력초점이 일치하는 일반 앱 창만 허용. 정보 없거나 빠른 설정/작은 화면은 대기. 제스처 직전 재조회에도 동일 검사.
@@ -301,7 +410,7 @@
 
 - 증상/재현: 재생 중 dump는 could not get idle state. 구형runner는 Android17에서 android.test.RepetitiveTest 누락. 매번 findAccessibilityNodeInfo 호출은 약10초 간격.
 - 원인: 계속 변하는UI의 idle조건, 구형실행기의 framework classpath 누락, 탐색 내부 idle 대기. Instagram 진행값 미제공을 의미하지 않음.
-- 증거: private/instagram-probe/sample-1.txt(누락예외),sample-1-progress.txt(지연),sample-2-cached-progress.txt(약400ms진행).
+- 증거: 비공개 증거 자료(누락예외),sample-1-progress.txt(지연),sample-2-cached-progress.txt(약400ms진행).
 - 영향: 지원 가능성 조사 속도/정확성. 설치앱의 동작 경로는 미변경.
 - 잘못된 접근: 일반XML덤프에 RangeInfo가 포함되거나 반복 탐색이 무간섭 고속이라고 가정.
 - 대응: 일시정지로 UI구조 관측. 기기에 있는 android.test.runner/base/uiautomator jar를 classpath에 명시해 app_process 실행. 전용 scrubber 노드 획득 후 refresh로 숫자만 읽고 실패 시 재조회.
@@ -312,7 +421,7 @@
 
 - 증상/재현: 자동 제스처 pending 중 root가 잠시 null이면 패키지를 빈 문자열로 해석하여 invalidate/gate.cancel에 진입할 수 있었다. 코드/조건 재현이며 실제 오스와이프는 관측하지 않음.
 - 직접 원인: 앱 정보 없음과 알려진 다른 앱으로의 이동을 구분하지 않음.
-- 확인 증거: 부모·독립 리뷰 양쪽에서 확인. SessionPolicyTest.missingRootRetainsPendingConfirmation로 null/빈문자열과 pending→WAITING→FAILED 경로 재현.
+- 확인 증거: 코드·독립 리뷰 양쪽에서 확인. SessionPolicyTest.missingRootRetainsPendingConfirmation로 null/빈문자열과 pending→WAITING→FAILED 경로 재현.
 - 영향: D-002 조회공백 보호의 회귀 위험. 미확인 제스처 재시도 차단이 풀릴 수 있음.
 - 잘못된 접근: 값이 다르다는 이유만으로 패키지 전환이라고 판단.
 - 수정: SessionPolicy.packageChanged는 비어 있지 않은 알려진 패키지 변경만 true. 서비스에서 사용.

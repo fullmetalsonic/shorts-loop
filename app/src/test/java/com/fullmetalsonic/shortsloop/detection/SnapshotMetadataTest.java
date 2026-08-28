@@ -5,6 +5,18 @@ import static org.junit.Assert.*;
 
 /** JVM metadata checks; Android window/geometry checks remain device tests. */
 public class SnapshotMetadataTest {
+    @Test public void liveFlagSurvivesPackageAndWindowCopiesWithoutBecomingVisualOrUsable() {
+        YouTubeSnapshot source = YouTubeSnapshot.livePreview("youtube-live-node:1", null);
+        YouTubeSnapshot copy = source.withIdentity("com.google.android.youtube|youtube-live-node:1").inWindow(8, null);
+        assertTrue(copy.live); assertFalse(copy.ad); assertFalse(copy.visualCandidate); assertFalse(copy.usable());
+        assertEquals(8, copy.windowId); assertNull(copy.progress); assertEquals(source.reason, copy.reason);
+    }
+    @Test public void ordinaryAndInstagramSnapshotsDoNotAcquireLiveFlag() {
+        assertFalse(YouTubeSnapshot.withoutClock("hash", null, false).live);
+        assertFalse(YouTubeSnapshot.advertisement(null).live);
+        assertFalse(YouTubeSnapshot.unavailable("waiting").live);
+        assertFalse(new YouTubeSnapshot(null, "normal", null, "").withIdentity("normal2").live);
+    }
     @Test public void appIdentityPrefixKeepsClocklessCandidateAndWindow() {
         YouTubeSnapshot source = YouTubeSnapshot.withoutClock("hash", null, false).inWindow(7, null);
         YouTubeSnapshot copy = source.withIdentity("com.instagram.android|hash");

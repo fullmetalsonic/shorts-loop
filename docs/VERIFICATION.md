@@ -1,8 +1,175 @@
-# 검증 기록 · ShortsLoop 0.2.4
+# 검증 기록 · ShortsLoop 0.2.5
+
+## 2026-08-28 · 현재 code21 확정 후보 / Current frozen candidate
+
+code21은 차단 상태의 확장 조회 재활성화 금지와 반복0/별도 동작 없는 idle 플래그 원복을 보강한 **0.2.5 확정 후보**다. 고정 APK **709703bytes**, SHA-256 `6095BC8C22BD49AACA348E7D1C048301A9E229C92288D1620439F047179E16B2`. 최종 소스·같은 APK로 아래 결과를 확인했으며 code20 수치를 재사용하지 않는다.
+
+| 검사 / Check | 결과 / Result | 범위 / Scope |
+|---|---|---|
+| 최종 BUILD / Compile | PASS | code21 제품·시험 빌드 / Final product/test build |
+| Unit / Regression | PASS | 직접JUnit356개 /356 product tests |
+| Lint | PASS | 0오류·기존3경고 /0 errors,3 existing warnings |
+| 정적 보호 / Static guards | PASS | LIVE_TREE_LIFECYCLE 포함 조회 생명주기 원복 검사 |
+| 동일 APK 계측 / Exact-APK emulator checks | PASS | 10:39 API26/33/34 각각74/74/73 |
+| 휴대폰 설치·연결 / Phone installation and binding | PASS | 10:40 code21 설치·접근성 bound 확인 |
+| 설정·산출물 동일성 / Preferences and APK parity | PASS | 재생 설정 보존·설치 SHA256 및709703bytes 일치 |
+| 최종 독립리뷰 / Final independent review | PASS(검토 범위) | 조회 원복 추가P1/P2 없음 / No additionalP1/P2 findings |
+| code21 YouTube10연속 / Ten consecutive transitions | PASS | 10:40:41→10:47:45.702,424.5초,확인0→10,세대6·수동입력/앱전환 없음·라이브0 |
+| 실제 전환 화면 / Visual transition review | PASS(관측 범위) | 전환1~10 모두 서로 다른 정상 전체화면 영상·플로팅·올바른 이동 방향 육안 확인 |
+| 시험 후 전체 실행 / Post-test execution | PASS | 약10:50 플로팅X로 전체OFF 확인 |
+| 업데이트 자동조회 선택 복원 / Restore update preference | PASS |10:51 실제 UI에서ON 복원, UI·저장값 확인 / Restored ON via UI and checked in storage |
+| 20연속 / Twenty consecutive transitions | 미완료 / Incomplete | 이번 공식 목표10회와 구분 |
+| code21 라이브0초/5초/OFF 개별 / Individual live retests | NOT RUN | 아래 개별 라이브PASS는code20의 근거 |
+| 새 Public·CI·공개 재다운로드 / Publication | NOT RUN | 현재미게시·공개CI/익명자산/해시 확인 예정 |
+
+code21 공식10연속은 결과 집계의PASS와 전환1~10 화면의 실제 육안 대조를 모두 확인했다. 수동 입력·앱 전환 없이 확인기준0→10,같은 세대6으로 진행했으며 모두 일반 영상이고 라이브 이동은0이다. code20의 외부 중단2회나 개별 라이브 시험,목표 이후 추가 관측을 합산하지 않는다. 새 라이브0초/5초/OFF 개별 시험은code21에서 미실행이므로 code20의 근거와 구분한다. D-021은 미수정이며20연속 완료로 확대하지 않는다.
+
+The final **code21** artifact passed build,356 product tests,lint,static guards and74/74/73 emulator checks;phone version/binding/preferences/hash and final review also passed. The separate code21 run **passed10 consecutive normal-video transitions** in424.5 seconds(10:40:41→10:47:45.702),confirmation0→10,generation6,with no manual input or app change and no live skips. All10 transition screens were visually reviewed. Post-target observations are excluded. FloatingX stopped overall execution around10:50. The update preference was restored ON at10:51. Code21 individual live retests and publication checks remain pending;D-021 and20-transition completion are unresolved.
+
+## 2026-08-28 · code20 확정 후보·실기기 검증 / Code20 verification
+
+**0.2.5/code20, 미게시.** cleanup을 포함한 확정 APK는 **725487bytes**, SHA-256 `EF59D4E40E192A89D5B207741B03CCE08FA11AC1079DC61C7776C19A1D3D60EB`이다. 같은 후보를 에뮬레이터와 휴대폰에서 확인했다. 초기 cleanup 전356시험과 후속 cleanup 포함 최종356시험을 구분하며 아래는 후자의 결과다.
+
+**Unpublished0.2.5/code20:** the final cleanup-inclusive **725487-byte** APK has the SHA-256 above. The following results concern this exact candidate, including the final356-test rerun, not just the earlier pre-cleanup checkpoint.
+
+| 검사 / Check | 결과 / Result | 실제 범위 / Scope |
+|---|---|---|
+| BUILD / Compile | PASS | cleanup 포함 최종 제품·시험 APK / Final cleanup-inclusive build |
+| 제품 Unit / Regression | PASS | 직접 JUnit356개 /356 product tests |
+| Lint | PASS | 0오류·기존3경고 /0 errors,3 existing warnings |
+| 동일 후보 에뮬레이터 / Exact-candidate emulators | PASS | 10:30 API26/33/34 각각74/74/73개 / Not host-app scrolling E2E |
+| 휴대폰 설치·준비 상태 / Phone installation/readiness | PASS | code20 설치 및 준비 확인 / Installed candidate ready |
+| 재생 설정 보존·설치 APK / Preferences and installed parity | PASS | 설정 유지,725487bytes·위 해시 일치 / Preferences, size and hash match |
+| 실제 UI 준비 상태 / Main UI readiness | PASS(관측 범위) | 권한 경고 없음 육안 확인 / No permission warning visible |
+| 라이브5초 지연 /5-second live delay | PASS | 10:30:29 대기 시작 →10:30:34 요청 →10:30:35 확인누계1·25초 일반 영상 진입 |
+| 라이브OFF 대기 / Live-OFF waiting | PASS | 10:33:33~39 같은 라이브 인식,blocked=false·요청2/확인2 유지 |
+| 0초·반복0회 독립 / Immediate at zero normal plays | PASS | 10:34:31 조회 준비 →10:34:33 요청 →10:34:34 확인누계2→3 |
+| 새10연속 시험 / New10-transition run | 외부 중단·2/10 / Externally interrupted | 10:35:28 확인기준3·세대30 →10:35:52 1회 →10:36:47 2회 →10:37:17 외부 앱 전환.10PASS 아님 |
+| D-021 일반 반복 경계 / Normal loop-boundary issue | 미해결 / Unresolved | code16의19초17→0 및 과거18초16→0 문제를 라이브 수정으로 해결 처리하지 않음 |
+| Public Release·CI·익명 재다운로드 / Publication checks | NOT RUN | 새 후보 미게시 / Candidate unpublished |
+
+5초 시험은 요청뿐 아니라 다음 일반 영상 진입까지 확인했다.0초는 별도 시청 지연이 없다는 의미이며 조회 준비·안정화·안전 확인 시간을0ms로 보장하지 않는다.0회 독립 시험의 증가분은1회(확인2→3)이고 누계3을 새로운3연속 성공으로 세지 않는다. 라이브OFF 시험도 이동 성공이 아니라 요청이 늘지 않는 보호 동작의 PASS다.
+
+The5-second test confirmed arrival at a normal video, not only gesture dispatch. Immediate mode still permits retrieval/settlement/safety checks. The zero-play test confirmed one transition(2→3), not a new three-transition streak; live-OFF passed by keeping requests unchanged. The separate10-transition run was interrupted externally after two confirmations, not completed.
+
+연속 시험 상세:10:35:28 기준확인3/세대30에서 시작해10:35:52 첫 확인 후54초 영상,10:36:47 두 번째 확인 후48초 영상으로 이동했다.10:37:17 전면이 런처/카메라로 바뀌어 세션을 중단했다. 종료 시 blocked=false·pending=false·요청5/확인5, 마지막 진행30/48초다. 제품 감지 실패로 분류하지 않지만10연속 성공도 아니며, 이전 개별 라이브 시험을 합산하지 않는다.
+
+The run reached a54-second video after its first confirmation and a48-second video after its second. Foreground launcher/camera transition ended the session at10:37:17 with blocked=false, pending=false, requests=5, confirmations=5 and last progress30/48 seconds. This was external interruption, not a detected product failure or a10-transition PASS.
+
+code18의 인식FAIL은 프로브/제품 플래그 불일치였다. 동일 화면3초씩 비교에서 기본49노드에는 전용 라이브 노드가 없고 확장101노드에는 있었다. 중간code19는 라이브ON만 확장했으나 code20은 전체실행ON·YouTube선택·전면YouTube이면 라이브 옵션과 무관하게 확장한다. 라이브OFF의 일반→라이브 확인과 pending 중 동일한 조회형태를 유지하고, 모드 변경 후 이전 root 폐기 및 failClosed/onDestroy 원복을 적용했다. D-033의 해당 원인은 실제 기기 재시험PASS로 확인하되 모든 호스트 UI·연속 라이브·장시간을 보장하지 않는다. [D-033](DEBUG_LOG.md).
+
+Code18's flag mismatch is corrected and device-retested for the observed cases. Code20 keeps retrieval consistent even with live skipping OFF, discards old roots on mode changes and restores default flags on stop/destruction. This is not a guarantee for every host UI, consecutive live pair or endurance run.
+
+## 2026-08-28 · 과거 code18 고정 후보 / Retained code18 candidate
+
+**0.2.5/code18, 미게시·실기기 라이브 인식 FAIL.** 라이브 옵션은 기본OFF·대기0~60초/기본0초(안전 확인 후 바로), 일반 반복0회와 독립이며 전체 실행OFF는 광고·라이브까지 중지한다. [라이브 계약](LIVE_SKIP.md). 아래 수치는 동일 고정 후보에 대한 결과이며 code16/17 및 후속 code20와 합산하지 않는다.
+
+**0.2.5/code18 was not published and failed actual live recognition.** Live previews are opt-in, initially OFF, with a0–60-second delay(default0, immediate after safety checks). The option is independent of zero normal plays; main OFF stops everything. Code16/17 and code20 results remain separate.
+
+고정 APK / Frozen APK: **738945 bytes**. SHA-256: `941532517058CB8553EFE5DB34ED1762426C468B2D66F88A567CE788E306C54D`.
+
+| 검사 / Check | 결과 / Result | 실제 범위 / Scope |
+|---|---|---|
+| BUILD / Compile | PASS | code18 제품·시험 APK 빌드 / Product and test APKs |
+| 제품 Unit / Regression | PASS | 직접 JUnit352개 /352 product tests |
+| Lint | PASS | 0오류·기존3경고 /0 errors,3 existing warnings |
+| 동일 후보 에뮬레이터 계측 / Exact-candidate emulator checks | PASS | API26/33/34 각각74/74/73개. 실제 소셜앱 E2E 아님 / Not social-app scrolling E2E |
+| 실기기 설치 / Phone installation | PASS | ADB 업데이트 설치, versionName0.2.5/versionCode18 확인 / ADB replacement installation |
+| 접근성 재연결 / Accessibility reconnection | PASS | 기존 허용 서비스의 설치 후 연결 회복. 새 권한 자동 부여·실행 자동 시작 아님 / Existing service rebound; no new grant or auto-start |
+| 재생 설정 보존 / Playback preferences | PASS | 설치 전후 설정 유지 / Preserved across installation |
+| 설치 APK 동일성 / Installed APK parity | PASS | 738945bytes 및 위 SHA-256 일치 / Matching size and hash |
+| 독립 리뷰 지적 보완 / Review fixes | 수정 완료 / Implemented | 최종 root 재검증, 오래된 인덱스 배제, 일반 수집 회귀 방지, 동일 uptime 안정 상태 유지 |
+| 최초 실기기 라이브 관측 / Initial live observation | FAIL | 조회 플래그 차이로 전용 노드가 없어 인식 대기 지속. D-033 / Dedicated node absent under product flags |
+| 라이브0초·5초 정식 실기기 시험 / Formal0s and5s phone tests | NOT RUN | 인식 문제 진단 후 별도 시험 / Pending recognition diagnosis |
+| code18 YouTube10연속 / Ten consecutive transitions | NOT RUN | code16의2/10 실패와 합산하지 않음 / Separate from the failed code16 run |
+| code18 D-021 재시험 / Loop-boundary retest | NOT RUN | 일반 영상17→0은 code16 당시 관측이며 code18 새 증거 아님 |
+| 새 Public Release·CI·익명 재다운로드 / Publication checks | NOT RUN | 실패 후보 미게시 / Failed candidate unpublished |
+
+최종 root 재조회에서 창·페이지·라이브 상태를 다시 확인하고, 라이브→라이브는 요청 이후 같은 창/pager의 인덱스 변화와 다른 안정 페이지를 함께 요구한다. 이전 이벤트를 다음 요청에 재사용하지 않는다. 일반 쇼츠는 기존의 null-child 허용·600노드 상한 수집을 유지하고 라이브에만 완전성 감사를 적용한다. 동일 millisecond 재검증은 안정 시간을 늘리지 않고 이미 완료한 상태만 유지하며 역행은 초기화한다. 이 자동시험 결과가 실제 라이브 넘김·장시간 안정성을 대신하지 않는다.
+
+The final root is revalidated immediately before action. Live-to-live confirmation requires fresh same-window/pager index evidence and a distinct stable page. Normal collection retains its existing bounded behavior; complete-tree auditing is required for live actions. Same-timestamp checks preserve settled evidence without adding time. These checks do not establish real live scrolling or endurance reliability.
+
+D-019/D-021 및20연속 검증 미완료를 유지한다. 미연결 VisualSequence20시험의18PASS/2FAIL와 별도 오디오 진단은 제품352시험과 분리한다. 새 기능의 실제 결과는 후속 증거가 생긴 뒤 추가하며 미실행을 PASS로 바꾸지 않는다.
+
+## 2026-08-28 · 과거 code16 YouTube10연속 시험FAIL 및 라이브 조기 식별 조사
+
+- 설치본0.2.5/code16, 목표1회. 읽기 전용 관측101.4초에서2개 전환 성공 후3번째 라이브 미리보기 진입에 전환 확인 실패/안전정지.10연속 성공 아님. 이전 누계/수동 전환을 이 시험에 합산하지 않는다.
+- 코드와 실제 화면 대조: 제스처는 새 라이브 페이지로 이동했지만 유효 SeekBar0개여서 당시 code16 감지기가 새 페이지를 인정하지 못했다. 접근성은 연결 상태였다.
+- 후속 수동 일반→동일 라이브 재진입2회에서 전용 `immersive_live_preview_player`가 안내 문구 전에도 접근성 트리에 존재함을 확인. 일부만 보이는 전환 도중에도 잡히므로 실제 넘김에는 활성 페이지/안정화 보호가 필요하다.
+- 이 code16 조사 단계에서는 제품 수정/라이브 설정/라이브 자동 넘김 재시험이 미구현·미실행이었다. 조사는 기능 구현 PASS가 아니며 이후 code18 구현·검증은 위 항목으로 분리한다. [D-032 상세](DEBUG_LOG.md).
+
+## 2026-08-28 · 과거 UI 안내 보완 후보 code17 체크포인트
+
+당시 후보는0.2.5/code17이었다. 접근성 재연결이 필요한 상태를 구분하는 MainActivity와 안내 문자열만 보완했으며 핵심 감지·업데이터 코어는 아래 code16 검증본과 같았다. 아래 표는 그 시점의 빌드 진행 중·기기 설치 전 체크포인트를 보존하며 현재 code20 상태가 아니다. code16의 실제 OS 설치 성공을 code17 설치 완료로 바꾸어 기록하지 않는다.
+
+| 검사 | 결과 | 범위 |
+|---|---|---|
+| code17 빌드·안내 변경 시험 | 진행 중 | MainActivity/문자열의 재연결 안내 보완 |
+| code17 실기기 설치·해시·안내 화면 | 미실행 | 최종 산출물 확정 뒤 비파괴 확인 예정 |
+| code17 Public·CI·공개 자산 동일성 | 미수행 | 게시 전 체크포인트 |
+| 기존 감지 안정성·20연속 | 미완료 | 아래 과거 시험의 한계 유지, 이번 UI 보완으로 해결했다고 표시하지 않음 |
+
+## 2026-08-28 · 중간 code16 핵심 업데이터·호환성 검증
+
+아래 결과는0.2.5/code16,703134bytes의 중간 통합 APK에 해당한다. 후속 UI 후보code17 및 후속 라이브 후보code18·20과 구분한다.
+
+| 검사 | 결과 | 실제 범위 |
+|---|---|---|
+| BUILD / Compile | PASS | 제품 APK·시험 APK 빌드 |
+| 제품 Unit / Regression | PASS | 직접 JUnit274개, 기존 OS정책 포함241 + 업데이트정책33 |
+| Lint | PASS | 0오류3경고 |
+| 호환성·업데이트 계측 | PASS | API26/33/34에서 각각47/47/46개 |
+| 설치 사전검사 | PASS | API26/33/34 각36개 + 실제 Android17 기기36개 |
+| 손상 사본·provider 제한 | PASS | 정상 사본,0바이트 사본·잔류.part 복구,해시·버전 메타데이터 불일치 거부,읽기·쓰기·경로 제한 |
+| 실제 Android 설치 | PASS | 시험 시작 code15→중간 code16,Android 설치창을 통한 버전 상승 |
+| 설정 보존·APK 동일성 | PASS | 설치 전후 설정값 동일,설치본과 원본703134bytes/SHA256 일치 |
+| 실제 GitHub 네트워크 | PASS | API26/API34/실기기에서 기존 공개 자산의 HTTPS 다운로드·리다이렉트 경로 확인; 새0.2.5 공개 파일 시험 아님 |
+| 서명 일치 검증 | PASS(소스·정상 경로) | API28 전후 분기,전체 서명 집합 비교를 소스 리뷰하고 동일 서명 APK의 실제 설치 확인 |
+| 다른 키 실물 APK 거부 | 미실행 | 소스의 서명 불일치 차단과 별개이며 동적 시험 PASS에 포함하지 않음 |
+| 제품 시험 진입점 | PASS(정적 구성) | 시험 자산·외부 QA 진입점·검증 우회가 제품에 없고 전송 대체는 계측에서만 주입 |
+| 새 Public 게시 | 미수행 | 중간 code16 검증본의 당시 상태. 현재 code20과 구분 |
+
+code16 원본/설치본 SHA-256: `6FA61EA51C04AF5A8246E21183C7F4D9FDF0564FEEF5794553BEBEF7C1F4EFE1`. 설치 사전검사의36개는 패키지·해시·메타데이터·파일복구/provider 경로 시험이며 다른 서명 키 실물 시험을 포함하지 않는다. 구형 AOSP 이미지에 YouTube/Instagram은 없으므로47/47/46개 계측을 소셜앱 자동 넘김 E2E로 해석하지 않는다.
+
+### D-031 · 계측 후 접근성 중단과09:31 복구
+
+실제 OS 설치 뒤 네트워크 계측이 대상 앱을 종료시켜 접근성 서비스가 재연결되지 않았다. enabled 설정·오버레이 허용은 남았지만 `Bound{}`/자체서비스의 Crashed 항목과 상단 준비 안내가 확인됐다. exit-info09:26:47 `PACKAGE UPDATED`,09:27:22/23 계측 시작·종료 관련 `FORCE STOP`을 확인했으며 Java fatal crash는 관측되지 않았다. 제품 코드 크래시로 단정하지 않는다.
+
+09:31 접근성 수동 OFF→ON 후 `Bound{자체서비스}`, `Crashed{}`, `runtime connected=true`, `enabled=false`, `blocked=false` 및 실제 화면의 준비 바로가기 소멸 확인. 제품 코드·APK·저장 설정 변경 없이 계측 후 연결 상태를 복구했다. 이 구간에서 소셜앱 자동 넘김 E2E를 새로 수행한 것은 아니다. [D-031](DEBUG_LOG.md) 참조.
+
+재발방지 시험 순서: 파괴적 계측 후에는 enabled/bound/runtime과 사용 흐름을 확인한다. 실제폰 최종 설치 이후 계측을 재실행하지 않고 네트워크 시험은 설치 전 또는 에뮬레이터에서 수행한다. 최종 설치 뒤에는 APK 해시·버전·설정·연결 상태와 UI의 비파괴 확인만 수행한다.
+
+## 2026-08-28 · 로컬 0.2.5-compat-test 호환성 후보
+
+아래는 기존 공개판 및 이후 통합판과 구분하는 code14의 최초 호환성 후보 기록이다. [호환성 계약](COMPATIBILITY.md)을 검증하며 이 단계에서는 새 권한/감지 알고리즘 변경이 없다. 최초660364bytes 후보는 아이콘 패키징 누락이 뒤늦게 확인된 비최종 산출물이며, 후속660843bytes 수정 후보와 구분한다.
+
+| 검사 | 결과 | 실제 범위 |
+|---|---|---|
+| BUILD / Compile | PASS | 제품 assembleDebug, compileDebugUnitTestJavaWithJavac, assembleDebugAndroidTest |
+| 제품 Unit / Regression | PASS | 직접 JUnit 241개. 기존227 + OS정책14 |
+| Lint | PASS | 0오류3경고; 기존 OldTargetApi/ObsoleteSdkInt/SecondsEditor SetTextI18n |
+| 정적 API/권한 검사 | PASS | minSdk26, base/v34 XML, 캡처타입격리, API34팩토리, 기존시간제/광고/안전가드 |
+| 독립 리뷰 | PASS | 지적한 계측시험 분기·구형라벨·권한설명 보완 후 재리뷰. 신규 C/H/M0 |
+| 에뮬레이터 실행 | PASS(아래 범위) | Android8/API26 17검사, Android13/API33 17검사, Android14/API34 16검사 |
+| UI·사용성 | PASS(관측 범위) | API26/34 세로1080×1920에서 지원 이유·스크롤·하단실행·수동 안내/시스템 추가요청창 육안 확인 |
+| 타일 | PASS(제한 범위) | API26 추가 후 첫 탭으로 설정화면 복귀, 다시 펼치면 ‘권한 설정 필요’ 및 앱이름 포함 접근성 설명 확인. 실행ON/광고전용 실상태는 미실행 |
+| APK 무결성 | PASS | v2서명, 산출물과3개 에뮬레이터에서pull한 설치본 SHA256/660364bytes 일치 |
+| 실기기·소셜앱 E2E | 미실행 | 연결된 휴대폰 없음; 실제 타일·권한·자동넘김·장시간은 별도 |
+| 새 Public / 메일 | 미수행 | 공개판0.2.4 변경 없음 |
+
+후보 APK660364bytes, SHA256 `05E61E8FE4C8B657C3FE990487B73536B7C13A850B918147128A4FA8FC94FE01`. 구형 OS 설명/사용불가·설정보존은 제품 시험 범위이며, 기존 미연결 VisualSequence 실험2실패 및20연속 미완료를 해소하지 않는다.
+
+계측 증거: 비공개 증거 자료, 20260828-085012-emulator-5556.txt, 20260828-085004-emulator-5558.txt. 각각 result=PASS를 직접 확인했다. 실제 Activity 초기화·저장된 ON이 미지원 화면에 ON으로 보이지 않음·설정 보존·기본기능 정책·API34 factory 로딩·구형 no-op·버전별 XML capability를 확인했다. 세 AOSP 이미지에는 YouTube/Instagram이 없으므로 실제 설치 호스트의 감지나 스와이프 성공 시험은 아니다.
+
+화면 증거: 비공개 호환성 화면 자료의 top/bottom/support/dialog PNG, compat-5554-tile-after.png/XML. API26 타일은 에뮬레이터 cmd statusbar로 등록했고 실제 탭으로 설정화면 복귀를 확인했다. 최초 등록 직후에는 기본 이름, 서비스가 연결된 첫 탭 이후 상태 라벨이었다. 제조사별 전체 수동편집 조작·광고전용 타일의 최대글자 실화면·큰글꼴/가로/폴더블은 미실행이다. API34 요청창은 취소해 자동 추가되지 않음을 확인했다. API34 UIAutomator 초기 idle실패1회는 다음 대화창에서 정상 덤프했으며 화면 캡처 및 계측 성공과 구분한다.
+
+최초 로컬 APK: `artifacts/shorts-loop-v0.2.5-compat-test.apk`(660364bytes,비최종·배포 제외). 계측 스크립트 `scripts/verify-compat-emulator.ps1`은 에뮬레이터만 허용한다. APK·테스트 APK 설치 외 접근성/플로팅/캡처 권한을 부여하지 않았고 자동실행을 켜지 않았다. 테스트용 가상기기는 종료하고 자료는 보존한다.
+
+후속 아이콘 수정 후보: `artifacts/shorts-loop-v0.2.5-compat-test-verified.apk`,660843bytes,SHA256 `C52883CD9391786AF7F00137E065812813C23E51FD64D7BCCCDEE1C6262A7B45`. clean 빌드로 기본 anydpi와 v33 아이콘 자원을 함께 포함하고 완성 APK 패키징 검사 및 API26 실제 아이콘 표시를 확인했다. API26/33/34 계측18/18/17개 PASS. 이는 호환성 단계의 최종 수정 후보이며 이후 code16·17 통합판의 최종 배포본을 뜻하지 않는다. [D-029](DEBUG_LOG.md) 참조.
 
 ## 최종 0.2.4 · 광고 독립·기능별 UI
 
-사용자 승인으로20연속대기는면제했다. 미완료를성공으로바꾸지않으며아래후보A/B의과거결과와합산하지않는다. 최종Public게시·CI·재다운로드결과는 [릴리스 기록](releases/v0.2.4.md)에기록했다. 소스2e89114의CI33074271656 제품227/실패0·빌드PASS·lint0오류3경고,익명APK681624bytes/원본·설치본SHA동일/v2검증PASS. 공개SHA256텍스트도원본일치. 최종155개로컬문서링크누락0·독립문서재리뷰PASS. 앱소스변경없이게시문서만후속커밋한다.
+20연속미완료를명시하는시험판으로공개했다. 미완료를성공으로바꾸지않으며아래후보A/B의과거결과와합산하지않는다. 최종Public게시·CI·재다운로드결과는 [릴리스 기록](releases/v0.2.4.md)에기록했다. 소스2e89114의CI33074271656 제품227/실패0·빌드PASS·lint0오류3경고,익명APK681624bytes/원본·설치본SHA동일/v2검증PASS. 공개SHA256텍스트도원본일치. 최종155개로컬문서링크누락0·독립문서재리뷰PASS. 앱소스변경없이게시문서만후속커밋한다.
 
 | 검사 | 결과 | 실제 범위 |
 |---|---|---|
@@ -16,19 +183,19 @@
 | 실제0회광고 | PASS(1회) | 21:50:40.446요청1→21:50:41.529확인1,다른일반릴스확인;target0·adsON·전체ON |
 | 0회일반/시간제 차단 | PASS(관측범위) | 초기15표본요청0,광고후21:51:14까지요청/확인1고정,timedON10이나IDLE/요청0,blocked=false |
 | 광고OFF / 메인OFF | PASS(상태) | 옵션OFF는target0·enabledtrue보존/요청불변;메인OFF는adsON보존하면서enabledfalse·타이머중지·플로팅닫힘. 광고OFF에서같은광고재등장은미실행 |
-| 연속20 / 광범위회귀 | 미완료 | 사용자대기면제;최종YouTube E2E·모든정지/댓글/회전/큰글꼴/장시간은미실행 |
+| 연속20 / 광범위회귀 | 미완료 | 20회완료전시험판공개;최종YouTube E2E·모든정지/댓글/회전/큰글꼴/장시간은미실행 |
 
 최종원본/설치본SHA256: `D2846EB1F935F5886DEE37CC5D2EA877C7E58DB0019EC0286E8AFEFA7DB92944`.
 
-기기기록은private/device-tests/release024-zero-initial/zero-next1/zero-after-ad/zero-adsoff/mainoff.jsonl,자기앱실제화면은private/device-captures/release024-*.png. 광고진입을위한수동스와이프1회는자동성공에포함하지않는다. 광고요청·다른페이지확인과화면전후대조를함께확인했다. 광고 CTA클릭은하지않았다.
+기기 숫자 기록과 자기 앱의 실제 화면 증거는 비공개로 보관한다. 광고진입을위한수동스와이프1회는자동성공에포함하지않는다. 광고요청·다른페이지확인과화면전후대조를함께확인했다. 광고 CTA클릭은하지않았다.
 
 설정복구/정상회귀:기준·현재1,두앱/광고/플로팅/시간제ON10,화면보조OFF,전체ON으로복원했다. 21:55~56 restored기록에서33.932초정상영상이10초에잘리지않고N1끝에서요청/확인2→다음37.900초영상으로전환했다. 일반정상N1 실제회귀1회PASS이며20연속시험은아니다. 음량·음소거설정은변경하지않았다.
 
 현재 scripts/verify.ps1은제품구현과같은시험범위다. scripts/verify-sequence-experiment.ps1이보존한실험20개를별도실행하며실제2FAIL을반환한다. 아래B의전체245시험/제외옵션설명은소스집합분리전의과거실행기록이다.
 
-### 후보B 추가 관측·사용자 완료조건 변경
+### 후보B 추가 관측·전환 집계 범위
 
-21:32:31.823~21:37:39.561 같은generation13 비조작구간에서 총확인16→21,광고4→5,시간제1→2:5전환=정상3+시간제1+광고1. 앞선generation8구간과합산하지않는다. 긴142.569/167.666초일반영상에서도N회경로를유지했다. 사용자는광고를합계에포함하도록했고이후20회완료대기를면제했다. 원시파일timed-v024-b-twenty-run1.jsonl.
+21:32:31.823~21:37:39.561 같은generation13 비조작구간에서 총확인16→21,광고4→5,시간제1→2:5전환=정상3+시간제1+광고1. 앞선generation8구간과합산하지않는다. 긴142.569/167.666초일반영상에서도N회경로를유지했다. 정상·시간제·광고전환은종류별기록과함께총전환합계에포함하되20회미완료를명시한다. 원시파일timed-v024-b-twenty-run1.jsonl.
 
 ## 시간제 보조 B · 기본10초/최대60초
 
@@ -49,7 +216,7 @@
 
 B 원본/설치본 SHA256: `29CEEE11A5F1101692BA3ED7122446C02349F5A94B7D0D75A6481CD4627D07D6`.
 
-실제 B UI 화면은 최신 설치본에서 캡처하고 육안 확인했다. 61 입력이 원문으로 남고 저장값은60을 유지하는 오류 처리,60에서+무효,10 복구를 dumpsys와 함께 확인했다. 기본OFF는 신규/이전prefs 단위시험과 A 최초설치에서 확인했고 B에서는 사용자가 켠 시간제 선택을 유지한다. 정상43.604초 영상은10초 경과 후에도 기존 재생 횟수를 따르는 것을 관측했다.
+실제 B UI 화면은 최신 설치본에서 캡처하고 육안 확인했다. 61 입력이 원문으로 남고 저장값은60을 유지하는 오류 처리,60에서+무효,10 복구를 dumpsys와 함께 확인했다. 기본OFF는 신규/이전prefs 단위시험과 A 최초설치에서 확인했고 B에서는 기존에 켜진 시간제 선택을 유지한다. 정상43.604초 영상은10초 경과 후에도 기존 재생 횟수를 따르는 것을 관측했다.
 
 시험 명령은 `scripts/verify.ps1`(전체), `-ExcludeUnwiredSequenceExperiment`(기존 미연결 실험20개만 명시적으로 제외, 전체PASS 아님)이다. 두 결과를 혼동하지 않는다. 재생 내용/계정이 포함된 화면은 private 밖에 게시하지 않는다.
 
@@ -59,17 +226,17 @@ B 원본/설치본 SHA256: `29CEEE11A5F1101692BA3ED7122446C02349F5A94B7D0D75A648
 
 시간제 중 일시정지·댓글·잠금·회전·플로팅·0회 및 YouTube 실제 회귀는 이번 B 기기에서 미실행이다. 단위/연결/독립 코드 리뷰를 실제 E2E로 바꾸어 표현하지 않는다. 새 기능의60초 전체 대기 시험도 단위시험이며 기기에서60초를 끝까지 기다린 시험은 아니다.
 
-문서 로컬 링크105개, private/artifacts Git 제외, 최신 APK/설치본 동일성 확인. 남은 범용 안정성 검증과 기존 실험2실패가 있어 새 Public 배포는 하지 않았다. 메일 요청/발송 없음.
+문서 로컬 링크105개, 비공개 자료·산출물 Git 제외, 최신 APK/설치본 동일성 확인. 남은 범용 안정성 검증과 기존 실험2실패가 있어 새 Public 배포는 하지 않았다. 메일 요청/발송 없음.
 
 ## 별도 음향진단0.2.1 후보A · 미검출 경로 확인
 
 한정모듈빌드/시험컴파일/lint PASS(0오류6경고),직접JUnit48PASS,범위·연결검사/독립리뷰PASS. code3/88989bytes/SHA256093881C3C8539762930A5389A764A1776A502E6A324D6D7D96864D8F912AC24F,USB설치·설치본pull일치. 실제시작/결과/스크롤UI육안확인. 기존38+신규10은합성시험으로서실제릴스인식률PASS아님.
 
-사용자직접승인후60.167초,958272표본/2724신호/598프레임중572유효/리셋0,후보0.119검색/776개별평가거부,WHOLE_QUALITY·FLAT_MINIMUM.수신및정상종료/Projection해제확인,반복주기검출은실패. [전체집계·원시증거·주의](AUDIO_PATTERN_TRIAL.md). 진단앱은영상신원을읽지않으므로동일영상의모든시점을원자적으로증명하는시험은아님. main2FAIL/20연속미달/새공개·메일없음유지.
+OS동의후60.167초,958272표본/2724신호/598프레임중572유효/리셋0,후보0.119검색/776개별평가거부,WHOLE_QUALITY·FLAT_MINIMUM.수신및정상종료/Projection해제확인,반복주기검출은실패. [전체집계·원시증거·주의](AUDIO_PATTERN_TRIAL.md). 진단앱은영상신원을읽지않으므로동일영상의모든시점을원자적으로증명하는시험은아님. main2FAIL/20연속미달/새공개·메일없음유지.
 
 ## 별도 음향 반복 후보 시험 ·0.2-audio-pattern 후보A
 
-- 두번째세션(진단자탭없음)은 최종60.162초/958272표본/2356신호블록/최대-10.75dBFS/특징578/초기화1/후보0. 관측은48.366초와59.987초부터종료까지이며초기전구간검증아님. 종료·Projection해제·IG재생확인. 별도기존화면프로브240프레임의10.400초는후보일뿐정확길이아님. 사용자10초미만제보와함께해석,긴영상원인단정금지. [수치·한계](AUDIO_PATTERN_TRIAL.md#두-번째-세션화면-대조--second-session-and-visual-control).
+- 두번째세션(진단자탭없음)은 최종60.162초/958272표본/2356신호블록/최대-10.75dBFS/특징578/초기화1/후보0. 관측은48.366초와59.987초부터종료까지이며초기전구간검증아님. 종료·Projection해제·IG재생확인. 별도기존화면프로브240프레임의10.400초는후보일뿐정확길이아님.10초미만이라는초기길이추정도미검증이므로긴영상원인단정금지. [수치·한계](AUDIO_PATTERN_TRIAL.md#두-번째-세션화면-대조--second-session-and-visual-control).
 
 - [시험계약·사용법·상세결과](AUDIO_PATTERN_TRIAL.md). 기존제품 미교체, 새권한추가없음. Instagram UID+MEDIA/RAM전용/60초/사용자직접OS승인 유지, 자동넘김 미연결.
 - `verify-audio-probe.ps1`:한정모듈 빌드/시험컴파일/lint PASS(0오류5경고), 직접JUnit38 PASS(새코어25+기존13), 범위·연결 정적검사 PASS. 독립 코드리뷰 미해결P1/P2지적0,PowerShell2스크립트구문오류0. main 미연결VisualSequenceTracker2FAIL은별개로유지.
@@ -79,22 +246,22 @@ B 원본/설치본 SHA256: `29CEEE11A5F1101692BA3ED7122446C02349F5A94B7D0D75A648
 
 ## 별도 내부 오디오 수신 시험 ·0.1-audio-probe 후보A
 
-후속결과독립리뷰: 주작업자가전달한실제도구관측수치와4개문서의수치/한계/복원을대조해불일치없음확인. 검토자가기기시험을재실행한것은아니다. 과거권한대기체크포인트의‘현재’문구는‘당시’로정정.
+후속결과독립리뷰: 실제도구관측수치와4개문서의수치/한계/복원을대조해불일치없음확인. 검토자가기기시험을재실행한것은아니다. 과거권한대기체크포인트는당시상태로구분한다.
 
-**20:15 후속:** 실제사용자승인후내부PCM양성수신확인. 세션1:60.080초/955248표본/신호0(음소거조건). 세션2:45.635초까지0→IG음소거해제·재생후56.711초492신호구간/최대-11.07dBFS/peak17222→최종60.172초/957600표본/648신호구간/비영0표본22.99%. 양쪽자동종료후서비스없음/Projection=null확인. 승인반영·실제수신·60초종료PASS,반복판정/정확N/20연속/잠금·수동취소는미검증. 아래19:04~05미실행은과거체크포인트다. [조건·한계·복원](AUDIO_PROBE_TRIAL.md#기기-수신-시험--device-capture-test). 코드변경없어빌드/단위시험재실행없음,기존13PASS와구분.
+**20:15 후속:** OS동의후내부PCM양성수신확인. 세션1:60.080초/955248표본/신호0(음소거조건). 세션2:45.635초까지0→IG음소거해제·재생후56.711초492신호구간/최대-11.07dBFS/peak17222→최종60.172초/957600표본/648신호구간/비영0표본22.99%. 양쪽자동종료후서비스없음/Projection=null확인. OS동의·실제수신·60초종료PASS,반복판정/정확N/20연속/잠금·수동취소는미검증. 아래19:04~05미실행은과거체크포인트다. [조건·한계·복원](AUDIO_PROBE_TRIAL.md#기기-수신-시험--device-capture-test). 코드변경없어빌드/단위시험재실행없음,기존13PASS와구분.
 
-- 사용자 새권한/시험승인에 따라 별도 패키지로 분리. 기존 제품 설치·설정·권한불변. [계약·사용법](AUDIO_PROBE_TRIAL.md).
+- 새 오디오 수집 권한이 필요한 시험을 별도 패키지로 분리. 기존 제품 설치·설정·권한불변. [계약·사용법](AUDIO_PROBE_TRIAL.md).
 - `scripts/verify-audio-probe.ps1`: 한정모듈 assembleDebug/compileDebugUnitTestJavaWithJavac/lintDebug PASS, 직접JUnit13PASS,정적수집범위/권한검사PASS. lint0오류5경고(target35/backup규칙/진단아이콘/한국어문구2). 전체main회귀PASS로확대하지않는다. 기존 미연결 VisualSequenceTracker2FAIL은그대로다.
 - 독립 코드리뷰: API29 Insets조건분기 지적반영 후 미해결P1/P2지적0. 수동중지/잠금/OS취소/직후재시작/회전동의복귀는 기기검증필요. 알림권한추가하지않아 OS가알림을숨길수있으며 최근앱→인앱중지안내포함.
 - USB설치Success,version0.1-audio-probe/code1. APK56943bytes·SHA256 `0B3760F91D1B74AA60A2793159D281C103D710F0F6F754288E7FE5E7E4001174`,설치본pull대조일치. 실제시작화면/버튼표시/시작버튼터치→OS오디오권한창표시확인. 권한은대신부여하지않음.
-- 19:04~05 `RECORD_AUDIO=false`, `running=false`, `samples=0` 확인. **실제오디오수신·60초자동종료·동의거부·OS중지·잠금·재시작 E2E는미실행**. 권한창에서사용자응답대기.
-- 화면증거 `private/device-captures/audio-probe-a-start.png`, `audio-probe-a-permission.png`;재수신설치본 `private/audio-probe-v01-a-installed.apk`. 개인정보화면은공개대상에서제외. 앱은원PCM/특징값을파일로저장하지않는다.
+- 19:04~05 `RECORD_AUDIO=false`, `running=false`, `samples=0` 확인. **실제오디오수신·60초자동종료·동의거부·OS중지·잠금·재시작 E2E는미실행**. 당시OS권한미허용상태.
+- 실제 시작/권한 화면과 재수신 설치본은 비공개 증거로 보관. 개인정보화면은공개대상에서제외. 앱은원PCM/특징값을파일로저장하지않는다.
 - 음악반복/정확N/자동넘김은미구현,20연속기준미달유지. Public업데이트/메일없음.
 
 ## 화면 분석 보조 · A/B/C 실제 설치 시험 (2026-08-27)
 
 - 최종 B 빌드: assembleDebug/compileDebugUnitTestJavaWithJavac/lintDebug PASS, 직접 JUnit **186 PASS**, 정적 안전 검사6종 PASS. lint 0오류/3경고(기존 target, 하위API의 screenshot속성, 기존v26폴더). 기기 E2E와 별개다.
-- 후보A/B 모두 사용자 승인 범위에서 업데이트 설치. B APK와 기기에서 다시 받은 base.apk 모두661363bytes, SHA256 `7B2710DB69CE439A5E1350D0113ACF1CFE0D3EDEC52989AC65411FF3E394B535`. 후보A는 별도 보존했다.
+- 후보A/B 모두 업데이트 설치. B APK와 기기에서 다시 받은 base.apk 모두661363bytes, SHA256 `7B2710DB69CE439A5E1350D0113ACF1CFE0D3EDEC52989AC65411FF3E394B535`. 후보A는 별도 보존했다.
 - 새 설정 기본OFF, 동의창 표시 중OFF·취소OFF·명시 확인ON을 기기에서 확인. B 업데이트 후에도 선택ON/기존목표1/두앱/광고/플로팅 유지, 실행은 안전OFF로 시작했다. 이후 실행ON은 화면의 스위치로 직접 조작했다.
 - 후보A의 분석 미시작: 라우터에서 visualCandidate 누락. B의 `withIdentity` 보존과 새3개 JVM시험/정적 연결 검사/독립 리뷰로 수정. 실제 B에서는 frames가 증가하며 캡처 errors=0, 기존 문제 영상 분석이 시작됐다.
 - 실제 동작 관측은 진행 중이며20개 연속/해결/공개 PASS가 아니다. A/B의 원시 숫자 로그·화면은 private에만 보관한다.
@@ -112,7 +279,7 @@ B 원본/설치본 SHA256: `29CEEE11A5F1101692BA3ED7122446C02349F5A94B7D0D75A648
 - 별도 비조작 정상연속:비교08(25.475초)→17.865초 영상→다음 무시간원 영상,18:48:10.859/18:48:29.469 두 번 실제 전환확인.요청/확인2/2,광고0/화면추정0. 그다음그림형영상은STATIC학습초기화로정체. **20연속 기준 미달**, 전후수동비교구간은연속성공에포함안함. `v023c-normal-advance.jsonl`, `v023c-normal-chain2.jsonl`.
 - C까지 화면분석 요청/확인0/0. 기존시간기반2회성공을화면분석해결로주장하지않는다. 단일앵커대신전체시간구간상관비교를별도코어로시험준비중이며아직기기에적용하지않았다.
 - 후속 비교11의65.803초→69.633초→34.084초가진행해18:52:55누계요청/확인4/4.앞선2회와사이수동이동있으므로4연속아님.18:53:27~30 화면보조OFF·기존실행ON복원,frames517고정과시간진행확인. 원시 `v023c-long-normal`, `v023c-audio-policy-check`, `v023c-checkpoint-before-ui`, `v023c-visual-off-restored`.
-- 최신오디오질문:공식문서/IG패키지flag/최근재생기usage만확인,실제오디오캡처/새권한/녹음미실행.후속권한동의필요. YouTube새기기회귀/20연속/전체보조모드E2E는미검증또는미달.
+- 대체시간원오디오조사:공식문서/IG패키지flag/최근재생기usage만확인,실제오디오캡처/새권한/녹음미실행.실제수집에는OS권한동의필요. YouTube새기기회귀/20연속/전체보조모드E2E는미검증또는미달.
 
 아래0.2.2/C차의 제품 미수정·설치 없음은 과거 시점 기록이다.
 
@@ -133,7 +300,7 @@ B 원본/설치본 SHA256: `29CEEE11A5F1101692BA3ED7122446C02349F5A94B7D0D75A648
 | 기능·시각·UX/독립 리뷰 | 한계 확인 |실제0/1·재생바 화면 대조. 약2.1주기 학습/실제 시작점 불명/내부 반복 위험. UI·제품 수정 없음 |
 | 최종 독립 문서·증거 리뷰 | PASS |45+8표본/1회 이동 후 정체/정지 요약의 한계/세 JAR 해시/59링크/app 무변경 확인. 검토자는 빌드·기기 조작하지 않음 |
 | 제품 Build/Unit/Lint/수정 후 회귀 | 미실행 |새 제품 수정 없음, 과거148시험을 이번 PASS로 사용하지 않음 |
-| 새 capability/설치/게시/메일 | 미수행 |사용자에게 캡처 capability·시험 설치 별도 질문. 조건 미달로 새 공개 없음 |
+| 새 capability/설치/게시/메일 | 미수행 |캡처 capability 추가·시험 설치 전 단계. 조건 미달로 새 공개 없음 |
 
 최종18:01:25 확인: 실행ON·목표/기준1·두앱선택·광고/플로팅ON. 막힌 영상에 그대로 있음. 캡처는 private에만 보관. 제품 D-019/D-021/D-022 미해결.
 
@@ -154,7 +321,7 @@ B 원본/설치본 SHA256: `29CEEE11A5F1101692BA3ED7122446C02349F5A94B7D0D75A648
 
 ## D-022 USB 진단 · 2026-08-27 (제품 미수정)
 
-아래 게시 당시의 설치/디버깅 보류 기록 이후 사용자가 USB 진단을 요청했다. 실제0.2.2/code9를 확인했으며 이번 작업에서 설치한 것은 아니다. 상세 표본·제약·비공개 증거 경로는 [D-022](DEBUG_LOG.md)에 기록한다.
+아래 게시 당시의 설치/디버깅 보류 기록 이후 USB 진단을 재개했다. 실제0.2.2/code9를 확인했으며 이번 진단에서 설치한 것은 아니다. 상세 표본·제약·비공개 증거 경로는 [D-022](DEBUG_LOG.md)에 기록한다.
 
 | 검사 | 결과 | 범위/제한 |
 |---|---|---|
@@ -184,7 +351,7 @@ B 원본/설치본 SHA256: `29CEEE11A5F1101692BA3ED7122446C02349F5A94B7D0D75A648
 | Linux Gradle JUnit | PASS | 보고서 다운로드 후 XML합산148tests/0failures/0errors/0skipped |
 | Linux lint | PASS | 오류0/경고1(OldTargetApi). 비어 있는 v26폴더는Git에없어 로컬보다경고1개적음 |
 | CI 도구 경고 | 남음 | Node20 기반Actions의Node24강제실행/SetupJava4폐기안내. 작업실행은 성공; 보안문제가 없다는 포괄보증은 아님 |
-| 공개 안전·문서 | PASS(검사 범위) | 82공개파일의경로/텍스트검사·독립리뷰·링크검사, private/artifacts/SDK/참고원본/서명키제외. 파일2개PNG는생성아이콘 |
+| 공개 안전·문서 | PASS(검사 범위) | 82공개파일의경로/텍스트검사·독립리뷰·링크검사, 비공개 자료·산출물/SDK/참고원본/서명키제외. 파일2개PNG는생성아이콘 |
 | 소스 일치 | PASS | 공개 전 worktree와HEAD를git hash-object --filters로대조, remote main/ref확인. 이후 게시증거 문서만 갱신 |
 
 배포검증과 실기기 안정성은 구분한다. 새0.2.2 설치·배터리 메뉴 실제 터치/시각/복귀·자동 넘김 재시험은 보류, D-019/D-021미해결. 공개APK는CI재서명본이아니라아래해시의로컬개발서명본이며CI에는검사보고서만첨부한다. 메일 발송 없음.
@@ -199,7 +366,7 @@ B 원본/설치본 SHA256: `29CEEE11A5F1101692BA3ED7122446C02349F5A94B7D0D75A648
 | 정적 안전 검사 | PASS | 권한·core 모듈 / 숫자 입력 / 전환 중단 / 배터리 설정 연결. 권한·모듈은 하나의 출력 항목 |
 | 독립 변경 리뷰 | PASS | BatterySetupPanel·연결·문구·예외처리. 새 P1/P2 없음; 제품 전체 미해결은 별도 |
 | 새 메뉴 기능·시각·사용성 | 정적 리뷰 PASS / 현장 검증 필요 | 자체 앱만 열기, 48dp 이상 버튼, 명시적 수동 안내. 실제 터치·잘림·복귀 표시는 미실행 |
-| 0.2.2 휴대폰 설치·자동 넘김 회귀 | 미실행 | 사용자 요청으로 추가 기기 디버깅 보류. 마지막 설치본0.2.1 |
+| 0.2.2 휴대폰 설치·자동 넘김 회귀 | 미실행 | 이 단계에서 추가 기기 디버깅 보류. 마지막 설치본0.2.1 |
 | Windows Gradle testDebugUnitTest | 기존 환경 FAIL, 미재실행 | 한글 경로 로딩 오류의 직접JUnit 우회 사용. Linux CI는 별도 기록 |
 | 미해결 제품 문제 | 있음 | D-019 전환 실패, D-021 반복 경계 누락. 안정성 완료 아님 |
 | 웹 화면·회사메일 | N/A / 미수행 | 네이티브 Android / 메일 요청 없음 |
@@ -208,27 +375,27 @@ B 원본/설치본 SHA256: `29CEEE11A5F1101692BA3ED7122446C02349F5A94B7D0D75A648
 
 ### D-020 후속 실기기 시험 · 0.2.1 설정 변경, 코드 미변경
 
-사용자 승인 후 Android 앱 정보 → 배터리에서 자체 앱만 '최적화'에서 '제한 없음'으로 변경. 설정 화면 육안, deviceidle whitelist 사용자 예외, kernel cgroup.events frozen=0 확인. 동일 프로세스/실행 상태 유지이며 적용 시 실행 OFF→ON하지 않음.
+Android 앱 정보 → 배터리에서 자체 앱만 '최적화'에서 '제한 없음'으로 변경. 설정 화면 육안, deviceidle whitelist 수동 예외, kernel cgroup.events frozen=0 확인. 동일 프로세스/실행 상태 유지이며 적용 시 실행 OFF→ON하지 않음.
 
--16:09:20.257~16:10:15.977, 약56초, private/device-tests/v021f-pip-unrestricted.jsonl50표본. PiP+홈 대기에서 서비스 응답 모두 수신, blocked=false, 누계 요청16/확인15 유지, kernel frozen=0. 폴링 세대1351→1534.
+-16:09:20.257~16:10:15.977, 약56초, 비공개 증거 자료50표본. PiP+홈 대기에서 서비스 응답 모두 수신, blocked=false, 누계 요청16/확인15 유지, kernel frozen=0. 폴링 세대1351→1534.
 - 전체 화면 복귀 후 시간 감지 재개. 이것은 PiP 안에서 자동 넘김 성공을 뜻하지 않는다.
 -16:10:32.840~16:11:26.508, v021f-fullscreen-resume.jsonl65표본에서18초 영상16→0 반복3회와 카운트 누락 확인(D-021). 이후16:12:15.687~16:12:52.662 v021f-user-restart-observation.jsonl45표본은요청18/확인16/blocked=true, kernel frozen=0. 배터리 동결과 전환 확인 실패는 별개.
-- 파일명의 user-restart는 관측 라벨일 뿐 실제 사용자 재시작의 증거가 아니다. 사용자의 '되네' 응답만으로 전체 안정성 PASS로 기록하지 않음.
+- 파일명의 user-restart는 관측 라벨일 뿐 실제 수동 재시작의 증거가 아니다. 일시적인 복구나 짧은 정상 관측만으로 전체 안정성 PASS로 기록하지 않음.
 - 장시간·재부팅·다른 기기 효과는 현장 검증 필요. 개인 화면/로그는 공개하지 않는다.
 
 아래0.2.1 이하 기록은 당시 상태이며, 가시성 대기·배터리 미조치 등 과거 표현은 위 최신 기록으로 대체한다.
 
-## 추가 제보 진단 · YouTube 간헐 정지 (제품 미수정)
+## 추가 진단 · YouTube 간헐 정지 (제품 미수정)
 
 후속16:01 전체 화면 복귀 캡처/topResumedActivity 확인,진단 timeout 지속.16:04 자체 앱 커널 cgroup.freeze=1/events frozen=1 및Samsung Freecess 동결 목록 확인. MARs기록15:56:30 Bg동결→16:01:08 접근성Binder해제→16:01:14 재동결. 진단SIGQUIT에의한16:03:59 일시해제 후16:04:05 재동결도 확인. D-020은 현재 무응답의 동결 원인 확인, 절전 예외 조치/재발방지 수정은 미실행. 독립 증거해석 리뷰 완료. 아래 최초 ActivityManager isFrozen=false만으로 실제 동결이 없다고 해석하면 안 됨. 최초15:46 요청실패와 동일 원인인지 미확정.
 
-15:56 이후 사용자 PiP 시험: 홈+YouTube pinned/PiP 창 확인, 첫 상태 blocked=false·launcher 대기·누계16/15. 이후 Samsung Internet 전면에서 서비스 진단 응답 timeout이 반복되어 연속 관측 실패. ADB/PID/접근성 등록은 유지. PiP 원인이나 제품 크래시로 확정하지 않았으며 전체 화면 복귀 비교 대기. D-019 추가 항목 및 private/device-captures/v021e-popup-user-start.png 참조.
+15:56 이후 PiP 시험: 홈+YouTube pinned/PiP 창 확인, 첫 상태 blocked=false·launcher 대기·누계16/15. 이후 Samsung Internet 전면에서 서비스 진단 응답 timeout이 반복되어 연속 관측 실패. ADB/PID/접근성 등록은 유지. PiP 원인이나 제품 크래시로 확정하지 않았으며 전체 화면 복귀 비교 대기. D-019 추가 항목 및 비공개 증거 자료 참조.
 
 2026-08-27 15:47~15:51,0.2.1의 접근성 연결/실행true이나 blocked=true,요청11/확인10,넘김 확인 실패 상태 유지. PiP가 있었던 정황은 있으나 최초 요청 실패의 직접 트리거는 미확정. 세부 내용은 [D-019](DEBUG_LOG.md) 참조.
 
 15:51 진단자가 자체 빠른 설정 타일을OFF→ON하고 패널을 닫은 후 비조작 재생 관측. 15:53:02.493 요청12 →15:53:03.298 확인11/58초, 이후58→15→11초 전환으로15:54:24.564 누계14/13,blocked=false.59초 시작부터 추가요청3/확인3 성공이며 남은 누계 차이1은 이전 실패. 실제 전환 장면과 다음 영상 화면도 육안 확인. v021d-fullscreen-observation/fullscreen-transition/second-transition JSONL 보존. 최초 간헐 실패의 재현 및 근본 해결은 미완료, 아래 과거 PASS를 전체 안정성으로 해석하지 않음. 이번 코드/APK/권한 변경·빌드·새 단위시험 없음.
 
-과거 PiP종료 기록 정정: v021c-settings-clean에는 PiP가 남아 있었으며 최종 Instagram 캡처에 없다는 사실만 확인됨. 앱 완전 종료를 확인한 것은 아님. GitHub 요청은 이후 접수했으나 가시성 선택 대기이며 게시하지 않음.
+과거 PiP종료 기록 정정: v021c-settings-clean에는 PiP가 남아 있었으며 최종 Instagram 캡처에 없다는 사실만 확인됨. 앱 완전 종료를 확인한 것은 아님. 이 단계에서는 GitHub 공개 범위 미정으로 게시하지 않음.
 
 ## 최신 0.2.1 · 광고 토글 구현·설치 및 실제 시험
 
@@ -238,7 +405,7 @@ B 원본/설치본 SHA256: `29CEEE11A5F1101692BA3ED7122446C02349F5A94B7D0D75A648
 |---|---|---|
 | 빌드·Java 시험 컴파일 | PASS | 최종 candidate-c verify.ps1 BUILD SUCCESSFUL |
 | lintDebug | PASS | 오류0, 기존 경고2(OldTargetApi/빈 v26 폴더) |
-| 직접 JUnit | PASS | 148개, 부모 및 독립 검토자 실행. Gradle 기본 test task는 과거 환경 FAIL이며 별도 |
+| 직접 JUnit | PASS | 148개, 개발 검증 및 독립 재실행. Gradle 기본 test task는 과거 환경 FAIL이며 별도 |
 | 권한·모듈·숫자입력·전환보호 연결 | PASS | 인터넷 권한 없음, core Android 비의존, 입력 원문 및 비종료 중단 경로 정적 검사 |
 | 독립 코드 리뷰 | PASS | 광고 전환중 회전/드래그 보호취소 P2 수정 후 재리뷰. 정적 범위 미해결CRITICAL/HIGH0 |
 | 0.2.1 설치·서명·재추출 SHA-256 | PASS | candidate-c install-r Success, apksigner v2, 설치본과 동일 |
@@ -265,10 +432,10 @@ B 원본/설치본 SHA256: `29CEEE11A5F1101692BA3ED7122446C02349F5A94B7D0D75A648
 - 0.2.1/versionCode8, 개발 서명 APK,644,351bytes.
 - 빌드본·candidate-v021-c.apk·installed-v021-c.apk SHA-256: `8932952A74FBCB6B131A6D020DA8385CEF86701B231EB4AB996F092E9B7B1799`.
 - 보존 산출물 artifacts/shorts-loop-v0.2.1-debug.apk도 동일 크기/해시. 정식 외부 공개 릴리스 아님.
-- 실제 증거는 private/device-tests의 v021b-video-ad-off/on, v021b-ordinary-after-ad, v021b-zero-ad, v021c-ig-not-selected, v021c-youtube-regression 숫자 JSONL과 private/device-captures의 동일 접두 화면. 개인 영상/계정 원문은 문서에 옮기지 않음.
+- 실제 증거는 비공개 기기시험 자료의 v021b-video-ad-off/on, v021b-ordinary-after-ad, v021b-zero-ad, v021c-ig-not-selected, v021c-youtube-regression 숫자 JSONL과 비공개 화면 자료의 동일 접두 화면. 개인 영상/계정 원문은 문서에 옮기지 않음.
 - 광고 토글은 기본OFF, 시험 후 설정은 별도 최종 상태로 기록. OFF면 광고 수동 넘김이라는 안내를 실제 UI에 추가.
-- 최종 폰 상태: 실행ON, 현재/기준1, 두 앱선택ON, 광고ON, 플로팅OFF(사용자 조정 값 보존). 최종 설치본에서 광고1회 이동 후 일반릴스 재개. 시험용 YouTube PiP는 닫고 Instagram 복귀. v021c-settings-clean 실제 안내문 화면 확인.
-- 하단 고정 토글의 높이 축소/명칭 개선은 사용자 질문에 대한 제안이며 미적용. 영상 내 CTA 카드가 있는 광고는 지원 시험을 통과했지만 별도 창 팝업 닫기로 확대하지 않음.
+- 최종 폰 상태: 실행ON, 현재/기준1, 두 앱선택ON, 광고ON, 플로팅OFF(기존 조정 값 보존). 최종 설치본에서 광고1회 이동 후 일반릴스 재개. 시험용 YouTube PiP는 닫고 Instagram 복귀. v021c-settings-clean 실제 안내문 화면 확인.
+- 하단 고정 토글의 높이 축소/명칭 개선은 검토안이며 미적용. 영상 내 CTA 카드가 있는 광고는 지원 시험을 통과했지만 별도 창 팝업 닫기로 확대하지 않음.
 - 문서 링크 검사 및 독립 문서·산출물 대조 PASS. 검토자는 네 APK 크기/해시·버전·b/c 시험 구분·YouTube/타일/미선택 원시 로그를 직접 대조했다. 최종 상태를 추가 기록했고, 마지막 Instagram 화면에서 일반 릴스와 PiP가 없는 상태를 육안 확인했다.
 
 ## 이전 0.2.0 · 잠금 해제 전 구현/설치 이력
@@ -286,11 +453,11 @@ B 원본/설치본 SHA256: `29CEEE11A5F1101692BA3ED7122446C02349F5A94B7D0D75A648
 | APK 업데이트 설치 | PASS | adb install -r Success,설치본 base.apk 재추출·해시 일치 |
 | 설치 서비스/기존 설정 | PASS (조회 범위) | 0.2.0 연결true,실행false,기준/현재2,모드0,플로팅true. 위치·기존 설정 보존 확인 |
 | APK 서명 | PASS | apksigner verify, v2=true,signer1 |
-| 최신 인앱·키보드·붙여넣기·아이콘 육안 | 검증 불가 | 휴대폰 보안잠금 showing=true,inputRestricted=true. 사용자 잠금 해제 요청 |
+| 최신 인앱·키보드·붙여넣기·아이콘 육안 | 검증 불가 | 휴대폰 보안잠금 showing=true,inputRestricted=true |
 | 최신 플로팅·두 탭 모드·타일·저장 복원 E2E | 현장 검증 필요 | JVM 계약과 설치 조회만으로 실제 터치/디스크 복원 통과 선언하지 않음 |
 | 최신 YouTube 자동 넘김 회귀 | 현장 검증 필요 | 이전0.1.4/0.1.5 실제 성공은 아래 별도 이력 |
 | Instagram 서비스 자동 넘김 E2E | 현장 검증 필요 | 이전19.014/22.638초 진행·반복 관측은 탐지 가능성 조사이며 제품 스와이프 성공 아님 |
-| 실제 플로팅 권한 없는 실행 | 현장 검증 필요 | 조건부 권한 코드/정책 검토. 사용자 기존 권한을 임의 제거하지 않음 |
+| 실제 플로팅 권한 없는 실행 | 현장 검증 필요 | 조건부 권한 코드/정책 검토. 기존 권한은 제거하지 않음 |
 | 폴드·회전·큰 글꼴·장시간 | 현장 검증 필요 | 실제 장치 조작/측정 미실행 |
 | Gradle testDebugUnitTest | 과거 환경 FAIL,미재실행 | 한글경로 ClassNotFoundException 우회 직접 JUnit 사용. Gradle시험 PASS 아님 |
 | 웹 UI / GitHub / 메일 | N/A / 미수행 / 미수행 | Android 네이티브;외부 게시·메일 요청 없음 |
@@ -299,12 +466,12 @@ B 원본/설치본 SHA256: `29CEEE11A5F1101692BA3ED7122446C02349F5A94B7D0D75A648
 
 - 버전0.2.0,versionCode7,개발 서명. 정식 릴리스로 배포하지 않음.
 - app/build/outputs/apk/debug/app-debug.apk:634,888bytes.
-- private/device-tests/candidate-v020-c.apk 및 installed-v020-c.apk 모두 같은 크기/해시.
+- 비공개 증거 자료 및 installed-v020-c.apk 모두 같은 크기/해시.
 - SHA-256: `A2F01BA87B7203B2B80047BE0861F0AE5F4B433B078DBFA000C69A1E9EDE44BE`.
 - 설치 후 진단: connected=true enabled=false target=2 current=0 blocked=false,pending=false,requests=0 confirmed=0,ceiling=2 tapMode=0 floating=true.
 - 새 캡처를 실제 인앱 화면으로 제시하지 않음. 잠금화면만 확인했으며 앱 UI 시각/인간공학 PASS 판정 보류.
 - 현재 문서/소스0.2.0 일치,이전 버전 APK·설명/증거는 이력으로 보존. 도구 정책으로 차단된 빈 리소스 폴더 제거는 재시도하지 않음.
-- 최종 문서 링크 검사 PASS. 독립 검토자가 README/HANDOVER/검증/누적이력의 미검증 구분,versionCode7,세 APK의634,888bytes·동일SHA-256,실제lint0/2를 재대조하여 PASS. 폰/서명은 부모 실행증거이며 검토자가 재실행했다고 표시하지 않음.
+- 최종 문서 링크 검사 PASS. 독립 검토자가 README/HANDOVER/검증/누적이력의 미검증 구분,versionCode7,세 APK의634,888bytes·동일SHA-256,실제lint0/2를 재대조하여 PASS. 폰/서명은 기존 실행증거 대조이며 검토자가 재실행했다고 표시하지 않음.
 
 ## 이전0.1.5 검증 이력
 
@@ -333,11 +500,11 @@ B 원본/설치본 SHA256: `29CEEE11A5F1101692BA3ED7122446C02349F5A94B7D0D75A648
 | 폴드 접기·펼치기·회전 | 현장 검증 필요 | 위치 계산 단위시험만 실행 |
 | 배터리·장시간 사용 | 현장 검증 필요 | 실제 기기 장시간 세션 없음 |
 | 웹/1920×1080 브라우저 | N/A | Android 전용 앱 |
-| GitHub/메일 | 미수행 | 승인 없음 |
+| GitHub/메일 | 미수행 | 당시 개발·로컬 검증 단계 |
 
 ## 구현 전 관측 근거
 
-사용자 재생 중인 일반 YouTube 쇼츠를 ADB 읽기 전용으로 관찰했다. SeekBar content-desc는 `0분 35초 중 0분 8초` 형식이었다. 31→33→0, 31→33→35→0으로 두 번의 반복을 관찰했다. 이는 정보 조회 가능성의 증거이며, 제작 APK 서비스/스와이프 성공의 증거는 아니다. 개인 영상 제목/내용/계정은 문서에 기록하지 않았다.
+재생 중인 일반 YouTube 쇼츠를 ADB 읽기 전용으로 관찰했다. SeekBar content-desc는 `0분 35초 중 0분 8초` 형식이었다. 31→33→0, 31→33→35→0으로 두 번의 반복을 관찰했다. 이는 정보 조회 가능성의 증거이며, 제작 APK 서비스/스와이프 성공의 증거는 아니다. 개인 영상 제목/내용/계정은 문서에 기록하지 않았다.
 
 ## 실제 기기 시험 체크리스트
 
@@ -367,13 +534,13 @@ B 원본/설치본 SHA256: `29CEEE11A5F1101692BA3ED7122446C02349F5A94B7D0D75A648
 ## 실제 실행 이력 · 2026-08-27
 
 - 기기: Galaxy Z Fold8 SM-F971N, Android17/SDK37, 일반 YouTube21.33.322, Premium. 커버 화면1248×1972.
-- 설치/실행 시험 사용자 승인, 권한은 사용자 직접 부여. 다른 앱의 권한/설정 변경 없음.
-- 0.1.0: 0/0→0/1→0/2 순환, 숫자 드래그 후 목표값2 유지, 저장 좌표와 위치 복원, X 종료 확인. 캡처는 private/device-captures에 보관.
+- 설치/실행 시험에서 권한은 사용자가 직접 부여. 다른 앱의 권한/설정 변경 없음.
+- 0.1.0: 0/0→0/1→0/2 순환, 숫자 드래그 후 목표값2 유지, 저장 좌표와 위치 복원, X 종료 확인. 캡처는 비공개 화면 자료에 보관.
 - 0.1.1: 서비스 연결을 방해하지 않는 진단으로 41/52 고정 확인(D-006).
 - 0.1.2: 시간 갱신 해결. 1/2 진입 후 정상 갱신 오판으로 초기화되는 추가 문제 재현.
 - 0.1.3: 14→16초,309ms 진단으로 점프 오판 확정(D-008).
 - 0.1.4 목표2: 13:25:33 첫 온전한 재생1/2, 13:26:25경 두 번째2/2, 13:27:18 다음 영상54초의1/2. requests=confirmed=1, blocked=false. 자동 넘김 후 전체 쇼츠 화면 유지.
-- 위 0.1.4 연속 시험 중 수동 스와이프/탭 없음. 증거: private/device-tests/v014-two-plays.jsonl, 실제2/2와 전환 후 화면 육안 확인.
+- 위 0.1.4 연속 시험 중 수동 스와이프/탭 없음. 증거: 비공개 증거 자료, 실제2/2와 전환 후 화면 육안 확인.
 - 목표1 시험 시작 전 숫자로2→0→1 변경 후 한 번 수동 아래→위 스와이프하여21초 영상0초에서 시작. 이후 손대지 않고21/45/30초 세 영상에서 자동 전환 확인, 총 requests=confirmed=4(앞선 목표2의1회 포함). 증거: v014-one-play.jsonl.
 - 일시정지: 다음42초 영상24초에서 멈춤,8개 표본 동안24초/요청4/확인4 유지. 댓글창을 열자0/1과 댓글·메뉴 대기. 계정/댓글 입력·추천·저장·구독 조작 없음.
 - 목표0: 재생 재개 후1→2→0. 13:31:06~13:32:33,53표본에서요청4/확인4 유지. 0에서는시간조회 자체를 중단하므로 진단 position24는 마지막 조회값이지 재생 정지 증거가 아님. 전·중간 실제 화면은 같은 영상의 서로 다른 장면 및0/0.
@@ -382,7 +549,7 @@ B 원본/설치본 SHA256: `29CEEE11A5F1101692BA3ED7122446C02349F5A94B7D0D75A648
 - 0.1.5 최종 회귀: 42초 영상의 첫 온전한 재생1/2→13:39:54 두 번째2/2→13:40:37 다음36초 영상1/2. 요청1/확인1, 차단false. 최신 캡처에서 영상 전환과 전체화면 유지 확인. 증거: v015-final-auto-regression.jsonl, v015-auto-confirmed.png.
 - 시험 종료: X로 자동 실행OFF, 목표2 및 저장 위치/기존 타일 유지. YouTube 전체화면은 그대로 두었으며 권한·다른 타일 설정 변경 없음.
 - 최종 독립 요구사항·증거 대조 PASS: 검토자가 빠른 설정6표본, 최신1/2→2/2→전환 로그, 빌드/배포/설치APK의3개 해시와 문서 제한사항을 직접 확인. 목표1 시험 버전과 과거/최신 JUnit 개수 문구를 명확히 반영.
-- 한계: 입력포커스 없는 다른 팝업/타 앱 플로팅 전체 가림은 미검증. 사용자 잠금 해제·폴드 실제 접기/펴기·장시간 배터리 시험은 미실행.
+- 한계: 입력포커스 없는 다른 팝업/타 앱 플로팅 전체 가림은 미검증. 잠금 해제·폴드 실제 접기/펴기·장시간 배터리 시험은 미실행.
 - 독립 검토자 추가 JShell: 2배속+2초 표시+300ms 관측에서 두 번 완주 후 정확히1회 요청, 대기 초기화0. 긴 일시정지 후3초 급진행 및3초영상600ms 조기 완료 차단.
 - 앱/기기 외부로 영상 제목·계정·진단자료 업로드 없음. 숫자 진단만 사용, 개인 화면 캡처는 비공개.
 
@@ -398,12 +565,12 @@ B 원본/설치본 SHA256: `29CEEE11A5F1101692BA3ED7122446C02349F5A94B7D0D75A648
 
 ## 2026-08-27 · Instagram 사전 관측 (제품 E2E 아님)
 
-- Instagram444.0.0.46.85/Fold8 커버 화면. 사용자 시험 요청 후 ShortsLoop enabled=false 확인. 설치APK/권한 미변경.
+- Instagram444.0.0.46.85/Fold8 커버 화면. 시험 전 ShortsLoop enabled=false 확인. 설치APK/권한 미변경.
 - 재생 중 기본 UI dump는 idle 실패, 일시정지 시 성공. clips_viewer_view_pager/SeekBar scrubber 확인.
 - scripts/probes/InstagramProgressProbe.java를 SDK로 컴파일하여 dexjar 읽기전용 실행. 프로브 자체에는 탭/스와이프 없음. 별도 ADB로 재생/일시정지/다음넘김1회 조작.
 - sample-1-progress.txt: 일시정지18.721초 고정 후 재개 진행. 매번 노드 탐색은약10초 지연이 있어 연속 경계 정밀검증에 사용하지 않음.
 - sample-2-cached-progress.txt:136개 모두 fresh=true/visible=true. max19014, current18708→95,18705→83,18737→124의 경계3회. 약400ms간격. 독립 검토자가 원시 숫자 재분석하여 일치 확인.
 - sample-3-next-video.txt: ADB상향스와이프 후 max22638의 다른 영상 및22377→147 반복 경계 확인. 실제 화면도 확인.
-- 증거: private/instagram-probe, private/device-captures. assertion 없는 프로브 OK(1 test)는 실행 종료이지 자동 넘김 기능 PASS가 아님.
+- 증거: 비공개 프로브 자료, 비공개 화면 자료. assertion 없는 프로브 OK(1 test)는 실행 종료이지 자동 넘김 기능 PASS가 아님.
 - 결론: 진행값 기반 지원의 기술적 근거 확보. 서비스 통합, 정확N회 후 다음, 광고/댓글/탐색/잠금/앱선택 보호는 미실행.
 - 새 업데이트 제품 BUILD/TEST/REGRESSION은 N/A(미구현). 진단Java컴파일/실행/숫자관측은 수행. 아이콘 시안 육안 확인, 실제 런처 적용은 미실행.

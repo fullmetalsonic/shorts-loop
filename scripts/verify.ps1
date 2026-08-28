@@ -40,7 +40,12 @@ try {
     [xml]$taskManifest = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/AndroidManifest.xml') -Raw
     $taskAndroidNs = 'http://schemas.android.com/apk/res/android'
     $taskPermissions = @($taskManifest.manifest.'uses-permission' | ForEach-Object { $_.GetAttribute('name', $taskAndroidNs) })
-    if ($taskPermissions.Count -ne 1 -or $taskPermissions[0] -ne 'android.permission.SYSTEM_ALERT_WINDOW') { throw 'Unexpected permission change.' }
+    $taskAllowedPermissions = @('android.permission.SYSTEM_ALERT_WINDOW', 'android.permission.INTERNET', 'android.permission.REQUEST_INSTALL_PACKAGES')
+    if ($taskPermissions.Count -ne 3 -or (Compare-Object $taskPermissions $taskAllowedPermissions)) { throw 'Unexpected permission change.' }
+    $taskProvider = $taskManifest.manifest.application.provider
+    if ($taskProvider.GetAttribute('exported', $taskAndroidNs) -ne 'false' -or
+        $taskProvider.GetAttribute('name', $taskAndroidNs) -ne '.updates.UpdateFileProvider' -or
+        $taskManifest.manifest.application.GetAttribute('usesCleartextTraffic', $taskAndroidNs) -ne 'false') { throw 'Update provider/network isolation changed.' }
     $taskCore = Get-ChildItem -LiteralPath (Join-Path $taskRoot 'app/src/main/java/com/fullmetalsonic/shortsloop/core') -Filter '*.java'
     if ($taskCore | Select-String -Pattern 'import android\.') { throw 'Core acquired Android framework dependencies.' }
     'PERMISSION_AND_MODULE_AUDIT=PASS'
@@ -64,8 +69,21 @@ try {
         if (-not $taskService.Contains($taskGuard)) { throw 'In-flight request interruption protection changed; review service wiring.' }
     }
     'ADVANCE_INTERRUPTION_WIRING_AUDIT=PASS'
-    $taskVisual = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/java/com/fullmetalsonic/shortsloop/visual/VisualAssistController.java') -Raw
-    [xml]$taskAccessibility = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/res/xml/accessibility_service.xml') -Raw
+    $taskFacade = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/java/com/fullmetalsonic/shortsloop/visual/VisualAssistController.java') -Raw
+    $taskVisual = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/java/com/fullmetalsonic/shortsloop/visual/Api34VisualAssistController.java') -Raw
+    [xml]$taskAccessibility = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/res/xml-v34/accessibility_service.xml') -Raw
+    [xml]$taskLegacyAccessibility = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/res/xml/accessibility_service.xml') -Raw
+    if ($taskLegacyAccessibility.'accessibility-service'.HasAttribute('canTakeScreenshot', $taskAndroidNs) -or
+        $taskFacade -match 'TakeScreenshotCallback|ScreenshotResult|HardwareBuffer|wrapHardwareBuffer|takeScreenshotOfWindow' -or
+        -not $taskFacade.Contains('if (Build.VERSION.SDK_INT >= 34) return new Api34VisualAssistController(service, host);') -or
+        -not $taskService.Contains('visual = VisualAssistController.create(this,') -or
+        $taskGradle -notmatch 'minSdk 26') { throw 'Compatibility isolation or install floor changed unexpectedly.' }
+    foreach ($taskAttribute in $taskLegacyAccessibility.'accessibility-service'.Attributes) {
+        if ($taskAccessibility.'accessibility-service'.GetAttribute($taskAttribute.LocalName, $taskAttribute.NamespaceURI) -ne $taskAttribute.Value) {
+            throw 'Legacy/modern accessibility metadata drift beyond the screenshot capability.'
+        }
+    }
+    'ANDROID_COMPATIBILITY_ISOLATION_AUDIT=PASS'
     if ($taskAccessibility.'accessibility-service'.GetAttribute('canTakeScreenshot', $taskAndroidNs) -ne 'true' -or
         -not $taskVisual.Contains('Build.VERSION.SDK_INT < 34') -or
         -not $taskVisual.Contains('service.takeScreenshotOfWindow(') -or
@@ -107,7 +125,7 @@ try {
         throw 'Timed errors must not be shown as an in-flight next-page request.'
     }
     'TIMED_PENDING_LABEL_AUDIT=PASS'
-    if (-not $taskService.Contains('if (store.target() == 0 && !adSkippingEnabled())') -or
+    if (-not $taskService.Contains('if (store.target() == 0 && !adSkippingEnabled() && !liveSkippingEnabled())') -or
         -not $taskService.Contains('AdSkipPolicy.enabled(store.enabled(), store.skipAds(), store.instagramEnabled())') -or
         $taskService -notmatch '(?s)if \(store.target\(\) == 0\) \{\s*counter.reset\(\); timed.reset\(\); visual.reset\(\);[^}]+return;' -or
         $taskService.IndexOf('if (snapshot.ad) {') -gt $taskService.IndexOf('if (store.target() == 0) {') -or
@@ -115,6 +133,27 @@ try {
         throw 'Independent ads must run before the zero-play guard; timers must stay behind it.'
     }
     'ZERO_PLAY_ADS_WIRING_AUDIT=PASS'
+    foreach ($taskLiveGuard in @('LiveSkipPolicy.enabled(store.enabled(), store.skipLive(), store.youtubeEnabled())',
+        'LiveSkipTracker.Result result = live.observe(key, store.liveDelaySeconds(), now);',
+        'if (result.due()) advanceLive(snapshot);', 'pendingLive ? inspectLiveTransition(snapshot, now)',
+        'gate.inspectLivePage(', 'LiveTransitionPolicy.accepts(liveRequestedAt, event.getEventTime(),',
+        'liveRequestPager.equals(source)', 'else if (unresolvedLiveAttempt && store.enabled())',
+        '"skip_live".equals(key)', '"live_delay_seconds".equals(key)', 'reader.close();')) {
+        if (-not $taskService.Contains($taskLiveGuard)) { throw "Live preview safety wiring changed: $taskLiveGuard" }
+    }
+    if ($taskService.IndexOf('if (snapshot.live) {') -gt $taskService.IndexOf('if (store.target() == 0) {')) {
+        throw 'Live previews must remain independent of ordinary repeat count.'
+    }
+    'LIVE_SKIP_WIRING_AUDIT=PASS'
+    # Guard the service-level lifecycle paths as well as the pure host policy.
+    if (-not $taskService.Contains('LiveTreePolicy.includeLayoutNodes(store.enabled() && !RuntimeState.blocked,') -or
+        $taskService -notmatch '(?s)if \(configureLiveTree\(pkg\)\) return YouTubeSnapshot.unavailable' -or
+        $taskService -notmatch '(?s)store.target\(\) == 0 && !adSkippingEnabled\(\) && !liveSkippingEnabled\(\)\) \{\s*clearLayoutQuery\(\);' -or
+        $taskService -notmatch 'RuntimeState.blocked = true; clearLayoutQuery\(\);' -or
+        $taskService -notmatch '(?s)void onDestroy\(\) \{\s*handler.removeCallbacksAndMessages\(null\); invalidate\(\);\s*clearLayoutQuery\(\);') {
+        throw 'Live tree mode must re-read on change and clear on blocked, idle and shutdown paths.'
+    }
+    'LIVE_TREE_LIFECYCLE_AUDIT=PASS'
     $taskReader = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/java/com/fullmetalsonic/shortsloop/detection/ShortsReader.java') -Raw
     if (-not $taskReader.Contains('return snapshot.withIdentity(identity);')) {
         throw 'App routing must preserve snapshot visual eligibility metadata.'
@@ -131,6 +170,23 @@ try {
     }
     'BATTERY_SETUP_WIRING_AUDIT=PASS'
     $taskApk = Join-Path $taskRoot 'app/build/outputs/apk/debug/app-debug.apk'
+    $taskAapt = Join-Path $taskSdkRoot 'build-tools/35.0.0/aapt2.exe'
+    $taskResources = (& $taskAapt dump resources $taskApk | Out-String)
+    if ($LASTEXITCODE -ne 0) { throw 'Cannot inspect packaged APK resources.' }
+    $taskIcon = [regex]::Match($taskResources, '(?ms)^\s+resource [^\r\n]+ mipmap/ic_launcher\r?\n(?<body>.*?)(?=^\s+(?:resource|type) |\z)').Groups['body'].Value
+    if ($taskIcon -notmatch '\(anydpi(?:-v26)?\)') {
+        throw 'APK is missing its API26-compatible launcher icon. Rebuild app:clean and recheck; source presence alone is insufficient.'
+    }
+    'PACKAGED_LEGACY_ICON_AUDIT=PASS'
+    $taskProductJava = Get-ChildItem -LiteralPath (Join-Path $taskRoot 'app/src/main/java') -Filter *.java -Recurse | Get-Content -Raw
+    if ($taskProductJava -match 'UpdateInstallInstrumentation|UpdateClientChecks|InstallerArtifactChecks|final-update\.apk|FIXTURE_READY') {
+        throw 'Test-only updater fixture leaked into product source.'
+    }
+    $taskArchive = [IO.Compression.ZipFile]::OpenRead($taskApk)
+    try {
+        if ($taskArchive.Entries.FullName -contains 'assets/final-update.apk') { throw 'Fixture APK must never ship inside product APK.' }
+    } finally { $taskArchive.Dispose() }
+    'UPDATE_FIXTURE_ISOLATION_AUDIT=PASS'
     Get-Item -LiteralPath $taskApk | Select-Object Name, Length
     'APK_SHA256=' + (Get-FileHash -LiteralPath $taskApk -Algorithm SHA256).Hash
     if ($taskJUnitFailed) { throw 'Direct JUnit regression tests failed. Static audits above do not turn this into a full-suite PASS.' }

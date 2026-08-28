@@ -1,4 +1,15 @@
 <resources>
+    <item name="update_status" type="id" />
+    <item name="update_check" type="id" />
+    <item name="update_action" type="id" />
+    <item name="update_cancel" type="id" />
+    <item name="update_automatic" type="id" />
+    <item name="update_banner" type="id" />
+    <item name="setup_jump" type="id" />
+    <item name="compatibility_panel" type="id" />
+    <item name="timed_support" type="id" />
+    <item name="ad_support" type="id" />
+    <item name="visual_support" type="id" />
     <item name="count_input" type="id" />
     <item name="count_up" type="id" />
     <item name="count_down" type="id" />
@@ -6,6 +17,13 @@
     <item name="app_youtube" type="id" />
     <item name="app_instagram" type="id" />
     <item name="skip_ads_toggle" type="id" />
+    <item name="live_skip_panel" type="id" />
+    <item name="skip_live_toggle" type="id" />
+    <item name="live_support" type="id" />
+    <item name="live_delay_input" type="id" />
+    <item name="live_delay_minus" type="id" />
+    <item name="live_delay_plus" type="id" />
+    <item name="live_delay_apply" type="id" />
     <item name="visual_assist_toggle" type="id" />
     <item name="timed_fallback_toggle" type="id" />
     <item name="fallback_seconds_input" type="id" />

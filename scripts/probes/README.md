@@ -4,7 +4,7 @@
 
 ## 확인 순서
 
-1. 앱의 저장된 enabled=false를 확인한다. 사용자가 승인한 Instagram 릴스를 연다.
+1. 앱의 저장된 enabled=false를 확인한다. 시험할 Instagram 릴스를 연다.
 2. SDK35의 android.jar, uiautomator.jar, optional/android.test.base.jar로 InstagramProgressProbe.java를 Java8 대상으로 컴파일한다.
 3. 클래스 JAR을 SDK d8로 dex 변환한 뒤 classes.dex를 담은 JAR을 만든다. 생성물은 private/instagram-probe에 보관한다.
 4. JAR을 /data/local/tmp/shortsloop-instagram-progress-cached.jar로 adb push한다.

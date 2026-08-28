@@ -12,6 +12,8 @@ import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 import com.fullmetalsonic.shortsloop.R;
 import com.fullmetalsonic.shortsloop.core.ModePolicy;
+import com.fullmetalsonic.shortsloop.core.FeatureSupportPolicy;
+import com.fullmetalsonic.shortsloop.core.LiveSkipPolicy;
 import com.fullmetalsonic.shortsloop.data.SettingsStore;
 import com.fullmetalsonic.shortsloop.service.RuntimeState;
 import com.fullmetalsonic.shortsloop.ui.MainActivity;
@@ -54,20 +56,32 @@ public final class ShortsTileService extends TileService implements SharedPrefer
     }
     private void render() {
         boolean active = ModePolicy.tileActive(store.enabled(), store.target(), RuntimeState.connected, RuntimeState.blocked);
+        boolean ads = store.skipAds() && store.instagramEnabled() && installed(SettingsStore.INSTAGRAM_PACKAGE);
+        boolean live = store.skipLive() && store.youtubeEnabled() && installed(SettingsStore.YOUTUBE_PACKAGE);
         String subtitle = active ? store.target() == 0
-                ? store.skipAds() && store.instagramEnabled() ? "0회 · 광고만 넘김" : "0회 · 넘김 대기"
+                ? getString(R.string.zero_features_short,
+                    getString(ads ? R.string.feature_on_short : R.string.feature_off_short),
+                    getString(live ? R.string.feature_on_short : R.string.feature_off_short))
                 : getString(R.string.tile_count, store.target())
                 : RuntimeState.blocked ? getString(R.string.restart_needed)
                 : !RuntimeState.connected || (store.floatingEnabled() && !Settings.canDrawOverlays(this)) ? getString(R.string.permission_needed)
                 : !store.hasSelectedApps() ? "앱 선택 필요"
                 : getString(R.string.off);
-        publish(active, subtitle);
+        publish(active, subtitle, active && store.target() == 0 ? LiveSkipPolicy.zeroCountStatus(ads, live) : subtitle);
     }
     private void publish(boolean active, String subtitle) {
+        publish(active, subtitle, subtitle);
+    }
+    private void publish(boolean active, String subtitle, String description) {
         Tile tile = getQsTile(); if (tile == null) return;
-        tile.setLabel(getString(R.string.tile_label)); tile.setState(active ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE);
+        tile.setLabel(FeatureSupportPolicy.tileLabel(Build.VERSION.SDK_INT, getString(R.string.tile_label), subtitle));
+        tile.setState(active ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE);
         if (Build.VERSION.SDK_INT >= 29) tile.setSubtitle(subtitle);
-        tile.setContentDescription(getString(R.string.tile_label) + " · " + subtitle); tile.updateTile();
+        tile.setContentDescription(getString(R.string.tile_label) + " · " + description); tile.updateTile();
+    }
+    private boolean installed(String packageName) {
+        try { getPackageManager().getApplicationInfo(packageName, 0); return true; }
+        catch (android.content.pm.PackageManager.NameNotFoundException absent) { return false; }
     }
     private void openSetup() {
         Intent intent = new Intent(this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);

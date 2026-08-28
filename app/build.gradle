@@ -6,8 +6,12 @@ android {
         applicationId 'com.fullmetalsonic.shortsloop'
         minSdk 26
         targetSdk 35
-        versionCode 13
-        versionName '0.2.4'
+        // Explicit local bootstrap is used only to test a real OS update to the final higher code.
+        versionCode providers.gradleProperty('updaterBootstrap').isPresent() ? 15 : 21
+        versionName providers.gradleProperty('updaterBootstrap').isPresent() ? '0.2.5-update-test' : '0.2.5'
+        testInstrumentationRunner providers.gradleProperty('updaterBootstrap').isPresent()
+                ? 'com.fullmetalsonic.shortsloop.updates.UpdateInstallInstrumentation'
+                : 'com.fullmetalsonic.shortsloop.CompatibilityInstrumentation'
     }
     buildFeatures { buildConfig true }
     // Preserve the unfinished, unconnected experiment in source, but not in the product APK/tests.

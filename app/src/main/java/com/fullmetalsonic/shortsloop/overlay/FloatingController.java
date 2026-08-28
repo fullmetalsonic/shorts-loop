@@ -17,6 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import com.fullmetalsonic.shortsloop.R;
 import com.fullmetalsonic.shortsloop.core.PositionPolicy;
+import com.fullmetalsonic.shortsloop.core.LiveSkipPolicy;
 import com.fullmetalsonic.shortsloop.data.SettingsStore;
 
 public final class FloatingController {
@@ -58,7 +59,7 @@ public final class FloatingController {
         close.setTextColor(Color.WHITE); close.setTextSize(16); close.setPadding(0, 0, 0, 0);
         close.setMinWidth(0); close.setMinimumWidth(0); close.setMinHeight(0); close.setMinimumHeight(0);
         close.setBackgroundColor(Color.TRANSPARENT); close.setContentDescription(context.getString(R.string.close_description));
-        // User-approved compact exception: X is 24dp; count/drag remains at least 48dp.
+        // Compact exception: X is 24dp; count/drag remains at least 48dp.
         root.addView(close, new FrameLayout.LayoutParams(dp(24), dp(24), Gravity.END | Gravity.TOP));
         close.setOnClickListener(view -> listener.close());
         number.setOnClickListener(view -> listener.cycle());
@@ -100,13 +101,20 @@ public final class FloatingController {
     }
     public void update(int current, int target, String status, int remainingSeconds) {
         if (number == null) return;
-        String label = remainingSeconds >= 0 ? remainingSeconds + "초"
-                : target == 0 && (status.startsWith("광고만 자동 넘김") || status.equals("광고 넘김 확인 중")) ? "광고"
+        String liveLabel = LiveSkipPolicy.floatingLabel(status, remainingSeconds);
+        boolean timedStatus = "시간제 · 진행 정보 확인 중".equals(status) || "시간제 · 설정 시간 후 넘김".equals(status);
+        String label = liveLabel != null ? liveLabel
+                : remainingSeconds >= 0 && timedStatus ? remainingSeconds + "초"
+                : target == 0 && LiveSkipPolicy.zeroCountStatus(true, true).equals(status) ? "광·라"
+                : target == 0 && LiveSkipPolicy.zeroCountStatus(false, true).equals(status) ? "라이브"
+                : target == 0 && (LiveSkipPolicy.zeroCountStatus(true, false).equals(status) || "광고 넘김 확인 중".equals(status)) ? "광고"
                 : status.equals("시간제 · 다음 영상 확인 중") ? "다음"
                 : status.startsWith("화면 분석") ? (status.contains("수동 넘김") ? "?/" : "…/") + target
                 : (status.startsWith("화면 추정") ? "~" : "") + current + "/" + target;
         if (!label.contentEquals(number.getText())) number.setText(label);
-        String description = remainingSeconds >= 0 ? "시간제 넘김 " + remainingSeconds + "초 남음 · " + status
+        String description = liveLabel != null ? status + (remainingSeconds > 0 && !LiveSkipPolicy.STATUS_CONFIRMING.equals(status)
+                        ? " · " + remainingSeconds + "초 남음" : "") + ". 탭하면 반복 횟수 변경. 끌어서 이동. 라이브 설정은 인앱에서 변경."
+                : remainingSeconds >= 0 && timedStatus ? "시간제 넘김 " + remainingSeconds + "초 남음 · " + status
                 : context.getString(R.string.floating_description, current, target, status);
         if (!description.contentEquals(number.getContentDescription() == null ? "" : number.getContentDescription()))
             number.setContentDescription(description);

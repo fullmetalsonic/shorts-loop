@@ -8,6 +8,9 @@ public final class ShortsReader {
     private final YouTubeReader youtube = new YouTubeReader();
     private final InstagramReader instagram = new InstagramReader();
 
+    /** Release the bounded RAM-only live page identity when the owning service is destroyed. */
+    public void close() { youtube.close(); }
+
     public YouTubeSnapshot read(AccessibilityNodeInfo root, SettingsStore store) {
         if (root == null || root.getPackageName() == null)
             return YouTubeSnapshot.unavailable("선택한 앱의 쇼츠·릴스 대기");

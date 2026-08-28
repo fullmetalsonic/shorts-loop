@@ -2,9 +2,9 @@
 
 대상:0.2.3-visual-test/code10,2026-08-27. **개발 중 시험판이며 해결/20개 연속 성공/공개 배포 판정 전이다.**
 
-## 승인과 영향 범위
+## 목적과 영향 범위
 
-직전 안내에서 화면 캡처 capability·시험 APK 설치·학습 중 추가 재생 가능성을 설명했다. 사용자가 “새로운 가능성 있는 방법이 없는거야? 뭐라도 시도해볼게있으면 해봐 그럼”이라고 답하여 해당 보조 방식의 구현·시험을 진행한다. 새 인터넷/마이크/알림 접근 권한, 다른 앱 변경, 동영상 다운로드는 범위 밖이다. Public 게시의20개 연속 조건은 유지한다.
+화면 캡처 capability를 사용하는 선택적 보조 방식을 시험 APK에 구현한다. 학습 중 추가 재생이 발생할 수 있다. 새 인터넷/마이크/알림 접근 권한, 다른 앱 변경, 동영상 다운로드는 이 시험 범위 밖이다. 당시 배포 검증 목표는20개 연속 자동 이동이었다.
 
 기존 재생 시간 기반 YouTube/Instagram 카운터가 우선이다. 화면 분석은 설정에서 별도로 동의하고 켜야 하며, Android14+의 단일 Instagram 동영상 릴스에서 유효한 시간값이 없을 때만 시도한다. 단순 시간 제한으로 넘기는 방식이 아니다.
 
@@ -34,7 +34,7 @@
 
 ## English
 
-This opt-in experimental fallback analyzes only clockless Instagram video Reels on Android14+. Existing playback clocks remain preferred. Captures/features stay in RAM and are neither saved nor transmitted. The initial learning phase may add playback cycles; visual repetition is not guaranteed to equal the true video boundary. `…/N` means learning/waiting and `~n/N` means visual estimation. No timer substitutes for observed returns. Publication requires the requested20 consecutive hands-off advances, with ordinary/advertisement/visual results reported separately.
+This opt-in experimental fallback analyzes only clockless Instagram video Reels on Android14+. Existing playback clocks remain preferred. Captures/features stay in RAM and are neither saved nor transmitted. The initial learning phase may add playback cycles; visual repetition is not guaranteed to equal the true video boundary. `…/N` means learning/waiting and `~n/N` means visual estimation. No timer substitutes for observed returns. The release-verification target at this stage was20 consecutive hands-off advances, with ordinary/advertisement/visual results reported separately.
 
 ## 관련 근거
 

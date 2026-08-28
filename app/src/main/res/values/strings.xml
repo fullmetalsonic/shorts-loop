@@ -1,4 +1,41 @@
 <resources>
+    <string name="accessibility_reconnect_help">접근성 연결이 필요합니다.\n이미 켰는데 작동하지 않으면, 접근성 설정에서 ‘쇼츠 자동 넘김’을 껐다가 다시 켜 주세요. 연결 후 아래 전체 실행도 다시 켜 주세요.\n화면 분석을 꺼도 재생 정보 확인과 다음 영상 넘김에 접근성이 필요합니다.</string>
+    <string name="accessibility_reconnect_action">접근성 설정·다시 연결</string>
+    <string name="accessibility_reconnect_banner">접근성 연결 확인 · 해결 방법 보기</string>
+    <string name="setup_needed_banner">사용 준비가 필요합니다 · 바로가기</string>
+    <string name="update_auto_title">앱 열 때 새 버전 확인</string>
+    <string name="live_card_title">YouTube 라이브 · 미리보기 넘김</string>
+    <string name="live_independent">반복 횟수와 별개 · 0회에서도 사용 가능</string>
+    <string name="live_toggle">라이브 미리보기 넘기기</string>
+    <string name="live_helper">YouTube 쇼츠 안의 라이브 미리보기만 적용합니다. 이 옵션과 전체 실행을 켜면, 인식한 라이브를 아래 시간 후 넘깁니다. 일반 반복 횟수가 0이어도 동작합니다. 기본은 꺼짐입니다.</string>
+    <string name="live_youtube_missing">YouTube 설치 필요 · 저장한 선택과 시간은 보존됩니다.</string>
+    <string name="live_youtube_select">‘사용할 앱’에서 YouTube를 선택해 주세요. 저장한 선택과 시간은 보존됩니다.</string>
+    <string name="live_youtube_ready">YouTube에 적용 · 인식 가능한 라이브 미리보기 전용</string>
+    <string name="live_delay_title">라이브를 넘기기 전 대기 시간 (초)</string>
+    <string name="live_delay_description">라이브 미리보기 대기 시간, 0에서 60초. 0초는 바로 넘기기</string>
+    <string name="live_delay_minus_description">라이브 대기 시간 1초 줄이기</string>
+    <string name="live_delay_plus_description">라이브 대기 시간 1초 늘리기</string>
+    <string name="live_delay_apply">입력한 라이브 시간 적용</string>
+    <string name="live_delay_draft">입력 후 키보드의 완료 또는 적용을 눌러 주세요.</string>
+    <string name="live_delay_error">0~60 사이의 정수 초를 입력해 주세요</string>
+    <string name="live_delay_immediate">0초 = 바로 넘기기 · 기본값 · +/−는 1초씩 적용</string>
+    <string name="live_delay_saved">%1$d초 후 넘기기 · 0초는 바로 넘기기 · 최대 60초</string>
+    <string name="live_remaining">라이브 · %1$d초 남음</string>
+    <string name="feature_on_short">켬</string>
+    <string name="feature_off_short">끔</string>
+    <string name="zero_features_short">0회 · 광고 %1$s · 라이브 %2$s</string>
+    <string name="compat_heading">이 기기의 기능 · Android %1$s</string>
+    <string name="compat_basics">기본 넘김·플로팅 지원. 대상 앱의 실행·권한·화면 인식은 별도로 필요합니다.</string>
+    <string name="compat_tile_request">빠른 설정: 아래 버튼으로 추가를 요청할 수 있습니다.</string>
+    <string name="compat_tile_manual">빠른 설정: 직접 추가하면 사용 가능 · Android 13 미만</string>
+    <string name="compat_visual_supported">화면 분석: 지원 · 별도 동의 후 사용하는 실험 기능</string>
+    <string name="compat_visual_unsupported">화면 분석: Android 14 이상 필요. 기본 넘김은 사용 가능하며, Instagram은 시간제로 대체할 수 있습니다.</string>
+    <string name="compat_saved_inactive">이전 선택은 보관하지만 이 기기에서는 실행하지 않습니다.</string>
+    <string name="compat_instagram_missing">Instagram 설치 필요 · 공식 앱이 지원하는 기기에서 사용</string>
+    <string name="compat_instagram_select">‘사용할 앱’에서 Instagram을 선택해 주세요.</string>
+    <string name="compat_instagram_ready">Instagram에 적용 · 지원되는 릴스 화면에서 동작</string>
+    <string name="compat_tile_add_button">빠른 설정에 실행 토글 추가</string>
+    <string name="compat_tile_manual_button">빠른 설정 직접 추가 방법</string>
     <string name="app_name">쇼츠 자동 넘김</string>
     <string name="tile_label">쇼츠 넘김</string>
     <string name="off">꺼짐</string>
@@ -9,16 +46,16 @@
     <string name="close_symbol">×</string>
     <string name="close_description">자동 넘김 중지하고 플로팅 닫기</string>
     <string name="floating_description">현재 %1$d회 / 적용 %2$d회. %3$s. 탭하면 선택한 방식으로 횟수 변경. 끌어서 이동.</string>
-    <string name="accessibility_description">선택한 YouTube 쇼츠와 Instagram 릴스의 재생 시간을 읽고 설정 횟수 후 넘깁니다. 선택한 시간제는 진행 정보 없는 Instagram 영상만 설정 시간 후 넘깁니다. 광고 옵션은 반복 횟수와 별개로 동작하며 전체 실행을 끄면 모두 중지합니다. 선택적 화면 분석은 기기 메모리에서만 비교합니다. 영상·계정·시청 기록을 저장하거나 전송하지 않습니다. 화면 조회·캡처·스와이프 기능을 사용합니다.</string>
+    <string name="accessibility_description">선택한 YouTube 쇼츠와 Instagram 릴스의 재생 시간을 읽고 설정 횟수 후 넘깁니다. 선택한 시간제는 진행 정보 없는 Instagram 영상만 설정 시간 후 넘깁니다. 광고와 YouTube 라이브 미리보기 옵션은 반복 횟수와 별개로 동작하며 전체 실행을 끄면 모두 중지합니다. 라이브 대기 시간 0초는 바로 넘기기입니다. 선택적 화면 분석·캡처는 Android 14 이상에서만 가능하며 기기 메모리에서 비교합니다. 영상·계정·시청 기록을 저장하거나 전송하지 않습니다. 화면 조회·스와이프 기능을 사용합니다.</string>
     <string name="tile_manual">빠른 설정창을 끝까지 내린 뒤 편집에서 ‘쇼츠 넘김’을 추가하세요.</string>
     <string name="tile_added">타일이 추가되어 있습니다.</string>
     <string name="tile_not_added">타일을 추가하지 않았습니다. 빠른 설정창 편집에서도 추가할 수 있습니다.</string>
     <string name="permission_dialog_title">화면 조회와 자동 스와이프 안내</string>
-    <string name="permission_dialog_body">선택한 YouTube 쇼츠·Instagram 릴스에서 재생 시간을 읽고, 설정 횟수 뒤 스와이프합니다.\n\n시간제를 켜면 진행 정보 없는 Instagram 영상만 설정 시간 뒤 넘깁니다. 광고 옵션은 반복 횟수와 별개라 0회에서도 동작하며, 전체 실행을 끄면 모두 중지합니다.\n\n화면 분석 보조를 별도로 켜면 재생 정보 없는 Instagram 영상의 화면을 기기 안에서 비교합니다. 처음 학습 중 추가 재생될 수 있고 정확한 횟수를 보장하지 않는 시험 기능입니다.\n\n접근성은 화면을 읽고 캡처·조작할 수 있는 강한 권한입니다. 이 앱은 인터넷 권한이 없고 영상·계정·시청 이력과 화면을 저장하거나 전송하지 않습니다.\n\n다음 화면의 ‘설치된 앱’에서 ‘쇼츠 자동 넘김’을 직접 켜 주세요. 다른 접근성 서비스는 변경하지 마세요.</string>
+    <string name="permission_dialog_body">선택한 YouTube 쇼츠·Instagram 릴스에서 재생 시간을 읽고, 설정 횟수 뒤 스와이프합니다.\n\n시간제를 켜면 진행 정보 없는 Instagram 영상만 설정 시간 뒤 넘깁니다. 광고와 YouTube 라이브 미리보기 옵션은 반복 횟수와 별개라 0회에서도 동작하며, 전체 실행을 끄면 모두 중지합니다. 라이브 대기 시간은 0~60초이며 0초는 바로 넘기기입니다.\n\nAndroid 14 이상에서 화면 분석 보조를 별도로 켜면 재생 정보 없는 Instagram 영상의 화면을 기기 안에서 비교합니다. 처음 학습 중 추가 재생될 수 있고 정확한 횟수를 보장하지 않는 시험 기능입니다. 구형 Android에서는 화면 캡처 없이 기본 기능을 사용합니다.\n\n접근성은 화면을 읽고 조작할 수 있으며, Android 14 이상에서는 캡처도 가능한 강한 권한입니다. 인터넷은 GitHub 업데이트 확인·다운로드에만 사용합니다. 영상·계정·시청 이력과 화면은 저장하거나 전송하지 않습니다.\n\n다음 화면의 ‘설치된 앱’에서 ‘쇼츠 자동 넘김’을 직접 켜 주세요. 다른 접근성 서비스는 변경하지 마세요.</string>
     <string name="open_settings">설정으로 이동</string>
     <string name="cancel">취소</string>
     <string name="settings_unavailable">이 기기에서 설정 화면을 열 수 없습니다. 시스템 설정에서 직접 열어 주세요.</string>
-    <string name="count_helper">0회 = 반복·시간제 중지 · 광고는 별도 적용\n최대 99회</string>
+    <string name="count_helper">0회 = 반복·시간제 중지 · 광고·라이브는 별도 적용\n최대 99회</string>
     <string name="battery_heading">백그라운드 실행 · 배터리</string>
     <string name="battery_exempt">절전 예외 적용됨</string>
     <string name="battery_not_exempt">절전 예외 아님 · 제한 없음 설정 권장</string>
