@@ -120,7 +120,12 @@ final class LocalizationChecks {
                 require(help.performClick(), "Help expands: " + where);
                 require(help.getText().toString().equals(context.getString(R.string.ui_help_hide)), "Localized help toggle: " + where);
                 measure(screen.root, dp(context, 320), dp(context, 800));
-                TextView body = findText(screen.root, context.getString(R.string.ui_help_body));
+                // The UI prepends the shared-window and per-host X behavior to the
+                // unchanged full guide. Match all three sections, not the old suffix alone.
+                String expectedHelp = context.getString(R.string.mw_mode_help) + "\n\n"
+                        + context.getString(R.string.mw_host_floating_help) + "\n\n"
+                        + context.getString(R.string.ui_help_body);
+                TextView body = findText(screen.root, expectedHelp);
                 require(body != null && body.getVisibility() == View.VISIBLE && body.getLineCount() > 1,
                         "Full translated help is visible and wraps: " + where);
                 inspect(screen.root, language.equals("en"), where + " help");

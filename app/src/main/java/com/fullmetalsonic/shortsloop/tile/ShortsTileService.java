@@ -58,21 +58,24 @@ public final class ShortsTileService extends TileService implements SharedPrefer
     }
     private void render() {
         boolean active = ModePolicy.tileActive(store.enabled(), store.target(), RuntimeState.connected, RuntimeState.blocked);
-        boolean ads = store.skipAds() && store.instagramEnabled() && installed(SettingsStore.INSTAGRAM_PACKAGE);
-        boolean live = store.skipLive() && store.youtubeEnabled() && installed(SettingsStore.YOUTUBE_PACKAGE);
-        boolean longVideo = store.skipLong() && ((store.youtubeEnabled() && installed(SettingsStore.YOUTUBE_PACKAGE))
-                || (store.instagramEnabled() && installed(SettingsStore.INSTAGRAM_PACKAGE)));
-        String subtitle = active ? store.target() == 0
-                ? longVideo ? text(R.string.tile_long) : text(R.string.zero_features_short,
-                    text(ads ? R.string.feature_on_short : R.string.feature_off_short),
-                    text(live ? R.string.feature_on_short : R.string.feature_off_short))
-                : text(R.string.tile_count, store.target())
+        String subtitle = active ? hostCounts()
                 : RuntimeState.blocked ? text(R.string.restart_needed)
                 : !RuntimeState.connected || (store.floatingEnabled() && !Settings.canDrawOverlays(this)) ? text(R.string.permission_needed)
                 : !store.hasSelectedApps() ? text(R.string.tile_select)
                 : text(R.string.off);
-        publish(active, subtitle, active && store.target() == 0
-                ? StatusText.text(AppLocale.wrap(this), com.fullmetalsonic.shortsloop.core.LongVideoPolicy.zeroCountStatus(ads, live, longVideo)) : subtitle);
+        publish(active, subtitle);
+    }
+    private String hostCounts() {
+        StringBuilder value = new StringBuilder();
+        for (String host : new String[]{SettingsStore.YOUTUBE_PACKAGE, SettingsStore.INSTAGRAM_PACKAGE}) {
+            if (!store.isSelected(host) || !installed(host)) continue;
+            if (value.length() != 0) value.append(" · ");
+            SettingsStore scoped = store.forHost(host);
+            value.append(SettingsStore.YOUTUBE_PACKAGE.equals(host) ? "YT " : "IG ");
+            value.append(scoped.hostPaused() ? text(R.string.off)
+                    : RuntimeState.forHost(host).blocked ? text(R.string.restart_needed) : Integer.toString(scoped.target()));
+        }
+        return value.length() == 0 ? text(R.string.tile_select) : value.toString();
     }
     private void publish(boolean active, String subtitle) {
         publish(active, subtitle, subtitle);

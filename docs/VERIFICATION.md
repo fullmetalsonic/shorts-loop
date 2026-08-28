@@ -1,4 +1,79 @@
-# 검증 기록 · ShortsLoop 0.2.9
+# 검증 기록 · ShortsLoop
+
+## 현재0.3.0/code32 · 최종 기능 검증 / Current functional verification
+
+공개 고정본의 소스·해시·업그레이드·CI·다운로드 확인은 [0.3.0 릴리스 원장](releases/v0.3.0.md)을 따른다. 아래 후보 해시를 공개 APK 해시로 사용하지 않는다.
+
+업그레이드 시험: 공개0.2.9→53FD 후보 덮어 설치를 일회용 API26/33/34에서 각각 수행해PASS. 기존24개 설정의 값·타입을 보존하고 앱별 초기화19개 추가(합계43),각호스트상속·이후독립수정·재초기화방지·사진IG전용·dual기본OFF·실행OFF·동일UID/서명·업데이트선호보존을 확인했다. 휴대폰 데이터는 초기화하지 않았다. / Upgrade checks pass on26/33/34:24 typed legacy preferences preserved,19 migration keys added,independent host inheritance/reopening,Instagram-only photo settings,default-OFF dual mode and unchanged UID/signer/update preferences.
+
+최신 실폰 후보 **742854bytes**,SHA256`53FDA56552ECC4B2D309BF38AD2E0072301866E813C0E445B7B328F6DA029C2A`의 설치 해시 일치 확인. BUILD·**564JUnit**·KO/EN360쌍/103상태·정적 안전 검사PASS. 동일 APK의 API26/33/34 native **28043/28053/27794 PASS**. lint0오류13경고(OldTargetApi1,ObsoleteSdkInt1,UnusedResources11). 독립 소스 리뷰 P1/P2=0.
+
+전체화면 복귀 시 TYPE3 SystemUI 손잡이를 가림으로 오인한 직접 원인을 확인했다. 비초점·정확한 SystemUI 소유·제한된 기하를 가진 손잡이가 별도 상위 SystemUI 가장자리 바에 완전히 포함될 때만 관측을 허용한다. 실제 입력 경로는 여전히 모든 상위 창과 교차하지 않아야 한다. 미포함·잘못된 소유/유형/초점/레이어·확대된 바·경로 충돌 음성 사례를 시험했다. [D-043](DEBUG_LOG.md).
+
+| 실폰 구간 / Physical segment | 후보 / Candidate | 실제 확인된 추가 전환 / Confirmed delta |
+|---|---|---|
+| 전체화면 Instagram / Full Instagram | 53FD | IG3/3:일반1·긴1·광고1;YT숨김0 |
+| 전체 실행·듀얼ON 유지→IG좌/YT우 / Keep execution and dual ON,split | 53FD | YT4/4:일반3·긴1;IG추가1/1일반 |
+| ON 유지→IG 전체화면 복귀 / Keep ON,return to full IG | 53FD | IG추가9/9:일반4·긴4·광고1;YT누적4에서변화0 |
+| 회전IG위/YT아래 / Rotated IG above YT | 이전DE7F | YT3/3일반;IG8/8:일반4·긴4 |
+| 전체OFF→상하교환→ON / OFF,swap,ON | 이전DE7F | YT추가2/2일반;IG추가3/3일반 |
+| 계산기위/YT아래 / Calculator above YT | 이전DE7F | YT1/1일반;숨긴IG추가0,계산기9→12조작 |
+| 계산기위/IG아래 / Calculator above IG | 이전F582 | IG6/6:일반3·긴2·시간제1;YT숨김0,계산기19→17조작 |
+
+53FD 무중단 모드전환 구간은21:05:45–21:11:58KST이며 최종 요청/확인 YT4/4·IG13/13,종료pending/blocked/recovery0. 창 전환은 시스템 메뉴·분할 경계로 수행했고 영상 수동 스와이프를 자동 전환으로 세지 않았다. 화면 경계가 바뀌면 이전 카운트를 버리고 새 시작부터 세는 것은 의도된 보호다. 종료 후 전체실행OFF로 설정을 보존했다.
+
+F582→53FD는 제품 코드 변경이므로 이전 후보의 물리시험을 새 APK 전체검증으로 합산하지 않는다. DE7F→F582끼리만 리소스표 외 ZIP항목(두DEX 포함)이 같았다. 원래 회전방향 복귀,최종 후보의 모든 배치/사진 두 모드/동시 손가락 제스처,듀얼OFF 실폰 흐름,모든 일반 앱·키보드·팝업 조합은 **NOT RUN**. 합성/native의 보호 검사와 실제 호스트 성공을 구분한다. 모든 영상·기기의 성공을 보장하지 않는다.
+
+EN: Installed phone candidate53FD…9C2A passes build,564 unit tests,static/localization checks and exact-APK API26/33/34 native28043/28053/27794 checks;lint0 errors/13 warnings and no open P1/P2 in source review. Full→dual→full works without toggling execution or dual mode:IG3,then YT4/IG+1,then IG+9 with hidden YT frozen. Final totals4/4 and13/13 have no pending requests,blocks or recovery. Earlier rotated/calculator segments are retained under their own artifact identities,not added to this candidate's totals. Unrun combinations and original-rotation return remain explicit. Final publication evidence is in the release record.
+
+## 이전0.3.0 후보별 기록 / Historical0.3.0 candidates
+
+이하 ‘최신/현재/진행 중/미게시’는 당시 상태다. 위 현재 검증과 릴리스 원장이 우선한다. / Relative status wording below belongs to its historical checkpoint.
+
+### 최신 후보 · 회전 및 일반 앱 병행 / Latest candidate,rotation and ordinary-app coexistence
+
+최종 설명 보완 후보는 **742366bytes**,SHA256`F582EA28C3A77D78A60BAD6D79C0E5A91010D8C9600773EFFC38599D05BFE017`이며 실폰 설치 APK 해시 일치를 확인했다. BUILD·**561JUnit**·KO/EN360쌍/103상태·정적 안전 검사PASS,lint0오류13경고. 같은 APK의 API26/33/34 native 검사는 각각 **28043/28053/27794 PASS**. 직전 실폰 후보`DE7F2803CD99D428D6AB15C63276C23B394DC3C4F8AF95281F3DD72131E3914C`(742318bytes)와 ZIP 항목을 비교하여 `resources.arsc`만 다르고 두 DEX를 포함한 나머지 항목이 같음을 확인했다. 두 APK를 동일 해시로 보고하지 않는다. 바뀐 내용은 한 대상 앱과 일반 앱을 병행할 때도 듀얼ON이 필요하다는 한·영 안내다.
+
+회전 실측에서 정상 TYPE3 상태표시줄의 고정 높이가 짧아진 상단 창 높이8%를 넘어 창을 차단했다. `edgeBar`의 긴변/창별 두께 상한과 실제 전체 범위 포함 조건을 보완했다. 비초점·유형·가장자리 조건,모든 상위 창과 입력 경로 교차 차단,입력 직전 경계 일치는 유지한다. 경계값·초점·유형·밀린 바·중앙 가림·입력 충돌을 재발방지 시험에 추가했다. 수정 소스 독립 리뷰의 새 P1/P2는0이다. [D-043](DEBUG_LOG.md).
+
+| 실폰 구간 / Device segment | APK | 실제 추가 전환 / Confirmed delta | 범위 / Scope |
+|---|---|---|---|
+| 회전,IG위/YT아래 / Rotated,IG above YT | DE7F | YT3/3 일반;IG8/8(일반4·긴4) | 20:47:34–20:50,반복1·긴60초,관측 종료pending/차단/복구0 |
+| 전체OFF→상하교환→ON / OFF,swap,ON | DE7F | YT2/2 일반;IG3/3 일반 | 20:50:28–20:52,플로팅이 호스트를 따라 이동,종료pending/차단/복구0 |
+| 계산기위/YT아래 / Calculator above YT | DE7F | YT1/1 일반;숨긴IG 추가0 | 계산기7+2=9,이어+3=12 조작,비초점 카운트 유지·실제 다음 페이지 확인 |
+| 계산기위/IG아래 / Calculator above IG | F582 | 진행 중 / In progress | 긴 영상·시간제 각1회 확인,일반 반복 전환 추가 확인 중;숨긴YT 요청0 |
+
+상하 두 구간의 합계5/11은 중간 실행OFF와 배치 교환이 있는 결과이며 무중단 연속 시험이 아니다. 카운트 증가만으로 PASS를 판정하지 않았고 요청 후 새 페이지 확인 수치를 사용했다. 일반 앱 병행은 계산기에서 확인한 제한된 표본이며 키보드·팝업·복잡한 멀티터치나 모든 다른 앱의 성공을 보장하지 않는다. 듀얼OFF는 활성 창만 처리하고,ON은 한 개만 보이는 대상도 처리한다. 외부 앱이 재생을 멈추면 강제로 재생하지 않으며 기존 키보드/가림 보호도 유지한다.
+
+원래 회전 방향 복귀·최종 후보의 모든 배치/사진 두 모드/동시 손가락 제스처·듀얼OFF 실폰 흐름은 **NOT RUN**이다. 이전 후보의 좌우·좁은 창·개별X 결과는 아래에서 별도 보존한다. GitHub게시·새커밋/태그·메일·OS회전설정 변경은 없다.
+
+EN: The final742366-byte F582 candidate is installed with matching SHA256 and passes build,561 unit tests,static guards and exact-APK native28043/28053/27794 checks on API26/33/34;lint has0 errors/13 warnings. Only the resource table differs from the phone-tested DE7F candidate;both DEX files and all other ZIP entries match. A fixed-height status bar was wrongly rejected after top/bottom rotation;bounded edge-bar geometry and negative regression tests fix that case while all touch-corridor/current-bounds guards remain. Independent source review found no new P1/P2. The table reports separate confirmed segments,not uninterrupted totals. Calculator coexistence does not establish support for every other app or keyboard/overlay interaction. Instagram ordinary-repeat coexistence and return rotation remain pending;no publication or email.
+
+### 이전818AC 후보 · 좁은 창 재시험 / Previous narrow-pane candidate
+
+최신742334-byte 후보SHA256`818AC00DECEE2C9C42AD4C668F4622561E030E2B2D44BAD221AB54707789E1A4`를실폰에설치하고설치APK해시일치를확인했다. BUILD/559JUnit/정적가드PASS,동일APK API26/33/34 native**28033/28043/27788PASS**. 추가native26검사는hidden setter대신공개Parcelable로분리된시험창을구성하고값왕복을검증하며,제품·기기권한을변경하지않는다. lint0오류13경고는유지한다.
+
+좁은Instagram창에서손잡이의고정폭이창너비25%를넘어확인중단되는현상을재현했다. 창의긴변과각변의상한·중심·가로형태조건으로관측규칙을보완했고,실제입력경로교차및요청직전창경계동일성검사는그대로유지했다. 최신후보의20:37:09–20:38후반무조작시험은YouTube**1/1**,Instagram**8/8**(일반1·긴영상6·광고1),종료pending0·차단0·ordinary recovery0. 이전후보와합산하지않는다.
+
+직전517827후보는첫배치5/5씩,좌우교체후추가YouTube5/5·Instagram7/7로누적10/12를확인했다. 이후Instagram플로팅X로해당앱만OFF,YouTube카운트세대유지·추가자동전환1회,Instagram추가요청0을확인했다. 이결과는두구간의검사이며한번도중지하지않은10연속시험이아니다. 그후좁은창실패를수정했으므로좌우교체/X검사는이전후보근거로구분한다.
+
+현재전체실행OFF·접근성연결유지·설정보존상태로사용자의90도회전/상하분할준비를기다린다. 회전·상하순서교체·원래방향복귀실폰검사는**NOT RUN**이다. OS회전설정변경·GitHub게시·메일없음. 아래내용은직전후보검증기록이다.
+
+EN: Latest818AC00D…89E1A4,742334bytes,matches the installed phone APK. Build,559 unit tests/static guards and exact-APK native28033/28043/27788 on26/33/34 pass. Narrow-pane physical retest confirmed1/1 YouTube and8/8 Instagram transitions(1 ordinary,6 long,1 ad),with no blocks or recovery. The preceding candidate's two-order totals10/12 and isolated-X test remain separate evidence. Overall execution isOFF while awaiting user-prepared90-degree/top-bottom testing;rotation/order reversal/return remainNOT RUN. No publication,email or OS rotation-setting change.
+
+### 직전517827 후보 기록 / Previous candidate evidence
+
+공개 최신은0.2.9이며 아래0.3.0은 미커밋 소스의 로컬 검증 후보다. 이전 후보의 오류와 결과를 최종 후보 PASS로 합산하지 않는다. [설계·계약](SPLIT_SCREEN_PLAN.md),[원인·재발방지D-043](DEBUG_LOG.md).
+
+- 최신 후보:742174bytes,SHA256`5178270548FE2F18DED435C275D3735119475F90E63DD3C2EAF197709EB72199`. 실폰에서 설치 APK를 다시 받아 같은 SHA256 확인. non-debuggable release,기존 단일 서명 유지,접근성 재연결과 기존 설정 보존 확인.
+- BUILD PASS,제품557JUnit PASS,KO/EN360리소스쌍·103상태 및 정적 안전 배선 검사 PASS. lint0오류13경고(기존 OS 관련2개,UI 재배치 후 미사용 리소스11개). 미사용 문구는 이번 변경에서 임의 삭제하지 않았다.
+- 동일 APK API34 native27762 PASS. 이어 추가한 최종 창 경계 합성 시험은 테스트 fixture의 hidden setter 접근 제한으로 중단됐으며 제품 크래시가 아니다. 이 추가 시험과 API26/33 최종 재실행은 진행 중이다. 이전969E 후보의27999/28009/27754 결과를 최신 후보에 대입하지 않는다.
+- 실폰 1차 무조작 구간:20:23:55–20:26:12,Instagram왼쪽/YouTube오른쪽,듀얼ON·양쪽반복1·긴영상ON60초. YouTube요청5/확인5(일반4·긴영상1),Instagram5/5(일반3·긴영상2),각pending0·blocked=false·ordinary recovery0. 수동 스와이프와 강제 초점 전환 없이 양쪽 진행값/카운트/페이지 변경을 함께 확인했다.
+- 위치 교체:전체실행OFF→시스템좌우교체→ON으로YouTube왼쪽/Instagram오른쪽. 각 창의 감지와 플로팅이 앱을 따라가는 것을 확인했고 반대 순서의 자동 전환 검사는 계속 진행 중이다. 서로 다른 구간을10연속 시험으로 합산하지 않는다.
+- 초기 실패:분할 경계 손잡이,지역화된 자기 플로팅 제목,API36 상단 창 제어 손잡이를 가림 창으로 오인했다. 메타데이터 관측으로 원인을 나누어 수정했으며,관측 허용과 실제 입력 경로 검사를 분리했다. 현재 창 경계가 요청 직전 경계와 다르면 입력을 거부한다. 재표시된 플로팅의 빈 상태 문구도 캐시 복원으로 수정했다.
+- 듀얼OFF의실폰전환,상하분할,드래그/비율변경,개별X,두앱동시요청충돌의실제발생,사진두모드의듀얼실기기표본은 아직미검증이다. 관련합성/native검사는실폰PASS를대신하지않는다. GitHub커밋/푸시/태그/Release/메일없음.
+
+EN: Public latest remains0.2.9. Local0.3.0 candidate51782705…B72199 is742174bytes and matches the installed phone APK. Build,557 unit tests,localization and static guards pass;lint has0 errors/13 warnings. API34 native27762 passed before an additional detached-window fixture encountered a hidden-setter restriction;that fixture and final26/33 runs are still being checked. The first untouched split run confirmed5/5 YouTube transitions(4 ordinary,1 long) and5/5 Instagram transitions(3 ordinary,2 long),with no manual swipes,blocks or recovery. Position-swap testing continues. These observations are not a10-consecutive or all-content guarantee. No publication or email.
 
 ## 현재0.2.9/code31 / Current verification
 

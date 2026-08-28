@@ -1,5 +1,31 @@
 # ShortsLoop · 기술 인수인계 / Technical handover
 
+## 현재0.3.0/code32 · 배포 준비 / Current release preparation
+
+듀얼모드·앱별 설정/세션/플로팅을 구현하고 실기기 시험을 마쳤다. 듀얼ON을 유지하면 전체화면 한 앱, 두 앱 분할, 일반 앱 옆 한 대상 앱을 보이는 창 기준으로 처리한다. 강제 초점·강제 재생은 하지 않는다. [사용법](docs/USER_GUIDE.md),[설계](docs/SPLIT_SCREEN_PLAN.md),[릴리스 원장](docs/releases/v0.3.0.md).
+
+최신 실폰 후보는742854bytes·SHA256`53FDA56552ECC4B2D309BF38AD2E0072301866E813C0E445B7B328F6DA029C2A`. 설치해시 일치,BUILD/564JUnit/정적가드PASS,API26/33/34 native28043/28053/27794PASS,lint0오류13경고,독립리뷰P1/P2=0. 시스템 상태표시줄 내부의 작은 창 제어 손잡이를 전체화면 가림으로 오인한 원인을 제한적으로 수정했다. 입력 경로 교차·창 경계 일치 보호는 유지한다.
+
+실행·듀얼ON 유지 시험: 전체IG3회→분할YT4회/IG추가1회→전체IG복귀추가9회,숨긴YT추가0,종료차단/복구/미확인요청0. 이전 후보의 상하두순서·계산기병행·좁은창·개별X 근거와 구분한다. 원래 회전방향 복귀·사진의 모든 듀얼 조합·모든 다른 앱/팝업은 미검증이다. 최종 APK 고정·업그레이드·CI·익명 다운로드 결과는 릴리스 원장에 이어 기록한다. 실폰 전체 실행OFF,기존 설정/권한/OS회전설정 보존. 기존Public에 게시 준비 중이며 메일 발송은 하지 않는다.
+
+EN: Dual mode,isolated host sessions/settings/overlays and scoped safety guards are implemented. Phone candidate53FD…9C2A matches its installed APK;build,564 unit tests,three-OS native checks and source review pass. Keeping execution and dual mode ON confirmed full IG3,dual YT4/IG+1,then returned-full IG+9 while hidden YT stayed unchanged. Evidence is candidate-specific;return rotation and all photo/overlay combinations are untested. Execution is nowOFF with settings and permissions preserved. See the release record for final artifact,upgrade,CI and public-download checks;no email.
+
+## 이전 후보 기록 / Historical candidate checkpoints
+
+아래 ‘현재/최신/대기/미구현’ 문구는 해당 시점의 기록이며 위 현재 상태를 대체하지 않는다. / Relative status wording below describes its historical checkpoint,not the current release.
+
+### 0.3.0/code32 분할 화면 구현·시험 중 / Earlier split-screen validation
+
+**최신 체크포인트: 회전·상하2배치 확인,일반 앱 병행 시험 마무리 중.** 최종APK742366bytes,SHA256`F582EA28C3A77D78A60BAD6D79C0E5A91010D8C9600773EFFC38599D05BFE017`,실폰설치해시일치. BUILD/561JUnit/가드/동일APK API26·33·34 native28043/28053/27794PASS,lint0오류13경고,소스독립리뷰새P1/P2=0. 회전 후 정상 상태표시줄의 고정높이를 창 가림으로 오인하는 문제를 추가수정했다. DE7F직전후보 상하IG위YT아래YT3/IG8,반대순서추가YT2/IG3,계산기조작중YT1전환을 각각확인했다. 최종F582는한영설명만보완하여리소스테이블외두DEX등ZIP항목동일. 현재계산기위/IG아래,실행ON,긴1·시간제1전환확인후일반반복을추가관측중이다. 원래방향복귀와전체예외조합은미검증. 자세한후보별근거는[검증원장](docs/VERIFICATION.md). 권한·설정유지,OS회전설정변경·새게시없음.
+
+EN: Rotated top/bottom orders and calculator/YouTube coexistence have confirmed physical transitions. FinalF582…FE017 matches the installed APK and passes561 unit tests/three-OS native checks. It changes only KO/EN help resources from the DE7F phone-tested runtime. Calculator/Instagram ordinary-repeat observation remains in progress with executionON;return rotation and full exception coverage remain untested. See verification for separate artifact/segment evidence;no publication or OS rotation-setting changes.
+
+공개 최신은0.2.9를 유지한다. 로컬0.3.0은 독립HostPlaybackSession 두개, 선택형 듀얼모드(기본OFF), 앱별 반복·긴영상·플로팅 위치/탭/일시정지, 두개72×56dp YT/IG 플로팅, 전역 입력 직렬화와 대기 재검증을 구현했다. 기존 키를 보존하고 한 번만 앱별 초기값으로 복사한다. X는 해당앱 정지, 전체OFF는 모두정지. [설계/시험계획](docs/SPLIT_SCREEN_PLAN.md).
+
+최신후보51782705…B72199(742174bytes):BUILD/557JUnit/정적가드PASS,실폰설치APK해시일치. 분할손잡이·자기플로팅제목·상단창제어오인을수정하고관측허용과실제입력경로검사를분리했다. 실폰IG좌/YT우무조작구간에서각5요청/5확인(YouTube일반4·긴1,Instagram일반3·긴2),차단/복구0을확인했다. 전체OFF→좌우교체→ON후반대순서시험중. API34 native27762PASS후추가창경계fixture가hidden setter제한으로중단되어테스트코드보완중;최종26/33재실행도남음. [현재검증](docs/VERIFICATION.md)이최신원장이다. 공개/새태그/메일없음.
+
+EN: Public latest remains0.2.9. Candidate51782705…B72199 matches the installed phone APK and passes build,557 unit tests and static guards. The untouched first split arrangement confirmed5 transitions for each host without blocks or recovery. Swapped-order testing and the final native fixture/OS checks continue;see verification for exact evidence and limits. No publication/tag/email.
+
 ## 게시·다음 업데이트 경계 / Release and follow-up boundary
 
 0.2.9를 기존 **Public 저장소에 공개 완료**했다. 제품태그`v0.2.9`/`eb4bd0c`,제품CI33163186891 SUCCESS,익명3파일 크기·SHA256·업데이트조회API 확인PASS. 최종APK SHA256`5EEB5B8B090B090EB0313CE10CC71102ADF3EDA5728EDE4F01FA0937D831E68D`. 실폰 시험후보1EF와 실행 내용은 같고 내장revision/전체해시만 다르며 분할 화면 보존을 위해 실폰 재설치는 하지 않았다. 아래 보류 표현은 배포 전 체크포인트이고 [릴리스 기록](docs/releases/v0.2.9.md)이 최종 원장이다. 분할 화면 두 앱 동시 동작과 앱별 플로팅은 [후속 계획](docs/SPLIT_SCREEN_PLAN.md)이며 이번 제품에 미구현이다. 기기 구조만 읽기 전용으로 확인했다.

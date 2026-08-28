@@ -1,8 +1,8 @@
-# 한국어·영어 안내 / Korean and English · ShortsLoop 0.2.9
+# 한국어·영어 안내 / Korean and English · ShortsLoop 0.3.0
 
-대상은 **0.2.9/code31**입니다. 이 문서는 언어 동작과 확인 방법을 설명하며 시험·배포 완료 선언이 아닙니다. 이번 버전의 휴대폰 실기기 시험은 **NOT RUN**, 공개 파일 검증은 대기 상태입니다. 최종 결과는 [검증 기록](VERIFICATION.md)을 확인하세요.
+대상은 **0.3.0/code32**입니다. 시스템 첫 언어에 따른 한영 선택을 유지하고 앱별 설정·듀얼·호스트별X 안내를 추가합니다. 최종 제품 후보의 빌드·단위·3개 OS 검사와 범위별 실기기 동작을 확인했으며,게시·CI·공개 파일 검증은 진행 중입니다. 모든 실시간 언어 변경·모든 기기 동작을 검증했다는 뜻은 아닙니다. 현재 공개판은0.2.9입니다. [검증 원장](VERIFICATION.md),[0.3.0 기록](releases/v0.3.0.md).
 
-This guide describes **0.2.9/code31** language behavior, not completed testing or delivery. Physical-phone tests for this version are **NOT RUN** and public-artifact verification is pending. See the verification record for final evidence.
+This guide targets **0.3.0/code32**,retaining first-system-language selection and adding per-host,dual-mode and scopedX guidance. Product build/unit/three-OS checks and scoped physical flows are verified;publication,CI and public-file checks remain in progress. This is not universal real-time language-change or device coverage. Public0.2.9 remains current;see the linked records.
 
 ## 1. 언어를 정하는 기준 / Language selection
 
@@ -28,14 +28,14 @@ App-owned menus, help, floating controls and Quick Settings state follow the **f
 1. 편집 중인 횟수·시간이 있으면 **완료/적용**으로 확정합니다. 확정 전 임시 입력의 화면 재생성 후 보존은 보장하지 않습니다.
 2. 안전하게 **전체 자동 넘김 실행 / Auto-advance**를 끕니다.
 3. Android의 **설정 → 언어**에서 원하는 언어를 첫 번째로 옮깁니다. 제조사에 따라 ‘일반 관리’나 ‘시스템’ 아래에 있습니다. ShortsLoop가 시스템 언어를 대신 변경하지 않습니다.
-4. ShortsLoop로 돌아와 메뉴·도움말·설치 버전 표시를 확인합니다. 예: `설치 버전 0.2.9` 또는 `Installed version 0.2.9`.
-5. 선택 앱을 전체 화면으로 열고 필요한 경우 전체 실행을 다시 켭니다. 언어 변경 중 화면 전환·진행 정보 소실·접근성 재연결에 대한 기존 보호를 해제하지 않습니다. ‘재시작 필요’ 또는 안전정지 안내가 있으면 현재 화면을 확인한 뒤 전체 실행을 **OFF→ON**합니다.
+4. ShortsLoop로 돌아와 메뉴·도움말·설치 버전 표시를 확인합니다. 예: `설치 버전 0.3.0` 또는 `Installed version 0.3.0`.
+5. 선택 앱을 지원되는 전체/분할 화면으로 열고 필요한 경우 전체 실행을 다시 켭니다. 언어 변경 중 화면 전환·진행 정보 소실·접근성 재연결에 대한 기존 보호를 해제하지 않습니다. ‘재시작 필요’ 또는 안전정지 안내가 있으면 현재 화면을 확인한 뒤 전체 실행을 **OFF→ON**합니다.
 
 1. Apply any edited count or time before leaving; uncommitted input is not guaranteed to survive screen recreation.
 2. Turn **Auto-advance** off for safety.
 3. In Android **Settings → Languages**, move your preferred language first. The path may be under General management or System. ShortsLoop does not change system language for you.
-4. Return to ShortsLoop and check menus, help and `Installed version 0.2.9` or its Korean equivalent.
-5. Open a selected host full-screen and re-enable execution when ready. Language changes do not bypass screen-change, missing-progress or accessibility-reconnection safeguards. If restart or safety-stop guidance appears, inspect the screen and toggle main execution **OFF→ON**.
+4. Return to ShortsLoop and check menus, help and `Installed version 0.3.0` or its Korean equivalent.
+5. Open a selected host in a supported full/split layout and re-enable execution when ready. Language changes do not bypass screen-change, missing-progress or accessibility-reconnection safeguards. If restart or safety-stop guidance appears, inspect the screen and toggle main execution **OFF→ON**.
 
 기존에 저장한 횟수·앱 선택·플로팅 위치·광고·라이브·긴 영상·시간제·화면 분석 선택은 언어 변경 때문에 초기화하지 않습니다. 단, 서비스 재연결 후 전체 실행을OFF로 두는 기존 안전 규칙은 그대로입니다. 기기의 앱별 언어 메뉴가 보이더라도 제품 화면의 기준은 위 시스템 첫 언어 규칙입니다.
 
@@ -54,24 +54,27 @@ Saved counts, selected hosts, floating position and feature options are not rese
 | YouTube 라이브 · 미리보기 넘김 | YouTube live · Skip previews | 인식한 라이브 미리보기 / Recognized live previews |
 | 플로팅 리모컨 | Floating control | 표시·탭 방식 / Display and tap behavior |
 | 사용할 앱 | Apps to use | YouTube·Instagram 선택 / Host selection |
+| 듀얼 화면 적용 | Use dual-window mode | OFF활성 창,ON보이는 선택 대상 / Active-only vs visible selected hosts |
+| 앱별 설정 | Settings for each app | 편집 대상 선택 / Choose the host to edit |
+| 이 앱 다시 시작 | Resume this app | 해당 호스트만 재개 / Resume one host |
 | 사용 준비 | Setup | 권한·배터리·타일 / Permissions, battery and tile |
 | 업데이트 · 앱 정보 | Updates · App information | 조회·다운로드·설치 / Check, download and install |
 | 실험 기능 | Experimental features | 선택형 화면 분석 / Optional visual assistance |
 | 전체 자동 넘김 실행 | Auto-advance | 모든 자동 동작 ON/OFF / All automation on/off |
 
-플로팅의 `1/2`, `2/2`는 언어가 바뀌어도 총 재생 횟수 표시입니다. `조건 / Filters`는 긴 영상 등 독립 옵션의 활성 상태, `광고 / Ads`, `라이브 / Live`, `광·라 / A+L`은 해당 독립 옵션 상태입니다. **현재 영상이 광고·라이브라는 판정이나 완주 횟수 자체가 아닙니다.** 복구 대기·정지 표시는 정상 재생 숫자와 구분합니다. 표시 언어가 길어져도 플로팅의 기존 크기·이동·× 종료 계약은 유지합니다.
+플로팅의 `1/2`, `2/2`는 언어가 바뀌어도 해당 앱의 총 재생 횟수 표시입니다. `조건 / Filters` 등 독립 옵션 표시는 **현재 영상 종류의 판정이나 완주 횟수 자체가 아닙니다.** 복구 대기·정지 표시는 정상 재생 숫자와 구분합니다.0.3.0의 X는 표시된 호스트만 일시정지하며 전체OFF는 모두 중지합니다. 이전 단일 플로팅의 전체 종료 계약과 혼동하지 않습니다.
 
-Floating `1/2` and `2/2` retain the same play-count meaning. `Filters` indicates independent filters such as long-video skipping; `Ads`, `Live` and `A+L` indicate those enabled options. **These are not classifications of the current video or completed-play counts.** Recovery waiting and stopped states remain distinct from ordinary counting. Translation does not change the floating control's size, dragging or × stop behavior.
+Floating `1/2` and `2/2` retain their host-specific play-count meaning. Independent-option labels such as `Filters` **do not classify the current content or count completed plays**. Recovery waiting/stopped states are distinct. In0.3.0,X pauses the labelled host;masterOFF stops all hosts. Do not apply the older single-control stop scope.
 
-0회는 일반 반복·시간제·화면 분석 중지입니다. 긴 영상·광고·라이브는 별도 옵션이며, 전체 실행OFF가 모두 중지합니다. 라이브 **0초**는 인식·안전 확인 후 바로 넘기기이지OFF가 아닙니다. 이 의미는 번역 후에도 같습니다.
+0회는 해당 앱의 일반 반복·시간제·화면 분석 중지입니다. 긴 영상·광고·라이브·사진은 지원 호스트의 별도 옵션이며,전체 실행OFF가 모두 중지합니다. 라이브·사진 **0초**는 인식·안전 확인 후 바로 동작이지OFF가 아닙니다. 이 의미는 번역 후에도 같습니다.
 
-Zero plays stops ordinary repetition, timer and visual assistance. Long-video, ad and live options are independent; main execution OFF stops everything. A live delay of **zero seconds** means immediate after recognition and safety checks, not OFF. Translation does not change these meanings.
+Zero plays stops that host's ordinary repetition,timer and visual assistance. Supported long-video,ad,live and photo rules are independent;masterOFF stops everything. A live/photo delay of **zero seconds** means immediate after safety checks,notOFF. Translation does not change these meanings.
 
 ## 4. 표시 언어와 영상 인식은 별개 / UI language is not detection support
 
-이 업데이트는 안내 문구의 번역입니다. YouTube·Instagram 판독은 기존의 한국어·영어 텍스트, 지원되는 시계 표기와 접근성 구조 중심이며 **모든 언어·지역·앱 버전의 영상·광고 인식을 보장하지 않습니다**. 일부 구조 기반 판독이 다른 언어에서도 동작할 수 있지만 전 언어 지원으로 간주하지 않습니다. 시스템 언어가 바뀌어 호스트 앱의 표기도 달라지면 기존에 읽던 진행 정보를 더 이상 읽지 못할 수 있습니다.
+표시 번역은 영상 인식 언어의 확대와 별개입니다. YouTube·Instagram 판독은 기존의 한국어·영어 텍스트,지원되는 시계 표기와 접근성 구조 중심이며 **모든 언어·지역·앱 버전의 영상·광고 인식을 보장하지 않습니다**. 일부 구조 기반 판독이 다른 언어에서도 동작할 수 있지만 전 언어 지원으로 간주하지 않습니다. 시스템 언어가 바뀌어 호스트 앱의 표기도 달라지면 기존에 읽던 진행 정보를 더 이상 읽지 못할 수 있습니다.
 
-This update translates the interface. YouTube/Instagram readers still focus on existing Korean/English text, supported clock formats and accessibility structures; **detection is not guaranteed for every language, region or host version**. Structure-based reading may work in another language without establishing full support. If changing system language also changes host labels, previously readable progress may become unavailable.
+UI translation is separate from host-language detection. YouTube/Instagram readers focus on Korean/English text,supported clock formats and accessibility structures; **detection is not guaranteed for every language,region or host version**. Structure-based reading may work in another language without establishing full support. If system language changes host labels,previously readable progress may become unavailable.
 
 읽을 수 없으면 기존 안전 대기·정지 계약을 따릅니다. 언어를 이유로 추측 스와이프·권한 우회·추가 화면/소리 분석을 하지 않습니다. 감지가 되지 않을 때는 전체 실행을 끄고 수동으로 넘기세요. 지원 언어로 호스트 설정을 바꾸는 것도 성공을 보장하지는 않습니다.
 
@@ -93,8 +96,8 @@ Fixed Public GitHub lookup/download, metadata/size/SHA256/package/version/OS/sig
 
 `LanguagePolicy` selects the first language; `AppLocale` supplies display contexts; `StatusText` renders internal status. `UpdateMessages` maps structured update failures to localized text without adding Android display dependencies to network parsing. Default resources are English and `values-ko` resources are Korean. Detection signals, node IDs, update addresses and preference keys are not translated.
 
-확인 항목은 첫 언어 조합·리소스 키/서식·숫자 입력·오류 개인정보 차단·작은 화면과 큰 글자·플로팅/타일 갱신·언어 변경 중 안전 대기·기존 설정 보존입니다. PC/에뮬레이터 검사와 실제 YouTube/Instagram 자동 전환 시험은 구분합니다. 이번 버전의 휴대폰 시험 **NOT RUN** 상태를 과거 성공으로 대체하지 않습니다.
+확인 항목은 첫 언어 조합·리소스 키/서식·숫자 입력·오류 개인정보 차단·작은 화면과 큰 글자·플로팅/타일 갱신·언어 변경 중 안전 대기·기존 설정 보존입니다. PC/에뮬레이터 검사와 실제 소셜 앱 전환은 구분하며,후보별 최신 결과는 검증 원장을 따릅니다. 최초0.2.9 문서의 휴대폰NOT RUN/공개 대기 표기는 당시 체크포인트이며,[0.2.9 최종 기록](releases/v0.2.9.md)과 현재0.3.0 결과를 대신하지 않습니다.
 
-Checks cover first-language combinations, resource keys/formats, numeric input, private-error suppression, narrow/large-text layouts, floating/tile refresh, language-change safety and preference retention. PC/emulator checks are distinct from actual YouTube/Instagram auto-advance tests. Earlier results do not replace this version's **NOT RUN** physical-phone status.
+Checks cover first-language combinations,resource keys/formats,input,private-error suppression,layout,floating/tile refresh,safety and preferences. PC/emulator checks remain distinct from physical transitions;use the artifact-specific verification record. The original0.2.9 guide's phoneNOT RUN/publication-pending statement was an early checkpoint,not the final0.2.9 outcome or the current0.3.0 status.
 
 관련 문서 / Related: [README](../README.md) · [사용 설명서 / User guide](USER_GUIDE.md) · [제품 계약 / Product contract](PRODUCT_SPEC.md) · [OS 호환성 / Compatibility](COMPATIBILITY.md) · [검증 / Verification](VERIFICATION.md).

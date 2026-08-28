@@ -31,6 +31,8 @@ public final class MainActivity extends Activity {
     private static final String YOUTUBE = "com.google.android.youtube", INSTAGRAM = "com.instagram.android";
     private final Handler handler = new Handler(Looper.getMainLooper());
     private SettingsStore store;
+    private SettingsStore youtubeStore, instagramStore;
+    private boolean instagramSettingsSelected;
     private SettingsScreen screen;
     private boolean rendering;
     private String appliedLanguage;
@@ -49,11 +51,28 @@ public final class MainActivity extends Activity {
     }
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState); store = new SettingsStore(this);
-        screen = new SettingsScreen(this, store.ceiling(), value -> { store.ceiling(value); render(); },
+        youtubeStore = store.forHost(YOUTUBE); instagramStore = store.forHost(INSTAGRAM);
+        instagramSettingsSelected = savedInstanceState != null && savedInstanceState.getBoolean("instagram_settings_tab", false);
+        screen = new SettingsScreen(this, youtubeStore.ceiling(), value -> { youtubeStore.ceiling(value); render(); },
                 store.fallbackSeconds(), value -> { store.fallbackSeconds(value); render(); },
                 store.liveDelaySeconds(), value -> { store.liveDelaySeconds(value); render(); },
-                store.longVideoSeconds(), value -> { store.longVideoSeconds(value); render(); });
+                youtubeStore.longVideoSeconds(), value -> { youtubeStore.longVideoSeconds(value); render(); },
+                instagramStore.ceiling(), value -> { instagramStore.ceiling(value); render(); },
+                instagramStore.longVideoSeconds(), value -> { instagramStore.longVideoSeconds(value); render(); });
         setContentView(screen.root);
+        bindHostPanel(screen.youtubeSettings, youtubeStore, false);
+        bindHostPanel(screen.instagramSettings, instagramStore, true);
+        screen.hostTabs.setOnCheckedChangeListener((group, id) -> {
+            if (rendering) return;
+            View focused = getCurrentFocus();
+            if (focused != null) {
+                focused.clearFocus();
+                android.view.inputmethod.InputMethodManager keyboard = getSystemService(android.view.inputmethod.InputMethodManager.class);
+                if (keyboard != null) keyboard.hideSoftInputFromWindow(focused.getWindowToken(), 0);
+            }
+            instagramSettingsSelected = id == R.id.mw_tab_instagram;
+            render();
+        });
         screen.photos.whole.changed = value -> { store.photoWholeSeconds(value); render(); };
         screen.photos.slide.changed = value -> { store.photoSlideSeconds(value); render(); };
         screen.photos.toggle.setOnCheckedChangeListener((v, checked) -> {
@@ -79,12 +98,6 @@ public final class MainActivity extends Activity {
             store.timedFallback(true); render();
         });
         screen.skipAds.setOnCheckedChangeListener((v, checked) -> { if (!rendering) { store.skipAds(checked); render(); } });
-        screen.longVideo.toggle.setOnCheckedChangeListener((v, checked) -> {
-            if (rendering) return;
-            if (!checked) { store.skipLong(false); render(); return; }
-            if (!hasInstalledSelection() || !screen.longVideo.commit()) { render(); return; }
-            store.skipLong(true); render();
-        });
         screen.live.toggle.setOnCheckedChangeListener((v, checked) -> {
             if (rendering) return;
             if (!checked) { store.skipLive(false); render(); return; }
@@ -99,15 +112,15 @@ public final class MainActivity extends Activity {
             if (visualAssistAvailable()) confirmVisualAssist();
         });
         screen.floating.setOnCheckedChangeListener((v, checked) -> { if (!rendering) { store.floatingEnabled(checked); render(); } });
-        screen.tapModes.setOnCheckedChangeListener((v, id) -> { if (!rendering) { store.tapMode(id == R.id.tap_quick ? ModePolicy.TOGGLE : ModePolicy.ROTARY); render(); } });
+        screen.dualMode.setOnCheckedChangeListener((v, checked) -> { if (!rendering) { store.dualMode(checked); render(); } });
         screen.execution.setOnCheckedChangeListener((v, checked) -> {
             if (rendering) return;
             if (!checked) { store.enabled(false); render(); return; }
-            if (!screen.count.commit()) { render(); return; }
-            if (store.ceiling() > 0 && store.timedFallback() && store.instagramEnabled() && !screen.seconds.commit()) { render(); return; }
-            if (store.skipLive() && store.youtubeEnabled() && installed(YOUTUBE) && !screen.live.commit()) { render(); return; }
-            if (store.skipLong() && hasInstalledSelection() && !screen.longVideo.commit()) { render(); return; }
-            if (store.photoEnabled() && store.instagramEnabled() && !screen.photos.commit(store)) { render(); return; }
+            if (!commitHost(screen.youtubeSettings, youtubeStore, false)
+                    || !commitHost(screen.instagramSettings, instagramStore, true)) { render(); return; }
+            if (instagramStore.ceiling() > 0 && store.timedFallback() && store.instagramEnabled() && installed(INSTAGRAM) && !screen.seconds.commit()) { showHost(true); return; }
+            if (store.skipLive() && store.youtubeEnabled() && installed(YOUTUBE) && !screen.live.commit()) { showHost(false); return; }
+            if (store.photoEnabled() && store.instagramEnabled() && installed(INSTAGRAM) && !screen.photos.commit(store)) { showHost(true); return; }
             if (!store.hasSelectedApps()) { toast(getString(R.string.ui_select_app_error)); render(); return; }
             if (!(store.youtubeEnabled() && installed(YOUTUBE)) && !(store.instagramEnabled() && installed(INSTAGRAM))) {
                 toast(getString(R.string.ui_app_missing_error)); render(); return;
@@ -135,8 +148,9 @@ public final class MainActivity extends Activity {
             boolean youtubeInstalled = installed(YOUTUBE), instagramInstalled = installed(INSTAGRAM);
             boolean instagramReady = FeatureSupportPolicy.instagramFeature(instagramInstalled, store.instagramEnabled());
             boolean youtubeReady = youtubeInstalled && store.youtubeEnabled();
-            boolean longReady = youtubeReady || instagramReady;
-            screen.count.render(store.ceiling());
+            screen.showHost(instagramSettingsSelected);
+            renderHostPanel(screen.youtubeSettings, youtubeStore, youtubeInstalled, false);
+            renderHostPanel(screen.instagramSettings, instagramStore, instagramInstalled, true);
             screen.photos.render(store, instagramReady);
             screen.photos.support.setText(CompatibilityPanel.instagramReason(this, instagramInstalled, store.instagramEnabled()));
             screen.seconds.render(store.fallbackSeconds()); screen.seconds.setAvailable(instagramReady);
@@ -144,12 +158,6 @@ public final class MainActivity extends Activity {
             screen.live.toggle.setChecked(store.skipLive() && youtubeReady);
             screen.live.support.setText(!youtubeInstalled ? R.string.live_youtube_missing
                     : !store.youtubeEnabled() ? R.string.live_youtube_select : R.string.live_youtube_ready);
-            screen.longVideo.render(store.longVideoSeconds()); screen.longVideo.setAvailable(longReady);
-            screen.longVideo.toggle.setChecked(store.skipLong() && longReady);
-            screen.longVideo.support.setText(longReady ? R.string.long_video_host_ready : R.string.long_video_host_unavailable);
-            screen.applied.setText(store.target() == store.ceiling()
-                    ? getString(R.string.ui_applied_count, store.target())
-                    : getString(R.string.ui_applied_different, store.ceiling(), store.target()));
             screen.youtube.setChecked(store.youtubeEnabled()); screen.instagram.setChecked(store.instagramEnabled());
             screen.youtube.setEnabled(youtubeInstalled); screen.instagram.setEnabled(instagramInstalled);
             screen.youtube.setText(youtubeInstalled ? getString(R.string.ui_youtube) : getString(R.string.ui_youtube_missing));
@@ -162,27 +170,11 @@ public final class MainActivity extends Activity {
             screen.visualAssist.setEnabled(visualAssistAvailable());
             screen.visualSupport.setText(CompatibilityPanel.visualReason(this, Build.VERSION.SDK_INT, instagramInstalled, store.instagramEnabled(), store.visualAssist()));
             screen.floating.setChecked(store.floatingEnabled()); screen.floatingDetails.setVisibility(store.floatingEnabled() ? View.VISIBLE : View.GONE);
-            screen.tapModes.check(store.tapMode() == ModePolicy.TOGGLE ? R.id.tap_quick : R.id.tap_rotary);
+            screen.dualMode.setChecked(store.dualMode());
             boolean active = store.enabled(); screen.execution.setChecked(active);
-            long timedRemaining = RuntimeState.timedRemainingSeconds;
-            boolean adsActive = store.skipAds() && instagramReady, liveActive = store.skipLive() && youtubeReady;
-            boolean longActive = store.skipLong() && longReady;
-            String statusCode = RuntimeState.status;
-            String localizedStatus = StatusText.text(this, statusCode);
-            String liveStatus = LiveSkipPolicy.STATUS_DELAYED.equals(statusCode) && timedRemaining > 0
-                    ? getString(R.string.live_remaining, timedRemaining) : localizedStatus;
-            String zeroStatus = StatusText.text(this, store.photoEnabled() && instagramReady ? "photo.rules"
-                    : LongVideoPolicy.zeroCountStatus(adsActive, liveActive, longActive));
-            screen.status.setText(!active ? getString(R.string.ui_execution_off) : RuntimeState.blocked ? localizedStatus
-                    : statusCode.startsWith("photo.") ? timedRemaining >= 0 ? getString(R.string.photo_status_remaining, localizedStatus, timedRemaining) : localizedStatus
-                    : store.target() == 0 ? zeroStatus + (LiveSkipPolicy.isLiveStatus(statusCode)
-                            || LongVideoPolicy.CHECKING.equals(statusCode) || LongVideoPolicy.CONFIRMING.equals(statusCode)
-                            ? "\n" + liveStatus : "")
-                    : LiveSkipPolicy.isLiveStatus(statusCode) ? liveStatus
-                    : timedRemaining >= 0 ? getString(R.string.ui_status_timer, timedRemaining, localizedStatus)
-                    : getString(R.string.ui_status_count, RuntimeState.current, store.target(), localizedStatus));
+            screen.status.setText(!active ? R.string.ui_execution_off : store.dualMode() ? R.string.mw_all_running : R.string.mw_single_running);
             screen.status.setContentDescription(screen.status.getText());
-            screen.status.setTextColor(RuntimeState.blocked ? UiTheme.WARNING : active ? UiTheme.CYAN : UiTheme.MUTED);
+            screen.status.setTextColor(active ? UiTheme.CYAN : UiTheme.MUTED);
             boolean access = RuntimeState.connected, overlay = Settings.canDrawOverlays(this);
             screen.permissionStatus.setText(!access ? getString(R.string.accessibility_reconnect_help)
                     : store.floatingEnabled() && !overlay ? getString(R.string.ui_ready_needs_overlay)
@@ -197,6 +189,66 @@ public final class MainActivity extends Activity {
     private boolean installed(String pkg) {
         try { getPackageManager().getApplicationInfo(pkg, 0); return true; }
         catch (android.content.pm.PackageManager.NameNotFoundException e) { return false; }
+    }
+    private void bindHostPanel(HostSettingsPanel panel, SettingsStore hostStore, boolean instagramHost) {
+        panel.longVideo.toggle.setOnCheckedChangeListener((view, checked) -> {
+            if (rendering) return;
+            if (!checked) { hostStore.skipLong(false); render(); return; }
+            if (!hostStore.isSelected(hostStore.hostPackage()) || !installed(hostStore.hostPackage()) || !panel.longVideo.commit()) { render(); return; }
+            hostStore.skipLong(true); render();
+        });
+        panel.tapModes.setOnCheckedChangeListener((view, id) -> {
+            if (rendering) return;
+            hostStore.tapMode(id == (instagramHost ? R.id.mw_instagram_quick : R.id.tap_quick) ? ModePolicy.TOGGLE : ModePolicy.ROTARY);
+            render();
+        });
+        panel.resume.setOnClickListener(view -> {
+            if (!store.enabled() || !hostStore.isSelected(hostStore.hostPackage()) || !installed(hostStore.hostPackage())) return;
+            if (!commitHost(panel, hostStore, instagramHost)) return;
+            if (RuntimeState.forHost(hostStore.hostPackage()).blocked) hostStore.enabled(false);
+            hostStore.start(); render();
+        });
+    }
+    private boolean commitHost(HostSettingsPanel panel, SettingsStore hostStore, boolean instagramHost) {
+        if (!hostStore.isSelected(hostStore.hostPackage()) || !installed(hostStore.hostPackage())) return true;
+        if (panel.count.commit() && (!hostStore.skipLong() || panel.longVideo.commit())) return true;
+        showHost(instagramHost); return false;
+    }
+    private void showHost(boolean instagramHost) { instagramSettingsSelected = instagramHost; render(); }
+    private void renderHostPanel(HostSettingsPanel panel, SettingsStore hostStore, boolean appInstalled, boolean instagramHost) {
+        boolean selected = hostStore.isSelected(hostStore.hostPackage());
+        boolean available = selected && appInstalled;
+        panel.count.render(hostStore.ceiling());
+        panel.longVideo.render(hostStore.longVideoSeconds()); panel.longVideo.setAvailable(available);
+        panel.longVideo.toggle.setChecked(hostStore.skipLong() && available);
+        panel.longVideo.support.setText(!appInstalled ? R.string.mw_host_missing : !selected ? R.string.mw_host_unselected : R.string.long_video_host_ready);
+        panel.applied.setText(hostStore.target() == hostStore.ceiling()
+                ? getString(R.string.ui_applied_count, hostStore.target())
+                : getString(R.string.ui_applied_different, hostStore.ceiling(), hostStore.target()));
+        panel.state.setText(!appInstalled ? R.string.mw_host_missing : !selected ? R.string.mw_host_unselected
+                : !store.enabled() ? R.string.mw_host_off : hostStore.hostPaused() ? R.string.mw_host_paused : R.string.mw_host_running);
+        RuntimeState.HostState runtime = RuntimeState.forHost(hostStore.hostPackage());
+        if (available && hostStore.enabled()) {
+            String code = runtime.status;
+            String localized = StatusText.text(this, code);
+            long remaining = runtime.timedRemainingSeconds;
+            String value = runtime.blocked ? localized
+                    : remaining >= 0 ? getString(R.string.ui_status_timer, remaining, localized)
+                    : hostStore.target() == 0 ? StatusText.text(this, hostStore.photoEnabled() ? "photo.rules"
+                            : LongVideoPolicy.zeroCountStatus(hostStore.skipAds(), hostStore.skipLive(), hostStore.skipLong()))
+                    : getString(R.string.ui_status_count, runtime.current, hostStore.target(), localized);
+            if (!runtime.blocked && remaining < 0 && hostStore.target() == 0
+                    && (LiveSkipPolicy.isLiveStatus(code) || LongVideoPolicy.CHECKING.equals(code) || LongVideoPolicy.CONFIRMING.equals(code)))
+                value += "\n" + localized;
+            panel.state.setText(value);
+        }
+        panel.state.setContentDescription(panel.state.getText());
+        panel.state.setTextColor(runtime.blocked && hostStore.enabled() ? UiTheme.WARNING : UiTheme.MUTED);
+        panel.resume.setVisibility(hostStore.hostPaused() || runtime.blocked ? View.VISIBLE : View.GONE);
+        panel.resume.setEnabled(store.enabled() && available);
+        panel.tapModes.check(hostStore.tapMode() == ModePolicy.TOGGLE
+                ? instagramHost ? R.id.mw_instagram_quick : R.id.tap_quick
+                : instagramHost ? R.id.mw_instagram_rotary : R.id.tap_rotary);
     }
     private boolean hasInstalledSelection() {
         return (store.youtubeEnabled() && installed(YOUTUBE)) || (store.instagramEnabled() && installed(INSTAGRAM));
@@ -242,6 +294,10 @@ public final class MainActivity extends Activity {
         try { super.onRestoreInstanceState(state); }
         finally { rendering = false; }
         render();
+    }
+    @Override protected void onSaveInstanceState(Bundle state) {
+        state.putBoolean("instagram_settings_tab", instagramSettingsSelected);
+        super.onSaveInstanceState(state);
     }
     @Override protected void onResume() {
         super.onResume();

@@ -23,10 +23,10 @@ final class PhotoGestureDispatcher {
                 && Objects.equals(a.photoPageKey, b.photoPageKey)
                 && a.photo.image.equals(b.photo.image) && a.photo.position.equals(b.photo.position);
     }
-    static boolean dispatch(AccessibilityService service, ShortsReader reader, YouTubeWindowGuard guard,
+    static boolean dispatch(HostPlaybackSession service, ShortsReader reader, YouTubeWindowGuard guard,
             SettingsStore store, YouTubeSnapshot expected, PhotoReelTracker.Action action, Rect overlay,
             AccessibilityService.GestureResultCallback callback, Handler handler) {
-        AccessibilityNodeInfo root = service.getRootInActiveWindow();
+        AccessibilityNodeInfo root = service.getHostRoot();
         List<AccessibilityNodeInfo> pagers = Collections.emptyList();
         try {
             if (!store.enabled() || !store.photoEnabled() || !store.instagramEnabled() || root == null || !root.refresh()
@@ -43,6 +43,7 @@ final class PhotoGestureDispatcher {
                     float y = picture.top + picture.height() * fraction;
                     Rect corridor = new Rect((int) end - 12, (int) y - 16, (int) start + 12, (int) y + 16);
                     if (!picture.contains(corridor) || Rect.intersects(overlay, corridor)) continue;
+                    if (!guard.allowsInput(service.getWindows(), fresh.windowId, fresh.windowBounds, corridor)) continue;
                     Path path = new Path(); path.moveTo(start, y); path.lineTo(end, y);
                     GestureDescription gesture = new GestureDescription.Builder()
                             .addStroke(new GestureDescription.StrokeDescription(path, 0, 320)).build();
@@ -61,7 +62,7 @@ final class PhotoGestureDispatcher {
                     || chosen.getWindowId() != fresh.windowId || !InstagramReader.PAGER_ID.equals(chosen.getViewIdResourceName())
                     || !InstagramReader.PACKAGE.contentEquals(chosen.getPackageName() == null ? "" : chosen.getPackageName())) return false;
             Rect bounds = new Rect(); chosen.getBoundsInScreen(bounds);
-            return bounds.contains(fresh.page) && chosen.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD);
+            return bounds.contains(fresh.page) && service.performScroll(chosen);
         } finally {
             for (AccessibilityNodeInfo pager : pagers) YouTubeReader.recycle(pager);
             YouTubeReader.recycle(root);

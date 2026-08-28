@@ -1,0 +1,25 @@
+<resources>
+    <item type="id" name="mw_dual_mode" />
+    <item type="id" name="mw_host_tabs" />
+    <item type="id" name="mw_tab_youtube" />
+    <item type="id" name="mw_tab_instagram" />
+    <item type="id" name="mw_youtube_settings" />
+    <item type="id" name="mw_instagram_settings" />
+    <item type="id" name="mw_youtube_state" />
+    <item type="id" name="mw_instagram_state" />
+    <item type="id" name="mw_youtube_resume" />
+    <item type="id" name="mw_instagram_resume" />
+    <item type="id" name="mw_instagram_rotary" />
+    <item type="id" name="mw_instagram_quick" />
+    <item type="id" name="mw_instagram_count_input" />
+    <item type="id" name="mw_instagram_count_up" />
+    <item type="id" name="mw_instagram_count_down" />
+    <item type="id" name="mw_instagram_count_apply" />
+    <item type="id" name="mw_instagram_long_panel" />
+    <item type="id" name="mw_instagram_skip_long" />
+    <item type="id" name="mw_instagram_long_support" />
+    <item type="id" name="mw_instagram_long_input" />
+    <item type="id" name="mw_instagram_long_minus" />
+    <item type="id" name="mw_instagram_long_plus" />
+    <item type="id" name="mw_instagram_long_apply" />
+</resources>

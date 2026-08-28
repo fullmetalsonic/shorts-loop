@@ -19,14 +19,20 @@ public final class LongVideoUiChecks {
     private LongVideoUiChecks() {}
     public static int run(Activity activity, SettingsStore store) {
         int checks = 0;
-        boolean ready = (installed(activity, SettingsStore.YOUTUBE_PACKAGE) && store.youtubeEnabled())
-                || (installed(activity, SettingsStore.INSTAGRAM_PACKAGE) && store.instagramEnabled());
+        boolean ready = installed(activity, SettingsStore.YOUTUBE_PACKAGE) && store.youtubeEnabled();
+        SettingsStore youtubeStore = store.forHost(SettingsStore.YOUTUBE_PACKAGE);
         Switch actual = activity.findViewById(R.id.skip_long_toggle);
-        require(actual != null && actual.isEnabled() == ready, "Either selected installed host enables long-video controls"); checks++;
-        require(actual.isChecked() == (ready && store.skipLong()), "Unavailable long-video choice does not look active"); checks++;
+        require(actual != null && actual.isEnabled() == ready, "Only this selected installed host enables its long-video controls"); checks++;
+        require(actual.isChecked() == (ready && youtubeStore.skipLong()), "Unavailable long-video choice does not look active"); checks++;
         require(store.skipLong() && store.longVideoSeconds() == 321, "Rendering preserves saved long-video choice and threshold"); checks++;
         require(((TextView)activity.findViewById(R.id.long_video_support)).getText().toString().equals(activity.getString(
-                ready ? R.string.long_video_host_ready : R.string.long_video_host_unavailable)), "Specific host guidance"); checks++;
+                !installed(activity, SettingsStore.YOUTUBE_PACKAGE) ? R.string.mw_host_missing
+                        : !store.youtubeEnabled() ? R.string.mw_host_unselected : R.string.long_video_host_ready)), "Specific host guidance"); checks++;
+        SettingsStore instagramStore = store.forHost(SettingsStore.INSTAGRAM_PACKAGE);
+        boolean instagramReady = installed(activity, SettingsStore.INSTAGRAM_PACKAGE) && store.instagramEnabled();
+        Switch instagramToggle = activity.findViewById(R.id.mw_instagram_skip_long);
+        require(instagramToggle.isEnabled() == instagramReady && instagramToggle.isChecked() == (instagramReady && instagramStore.skipLong()),
+                "Instagram long-video state is independently available"); checks++;
         require(!store.enabled(), "Long-video panel does not start execution on render"); checks++;
         View repeatCard = (View)activity.findViewById(R.id.count_input).getParent().getParent().getParent();
         View longCard = (View)activity.findViewById(R.id.long_video_panel).getParent();

@@ -1,14 +1,15 @@
 $ErrorActionPreference = 'Stop'
 $photoRoot = Split-Path -Parent $PSScriptRoot
-$photoService = Get-Content -LiteralPath (Join-Path $photoRoot 'app/src/main/java/com/fullmetalsonic/shortsloop/service/ShortsAccessibilityService.java') -Raw
+$photoService = Get-Content -LiteralPath (Join-Path $photoRoot 'app/src/main/java/com/fullmetalsonic/shortsloop/service/HostPlaybackSession.java') -Raw
 $photoDispatch = Get-Content -LiteralPath (Join-Path $photoRoot 'app/src/main/java/com/fullmetalsonic/shortsloop/service/PhotoGestureDispatcher.java') -Raw
 $photoReader = Get-Content -LiteralPath (Join-Path $photoRoot 'app/src/main/java/com/fullmetalsonic/shortsloop/detection/InstagramReader.java') -Raw
 if (-not $photoReader.Contains('return withPageIdentity(YouTubeSnapshot.advertisement(photo.page),') -or
     -not $photoReader.Contains('return withPageIdentity(YouTubeSnapshot.advertisement(singleVideo ? page : pager),')) {
     throw 'Recognized ads must preserve available photo transition page evidence.'
 }
-if ($photoService -notmatch '(?s)PhotoReelPolicy\.includeLayoutNodes\(\s*store\.enabled\(\) && !RuntimeState\.blocked, store\.instagramEnabled\(\), store\.photoEnabled\(\), packageName\)' -or
-    $photoService -notmatch 'if \(configureLiveTree\(pkg\)\) return YouTubeSnapshot.unavailable') {
+if (-not $photoService.Contains('store != null && store.enabled() && !state.blocked') -or
+    -not $photoService.Contains('YouTubeReader.PACKAGE.equals(activePackage) || photoSkippingEnabled()') -or
+    $photoService -notmatch 'if \(configureLiveTree\(activePackage\)\) return YouTubeSnapshot.unavailable') {
     throw 'Photo index tree mode must be opt-in and reacquired before reading.'
 }
 foreach ($photoGuard in @('if (photoTransition.pending()) {', 'else if (unresolvedPhotoAttempt && store.enabled())',
@@ -26,9 +27,13 @@ if ($photoService.IndexOf('if (snapshot.photo != null) { observePhoto(snapshot, 
 }
 foreach ($photoGuard in @('a.photo.position.equals(b.photo.position)', '!samePhoto(expected, fresh)',
     'guard.allowedBounds(service.getWindows(), root.getWindowId())', '!store.photoEnabled()',
-    'Rect.intersects(overlay, corridor)', 'chosen.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)',
+    'Rect.intersects(overlay, corridor)', 'service.performScroll(chosen)',
+    'guard.allowsInput(service.getWindows(), fresh.windowId, fresh.windowBounds, corridor)',
     'fresh.photo.position.current() >= fresh.photo.position.total()')) {
     if (-not $photoDispatch.Contains($photoGuard)) { throw "Photo dispatch guard missing: $photoGuard" }
 }
 if ($photoDispatch -match 'ACTION_CLICK|dispatchPageSwipe|Thread.sleep|while\s*\(') { throw 'Unexpected photo click/retry path.' }
+if (-not $photoService.Contains('windowGuard.allowsInput(getWindows(), fresh.windowId, fresh.windowBounds, corridor)')) {
+    throw 'Ordinary/live/long physical swipes must revalidate every window along their actual corridor.'
+}
 'PHOTO_SAFETY_WIRING_AUDIT=PASS'

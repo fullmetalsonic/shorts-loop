@@ -1,4 +1,57 @@
-# 사용 설명서 / User guide · ShortsLoop 0.2.9
+# 사용 설명서 / User guide · ShortsLoop 0.3.0
+
+## 현재 안내 · 게시 준비 / Current guide · Publication preparation
+
+**공개 버전은0.2.9이며,0.3.0/code32는 검증 범위를 확인한 뒤 게시를 준비 중입니다.** 최신 설치본에서 실행·듀얼ON을 유지한 전체화면→두 앱 분할→전체화면 복귀와 실제 자동 전환을 확인했습니다. 숨겨진 앱에는 새 넘김 요청이 없었습니다. 빌드·단위·3개 OS 검사·설정 보존 업그레이드·설치 해시 확인을 마쳤으며,게시 전 전체 실행은OFF로 두었습니다. 아직 공개 파일·CI 확인 완료를 뜻하지 않습니다. 이전 후보의 회전·일반 앱 병행 시험은 별도 이력입니다. [최신 검증 원장](VERIFICATION.md),[이전 후보별 이력](SPLIT_SCREEN_PLAN.md).
+
+**Public0.2.9 remains available;0.3.0/code32 is being prepared for publication after scoped verification.** The latest installed candidate completed fullscreen→dual-host split→fullscreen transitions with execution/dualON throughout;the hidden host issued no new advance. Build,unit,three-OS,settings-preserving upgrade and installation-hash checks passed. Execution isOFF for publication preparation;public assets and CI are not yet verified. Earlier rotation and ordinary-app coexistence evidence remains separate in the [verification record](VERIFICATION.md).
+
+듀얼 모드와 전체 실행을ON으로 유지하면 전체화면의 대상 앱 하나,분할 화면의 두 대상 앱,일반 앱 옆의 대상 앱 하나를 현재 보이는 창에 맞춰 감지합니다. 배치마다 모드를 다시 켜는 방식은 아닙니다. 창·권한·재생 상태가 안전 조건을 만족해야 하며,중지하거나 서비스가 다시 연결된 뒤에는 별도의 재개가 필요할 수 있습니다.
+
+With dual mode and executionON,the app detects one fullscreen host,two split-view hosts,or one host beside an ordinary app according to the visible windows;layout changes do not require toggling the mode again. Window,permission and playback guards still apply,and stopping or service reconnection may require explicit resumption.
+
+키보드·팝업 등 가림 창의 안전 보호와 앱 자체의 일시정지는 그대로 적용됩니다. 강제로 재생하지 않으며,모든 앱·배치의 동작을 보장하지 않습니다. 듀얼 사진 릴스의 새 실물 표본과 회전 후 원래 배치로의 복귀 시험은 아직 남아 있습니다.
+
+Keyboard/popup guards and host-imposed pauses still apply;playback is never forced. This is not a guarantee for every app or layout. Fresh dual-window photo-Reel samples and the return-rotation test remain outstanding.
+
+### 먼저 구분할 세 가지 / Three different controls
+
+| 메뉴 / Control | 의미 / Meaning |
+|---|---|
+| 사용할 앱 / Apps to use | 자동화를 허용할 앱 선택. 하나 또는 둘 다 선택 / Select one or both automation targets |
+| 앱별 설정의 YouTube·Instagram 탭 / App settings tabs | 편집할 앱 선택. 탭만 바꿔서는 실행이나 듀얼 모드가 켜지지 않음 / Choose what to edit, not what to run |
+| 듀얼 화면 적용 / Use dual-window mode | 기본OFF: 현재 활성 창 하나. ON: 함께 보이는 선택 앱을 각각 감지 / DefaultOFF: active window only. ON: detect each visible selected host |
+
+### 0.3.0 사용 순서 / Steps for0.3.0
+
+1. 전체 실행을OFF로 두고 ‘사용할 앱’에서 사용할 대상을 선택합니다. 접근성·플로팅 권한은 필요한 경우 직접 연결합니다. / Leave executionOFF, choose target apps, and manually connect required permissions.
+2. YouTube 탭에서 반복 횟수·긴 영상 기준·플로팅 터치 방식을 정하고 완료/적용합니다. Instagram 탭에서 같은 항목을 따로 정합니다. 예: YouTube2회·긴 영상60초, Instagram1회·긴 영상120초. / Set and apply each tab separately, for example YouTube2 plays/60s length threshold and Instagram1 play/120s threshold.
+3. Instagram의 시간제·사진·광고는 Instagram 탭에서, YouTube 라이브는 YouTube 탭에서 설정합니다. / Configure Instagram timer,photo and ad rules in its tab,and YouTube live previews in the YouTube tab.
+4. **듀얼OFF는 현재 활성 창만 처리합니다.** 반대쪽 창에서 일반 앱을 조작하는 동안에도 보이는 쇼츠 창을 처리하려면 듀얼을ON으로 합니다. 선택한 대상 앱이 한 개만 보여도 동작하며, 두 쇼츠 앱을 반드시 함께 열 필요는 없습니다. YouTube와 Instagram을 모두 처리하려면 두 앱을 선택하고 듀얼을ON으로 합니다. / **DualOFF processes only the active window.** Turn dualON to process a visible Shorts/Reels window while using an ordinary app in the other pane. One visible selected host is enough;two video apps are not required. Select both hosts and turn dualON to process both YouTube and Instagram.
+5. 필요하면 공통 플로팅 표시를 켭니다. 마지막에 하단 전체 실행을 직접 켭니다. 모드·설정 변경만으로 실행이 켜지지 않습니다. / Optionally show floating controls, then explicitly turn on overall execution.
+6. 각 앱의 상태와 실제 재생을 확인합니다. 앱이 자체적으로 일시정지한 영상은 강제로 재생하지 않습니다. / Check each app’s status and actual playback; the app does not force a host-paused video to play.
+
+탭을 바꾸거나 듀얼을 켜고 꺼도 저장한 앱별 설정은 유지됩니다. 탭 사이의 입력 초안도 서로 섞이지 않지만, 앱을 종료하기 전에는 완료/적용하세요. 0회는 **해당 앱의 일반 반복과 시간제·화면 분석**을 중지하며, 별도 긴 영상·광고·라이브·사진 옵션의 의미는 유지합니다.
+
+Changing tabs or dual mode preserves saved per-app values and keeps the two editor drafts separate. Apply drafts before exiting. Zero plays stops that app’s ordinary repeat, timer and visual counting; its supported independent filters remain separate.
+
+### 두 플로팅과 중지 범위 / Floating controls and stop scope
+
+- 각 대상 창에 앱 표시가 있는 반투명72×56dp 플로팅을 사용합니다. 듀얼에서 두 대상 창이 유효하면 두 개를 표시하며, 창이 없거나 안전한 공간이 부족하면 해당 플로팅은 숨깁니다. / Each eligible host has a labelled translucent72×56dp control; unavailable or too-small windows remain hidden.
+- 숫자 터치는 해당 앱의 횟수만 바꾸고, 끌기는 해당 앱의 위치만 저장합니다. 위치는 현재 창 안으로 보정됩니다. / Taps and drags affect only that app’s count and saved position.
+- **X는 해당 앱만 일시정지**합니다. 그 앱의 설정 탭에서 ‘이 앱 다시 시작’을 누르면 재개합니다. 전체 실행이OFF이면 이 버튼만으로 전체 실행을 켜지 않습니다. / X pauses only its host; Resume this app resumes it without enabling an off master switch.
+- **하단 전체OFF와 실행 타일OFF는 양쪽 모두 중지**합니다. 전체OFF→ON은 선택한 앱들을 각 기준 횟수로 다시 시작합니다. 표시OFF는 플로팅만 숨깁니다. / OverallOFF or tileOFF stops both; overallOFF→ON resumes selected hosts at their configured counts. Hiding controls alone does not stop execution.
+- X는24×24dp의 작은 터치 영역입니다. 누르기 어렵다면 인앱 전체 실행 스위치를 사용하세요. / The24×24dp X remains a small target; use the in-app master switch when needed.
+
+화면 분석 보조는 계속 실험 기능·Android14 이상·별도 동의 대상입니다. **두 대상 창이 함께 보이는 동안 분석은 동작하지 않으며 저장한 선택은 보존**합니다. 듀얼 모드의 정확한 반복 횟수를 화면 분석으로 대신 보증하지 않습니다. 권한·설치·서명 검사를 우회하지 마세요.
+
+Visual assistance remains experimental,Android14+ and separately consented. **It is inactive while both target windows are visible,without erasing the saved choice.** It does not certify accurate dual-host playback counts.
+
+## 공개0.2.9 사용법·이전 검증 원문 / Published0.2.9 guide and historical evidence
+
+아래는0.2.9와 이전 버전의 사용법·검증 기록입니다. 해당 버전의 단일 플로팅X·공통 반복 설정·화면 순서는 위0.3.0 앱별 계약보다 우선하지 않으며, 당시 PASS를0.3.0의 PASS로 재사용하지 않습니다.
+
+The retained sections below describe0.2.9 and older versions. Their single-control X,shared-repeat settings and layout are historical where superseded above;their test results are not0.3.0 evidence.
 
 **ShortsLoop 0.2.9/code31**의 한국어·영어 사용 안내입니다. 기존 영상 규칙·설정·패키지·서명을 보존하며 선택형 사진 두 모드를 추가합니다. 최신 APK의 두 모드·0/3/10초·댓글창 보호를 실폰에서 확인했습니다. 번호 없는 사진·사진 직후 광고·혼합 사례는 미확보이고 0.2.9를 공개했습니다. [사진 설정·예시·한계](PHOTO_REELS.md),[검증 상태](VERIFICATION.md),[언어·메뉴](LOCALIZATION.md).
 

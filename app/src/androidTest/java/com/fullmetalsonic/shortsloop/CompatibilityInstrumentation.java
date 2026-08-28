@@ -55,9 +55,16 @@ public final class CompatibilityInstrumentation extends Instrumentation {
             prefs = store.preferences; original = prefs.getAll();
             runOnMainSync(() -> checks += RecoveryServiceChecks.run(getTargetContext(), store));
             runOnMainSync(() -> checks += PhotoServiceChecks.run(getTargetContext(), store));
+            runOnMainSync(() -> checks += HostSessionIsolationChecks.run(getTargetContext(), store));
+            runOnMainSync(() -> checks += DeferredSessionChecks.run(getTargetContext(), store));
+            runOnMainSync(() -> checks += com.fullmetalsonic.shortsloop.detection.WindowInputChecks.run());
             // Simulate restored choices without granting permissions or starting automation.
             store.enabled(false); store.visualAssist(true); store.timedFallback(true); store.skipAds(true);
             store.skipLong(true); store.longVideoSeconds(321);
+            store.forHost(SettingsStore.YOUTUBE_PACKAGE).skipLong(true);
+            store.forHost(SettingsStore.YOUTUBE_PACKAGE).longVideoSeconds(321);
+            store.forHost(SettingsStore.INSTAGRAM_PACKAGE).skipLong(true);
+            store.forHost(SettingsStore.INSTAGRAM_PACKAGE).longVideoSeconds(321);
             store.selectedApp("com.instagram.android", true);
             activity = startActivitySync(new Intent(getTargetContext(), MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             waitForIdleSync();
@@ -66,6 +73,8 @@ public final class CompatibilityInstrumentation extends Instrumentation {
                 checks += LocalizationChecks.run(activity, store);
                 checks += com.fullmetalsonic.shortsloop.overlay.FloatingLocaleLifecycleChecks.run(activity, store);
                 checks += EditorRestoreChecks.run(activity);
+                checks += HostSettingsUiChecks.run(activity);
+                checks += DualModeUiChecks.run(activity, store);
                 require(activity.findViewById(R.id.compatibility_panel) != null, "Compatibility panel exists");
                 Button tile = activity.findViewById(R.id.tile_add);
                 require(tile.getText().toString().equals(activity.getString(Build.VERSION.SDK_INT >= 33
@@ -94,6 +103,7 @@ public final class CompatibilityInstrumentation extends Instrumentation {
                 checks += PhotoUiChecks.run(activity, store);
                 checks += com.fullmetalsonic.shortsloop.detection.PhotoNodeIdentityChecks.run(activity);
                 checks += com.fullmetalsonic.shortsloop.overlay.FloatingLayoutChecks.run(activity, store);
+                checks += com.fullmetalsonic.shortsloop.overlay.HostOverlayChecks.run(activity, store);
             });
             VisualAssistController controller = VisualAssistController.create(null, null);
             require(controller != null && !controller.active(), "Factory loads safely on runtime OS");

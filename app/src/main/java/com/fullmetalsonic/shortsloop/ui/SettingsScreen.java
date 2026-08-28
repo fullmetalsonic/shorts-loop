@@ -27,7 +27,7 @@ public final class SettingsScreen {
     public final PhotoReelPanel photos;
     public final TextView applied, status, permissionStatus, timedSupport, adSupport, visualSupport;
     public final CheckBox youtube, instagram;
-    public final Switch floating, execution, skipAds, visualAssist, timedFallback;
+    public final Switch floating, execution, skipAds, visualAssist, timedFallback, dualMode;
     public final RadioGroup tapModes;
     public final RadioButton rotary, quick;
     public final LinearLayout floatingDetails;
@@ -35,11 +35,20 @@ public final class SettingsScreen {
     public final BatterySetupPanel battery;
     public final UpdatePanel updates;
     public final Button setupJump, updateBanner;
+    public final HostSettingsPanel youtubeSettings, instagramSettings;
+    public final RadioGroup hostTabs;
     private final ScrollView scroll;
-    private final LinearLayout appsCard, setupCard, updateCard;
+    private final LinearLayout appsCard, setupCard, updateCard, timedCard, photoCard, adsCard, liveCard, experimental;
     public SettingsScreen(Context c, int initial, CountEditor.Listener countListener, int initialSeconds,
             SecondsEditor.Listener secondsListener, int initialLiveDelay, LiveSkipPanel.Listener liveListener,
             int initialLongSeconds, LongVideoPanel.Listener longListener) {
+        this(c, initial, countListener, initialSeconds, secondsListener, initialLiveDelay, liveListener,
+                initialLongSeconds, longListener, initial, value -> {}, initialLongSeconds, value -> {});
+    }
+    public SettingsScreen(Context c, int initial, CountEditor.Listener countListener, int initialSeconds,
+            SecondsEditor.Listener secondsListener, int initialLiveDelay, LiveSkipPanel.Listener liveListener,
+            int initialLongSeconds, LongVideoPanel.Listener longListener, int instagramCount,
+            CountEditor.Listener instagramCountListener, int instagramLongSeconds, LongVideoPanel.Listener instagramLongListener) {
         root = UiTheme.column(c); root.setBackgroundColor(UiTheme.BACKGROUND);
         scroll = new ScrollView(c); scroll.setFillViewport(true); scroll.setClipToPadding(false);
         FrameLayout holder = new ContentFrame(c); LinearLayout content = UiTheme.column(c);
@@ -57,40 +66,45 @@ public final class SettingsScreen {
         header.addView(names, new LinearLayout.LayoutParams(0, -2, 1)); content.addView(header); UiTheme.space(c, content, 20);
         setupJump = UiTheme.button(c, c.getString(R.string.setup_needed_banner)); setupJump.setId(R.id.setup_jump); content.addView(setupJump);
         updateBanner = UiTheme.button(c, c.getString(R.string.ui_update_view)); updateBanner.setId(R.id.update_banner); updateBanner.setVisibility(View.GONE); content.addView(updateBanner);
-        LinearLayout repeat = UiTheme.card(c, content, c.getString(R.string.ui_repeat_title));
-        repeat.addView(UiTheme.text(c, c.getString(R.string.ui_repeat_intro), 14, UiTheme.MUTED, false)); UiTheme.space(c, repeat, 12);
-        count = new CountEditor(c, initial, countListener); repeat.addView(count);
-        applied = UiTheme.text(c, "", 14, UiTheme.CYAN, false); applied.setPadding(0, UiTheme.dp(c, 8), 0, 0); repeat.addView(applied);
-        LinearLayout longCard = UiTheme.card(c, content, c.getString(R.string.long_video_card_title));
-        longVideo = new LongVideoPanel(c, initialLongSeconds, longListener); longCard.addView(longVideo);
-        LinearLayout timedCard = UiTheme.card(c, content, c.getString(R.string.ui_timer_title));
+        LinearLayout dualCard = UiTheme.card(c, content, c.getString(R.string.mw_mode_title));
+        dualMode = toggle(c, c.getString(R.string.mw_dual_toggle), R.id.mw_dual_mode); dualCard.addView(dualMode);
+        dualCard.addView(UiTheme.text(c, c.getString(R.string.mw_mode_help), 13, UiTheme.MUTED, false));
+        LinearLayout tabsCard = UiTheme.card(c, content, c.getString(R.string.mw_settings_title));
+        tabsCard.addView(UiTheme.text(c, c.getString(R.string.mw_settings_help), 13, UiTheme.MUTED, false));
+        hostTabs = new RadioGroup(c); hostTabs.setId(R.id.mw_host_tabs); hostTabs.setOrientation(RadioGroup.HORIZONTAL);
+        RadioButton ytTab = radio(c, c.getString(R.string.ui_youtube), R.id.mw_tab_youtube);
+        RadioButton igTab = radio(c, c.getString(R.string.ui_instagram), R.id.mw_tab_instagram);
+        hostTabs.addView(ytTab, new RadioGroup.LayoutParams(0, -2, 1));
+        hostTabs.addView(igTab, new RadioGroup.LayoutParams(0, -2, 1)); tabsCard.addView(hostTabs);
+        youtubeSettings = new HostSettingsPanel(c, initial, countListener, initialLongSeconds, longListener, false);
+        instagramSettings = new HostSettingsPanel(c, instagramCount, instagramCountListener, instagramLongSeconds, instagramLongListener, true);
+        content.addView(youtubeSettings.root); content.addView(instagramSettings.root); instagramSettings.root.setVisibility(View.GONE);
+        count = youtubeSettings.count; longVideo = youtubeSettings.longVideo; applied = youtubeSettings.applied;
+        tapModes = youtubeSettings.tapModes; rotary = youtubeSettings.rotary; quick = youtubeSettings.quick;
+        timedCard = UiTheme.card(c, content, c.getString(R.string.ui_timer_title));
         timedFallback = toggle(c, c.getString(R.string.ui_timer_toggle), R.id.timed_fallback_toggle); timedCard.addView(timedFallback);
         timedSupport = UiTheme.text(c, "", 13, UiTheme.CYAN, false); timedSupport.setId(R.id.timed_support); timedCard.addView(timedSupport);
         timedCard.addView(UiTheme.text(c, c.getString(R.string.ui_timer_helper), 13, UiTheme.MUTED, false));
         UiTheme.space(c, timedCard, 8);
         seconds = new SecondsEditor(c, initialSeconds, secondsListener); timedCard.addView(seconds);
         timedCard.addView(UiTheme.text(c, c.getString(R.string.ui_timer_zero_help), 13, UiTheme.MUTED, false));
-        LinearLayout photoCard = UiTheme.card(c, content, c.getString(R.string.photo_title));
+        photoCard = UiTheme.card(c, content, c.getString(R.string.photo_title));
         photos = new PhotoReelPanel(c); photoCard.addView(photos);
-        LinearLayout adsCard = UiTheme.card(c, content, c.getString(R.string.ui_ads_title));
+        adsCard = UiTheme.card(c, content, c.getString(R.string.ui_ads_title));
         adsCard.addView(UiTheme.text(c, c.getString(R.string.long_video_independent), 14, UiTheme.CYAN, true));
         skipAds = toggle(c, c.getString(R.string.ui_ads_toggle), R.id.skip_ads_toggle); adsCard.addView(skipAds);
         adSupport = UiTheme.text(c, "", 13, UiTheme.CYAN, false); adSupport.setId(R.id.ad_support); adsCard.addView(adSupport);
         adsCard.addView(UiTheme.text(c, c.getString(R.string.ui_ads_helper), 13, UiTheme.MUTED, false));
         UiTheme.space(c, adsCard, 8);
         adsCard.addView(UiTheme.text(c, c.getString(R.string.ui_ads_only_help), 13, UiTheme.TEXT, false));
-        LinearLayout liveCard = UiTheme.card(c, content, c.getString(R.string.live_card_title));
+        liveCard = UiTheme.card(c, content, c.getString(R.string.live_card_title));
         live = new LiveSkipPanel(c, initialLiveDelay, liveListener); liveCard.addView(live);
+        content.addView(UiTheme.text(c, c.getString(R.string.mw_common_settings), 18, UiTheme.TEXT, true));
         LinearLayout floatCard = UiTheme.card(c, content, c.getString(R.string.ui_floating_title));
         floating = toggle(c, c.getString(R.string.ui_floating_toggle), R.id.floating_toggle); floatCard.addView(floating);
         floatCard.addView(UiTheme.text(c, c.getString(R.string.ui_floating_optional), 14, UiTheme.MUTED, false));
         floatingDetails = UiTheme.column(c); UiTheme.space(c, floatingDetails, 14);
-        floatingDetails.addView(UiTheme.text(c, c.getString(R.string.ui_floating_tap_title), 15, UiTheme.TEXT, true));
-        tapModes = new RadioGroup(c); tapModes.setOrientation(RadioGroup.VERTICAL);
-        rotary = radio(c, c.getString(R.string.ui_tap_rotary), R.id.tap_rotary);
-        quick = radio(c, c.getString(R.string.ui_tap_quick), R.id.tap_quick);
-        tapModes.addView(rotary); tapModes.addView(quick); floatingDetails.addView(tapModes);
-        floatingDetails.addView(UiTheme.text(c, c.getString(R.string.ui_floating_help), 13, UiTheme.MUTED, false)); floatCard.addView(floatingDetails);
+        floatingDetails.addView(UiTheme.text(c, c.getString(R.string.mw_common_floating_help), 13, UiTheme.MUTED, false)); floatCard.addView(floatingDetails);
         LinearLayout apps = UiTheme.card(c, content, c.getString(R.string.ui_apps_title));
         appsCard = apps;
         apps.addView(UiTheme.text(c, c.getString(R.string.ui_apps_help), 14, UiTheme.MUTED, false));
@@ -106,12 +120,13 @@ public final class SettingsScreen {
         tileButton = UiTheme.button(c, c.getString(R.string.compat_tile_add_button)); tileButton.setId(R.id.tile_add); setup.addView(tileButton);
         updateCard = UiTheme.card(c, content, c.getString(R.string.ui_update_title));
         updates = new UpdatePanel(c); updateCard.addView(updates);
-        LinearLayout experimental = UiTheme.card(c, content, c.getString(R.string.ui_experimental_title));
+        experimental = UiTheme.card(c, content, c.getString(R.string.ui_experimental_title));
         visualAssist = toggle(c, c.getString(R.string.ui_visual_toggle), R.id.visual_assist_toggle); experimental.addView(visualAssist);
         visualSupport = UiTheme.text(c, "", 13, UiTheme.CYAN, false); visualSupport.setId(R.id.visual_support); experimental.addView(visualSupport);
         experimental.addView(UiTheme.text(c, c.getString(R.string.ui_visual_helper), 13, UiTheme.MUTED, false));
         Button help = UiTheme.button(c, c.getString(R.string.ui_help_show)); help.setId(R.id.help_toggle); content.addView(help);
-        TextView details = UiTheme.text(c, c.getString(R.string.ui_help_body),
+        TextView details = UiTheme.text(c, c.getString(R.string.mw_mode_help) + "\n\n" + c.getString(R.string.mw_host_floating_help)
+                + "\n\n" + c.getString(R.string.ui_help_body),
                 14, UiTheme.MUTED, false);
         details.setPadding(UiTheme.dp(c, 8), UiTheme.dp(c, 12), UiTheme.dp(c, 8), UiTheme.dp(c, 12)); details.setVisibility(View.GONE); content.addView(details);
         help.setOnClickListener(v -> { boolean show = details.getVisibility() != View.VISIBLE; details.setVisibility(show ? View.VISIBLE : View.GONE); help.setText(show ? c.getString(R.string.ui_help_hide) : c.getString(R.string.ui_help_show)); });
@@ -134,6 +149,16 @@ public final class SettingsScreen {
         });
     }
     public void showSetup(boolean appsMissing) { scroll.smoothScrollTo(0, (appsMissing ? appsCard : setupCard).getTop()); }
+    public void showHost(boolean instagramHost) {
+        youtubeSettings.root.setVisibility(instagramHost ? View.GONE : View.VISIBLE);
+        instagramSettings.root.setVisibility(instagramHost ? View.VISIBLE : View.GONE);
+        timedCard.setVisibility(instagramHost ? View.VISIBLE : View.GONE);
+        photoCard.setVisibility(instagramHost ? View.VISIBLE : View.GONE);
+        adsCard.setVisibility(instagramHost ? View.VISIBLE : View.GONE);
+        liveCard.setVisibility(instagramHost ? View.GONE : View.VISIBLE);
+        experimental.setVisibility(instagramHost ? View.VISIBLE : View.GONE);
+        hostTabs.check(instagramHost ? R.id.mw_tab_instagram : R.id.mw_tab_youtube);
+    }
     public void showUpdates() { scroll.smoothScrollTo(0, updateCard.getTop()); }
     private static CheckBox appChoice(Context c, String label, int id) {
         CheckBox v = new CheckBox(c); v.setId(id); v.setText(label); v.setTextSize(17); v.setTextColor(UiTheme.TEXT);

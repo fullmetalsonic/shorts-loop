@@ -1,5 +1,26 @@
 # 누적이력
 
+## 0.3.0/code32 · 듀얼모드 검증·배포 준비 / Dual-mode validation and release preparation
+
+- 듀얼 토글(기본OFF)을 켜두면 보이는 선택 앱에 따라 전체1개/분할2개/일반 앱 옆1개를 자동 처리한다. 앱별 카운트·긴영상·플로팅 탭/위치/일시정지를 분리하고 X는 해당 앱만 멈춘다. 기존 설정은 보존하며 최초 한 번 앱별로 복사한다.
+- 분할/회전/전체화면 손잡이와 시스템 바의 가림 오인을 고쳤다. 관측 예외와 실제 입력 충돌 검사를 분리하고 오래되거나 창·페이지가 바뀐 대기 요청은 폐기한다.
+- 최신53FD 실폰 후보564JUnit·3OS native·설치해시·독립리뷰PASS. 실행/듀얼ON 유지 전체→분할→전체에서 YT4/4·IG13/13 확인,숨긴 앱 요청0·차단/복구0. 이전 후보의 상하교환·계산기 병행 시험과 분리해 기록한다.
+- 한영 사용법·설정/호환성/업데이트/설계/디버그/검증 문서를 최신화한다. 공개 전 개인정보·원시로그·기기화면·키 제외 및 배포 검증을 수행한다. [최종 릴리스 원장](releases/v0.3.0.md),[상세 시험·한계](VERIFICATION.md).
+
+EN: Default-OFF dual mode automatically adapts to one or two visible selected hosts,with separate settings,counters and floats. Corrected bounded SystemUI observation while preserving input safety. Candidate53FD passes564 unit/three-OS native tests and uninterrupted mode-transition checks with4/4 YouTube and13/13 Instagram confirmations. Prior candidate evidence remains separate. Documentation and privacy/release checks are updated;see the release record for publication status.
+
+### 이전0.3.0 후보 체크포인트 / Earlier candidate checkpoints
+
+2026-08-28회전후속:상하창의정상상태표시줄고정높이오인을수정하고561JUnit/가드·3OSnativePASS. 상하두순서와계산기조작중YouTube전환을확인했다. 마지막F582후보742366bytes는한호스트+일반앱도듀얼ON이라는한영안내보완이며실폰설치해시일치;동일APK API26/33/34 native28043/28053/27794PASS. 계산기+Instagram일반반복확인중,원래회전복귀등은미검증. [후보별최신검증](VERIFICATION.md). EN: Fixed rotated status-bar misclassification,verified both top/bottom orders and calculator/YouTube coexistence,and clarified dual-mode help for one visible host. Final installed F582 passes561 unit tests and exact-APK three-OS native checks;remaining physical coverage is stated in verification. No publication.
+
+아래는이번회전수정전의후보별이력이다. / The following preserves earlier candidate checkpoints.
+
+후속검증:분할/상단손잡이와자기플로팅오인을수정하고관측허용과실제입력경로보호를분리했다. 최신818AC00D후보559JUnit·3OSnativePASS,설치해시일치,좁은창YT1/IG8자동전환확인. 이전후보좌우교체후누적YT10/IG12및개별X분리는별도근거로보존한다. 전체실행을끄고사용자의90도회전/상하분할준비를대기중이다. [최신검증](VERIFICATION.md). EN: Latest candidate passes559 unit tests/three-OS native checks and narrow-pane retest. Rotation/top-bottom physical testing is pending;earlier two-order and isolated-X evidence remains candidate-specific.
+
+두 앱의 상태·설정·플로팅을 분리하고 기본OFF 듀얼 토글을 추가했다. 기존 키는 보존하고 앱별 초기값을 한 번 복사한다. 입력은직렬화하며 콘텐츠/노드/창/경계가달라지거나3초를넘긴대기는폐기한다. 초점을강제로옮기거나일시정지앱을재생하지않는다. 1차546JUnit,API26/33/34nativePASS;실폰비초점YouTube시계증가확인. 양쪽자동넘김·순서교환은검사중이며아직PASS아니다. [설계/근거](SPLIT_SCREEN_PLAN.md). 공개최신0.2.9유지,새게시없음.
+
+EN: Independent sessions/settings/overlays and default-OFF dual mode. Preserved legacy settings,serialized input and bounded page-validated waiting. Initial unit/native checks pass;non-focused YouTube progress is observable. Physical dual-host auto-advance and swaps are still under validation. Public latest stays0.2.9.
+
 ## 0.2.9 공개 완료 / Published0.2.9
 
 2026-08-28 19:26KST 기존Public에v0.2.9/eb4bd0c 게시. 제품CI33163186891 SUCCESS,debug/release각522tests·실패/오류/건너뜀0,최종3OS계측PASS,익명3파일 크기·SHA256·GitHub digest·HTTP200·업데이트조회API PASS. 최종5EEB5B8B…31E68D는 실폰시험후보1EF와 실행 내용이 같고 내장revision만 다르다. 실폰재설치/메일발송없음. [릴리스 원장](releases/v0.2.9.md). 아래 보류·local only 표기는 배포 전 이력이다.

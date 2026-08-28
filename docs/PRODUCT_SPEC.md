@@ -1,4 +1,44 @@
-# 제품 기준 / Product contract · ShortsLoop 0.2.9
+# 제품 기준 / Product contract · ShortsLoop 0.3.0
+
+## 현재0.3.0 계약 · 게시 준비 / Current contract · Publication preparation
+
+**Public 공개 버전은0.2.9다. 0.3.0/code32는 범위별 검증을 마치고 게시 준비 중이다.** 최신 후보는 전체화면 시스템 손잡이 보호 규칙을 보완한 제품 코드 변경이다. 실행·듀얼ON 상태에서 전체화면→두 앱 분할→전체화면으로 바꾸며 실제 자동 전환과 숨겨진 호스트의 요청 정지를 확인했다. 빌드·단위·3개 OS·설정 보존 업그레이드·설치 해시 검사는 통과했으나 공개 파일·CI 확인은 아직 진행 중이다. 이전 문구 전용 후보와 같은 실행 파일로 취급하지 않는다. 정확한 APK·구간별 결과는 [검증 원장](VERIFICATION.md),이전 관측은 [분할 화면 이력](SPLIT_SCREEN_PLAN.md)을 따른다.
+
+**Public0.2.9 remains published;0.3.0/code32 is prepared for publication after scoped verification.** The latest product guard completed fullscreen→dual-host split→fullscreen operation with execution/dualON,including confirmed advances and no new hidden-host request. Build,unit,three-OS,settings-preserving upgrade and installed-APK checks passed;public assets and CI remain pending. Its executable payload differs from the earlier wording-only candidate;keep artifact and segment results distinct.
+
+듀얼ON·전체 실행ON은 현재 보이는 선택 대상에 맞춰 전체화면 하나·분할 두 앱·일반 앱 옆 한 앱을 감지하는 공통 상태다. 배치마다 다시 설정하는 계약이 아니며,기존 중지·권한·서비스 재연결·안전 보호는 그대로 적용한다. / With dual mode and executionON,detect the currently visible selected hosts across fullscreen,social-app split view or one host beside an ordinary app. Layout changes alone do not require re-enabling the mode;stop,permission,reconnection and safety rules remain unchanged.
+
+### 모드·설정·실행 / Mode,settings and execution
+
+- `dual_mode` 기본OFF: 현재 활성 대상 창 하나만 처리한다. ON: 함께 보이는 선택 대상 앱을 각각 감지한다. 대상은 YouTube와Instagram이며 하나만 선택하면 그 앱만 처리한다. 모드 변경은 전체 실행을 자동으로 켜지 않는다.
+- 반복`target/ceiling/last_nonzero`,플로팅`tap_mode/x/y`,긴 영상`skip_long/long_video_seconds`,호스트 일시정지를 앱별로 분리한다. 최초 앱별 저장소 사용 때 기존 값을 양쪽에 한 번 복사하고 기존 키를 보존한다. 이후 한 앱의 수정은 다른 앱의 설정을 덮어쓰지 않는다.
+- 전체 실행·플로팅 표시·사용할 앱 선택·듀얼 모드는 공통이다. Instagram 광고/사진/시간제/화면 분석과 YouTube 라이브는 기존 전용 설정을 유지한다. 잘못된 호스트에서는 전용 기능이 활성화되지 않는다.
+- 앱별 실행은 `전체ON AND 해당앱선택 AND 해당앱일시정지아님`을 필요로 한다. 창·콘텐츠·재생 상태의 기존 안전 조건은 별도로 적용한다. 앱 자체의 재생 정지를 강제로 해제하지 않는다.
+- X는 표시된 호스트만 일시정지한다. 인앱 해당 호스트 재개는 해당 목표를 기준값으로 맞추고 일시정지를 해제하지만 전체OFF를ON으로 바꾸지 않는다. 전체OFF는 양쪽 모두 중지하며,전체ON은 선택된 호스트들을 각 기준값으로 재개한다. 서비스 재연결은 자동 재개하지 않는다.
+
+EN: Dual mode defaultsOFF and processes one active target window;ON independently detects visible selected hosts. Per-host repeat,threshold,tap,position and pause values are initialized once from preserved legacy settings. Shared master/display/host-selection/dual controls remain global;Instagram-only and YouTube-only rules stay scoped. X and host resume affect one host,while masterOFF stops both and masterON resumes selected hosts at their own ceilings. Mode changes and service reconnection never silently start execution or force host playback.
+
+### 창·입력·표시 안전 / Window,input and presentation safety
+
+- `HostPlaybackSession` 두 개가 카운터·복구·시간제·사진·전환 확인·실패 상태를 공유하지 않는다. 전환 확인 실패가 다른 호스트의 카운트로 섞이거나 다른 창으로 재전송되지 않는다.
+- 입력은 공통 조정기에서 직렬 처리한다. 실행 직전 같은 호스트·창·콘텐츠·경계를 다시 확인하며,대기 중 화면이 바뀐 요청을 오래된 좌표로 보내지 않는다. 댓글·메뉴·가려짐·잠금·미확인 전환 등의 보호를 유지한다.
+- 호스트별72×56dp 반투명 플로팅을 제공한다. 앱 표시·카운트·X 범위를 구분하며,각 창의 안전한 영역을 벗어나는 위치는 보정한다. 두 개를 보여준 사실 자체는 두 자동 전환 성공의 증거가 아니다.
+- 두 대상 창이 동시에 보이면 실험적 화면 분석을 비활성화한다. 저장한 선택·API34 이상 제한·별도 동의는 유지한다. 화면 분석이 동시 재생이나 정확한 반복 인식을 보완한다고 주장하지 않는다.
+- 인앱 편집 탭은 실행 앱 선택이나 듀얼ON과 별개다. 두 편집 트리를 유지하여 입력 초안을 섞지 않으며 공통 실행 상태와 호스트별 상태를 구분한다. 기존0회·0초·긴 영상 총길이의 의미는 해당 호스트에서 유지한다.
+
+EN: Two independent sessions retain their own counters,recovery,timers,photo transitions and failures. Shared input is serialized and freshly revalidated. Two labelled72×56dp overlays stay within their host windows. Experimental visual analysis is inactive while both targets are visible,with the saved choice retained. Editing tabs neither select runnable apps nor enable dual mode;zero-count and independent-rule semantics remain host-specific.
+
+### 검증 범위 / Verification boundary
+
+설정 이전·앱별 독립성·UI 초안·제어 범위의 합성시험과 실제 소셜 앱 자동 전환은 별도 근거다. 정확한 APK별 BUILD/Unit/native/시각/실폰 결과는 검증 원장을 따른다. OFF·배치 교환·ON으로 나뉜 구간을 무중단 연속시험으로 합산하지 않는다. 키보드·팝업 보호와 앱 자체 일시정지는 유지하며 모든 일반 앱·배치와의 병행 동작을 보장하지 않는다. 듀얼 사진 릴스의 새 실물 표본과 복귀 회전 시험은 아직 미확보다. 게시·최종 파일·CI 결과가 나오기 전까지0.3.0은 미게시다.
+
+Synthetic migration,isolation and UI checks are distinct from physical transitions. Use artifact-specific records;segments separated byOFF,swap andON are not one uninterrupted run. Keyboard/popup guards and host-imposed pauses remain,no universal app/layout compatibility is promised,and fresh dual-photo samples plus return-rotation testing remain outstanding. Clock progress or a request alone is not a confirmed transition.
+
+## 공개0.2.9·이전 제품 계약 원문 / Published0.2.9 and earlier contracts
+
+아래 원문과 당시 검증은 보존한다. 공통 반복값·단일 플로팅X·전면 창 한정 등 위에서 변경한 항목은0.3.0 계약이 우선하며,과거 검증을 새 버전 결과로 합산하지 않는다.
+
+The retained records below are historical where superseded by the0.3.0 contracts above. Their verification is not reused as0.3.0 evidence.
 
 **ShortsLoop 0.2.9/code31**은 한국어·영어 표시와 선택형 Instagram 사진 릴스 두 모드를 추가한다. 설정·서명·권한을 보존하고 영상과 사진 규칙을 분리한다. 사진은 반복0회와 독립이며 전체OFF는 모두 중지한다. 실폰 시험후보1EF2434F의 설치 SHA256 일치를 확인했다. 최종 배포본은 실행 내용이 같고 내장revision만 다르다. 통째0·3·10초, 한 장0·3·10초, 마지막 장 이후 다음 릴스 이동과 댓글창 보호를 확인했다. 추가 신속 검사에서8장 릴스의 가로7/7·세로1/1, 한 장10초의 가로1/1·세로1/1을 확인했다. 번호 없는 사진·사진 직후 광고·혼합 게시물은 실폰 사례 미확보이며,20개 표본 탐색은 자동20연속 PASS가 아니다. 공개 완료. 최종 파일과 CI는 릴리스 기록을 따른다. [사진 계약](PHOTO_REELS.md),[언어 계약](LOCALIZATION.md),[검증 상태](VERIFICATION.md),[이전 배포](releases/v0.2.8.md).
 

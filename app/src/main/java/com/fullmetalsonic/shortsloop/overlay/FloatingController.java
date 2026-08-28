@@ -29,7 +29,11 @@ public final class FloatingController {
     private Context localized;
     private int lastCurrent, lastTarget, lastRemaining = -1;
     private String lastStatus = "off";
-    private final SettingsStore store;
+    private final SettingsStore baseStore;
+    private SettingsStore store;
+    private String host = "";
+    private Rect allowedBounds, placementArea;
+    private boolean boundsSpecified;
     private final Listener listener;
     private final WindowManager manager;
     private FrameLayout root;
@@ -38,18 +42,38 @@ public final class FloatingController {
     private int availableX, availableY, insetX, insetY;
     private int originX, originY;
     private float downX, downY;
-    private boolean dragging;
+    private boolean dragging, touchActive;
 
     public FloatingController(Context context, SettingsStore store, Listener listener) {
-        this.context = context; this.store = store; this.listener = listener;
+        this.context = context; this.baseStore = store; this.store = store; this.listener = listener;
         manager = context.getSystemService(WindowManager.class);
         localized = AppLocale.wrap(context);
+    }
+
+    /** One controller belongs to one host. Changing hosts never carries another host's count or position. */
+    public void setHost(String packageName) {
+        if (!SettingsStore.YOUTUBE_PACKAGE.equals(packageName) && !SettingsStore.INSTAGRAM_PACKAGE.equals(packageName))
+            throw new IllegalArgumentException("Unsupported floating host");
+        if (host.equals(packageName)) return;
+        hide(); host = packageName; store = baseStore.forHost(packageName);
+        allowedBounds = null; boundsSpecified = true; placementArea = null;
+        lastCurrent = lastTarget = 0; lastRemaining = -1; lastStatus = "off";
+    }
+
+    /** Absolute screen bounds. Null hides this host; only an explicit show() can make it visible again. */
+    public void setAllowedBounds(Rect hostBounds) {
+        Rect next = hostBounds == null ? null : new Rect(hostBounds);
+        if (boundsSpecified && java.util.Objects.equals(allowedBounds, next)) return;
+        endInteraction(); boundsSpecified = true; allowedBounds = next;
+        if (!measureArea()) { hide(); return; }
+        if (root != null) { restorePosition(); manager.updateViewLayout(root, params); }
     }
     // Coordinates are absolute screen pixels, deliberately independent of text direction.
     @SuppressLint({"ClickableViewAccessibility", "RtlHardcoded"})
     public void show() {
         if (root != null) return;
-        root = new FloatingContent(localized);
+        if (!measureArea()) return;
+        root = new FloatingContent(localized, host);
         number = root.findViewById(R.id.floating_count);
         Button close = root.findViewById(R.id.floating_close);
         close.setOnClickListener(view -> listener.close());
@@ -58,22 +82,26 @@ public final class FloatingController {
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
                     downX = event.getRawX(); downY = event.getRawY(); originX = params.x; originY = params.y;
-                    dragging = false; listener.interaction(true); return true;
+                    dragging = false; touchActive = true; listener.interaction(true); return true;
                 case MotionEvent.ACTION_MOVE:
+                    if (!touchActive || placementArea == null) return true;
                     float dx = event.getRawX() - downX, dy = event.getRawY() - downY;
                     if (Math.hypot(dx, dy) > ViewConfiguration.get(context).getScaledTouchSlop()) dragging = true;
                     if (dragging) {
-                        params.x = insetX + PositionPolicy.clamp(originX + Math.round(dx) - insetX, availableX);
-                        params.y = insetY + PositionPolicy.clamp(originY + Math.round(dy) - insetY, availableY);
+                        Rect moved = OverlayPlacement.clamp(placementArea, dp(WIDTH_DP), dp(HEIGHT_DP),
+                                originX + Math.round(dx), originY + Math.round(dy));
+                        params.x = moved.left; params.y = moved.top;
                         manager.updateViewLayout(root, params);
                     }
                     return true;
                 case MotionEvent.ACTION_UP:
+                    if (!touchActive) return true;
                     if (dragging) savePosition(); else view.performClick();
-                    listener.interaction(false); return true;
+                    endInteraction(); return true;
                 case MotionEvent.ACTION_CANCEL:
+                    if (!touchActive) return true;
                     if (dragging) savePosition();
-                    listener.interaction(false); return true;
+                    endInteraction(); return true;
                 default: return true;
             }
         });
@@ -82,10 +110,11 @@ public final class FloatingController {
                         | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN, PixelFormat.TRANSLUCENT);
         params.gravity = Gravity.TOP | Gravity.LEFT;
         params.alpha = 0.8f;
-        params.setTitle("ShortsLoop");
-        measureArea(); restorePosition();
+        params.setTitle(host.isEmpty() ? "ShortsLoop" : "ShortsLoop · " + FloatingContent.hostName(localized, host));
+        restorePosition();
         try { manager.addView(root, params); }
         catch (RuntimeException failure) { root = null; number = null; throw failure; }
+        update(lastCurrent, lastTarget, lastStatus, lastRemaining);
     }
     public void update(int current, int target, String status) {
         update(current, target, status, -1);
@@ -119,6 +148,8 @@ public final class FloatingController {
                         ? localized.getString(R.string.flo_remaining, remainingSeconds) : "")
                 : remainingSeconds >= 0 && timedStatus ? localized.getString(R.string.flo_timed_description, remainingSeconds, readable)
                 : localized.getString(R.string.floating_description, current, target, readable);
+        if (!host.isEmpty()) description = localized.getString(R.string.host_overlay_description,
+                FloatingContent.hostName(localized, host), description);
         if (!description.contentEquals(number.getContentDescription() == null ? "" : number.getContentDescription()))
             number.setContentDescription(description);
     }
@@ -126,24 +157,25 @@ public final class FloatingController {
         localized = AppLocale.wrap(context);
         if (root == null) return;
         // Rebuild only presentation: the saved position and execution settings stay unchanged.
-        listener.interaction(false); dragging = false;
+        if (touchActive) endInteraction(); else if (listener != null) listener.interaction(false);
         hide(); show();
         update(lastCurrent, lastTarget, lastStatus, lastRemaining);
     }
     private void restorePosition() {
-        params.x = insetX + PositionPolicy.restore(store.x(), availableX);
-        params.y = insetY + PositionPolicy.restore(store.y(), availableY);
+        Rect restored = OverlayPlacement.restore(placementArea, dp(WIDTH_DP), dp(HEIGHT_DP), store.x(), store.y());
+        params.x = restored.left; params.y = restored.top;
     }
     private void savePosition() {
         store.position(PositionPolicy.save(params.x - insetX, availableX), PositionPolicy.save(params.y - insetY, availableY));
     }
     @SuppressWarnings("deprecation")
-    private void measureArea() {
-        int width, height, right = 0, bottom = dp(24);
+    private boolean measureArea() {
+        if (boundsSpecified && allowedBounds == null) { placementArea = null; return false; }
+        int width, height, right = 0, bottom = dp(24), left = 0, top = 0;
         insetX = 0; insetY = dp(28);
         if (Build.VERSION.SDK_INT >= 30) {
             android.view.WindowMetrics metrics = manager.getCurrentWindowMetrics();
-            Rect bounds = metrics.getBounds(); width = bounds.width(); height = bounds.height();
+            Rect bounds = metrics.getBounds(); width = bounds.width(); height = bounds.height(); left = bounds.left; top = bounds.top;
             android.graphics.Insets insets = metrics.getWindowInsets().getInsetsIgnoringVisibility(
                     WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout());
             insetX = insets.left; insetY = insets.top; right = insets.right; bottom = insets.bottom;
@@ -151,14 +183,25 @@ public final class FloatingController {
             android.util.DisplayMetrics metrics = new android.util.DisplayMetrics();
             manager.getDefaultDisplay().getRealMetrics(metrics); width = metrics.widthPixels; height = metrics.heightPixels;
         }
-        availableX = Math.max(0, width - insetX - right - dp(WIDTH_DP));
-        availableY = Math.max(0, height - insetY - bottom - dp(HEIGHT_DP));
+        Rect displaySafe = new Rect(left + insetX, top + insetY, left + width - right, top + height - bottom);
+        placementArea = OverlayPlacement.area(displaySafe, boundsSpecified ? allowedBounds : displaySafe,
+                host.isEmpty() ? 0 : dp(4), dp(WIDTH_DP), dp(HEIGHT_DP));
+        if (placementArea == null) return false;
+        insetX = placementArea.left; insetY = placementArea.top;
+        availableX = placementArea.width() - dp(WIDTH_DP); availableY = placementArea.height() - dp(HEIGHT_DP);
+        return true;
     }
     public Rect bounds() {
         return root == null ? new Rect() : new Rect(params.x, params.y, params.x + dp(WIDTH_DP), params.y + dp(HEIGHT_DP));
     }
     public void hide() {
+        endInteraction();
         if (root != null) { manager.removeView(root); root = null; number = null; }
+    }
+    private void endInteraction() {
+        if (!touchActive) return;
+        touchActive = dragging = false;
+        if (listener != null) listener.interaction(false);
     }
     private int dp(float value) { return Math.round(value * context.getResources().getDisplayMetrics().density); }
 }

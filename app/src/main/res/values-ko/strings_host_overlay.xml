@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="host_overlay_youtube_short">YT</string>
+    <string name="host_overlay_instagram_short">IG</string>
+    <string name="host_overlay_youtube_name">YouTube</string>
+    <string name="host_overlay_instagram_name">Instagram</string>
+    <string name="host_overlay_description">%1$s · %2$s</string>
+    <string name="host_overlay_close">%1$s 자동 넘김만 일시정지하고 해당 플로팅 닫기</string>
+</resources>

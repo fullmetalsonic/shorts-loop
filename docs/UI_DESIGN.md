@@ -1,4 +1,47 @@
-# UI·인간공학 기준 · ShortsLoop 0.2.8
+# UI·인간공학 기준 / UI and usability · ShortsLoop 0.3.0
+
+## 현재 화면 계약 · 게시 준비 / Current UI contract · Publication preparation
+
+**현재 공개판은0.2.9이며0.3.0/code32는 게시 준비 중이다.** 최신 설치본에서 실행·듀얼ON을 유지한 전체화면→두 앱 분할→전체화면 자동 전환과 숨겨진 호스트의 요청 정지를 확인했다. 빌드·단위·3개 OS 검사·설정 보존 업그레이드·설치 해시를 확인했고,범위별 독립 리뷰의 미해결P1/P2는0건이다. 게시 확인과 모든 앱·배치·시각·사용성 감사 완료를 뜻하지 않는다. 이전 문구 전용 후보와 실행 파일이 같다는 설명은 최신 후보에 적용하지 않는다. [검증 원장](VERIFICATION.md),[사용 순서](USER_GUIDE.md),[이전 후보 이력](SPLIT_SCREEN_PLAN.md).
+
+**Public0.2.9 remains published;0.3.0/code32 is being prepared for publication.** The latest installed build completed fullscreen→dual-host split→fullscreen advances with execution/dualON and no new hidden-host request. Build,unit,three-OS,settings-preserving upgrade and installation-hash checks passed;scoped independent review has no unresolvedP1/P2 finding. This is neither completed publication nor an all-app/all-layout visual or usability audit. The earlier wording-only payload comparison does not describe this candidate.
+
+듀얼ON 안내는 ‘두 앱이 꼭 있어야 함’이나 ‘배치마다 다시 켜야 함’으로 읽히지 않아야 한다. 전체 실행ON에서 전체화면 한 대상·분할 두 대상·일반 앱 옆 한 대상을 현재 창에 따라 감지하되,안전 보호로 대기하는 상태와 명시적 중지 상태를 구분한다. / DualON must not imply that two hosts are required or the mode must be toggled after each layout change. With executionON,it follows one fullscreen host,two split hosts or one host beside an ordinary app;distinguish guarded waiting from explicit stopping.
+
+### 정보 순서와 제어 범위 / Information order and scope
+
+1. 준비·업데이트 알림은 필요한 경우 상단에 표시한다. / Show setup/update banners only when relevant.
+2. ‘화면 처리 방식 · 공통’에 ‘듀얼 화면 적용’을 둔다. 기본OFF는 활성 창 하나,ON은 함께 보이는 선택 대상 각각이다. 이 토글은 실행 스위치가 아니다. / Put the default-OFF dual-mode switch above editor tabs;it selects processing scope,not execution.
+3. YouTube·Instagram 설정 탭 안에 해당 앱의 반복 횟수·긴 영상·플로팅 터치 방식을 둔다. YouTube 라이브와 Instagram 시간제·사진·광고는 각 전용 탭에 표시한다. / Show repeat,length and tap mode per tab;keep live previews on YouTube and timer/photo/ad rules on Instagram.
+4. 공통 영역에 플로팅 표시·사용할 앱·준비/권한·업데이트를 둔다. Instagram 탭에서 실험적 화면 분석 안내를 표시한다. / Keep display,target selection,setup and updates shared;show experimental analysis in the Instagram tab.
+5. 전체 실행과 전체 상태는 하단에 고정한다. 실행 중에는 활성 창 모드와 듀얼 모드를 문구로 구분하고,상세 카운트·오류는 해당 호스트 영역에서 표시한다. / Keep the global execution switch fixed at the bottom,with mode-specific global text and host-specific detail.
+
+편집 탭과 실행할 앱 체크박스를 별도로 설명한다. 탭만 바꿔도 실행 대상이 바뀐다고 느끼지 않도록 ‘설정 대상’임을 명시한다. 두 편집 트리는 별도 ID를 가지며 보이지 않는 탭의 초안도 다른 앱에 적용되지 않는다. 듀얼 모드 변경은 저장한 앱별 값이나 전체 실행을 변경하지 않는다.
+
+Editor tabs and runnable-app checkboxes are explicitly different. Separate editor trees/IDs keep drafts isolated. Changing dual mode preserves per-app values and does not enable execution.
+
+### 플로팅과 재개 / Floating controls and resume
+
+- 대상별 반투명72×56dp 플로팅 두 개를 사용한다. 앱 구분은 문자와 접근성 설명을 함께 쓰며 색상만으로 구분하지 않는다. 한 대상만 유효하면 그 대상만 표시한다.
+- 숫자 터치·끌기는 해당 앱의 횟수·위치만 바꾼다. 위치는 그 앱 창의 안전 영역 안으로 보정한다. 창이 사라지거나 공간이 부족하면 숨긴다.
+- X는 해당 호스트만 일시정지한다. 해당 탭의 ‘이 앱 다시 시작’과 전체OFF→ON을 구분한다. 전체OFF 상태의 개별 재개 버튼은 전체 실행을 켜지 않는다.
+- 전체OFF/타일OFF는 두 앱 모두 중지하고,플로팅 표시OFF는 자동 동작을 중지하지 않는다. X는24×24dp이므로 작은 터치 목표라는 접근성 한계를 숨기지 않는다.
+
+EN: Use two translucent72×56dp,host-labelled controls,with text/accessibility labels rather than color alone. Tap,drag and X act on one host. Host resume does not turn on an off master;masterOFF/tileOFF stop both. Hidden or too-small host windows do not borrow space from the other pane. The24×24dp X remains a small-target limitation.
+
+### 설명·감사 기준 / Explanations and audit criteria
+
+두 대상 창이 보이는 동안 화면 분석은 비활성이고 저장한 선택은 유지된다고 안내한다. 듀얼ON은 대상이 한 창만 보여도 일반 앱 옆에서 처리할 수 있지만,키보드·팝업 보호와 앱 자체 일시정지는 유지된다고 설명한다. 자체 일시정지 영상을 강제로 재생하거나,모든 앱·배치에서 두 재생이 계속된다고 보장하지 않는다. 듀얼 사진 실물 표본과 복귀 회전은 남은 시험으로 구분한다. 한국어/영어의 메뉴·0회·0초 의미를 일치시킨다.
+
+검사는 실제 토글 저장·모드별 안내·전체OFF 유지·앱별 설정/초안 보존·X 범위·재개·창 교환/크기 변경·큰 글꼴의 잘림·줄바꿈을 포함한다. 도움말은 듀얼 안내와 앱별X 안내를 기존 전문 앞에 붙이며,검사도 세 부분 전체와 실제 레이아웃을 확인한다. 합성 UI 검사 결과와 실폰 자동 넘김·시각 감사 결과는 합산하지 않는다.
+
+EN: Explain that two visible hosts disable experimental analysis without deleting its choice. DualON can process one visible host beside an ordinary app,but keyboard/popup guards and host-paused playback still apply;do not promise every app/layout or force playback. Fresh dual-photo samples and return rotation remain untested. Audit real toggle persistence,mode labels,OFF preservation,draft isolation,X/resume,bounds and large-font wrapping. Validate all three help sections and native layout;synthetic UI evidence is not physical auto-advance evidence.
+
+## 이전0.2.8·0.2.9 화면 기준과 검증 / Historical UI contracts and evidence
+
+아래 원문·수치·시각 설계 이력을 보존한다. 이전 단일 플로팅X/공통 횟수/메뉴 순서는0.3.0의 변경 계약보다 우선하지 않는다. 당시 ‘이번 변경’과PASS는 해당 버전만 뜻한다.
+
+The retained records below describe their own historical versions;superseded single-control behavior and earlier PASS results are not current0.3.0 claims.
 
 **ShortsLoop 0.2.8/code30**은 앱 이름·버전만 표시하고 디버깅이 비활성화된 release APK를 사용합니다. 기존 패키지·서명을 유지합니다. 실제 시험 범위와 게시 상태는 [0.2.8 기록](releases/v0.2.8.md)을 확인하세요.
 

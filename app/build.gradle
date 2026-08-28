@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 35
         // Explicit local bootstrap is used only to test a real OS update to the final higher code.
-        versionCode providers.gradleProperty('updaterBootstrap').isPresent() ? 15 : 31
-        versionName providers.gradleProperty('updaterBootstrap').isPresent() ? '0.2.5-update-test' : '0.2.9'
+        versionCode providers.gradleProperty('updaterBootstrap').isPresent() ? 15 : 32
+        versionName providers.gradleProperty('updaterBootstrap').isPresent() ? '0.2.5-update-test' : '0.3.0'
         testInstrumentationRunner providers.gradleProperty('updaterBootstrap').isPresent()
                 ? 'com.fullmetalsonic.shortsloop.updates.UpdateInstallInstrumentation'
                 : 'com.fullmetalsonic.shortsloop.CompatibilityInstrumentation'

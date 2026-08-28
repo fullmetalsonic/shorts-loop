@@ -1,6 +1,14 @@
 # Android 버전별 기능 / Android compatibility
 
-## 0.2.9/code31 · 언어와 OS 지원 / Language and OS support
+## 현재0.3.0/code32 · 게시 준비 / Current release preparation
+
+설치 하한Android8/API26,API29 타일 상태줄·API33 타일 추가·API34 실험적 화면 분석 제한은 유지한다.0.3.0은 기본OFF인 듀얼 모드와 앱별 설정/카운터/플로팅을 추가한다. 듀얼ON·실행ON에서 보이는 전체화면 한 대상·분할 두 대상·일반 앱 옆 한 대상을 처리하지만,PiP·잠금·키보드/팝업 가림·앱 자체 일시정지 보호를 우회하지 않는다. 두 대상이 보이면 화면 분석은 저장값을 유지한 채 비활성이다.
+
+최종 제품 후보의 BUILD·564JUnit·API26/33/34 native28,043/28,053/27,794검사와 설치 해시를 확인했다. 같은 후보에서 전체Instagram→분할→전체Instagram 자동 감지·전환을 확인했으며,원래 회전 방향 복귀·모든 예외 조합·새 듀얼 사진 표본은 미실행/미확보다. 현재 Public은0.2.9이고0.3.0 게시 검증은 진행 중이다. [최신 원장](VERIFICATION.md),[0.3.0 기록](releases/v0.3.0.md).
+
+EN: Version0.3.0 keepsAPI26 minimum and existing API29/33/34 feature boundaries. Default-OFF dual mode follows visible selected hosts across fullscreen,split view or one host beside an ordinary app,without bypassingPiP,lock,keyboard/popup or host-pause guards. Visual assistance stays inactive with both hosts visible. The final product candidate passed build,564 unit tests,28,043/28,053/27,794 native checks onAPI26/33/34 and installed-hash verification. Its fullscreen→split→fullscreen flow is confirmed;returning to the original rotation,all exception combinations and fresh dual-photo samples remain outside verified scope. Public0.2.9 remains available while0.3.0 publication is in progress.
+
+## 이전0.2.9/code31 · 언어와 OS 지원 / Previous language and OS evidence
 
 설치 하한Android8/API26, API29 타일 상태줄·API33 타일 추가 요청·API34 화면 분석 제한은 그대로다.0.2.9는 앱·플로팅·빠른 설정 실행 상태·도움말·업데이트/오류를 한국어·영어로 표시한다. 새 권한·호스트 앱 개조·언어별 감지 우회를 추가하지 않으며 기존 설정·서명·패키지를 유지한다. 최신 APK의 실폰 두 모드·0/3/10초·댓글창 보호는 확인했다. 번호 없는 사진·사진 직후 광고·혼합 사례는 미확보이며 공개 파일 검증은 완료했다. [조건별 검증](VERIFICATION.md),[언어 안내](LOCALIZATION.md). 아래 과거 결과는 새 시험으로 합산하지 않는다.
 
@@ -93,7 +101,7 @@ Since code17, the app shows accessibility help and a settings/reconnect button w
 
 인앱 업데이트는 앱의 기존 설치 하한인 API26부터 제공하며 화면 분석의 API34 제한과 별개입니다. ‘사용 준비’ 다음의 **업데이트 · 앱 정보**에서 설치 버전과 수동 **업데이트 확인**을 찾습니다. 기본 ON인 **앱 열 때 새 버전 확인**은 앱을 열거나 돌아올 때 마지막 시도 후 24시간 간격으로 조회하며 OFF로 바꿀 수 있습니다. 더 높고 기기에 맞는 버전이 확인된 경우만 상단 배너로 알립니다. 앱을 닫아 둔 동안의 주기 감시·시스템 알림은 없습니다.
 
-The updater is available from the existing API26 app minimum, independently of the API34 visual trial. Find **Installed version 0.2.9** and the manual check under **Updates · App information**, after Setup. Opening/resuming the app can check automatically, at most once per 24 hours since the last attempt; this defaults ON and can be disabled. Only a known compatible newer version produces a top banner. There is no background polling or system notification.
+The updater is available from the existing API26 app minimum, independently of the API34 visual trial. Find **Installed version 0.3.0** and the manual check under **Updates · App information**, after Setup. Opening/resuming the app can check automatically, at most once per 24 hours since the last attempt; this defaults ON and can be disabled. Only a known compatible newer version produces a top banner. There is no background polling or system notification.
 
 **조회 → 직접 다운로드 → 검사 완료 후 직접 설치**를 구분합니다. `INTERNET`은 GitHub 업데이트 정보·APK 수신용이며 영상·계정·시청이력을 업로드하지 않습니다. `REQUEST_INSTALL_PACKAGES`는 설치 화면 연결용 선언입니다. 실제 ‘이 출처 허용’과 시스템 최종 설치 확인은 사용자가 직접 합니다. 기기 정책으로 설치가 제한될 수 있으며 우회하지 않습니다. 저장소 전체 접근·알림 권한·무인 자동 설치는 없습니다.
 

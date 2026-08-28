@@ -2,6 +2,19 @@ package com.fullmetalsonic.shortsloop.service;
 
 /** In-process status only. No video/account data is persisted. */
 public final class RuntimeState {
+    public static final class HostState {
+        public volatile boolean blocked;
+        public volatile int current;
+        public volatile int timedRemainingSeconds = -1;
+        public volatile String status = "off";
+    }
+    private static final HostState YOUTUBE = new HostState();
+    private static final HostState INSTAGRAM = new HostState();
+    public static HostState forHost(String packageName) {
+        if ("com.google.android.youtube".equals(packageName)) return YOUTUBE;
+        if ("com.instagram.android".equals(packageName)) return INSTAGRAM;
+        throw new IllegalArgumentException("Unsupported host");
+    }
     private RuntimeState() {}
     public static volatile boolean connected;
     public static volatile boolean blocked;

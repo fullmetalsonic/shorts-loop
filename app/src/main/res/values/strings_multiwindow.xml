@@ -1,0 +1,22 @@
+<resources>
+    <string name="mw_mode_title">Window processing · Shared</string>
+    <string name="mw_dual_toggle">Use dual-window mode</string>
+    <string name="mw_mode_help">Off (default): process only the active window. On: detect each selected app that is visible. Turn this on when using one Shorts app beside another app too. Hidden apps are not processed. This does not force either app to play if it pauses. Switching modes preserves each app’s settings and does not turn on execution.</string>
+    <string name="mw_single_running">On · Active window only</string>
+    <string name="mw_settings_title">Settings for each app</string>
+    <string name="mw_settings_help">Choose a tab to edit that app’s settings. Tabs do not select which apps run or enable dual-window mode. Choose apps under Apps to use.</string>
+    <string name="mw_youtube_repeat">YouTube only · Number of complete plays for videos with playback information.</string>
+    <string name="mw_instagram_repeat">Instagram only · Number of complete plays for videos with playback information.</string>
+    <string name="mw_resume_host">Resume this app</string>
+    <string name="mw_host_floating_title">This app’s floating control</string>
+    <string name="mw_host_floating_help">Tap changes only this app’s count. Drag saves its position. X pauses only this app; resume here or turn all execution off and on.</string>
+    <string name="mw_common_floating_help">Show the floating controls for selected apps. Hiding the controls does not stop execution. The switch below stops both apps.</string>
+    <string name="mw_host_off">All execution is off</string>
+    <string name="mw_host_paused">This app is paused</string>
+    <string name="mw_host_running">Enabled · Runs when its video is safely visible</string>
+    <string name="mw_host_unselected">Select this app under Apps to use</string>
+    <string name="mw_host_missing">Install this app to use its automation</string>
+    <string name="mw_all_running">On · Dual-window mode · Selected apps use separate settings</string>
+    <string name="mw_common_settings">Shared settings · Both apps</string>
+    <string name="mw_start_draft_error">Review the pending settings in the selected app tab.</string>
+</resources>

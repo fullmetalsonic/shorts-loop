@@ -1,6 +1,14 @@
 # 배포·버전 표시 전수 검토 / Release presentation audit
 
-## 0.2.8 수정 결과 / Remediation
+## 현재0.3.0/code32 · 게시 준비 감사 / Current preparation audit
+
+앱·README·설명서는0.3.0/code32를 현재 배포 대상으로 설명하며,인앱 버전 라벨은 중립적인 이름/설치버전 형태를 유지한다. 듀얼은 기본OFF이고,편집 탭·사용할 앱 선택·전체 실행을 구분한다. X는 해당 앱만 정지하며 전체OFF는 모두 중지한다. 과거 후보와 공개0.2.9의 수치를 최신 결과로 합산하지 않는다.
+
+최종 제품 후보의 BUILD·564JUnit·정적 가드·같은APK API26/33/34 native28,043/28,053/27,794·설치 해시를 확인했다. 로컬lint0오류/13경고,독립 검토 범위 미해결P1/P2는0건이다. 실행·듀얼ON을 유지한 전체화면→분할→전체화면 흐름은 실기기 근거가 있으나,모든 앱·예외 조합·원래 회전 방향 복귀·새 듀얼 사진은 검증 완료가 아니다. 현재 Public0.2.9,0.3.0 게시·CI·공개 파일 검증 진행 중. [검증 원장](VERIFICATION.md),[배포 기록](releases/v0.3.0.md).
+
+EN: Current presentation targets0.3.0/code32 with neutral version labels and clear editor/host-selection/dual/master scopes. HostX and masterOFF are distinguished;old evidence remains historical. The final product candidate passed build,564 unit tests,static guards,28,043/28,053/27,794 same-APK native checks onAPI26/33/34 and installed-hash checks. Local lint reports0 errors/13 warnings;no unresolvedP1/P2 remains in independent review scope. Physical fullscreen→split→fullscreen evidence does not establish all-app/all-exception,return-rotation or dual-photo coverage. Public0.2.9 remains current while0.3.0 publication,CI and asset checks proceed.
+
+## 이전0.2.8 수정 결과 / Previous remediation
 
 두 버전 라벨을 중립적인 앱명·설치버전으로 수정하고 resource·실제라벨 검사를 추가했다. non-debuggable release 구성과 기존 단일 서명·소스revision·출고거절 가드를 추가했으며 현재 사용 문서와 과거 기록을 분리했다. 실제 화면분석 실험 안내와 prerelease포함 기존 업데이트 정책은 유지했다. 빌드468JUnit·세OS 계측/19설정 덮어설치·휴대폰 문구/연결/해시 검사를 수행했고 독립 리뷰에서 P1/P2발견0건이다. [검증 수치·제약](VERIFICATION.md),[최종 배포 상태](releases/v0.2.8.md),[재현 가능한 빌드](RELEASE_BUILD.md).
 

@@ -1,7 +1,6 @@
 package com.fullmetalsonic.shortsloop;
 
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.graphics.Rect;
 import android.widget.TextView;
 import com.fullmetalsonic.shortsloop.core.AdvanceGate;
@@ -15,7 +14,7 @@ import com.fullmetalsonic.shortsloop.i18n.AppLocale;
 import com.fullmetalsonic.shortsloop.detection.YouTubeSnapshot;
 import com.fullmetalsonic.shortsloop.overlay.FloatingController;
 import com.fullmetalsonic.shortsloop.service.RuntimeState;
-import com.fullmetalsonic.shortsloop.service.ShortsAccessibilityService;
+import com.fullmetalsonic.shortsloop.service.HostPlaybackSession;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -23,15 +22,16 @@ import java.lang.reflect.Method;
 final class RecoveryServiceChecks {
     private static final String HOST = SettingsStore.YOUTUBE_PACKAGE;
     private static int checks;
-    static int run(Context context, SettingsStore store) {
+    static int run(Context context, SettingsStore rootStore) {
+        SettingsStore store = rootStore.forHost(HOST);
+        RuntimeState.HostState state = RuntimeState.forHost(HOST);
         checks = 0;
         try {
-            ShortsAccessibilityService service = new ShortsAccessibilityService();
-            Method attach = ContextWrapper.class.getDeclaredMethod("attachBaseContext", Context.class);
-            attach.setAccessible(true); attach.invoke(service, context);
+            HostPlaybackSession service = new HostPlaybackSession(context, HOST, null);
+            rootStore.enabled(true);
             set(service, "store", store); set(service, "activePackage", HOST);
             store.selectedApp(HOST, true); store.target(1); store.enabled(true);
-            RuntimeState.blocked = false;
+            state.blocked = false;
             AdvanceGate gate = (AdvanceGate)get(service, "gate");
             LoopCounter counter = (LoopCounter)get(service, "counter"); counter.setTarget(1);
             gate.begin("old", 10, 0); require(gate.unavailable(4500) == AdvanceGate.State.FAILED, "Real gate timeout");
@@ -39,9 +39,9 @@ final class RecoveryServiceChecks {
             int generation = (Integer)get(service, "generation");
             call(service, "advanceTimedOut", new Class<?>[0]);
             PlaybackRestart recovery = (PlaybackRestart)get(service, "restart");
-            require(recovery.active() && !RuntimeState.blocked, "Ordinary timeout remains observable");
+            require(recovery.active() && !state.blocked, "Ordinary timeout remains observable");
             require((Integer)get(service, "generation") > generation, "Old request callback invalidated");
-            require(RuntimeState.current == 0 && RuntimeState.status.equals(PlaybackRestart.WAITING), "Waiting visible");
+            require(state.current == 0 && state.status.equals(PlaybackRestart.WAITING), "Waiting visible");
             Rect page = new Rect(0, 0, 400, 700);
             observe(service, YouTubeSnapshot.advertisement(page).inWindow(7, page), 5000);
             observe(service, YouTubeSnapshot.livePreview("live", page).inWindow(7, page), 6000);
@@ -54,7 +54,7 @@ final class RecoveryServiceChecks {
             observe(service, snapshot(2, 7), 11000);
             require(recovery.active(), "Interruption discards candidate, not guard");
             observe(service, snapshot(0, 7), 12000); observe(service, snapshot(1, 7), 13000);
-            require(!recovery.active() && RuntimeState.current == 1, "Fresh start rearms counter");
+            require(!recovery.active() && state.current == 1, "Fresh start rearms counter");
             require((Integer)get(service, "confirmedAdvances") == 0 && (Integer)get(service, "advanceRequests") == 0,
                     "Recovery is neither a request nor a confirmed advance");
             long now = 13000;
@@ -64,13 +64,13 @@ final class RecoveryServiceChecks {
             require(!counter.observe(new Progress(1, 10), "current", now + 2000).advance, "No duplicate emission");
             // All non-ordinary timeout modes retain the actual hard-stop wiring.
             for (String flag : new String[]{"pendingAd", "pendingLive", "pendingTimed", "pendingVisual", "pendingLong"}) {
-                RuntimeState.blocked = false; set(service, "ordinaryRequestWindow", 7); set(service, flag, true);
+                state.blocked = false; set(service, "ordinaryRequestWindow", 7); set(service, flag, true);
                 call(service, "advanceTimedOut", new Class<?>[0]);
-                require(RuntimeState.blocked && !recovery.active(), "Hard stop preserved for " + flag);
+                require(state.blocked && !recovery.active(), "Hard stop preserved for " + flag);
             }
-            RuntimeState.blocked = false; recovery.begin(HOST, 7); store.target(0);
+            state.blocked = false; recovery.begin(HOST, 7); store.target(0);
             observe(service, snapshot(0, 7), 40000); observe(service, snapshot(1, 7), 41000);
-            require(recovery.active() && RuntimeState.current == 0, "Zero prevents restart");
+            require(recovery.active() && state.current == 0, "Zero prevents restart");
             store.target(1); store.enabled(false);
             observe(service, snapshot(0, 7), 42000); observe(service, snapshot(1, 7), 43000);
             require(recovery.active() && !store.enabled(), "OFF never re-enabled");
@@ -90,11 +90,11 @@ final class RecoveryServiceChecks {
             call(service, "invalidate", new Class<?>[0]); require(!recovery.active(), "Settings/session reset cancels recovery");
             set(service, "ordinaryRequestWindow", 7); store.target(0);
             call(service, "advanceTimedOut", new Class<?>[0]);
-            require(RuntimeState.blocked && !recovery.active(), "Zero cannot enter timeout recovery");
-            RuntimeState.blocked = false; store.target(1); set(service, "ordinaryRequestWindow", -1);
+            require(state.blocked && !recovery.active(), "Zero cannot enter timeout recovery");
+            state.blocked = false; store.target(1); set(service, "ordinaryRequestWindow", -1);
             call(service, "advanceTimedOut", new Class<?>[0]);
-            require(RuntimeState.blocked && !recovery.active(), "Unknown request window cannot enter recovery");
-            RuntimeState.blocked = false; store.enabled(true); store.skipLong(true); store.longVideoSeconds(10); store.target(0);
+            require(state.blocked && !recovery.active(), "Unknown request window cannot enter recovery");
+            state.blocked = false; store.enabled(true); store.skipLong(true); store.longVideoSeconds(10); store.target(0);
             require((Boolean)call(service, "longCandidate", new Class<?>[]{YouTubeSnapshot.class}, snapshot(0, 7)), "Length filter independent of zero plays");
             store.enabled(false);
             require(!(Boolean)call(service, "longCandidate", new Class<?>[]{YouTubeSnapshot.class}, snapshot(0, 7)), "Execution OFF blocks length filter");
@@ -148,9 +148,9 @@ final class RecoveryServiceChecks {
             require(call(service, "inspectLongTransition", new Class<?>[]{YouTubeSnapshot.class, long.class}, snapshot(1, 7).withContentIdentity("beta"), 2500L)
                     == AdvanceGate.State.WAITING, "Identity source stays pinned for request lifetime");
             for (String key : new String[]{"target", "long_video_seconds", "skip_long"}) {
-                RuntimeState.blocked = false; set(service, "unresolvedLongAttempt", true);
-                service.onSharedPreferenceChanged(store.preferences, key);
-                require(RuntimeState.blocked && !recovery.active(), "Unconfirmed long request cannot rearm through " + key);
+                state.blocked = false; set(service, "unresolvedLongAttempt", true);
+                service.onSharedPreferenceChanged(store.preferences, store.scopedKey(key));
+                require(state.blocked && !recovery.active(), "Unconfirmed long request cannot rearm through " + key);
             }
             set(service, "unresolvedLongAttempt", false);
             store.skipLong(false); store.target(1);
@@ -167,7 +167,7 @@ final class RecoveryServiceChecks {
             floating.update(0, 0, "ads.confirming"); require(number.getText().toString().equals(displayContext.getString(R.string.flo_ads)), "Long setting does not mask ad label");
             return checks;
         } catch (ReflectiveOperationException e) { throw new AssertionError("Service wiring check failed", e); }
-        finally { store.enabled(false); store.skipLong(false); RuntimeState.blocked = false; RuntimeState.current = 0; RuntimeState.status = "off"; }
+        finally { rootStore.enabled(false); store.enabled(false); store.skipLong(false); state.blocked = false; state.current = 0; state.status = "off"; }
     }
     private static YouTubeSnapshot snapshot(double position, int window) {
         Rect bounds = new Rect(0, 0, 400, 700);

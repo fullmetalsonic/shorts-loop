@@ -1,8 +1,8 @@
 # Instagram 사진 릴스 / Photo Reels
 
-상태: 0.2.9 로컬 구현·검증 중. GitHub 미게시. 실기기 자동 넘김 시험 결과는 아래 검증 구분을 따른다.
+현재0.3.0/code32는 게시 준비 중이며,Public 공개판은0.2.9다. 사진 기능은0.2.9의 통째/한 장 계약을 유지하되,0.3.0에서는 Instagram 탭과 해당 호스트의 실행/플로팅 상태에 속한다. X는 Instagram만 일시정지하고 전체OFF는 모든 규칙을 중지한다. 새 듀얼 사진 실물 표본은 확보하지 못했으며,아래0.2.9 사진 시험을0.3.0 듀얼 사진 PASS로 재사용하지 않는다. [최신 검증](VERIFICATION.md),[앱별 사용법](USER_GUIDE.md).
 
-Status: local0.2.9 implementation under validation,not published. Physical automatic transitions are not implied by PC/emulator results.
+Current0.3.0/code32 is being prepared for publication;Public0.2.9 remains available. Whole/each-photo rules are retained,but settings and runtime controls now belong to the Instagram host. X pauses Instagram;masterOFF stops every rule. No fresh dual-window photo sample was obtained. Historical0.2.9 photo results below do not establish a0.3.0 dual-photo PASS.
 
 ## 설정 / Settings
 
@@ -38,10 +38,10 @@ EN: Whole0 skips after safe settlement. Each3 on three photos waits3 seconds per
 
 EN: A narrowly recognized image carousel and dedicated slide index are required. Incomplete/ambiguous trees,contradictory indices and partial movement do not become fallback candidates. Horizontal movement requires the exact next index in the same post/window and unchanged total. Vertical movement requires both a stable different post and a different media source-node;caption changes alone cannot confirm it. Stateless window/node-hash keys preserve A→B→A rollback. Hash collisions,reused nodes or ad end cards without media metadata may conservatively stop. Unconfirmed/cancelled movement hard-stops;changing settings/fallback cannot retry it. Explicit mainOFF/ON is required. Encoded slideshow videos retain video rules. Mixed media,other host versions and overlays remain limited;landing on a video item during each-photo mode can stop confirmation.
 
-## 검증 구분 / Validation boundaries
+## 이전0.2.9 사진 검증 / Historical0.2.9 photo evidence
 
 - 설치0.2.8/관측호스트에서사진1/2→이전일반영상→복귀1/2→사진2/2의구조비교와ADB수동가로이동확인. 이것은신규제품자동이동PASS가아니다.
-- 최신 로컬 후보는522 JUnit,API26/33/34 native25335/25349/25132 검사를 통과했다. 기본3초,0–10초 경계,독립 저장,번호 누락 대체,실패 정지,좁은 화면/큰 글꼴,KO/EN,노드 복귀와 광고 메타데이터를 검사했다. 정확한 파일/해시는 [검증 기록](VERIFICATION.md)을 따른다.
+- 당시0.2.9 로컬 후보는522 JUnit,API26/33/34 native25335/25349/25132 검사를 통과했다. 기본3초,0–10초 경계,독립 저장,번호 누락 대체,실패 정지,좁은 화면/큰 글꼴,KO/EN,노드 복귀와 광고 메타데이터를 검사했다. 정확한 파일/해시는 [검증 기록](VERIFICATION.md)을 따른다.
 - 실폰 시험후보1EF2434F의 설치 SHA256 일치를 확인했다. 최종 배포본은 실행 내용이 같고 내장revision만 다르다. 통째0·3·10초, 한 장0·3·10초, 마지막 장 이후 다음 릴스 이동과 댓글창 보호를 확인했다. 추가 신속 검사에서8장 릴스의 가로7/7·세로1/1, 한 장10초의 가로1/1·세로1/1을 확인했다. 번호 없는 사진·사진 직후 광고·혼합 게시물은 실폰 사례 미확보이며,20개 표본 탐색은 자동20연속 PASS가 아니다. 공개 완료. 최종 파일과 CI는 릴리스 기록을 따른다. 자동 시험 구간과 수동 복귀/신속 탐색을 분리한다. [조건별 검증](VERIFICATION.md).
 - [D-041 원인·예방](DEBUG_LOG.md#d-041--instagram-사진-릴스-제외--photo-reel-diagnosis-not-implemented),[인수인계](../HANDOVER.md),[제품계약](PRODUCT_SPEC.md).
 

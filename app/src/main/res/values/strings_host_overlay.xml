@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="host_overlay_youtube_short">YT</string>
+    <string name="host_overlay_instagram_short">IG</string>
+    <string name="host_overlay_youtube_name">YouTube</string>
+    <string name="host_overlay_instagram_name">Instagram</string>
+    <string name="host_overlay_description">%1$s · %2$s</string>
+    <string name="host_overlay_close">Pause auto-advance for %1$s only and close its floating control</string>
+</resources>

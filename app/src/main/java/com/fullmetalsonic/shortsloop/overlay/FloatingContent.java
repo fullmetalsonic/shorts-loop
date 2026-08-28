@@ -15,6 +15,10 @@ final class FloatingContent extends FrameLayout {
     static final int WIDTH_DP = 72, HEIGHT_DP = 56, CLOSE_DP = 24;
 
     FloatingContent(Context context) {
+        this(context, "");
+    }
+
+    FloatingContent(Context context, String host) {
         super(context);
         TextView number = new TextView(context);
         number.setId(R.id.floating_count);
@@ -26,16 +30,37 @@ final class FloatingContent extends FrameLayout {
         number.setFocusable(true); number.setClickable(true);
         addView(number, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
+        if (!host.isEmpty()) {
+            TextView badge = new TextView(context);
+            badge.setId(R.id.floating_host);
+            boolean youtube = com.fullmetalsonic.shortsloop.data.SettingsStore.YOUTUBE_PACKAGE.equals(host);
+            badge.setText(youtube ? R.string.host_overlay_youtube_short : R.string.host_overlay_instagram_short);
+            badge.setTextColor(youtube ? Color.rgb(116, 220, 255) : Color.rgb(224, 190, 255));
+            badge.setGravity(Gravity.CENTER); badge.setMaxLines(1); badge.setHorizontallyScrolling(false);
+            badge.setPadding(dp(4), 0, dp(2), 0);
+            badge.setAutoSizeTextTypeUniformWithConfiguration(6, 12, 1, TypedValue.COMPLEX_UNIT_SP);
+            // Decorative label: touches pass to the count/drag surface underneath.
+            badge.setClickable(false); badge.setFocusable(false);
+            badge.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
+            addView(badge, new LayoutParams(dp(WIDTH_DP - CLOSE_DP), dp(CLOSE_DP), Gravity.START | Gravity.TOP));
+        }
+
         Button close = new Button(context);
         close.setId(R.id.floating_close); close.setText(R.string.close_symbol);
         close.setTextColor(Color.WHITE); close.setPadding(0, 0, 0, 0);
         close.setMaxLines(1); close.setHorizontallyScrolling(false);
         close.setMinWidth(0); close.setMinimumWidth(0); close.setMinHeight(0); close.setMinimumHeight(0);
         close.setBackgroundColor(Color.TRANSPARENT);
-        close.setContentDescription(context.getString(R.string.close_description));
+        close.setContentDescription(host.isEmpty() ? context.getString(R.string.close_description)
+                : context.getString(R.string.host_overlay_close, hostName(context, host)));
         // Existing compact 24dp close target stays on top; the rest is count/drag space.
         addView(close, new LayoutParams(dp(CLOSE_DP), dp(CLOSE_DP), Gravity.END | Gravity.TOP));
         refreshMetrics();
+    }
+
+    static String hostName(Context context, String host) {
+        return context.getString(com.fullmetalsonic.shortsloop.data.SettingsStore.YOUTUBE_PACKAGE.equals(host)
+                ? R.string.host_overlay_youtube_name : R.string.host_overlay_instagram_name);
     }
 
     /** Recalculate dp and sp after font/display settings change, without losing listeners/state. */

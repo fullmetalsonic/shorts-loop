@@ -61,14 +61,14 @@ try {
         throw 'Count editor may silently transform pasted input.'
     }
     'COUNT_INPUT_CONFIG_AUDIT=PASS'
-    $taskService = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/java/com/fullmetalsonic/shortsloop/service/ShortsAccessibilityService.java') -Raw
+    $taskService = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/java/com/fullmetalsonic/shortsloop/service/HostPlaybackSession.java') -Raw
     foreach ($taskGuard in @(
         'interacting = active; interruptSession();',
-        'super.onConfigurationChanged(config); interruptSession();',
+        'interruptSession(); holdUntil = SystemClock.uptimeMillis() + 1000;',
         'interruptSession(); lastPageIndex = -1;',
         'interruptSession(); holdUntil = SystemClock.uptimeMillis() + 900;',
         'if (gate.interrupt() == AdvanceGate.State.FAILED) failClosed(',
-        'if (RuntimeState.blocked) return;'
+        'if (state.blocked) return;'
     )) {
         if (-not $taskService.Contains($taskGuard)) { throw 'In-flight request interruption protection changed; review service wiring.' }
     }
@@ -125,7 +125,7 @@ try {
     if ($taskLegacyAccessibility.'accessibility-service'.HasAttribute('canTakeScreenshot', $taskAndroidNs) -or
         $taskFacade -match 'TakeScreenshotCallback|ScreenshotResult|HardwareBuffer|wrapHardwareBuffer|takeScreenshotOfWindow' -or
         -not $taskFacade.Contains('if (Build.VERSION.SDK_INT >= 34) return new Api34VisualAssistController(service, host);') -or
-        -not $taskService.Contains('visual = VisualAssistController.create(this,') -or
+        -not $taskService.Contains('visual = VisualAssistController.create(coordinator,') -or
         $taskGradle -notmatch 'minSdk 26') { throw 'Compatibility isolation or install floor changed unexpectedly.' }
     foreach ($taskAttribute in $taskLegacyAccessibility.'accessibility-service'.Attributes) {
         if ($taskAccessibility.'accessibility-service'.GetAttribute($taskAttribute.LocalName, $taskAttribute.NamespaceURI) -ne $taskAttribute.Value) {
@@ -159,7 +159,7 @@ try {
         'ClocklessTimeoutTracker.Result result = timed.observe(key, store.fallbackSeconds(), now);',
         'if (result.due()) advanceClockless(snapshot, true);',
         '"timed_fallback".equals(key)', '"fallback_seconds".equals(key)',
-        'timed.reset(); RuntimeState.timedRemainingSeconds = -1;',
+        'timed.reset(); state.timedRemainingSeconds = -1;',
         'if (pendingTimed) confirmedTimed++;'
     )) {
         if (-not $taskService.Contains($taskGuard)) { throw "Timed fallback safety wiring changed: $taskGuard" }
@@ -195,12 +195,14 @@ try {
     }
     'LIVE_SKIP_WIRING_AUDIT=PASS'
     # Guard the service-level lifecycle paths as well as the pure host policy.
-    if (-not $taskService.Contains('LiveTreePolicy.includeLayoutNodes(store.enabled() && !RuntimeState.blocked,') -or
-        $taskService -notmatch '(?s)if \(configureLiveTree\(pkg\)\) return YouTubeSnapshot.unavailable' -or
-        $taskService -notmatch '(?s)store.target\(\) == 0 && !adSkippingEnabled\(\) && !liveSkippingEnabled\(\) && !longSkippingEnabled\(\) && !photoSkippingEnabled\(\)\) \{\s*clearLayoutQuery\(\);' -or
-        $taskService -notmatch 'RuntimeState.blocked = true; clearLayoutQuery\(\);' -or
-        $taskService -notmatch '(?s)void onDestroy\(\) \{\s*handler.removeCallbacksAndMessages\(null\); invalidate\(\);\s*clearLayoutQuery\(\);') {
-        throw 'Live tree mode must re-read on change and clear on blocked, idle and shutdown paths.'
+    $taskCoordinator = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/java/com/fullmetalsonic/shortsloop/service/ShortsAccessibilityService.java') -Raw
+    if (-not $taskService.Contains('store != null && store.enabled() && !state.blocked') -or
+        $taskService -notmatch 'if \(configureLiveTree\(activePackage\)\) return YouTubeSnapshot.unavailable' -or
+        $taskService -notmatch 'state.blocked = true; clearLayoutQuery\(\);' -or
+        -not $taskCoordinator.Contains('youtube.needsLayoutNodes() || instagram != null && instagram.needsLayoutNodes()') -or
+        -not $taskCoordinator.Contains('youtube = instagram = null;') -or
+        $taskCoordinator -notmatch '(?s)youtube = instagram = null;\s*updateQueryMode\(\);') {
+        throw 'Shared tree mode must use the union of enabled unblocked hosts and clear on shutdown.'
     }
     'LIVE_TREE_LIFECYCLE_AUDIT=PASS'
     $taskReader = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/java/com/fullmetalsonic/shortsloop/detection/ShortsReader.java') -Raw
