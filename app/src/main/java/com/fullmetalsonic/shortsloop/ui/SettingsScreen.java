@@ -121,7 +121,8 @@ public final class SettingsScreen {
                 14, UiTheme.MUTED, false);
         details.setPadding(UiTheme.dp(c, 8), UiTheme.dp(c, 12), UiTheme.dp(c, 8), UiTheme.dp(c, 12)); details.setVisibility(View.GONE); content.addView(details);
         help.setOnClickListener(v -> { boolean show = details.getVisibility() != View.VISIBLE; details.setVisibility(show ? View.VISIBLE : View.GONE); help.setText(show ? "사용법 접기" : "사용법과 감지 한계 보기"); });
-        TextView version = UiTheme.text(c, "ShortsLoop " + com.fullmetalsonic.shortsloop.BuildConfig.VERSION_NAME + " · 시험판", 12, UiTheme.MUTED, false); version.setGravity(Gravity.CENTER); version.setPadding(0, UiTheme.dp(c, 16), 0, UiTheme.dp(c, 8)); content.addView(version);
+        TextView version = UiTheme.text(c, c.getString(R.string.app_version, com.fullmetalsonic.shortsloop.BuildConfig.VERSION_NAME), 12, UiTheme.MUTED, false);
+        version.setId(R.id.app_version); version.setGravity(Gravity.CENTER); version.setPadding(0, UiTheme.dp(c, 16), 0, UiTheme.dp(c, 8)); content.addView(version);
         LinearLayout footer = new LinearLayout(c); footer.setGravity(Gravity.CENTER_VERTICAL); footer.setPadding(UiTheme.dp(c, 20), UiTheme.dp(c, 12), UiTheme.dp(c, 20), UiTheme.dp(c, 12));
         footer.setBackground(UiTheme.surface(c, UiTheme.SURFACE, 0, true));
         LinearLayout state = UiTheme.column(c); state.addView(UiTheme.text(c, "전체 자동 넘김 실행", 18, UiTheme.TEXT, true));

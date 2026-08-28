@@ -1,4 +1,6 @@
 <resources>
+    <string name="installed_version">설치 버전 %1$s</string>
+    <string name="app_version">ShortsLoop %1$s</string>
     <string name="accessibility_reconnect_help">접근성 연결이 필요합니다.\n이미 켰는데 작동하지 않으면, 접근성 설정에서 ‘쇼츠 자동 넘김’을 껐다가 다시 켜 주세요. 연결 후 아래 전체 실행도 다시 켜 주세요.\n화면 분석을 꺼도 재생 정보 확인과 다음 영상 넘김에 접근성이 필요합니다.</string>
     <string name="accessibility_reconnect_action">접근성 설정·다시 연결</string>
     <string name="accessibility_reconnect_banner">접근성 연결 확인 · 해결 방법 보기</string>

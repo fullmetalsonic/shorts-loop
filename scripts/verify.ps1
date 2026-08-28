@@ -1,18 +1,20 @@
-param([switch]$SkipBuild, [switch]$ExcludeUnwiredSequenceExperiment)
+param([switch]$SkipBuild, [switch]$ExcludeUnwiredSequenceExperiment, [ValidateSet('debug','release')][string]$BuildType = 'debug')
 # The legacy exclusion switch is retained for old commands; product scope is now explicit in Gradle.
 $ErrorActionPreference = 'Stop'
 $taskRoot = Split-Path -Parent $PSScriptRoot
 Push-Location -LiteralPath $taskRoot
 try {
+    $taskVariant = (Get-Culture).TextInfo.ToTitleCase($BuildType)
     if (-not $SkipBuild) {
-        & (Join-Path $taskRoot 'gradlew.bat') --no-daemon :app:assembleDebug :app:compileDebugUnitTestJavaWithJavac :app:lintDebug
+        & (Join-Path $taskRoot 'gradlew.bat') --no-daemon ":app:assemble$taskVariant" ":app:compile${taskVariant}UnitTestJavaWithJavac" ":app:lint$taskVariant"
         if ($LASTEXITCODE -ne 0) { throw 'Android build, test compilation, or lint failed.' }
     }
     $taskCache = if ($env:GRADLE_USER_HOME) { Join-Path $env:GRADLE_USER_HOME 'caches/modules-2/files-2.1' } else { Join-Path $env:USERPROFILE '.gradle/caches/modules-2/files-2.1' }
     $taskJunit = Get-ChildItem -LiteralPath (Join-Path $taskCache 'junit/junit/4.13.2') -Recurse -Filter 'junit-4.13.2.jar' | Select-Object -First 1 -ExpandProperty FullName
     $taskHamcrest = Get-ChildItem -LiteralPath (Join-Path $taskCache 'org.hamcrest/hamcrest-core/1.3') -Recurse -Filter 'hamcrest-core-1.3.jar' | Select-Object -First 1 -ExpandProperty FullName
-    $taskMainClasses = Join-Path $taskRoot 'app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes'
-    $taskTestClasses = Join-Path $taskRoot 'app/build/intermediates/javac/debugUnitTest/compileDebugUnitTestJavaWithJavac/classes'
+    $taskVariant = (Get-Culture).TextInfo.ToTitleCase($BuildType)
+    $taskMainClasses = Join-Path $taskRoot "app/build/intermediates/javac/$BuildType/compile${taskVariant}JavaWithJavac/classes"
+    $taskTestClasses = Join-Path $taskRoot "app/build/intermediates/javac/${BuildType}UnitTest/compile${taskVariant}UnitTestJavaWithJavac/classes"
     $taskSdkRoot = if ($env:ANDROID_HOME) { $env:ANDROID_HOME } else { Join-Path $env:LOCALAPPDATA 'Android\Sdk' }
     $taskAndroidApi = Join-Path $taskSdkRoot 'platforms\android-35\android.jar'
     $taskClassPath = @($taskMainClasses, $taskTestClasses, $taskJunit, $taskHamcrest, $taskAndroidApi) -join [IO.Path]::PathSeparator
@@ -214,7 +216,13 @@ try {
         throw 'Battery setup must remain read-only, app-scoped and refreshed on return.'
     }
     'BATTERY_SETUP_WIRING_AUDIT=PASS'
-    $taskApk = Join-Path $taskRoot 'app/build/outputs/apk/debug/app-debug.apk'
+    $taskApk = Join-Path $taskRoot "app/build/outputs/apk/$BuildType/app-$BuildType.apk"
+    if ($BuildType -eq 'release') {
+        $taskOutput = Get-Content -LiteralPath (Join-Path $taskRoot 'app/build/outputs/apk/release/output-metadata.json') -Raw | ConvertFrom-Json
+        if ($taskOutput.elements.Count -ne 1 -or $taskOutput.elements[0].outputFile -notmatch '^app-release(?:-unsigned)?\.apk$') { throw 'Unexpected release output metadata.' }
+        $taskApk = Join-Path $taskRoot ('app/build/outputs/apk/release/' + $taskOutput.elements[0].outputFile)
+        & (Join-Path $PSScriptRoot 'verify-release-safety.ps1') -Apk $taskApk
+    }
     $taskAapt = Join-Path $taskSdkRoot 'build-tools/35.0.0/aapt2.exe'
     $taskResources = (& $taskAapt dump resources $taskApk | Out-String)
     if ($LASTEXITCODE -ne 0) { throw 'Cannot inspect packaged APK resources.' }
@@ -224,7 +232,7 @@ try {
     }
     'PACKAGED_LEGACY_ICON_AUDIT=PASS'
     $taskProductJava = Get-ChildItem -LiteralPath (Join-Path $taskRoot 'app/src/main/java') -Filter *.java -Recurse | Get-Content -Raw
-    if ($taskProductJava -match 'UpdateInstallInstrumentation|UpdateClientChecks|InstallerArtifactChecks|final-update\.apk|FIXTURE_READY') {
+    if ($taskProductJava -match 'UpdateInstallInstrumentation|UpdateClientChecks|InstallerArtifactChecks|SettingsUpgradeChecks|upgrade_test_baseline|upgrade_test_identity|final-update\.apk|FIXTURE_READY') {
         throw 'Test-only updater fixture leaked into product source.'
     }
     $taskArchive = [IO.Compression.ZipFile]::OpenRead($taskApk)

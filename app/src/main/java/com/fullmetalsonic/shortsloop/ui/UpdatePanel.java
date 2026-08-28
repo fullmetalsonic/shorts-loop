@@ -17,7 +17,8 @@ public final class UpdatePanel extends LinearLayout {
     public final Switch automatic;
     public UpdatePanel(Context context) {
         super(context); setOrientation(VERTICAL);
-        addView(UiTheme.text(context, "설치 버전 " + BuildConfig.VERSION_NAME + " · 공개 시험판", 14, UiTheme.MUTED, false));
+        TextView installedVersion = UiTheme.text(context, context.getString(R.string.installed_version, BuildConfig.VERSION_NAME), 14, UiTheme.MUTED, false);
+        installedVersion.setId(R.id.installed_version); addView(installedVersion);
         status = UiTheme.text(context, "새 버전을 확인할 수 있습니다.", 14, UiTheme.CYAN, false); status.setId(R.id.update_status); addView(status);
         progress = new ProgressBar(context, null, android.R.attr.progressBarStyleHorizontal); progress.setMax(100); progress.setVisibility(GONE); addView(progress);
         check = UiTheme.button(context, "업데이트 확인"); check.setId(R.id.update_check); addView(check);

@@ -7,13 +7,32 @@ android {
         minSdk 26
         targetSdk 35
         // Explicit local bootstrap is used only to test a real OS update to the final higher code.
-        versionCode providers.gradleProperty('updaterBootstrap').isPresent() ? 15 : 29
-        versionName providers.gradleProperty('updaterBootstrap').isPresent() ? '0.2.5-update-test' : '0.2.7'
+        versionCode providers.gradleProperty('updaterBootstrap').isPresent() ? 15 : 30
+        versionName providers.gradleProperty('updaterBootstrap').isPresent() ? '0.2.5-update-test' : '0.2.8'
         testInstrumentationRunner providers.gradleProperty('updaterBootstrap').isPresent()
                 ? 'com.fullmetalsonic.shortsloop.updates.UpdateInstallInstrumentation'
                 : 'com.fullmetalsonic.shortsloop.CompatibilityInstrumentation'
     }
     buildFeatures { buildConfig true }
+    // Local signing only. CI builds an unsigned release; no key or password belongs in source.
+    def releaseStore = providers.environmentVariable('SHORTSLOOP_KEYSTORE').orNull
+    signingConfigs {
+        if (releaseStore) {
+            distribution {
+                storeFile file(releaseStore)
+                storePassword providers.environmentVariable('SHORTSLOOP_STORE_PASSWORD').get()
+                keyAlias providers.environmentVariable('SHORTSLOOP_KEY_ALIAS').get()
+                keyPassword providers.environmentVariable('SHORTSLOOP_KEY_PASSWORD').get()
+            }
+        }
+    }
+    buildTypes {
+        release {
+            debuggable false
+            minifyEnabled false
+            if (releaseStore) signingConfig signingConfigs.distribution
+        }
+    }
     // Preserve the unfinished, unconnected experiment in source, but not in the product APK/tests.
     // Run its full (currently failing) suite separately with scripts/verify-sequence-experiment.ps1.
     sourceSets {

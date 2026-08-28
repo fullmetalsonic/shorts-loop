@@ -1,5 +1,30 @@
 # 디버그·재발방지 대장
 
+## D-037 · 배포 상태·앱 라벨·문서 불일치 / Fixed in0.2.8
+
+- 증상/재현: 공개0.2.7의업데이트메뉴와사용법아래하단을열면‘공개시험판’/‘시험판’표시. README일부는최신code29가아닌code28을현재로설명.
+- 직접원인: 두UI문자열에시험판문구하드코딩. GitHub메타데이터/문서머리말변경은APK문자열을바꾸지않음. 기존서술과과거기록이여러문서에중복됨.
+- 증거/영향: UpdatePanel20,SettingsScreen124,README24/25/38/40/228,UI_DESIGN5/7/9,USER_GUIDE21/31. 소스·실폰두화면·독립검토확인. 설치본교체시점이나업데이트캐시문제가아님.
+- 잘못된기존접근: 공개flag와문서일부변경및APK해시동일성만으로표기정합성까지완료로판정. 업데이트패널존재검사에라벨검사가없음.
+- 수정안: 앱이름/설치버전만표시하고정식판접미사도추가하지않음. 실제화면분석실험안내·과거시험판이력은유지. 현재안내와이력분리.
+- 자동예방안: 정확한두버전라벨,예외가아닌전체앱시험판표시부재,문서현재버전및최종설치APK화면검사.
+- 수정/재시험:0.2.8 두 라벨을 resources와BuildConfig 버전으로 구성하고 안정적인 view ID·실제설치버전 exact assertion을 추가했다. 현재/과거 문서를 분리했다. API26/33/34 및 휴대폰 두위치·펼친사용법 확인 PASS. 실제 실험 기능 안내 유지. [전수검토](RELEASE_PRESENTATION_AUDIT.md),[최종 기록](releases/v0.2.8.md).
+
+EN: Fixed in0.2.8 with neutral resource-backed labels,exact installed-version assertions and current/history separation. Native and physical checks passed while preserving experimental disclosures and historical evidence.
+
+## D-038 · 배포APK 디버깅 허용·배포 차단검사 부재 / Fixed in0.2.8
+
+- 증상/재현: 공개0.2.7APK의aapt badging에application-debuggable,설치패키지flags에DEBUGGABLE. GitHub는prerelease=false.
+- 직접원인: assembleDebug산출물을기존방식대로배포. prepare-release는서명/패키지/버전만검증하며debuggable을거절하지않음. CI도debug빌드검사만수행.
+- 증거/영향: app/build.gradle,.github/workflows/android.yml,scripts/prepare-release.ps1과실제배포/설치APK. Android배포준비설정누락이며원격침해나새재생오류가관측됐다는뜻은아님.
+- 잘못된기존접근: debug파일명/서명호환성과GitHub정식표시만구분하고배포APK내부debuggable검사를누락.
+- 수정안: 기존패키지·서명신원·설정/업데이트호환을보존하는배포용debuggable=false빌드를구성하고해당산출물로검증. 임의키교체/앱삭제금지.
+- 자동예방안: 배포스크립트에서debuggableAPK거절,CI배포빌드및검증,실제배포APK속성/서명/설치업데이트/해시확인.
+- 수정/자동예방: release debuggable=false·동일 개인 서명은 환경변수로만 연결, CI unsigned release+debug 검사. 디버깅APK 출고 거절, 정확히1개 기존 signer 집합, 미커밋제품변경/내장revision 불일치 차단. 코드커밋 후 final폴더를 별도로 생성하여 초기후보와과거파일을 보존한다.
+- 재시험:468JUnit·정적가드, debug APK 실제 거절, 세OS19설정·UID·서명 보존·디버깅OFF 덮어설치, 휴대폰 nondebuggable·접근성·해시 확인 PASS. 초기테스트baseline저장 UID오류는 테스트전용파일 경로로수정하여 재시험했다. 제품 QA우회는 추가하지 않음. [검토·공식근거](RELEASE_PRESENTATION_AUDIT.md),[최종 기록](releases/v0.2.8.md).
+
+EN: Fixed with a non-debuggable release variant,preserved signing identity,exact signer/committed-revision guards and debug-APK rejection. Three-OS settings-preserving upgrades and physical release checks passed. A fixture-only storage-UID error was corrected without adding product QA bypasses. Final artifact/publication results are linked separately.
+
 ## D-036 · 작은 플로팅 ‘긴영상’ 잘림 / Compact long-video label clipping
 
 - 증상·재현: 공개0.2.6의72×56dp 플로팅에서 ‘긴영상’ 첫 글자가 일부 잘림. 기존48dp 글자뷰와 singleLine 설정을 Android 계측에서 재현해 실제 글자 폭 초과를 확인.

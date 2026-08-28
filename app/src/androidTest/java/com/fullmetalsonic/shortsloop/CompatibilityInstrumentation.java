@@ -22,14 +22,28 @@ import java.util.Map;
 public final class CompatibilityInstrumentation extends Instrumentation {
     private int checks;
     private Activity activity;
-    @Override public void onCreate(Bundle arguments) { super.onCreate(arguments); start(); }
+    private boolean expectRelease;
+    private String upgradePhase;
+    @Override public void onCreate(Bundle arguments) {
+        super.onCreate(arguments);
+        expectRelease = arguments != null && "true".equals(arguments.getString("expectRelease"));
+        upgradePhase = arguments == null ? null : arguments.getString("upgradePhase");
+        start();
+    }
     @Override public void onStart() {
+        if (upgradePhase != null) {
+            Bundle upgrade = SettingsUpgradeChecks.run(this, upgradePhase);
+            finish("PASS".equals(upgrade.getString("result")) ? Activity.RESULT_OK : Activity.RESULT_CANCELED, upgrade);
+            return;
+        }
         Bundle result = new Bundle();
         SharedPreferences prefs = null; Map<String, ?> original = null;
         SharedPreferences updates = null; Map<String, ?> originalUpdates = null;
         try {
             String product = Build.PRODUCT;
             require(product.contains("sdk") || product.contains("emulator"), "Disposable emulator only");
+            if (expectRelease) require((getTargetContext().getApplicationInfo().flags
+                    & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) == 0, "Installed release must not be debuggable");
             require(getTargetContext().getDrawable(R.mipmap.ic_launcher) != null, "Launcher icon packaged for runtime OS");
             checks += UpdateClientChecks.run(getTargetContext());
             checks += com.fullmetalsonic.shortsloop.detection.YouTubeLiveChecks.run(getTargetContext());
@@ -47,6 +61,7 @@ public final class CompatibilityInstrumentation extends Instrumentation {
             activity = startActivitySync(new Intent(getTargetContext(), MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             waitForIdleSync();
             runOnMainSync(() -> {
+                checks += ReleasePresentationChecks.run(activity);
                 require(activity.findViewById(R.id.compatibility_panel) != null, "Compatibility panel exists");
                 Button tile = activity.findViewById(R.id.tile_add);
                 require(tile.getText().toString().equals(getTargetContext().getString(Build.VERSION.SDK_INT >= 33

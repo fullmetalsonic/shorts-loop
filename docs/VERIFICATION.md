@@ -1,12 +1,22 @@
-# 검증 기록 · ShortsLoop 0.2.7
+# 검증 기록 · ShortsLoop 0.2.8
 
-## 0.2.7/code29 · 플로팅 표시 수정 / Floating presentation fix
+## 현재0.2.8/code30 / Current verification
+
+배포 release 빌드·468JUnit·정적 가드 PASS, lint0오류/기존3경고. API26/33/34 같은 배포 APK의 실제 계측5572/5572/5571항목 PASS. 세 OS에서 이전0.2.7/code29→0.2.8/code30 덮어 설치,19개 설정의 타입·값 전체·UID·서명 보존, 실행OFF·디버깅OFF를 확인했다. 첫 upgrade fixture는 별도 test 패키지의 저장소에 쓰려다 UID 차이로 baseline저장이 실패했다. 제품 문제가 아니며 테스트코드만 대상 앱의 fixture전용 저장소를 사용하도록 고친 후 세 OS 모두 재시험했다.
+
+휴대폰은 release 설치·두 버전 라벨/펼친 사용법/실험 경고 육안 확인·접근성 바인딩·런타임13개 비교·플로팅 위치/탭1→0→1/X종료·설치 해시 일치 PASS. private설정 전체를 읽지 않았고 `run-as`는 의도대로 거절된다. 현재 실행OFF. 독립 변경 리뷰 P1/P2 발견0건이며 전체 서명집합·실제 unsigned출력 선택도 보강했다. 감지/카운트/넘김 코드 변경은 없고 새 호스트10/20연속·설치화면E2E는 미실행이다.
+
+EN: Release build,468 product tests,static guards and native5572/5572/5571 checks passed. All three emulator OS versions verified all19 typed settings plus UID/signer and OFF states across code29→30. An initial test-storage UID mistake was corrected in the test harness only. Phone evidence covers actual labels/help/disclosures,accessibility,13 exposed settings,overlay interactions and hash parity—not a full private-preference comparison. No new social-app endurance or installer-UI E2E run is claimed.
+
+최종 파일·소스커밋·CI·공개검증은 [0.2.8 릴리스 기록](releases/v0.2.8.md), 반복명령은 [배포 빌드 절차](RELEASE_BUILD.md), 원인은 [감사](RELEASE_PRESENTATION_AUDIT.md)와 [D-037/D-038](DEBUG_LOG.md)를 따른다. 아래 기록은 과거 버전 결과다.
+
+## 이전0.2.7/code29 · 플로팅 표시 수정 / Historical floating presentation fix
 
 BUILD PASS,468JUnit PASS,lint0오류/기존3경고,API26/33/34 실제 계측5568/5568/5567검사항목 PASS. 기존 잘림 재현 및 실제 glyph 경계 검사를 추가했다. 동일 APK 설치본·서명·설치 전후 설정·접근성 연결 확인과 실폰 ‘긴영상’/숫자·탭·드래그·X 검증 완료. 독립 소스 리뷰 P1/P2 0건. 새 연속10/20시험은 미실행. APK726467bytes,SHA256 `809CD1EF1287209E23A31896B00FEFF9585511319939FC8113CBC2B1876DAF1A`. [상세 실행기록·제약](FLOATING_LAYOUT_FIX.md),[정식 게시·CI·공개 파일 검증](releases/v0.2.7.md).
 
 EN:0.2.7/code29 passes build,468JUnit,static guards and5568/5568/5567 native assertions. Lint0 errors/3 existing warnings. Actual glyph bounds,legacy clipping reproduction and physical display/tap/drag/X checks passed with matching installed APK. Independent source review found no P1/P2. No new10/20-transition endurance test;see the reports for limitations and stable-publication checks.
 
-## 최신 0.2.6/code28 · Public 시험판 검증 완료 / Published and verified
+## 이전0.2.6/code28 · Public 시험판 검증 완료 / Historical published version
 
 **0.2.6/code28 공개 시험판(pre-release)을 게시하고 공개 파일 검증까지 완료했다.** YouTube의 같은 창·pager·전체 페이지에서 현재 행이 요청 행보다 정확히1 증가하는 근거를 보강했다. 최종 빌드·468JUnit·정적 가드 PASS,로컬lint0오류/기존3경고,동일APK API26/33/34 계측233/233/232 PASS와 설치·설정 보존·접근성·런타임·해시 일치를 확인했다. YouTube20회는148.6초 동안 요청20/확인20(일반4·긴 영상15·라이브1),수동0·실패0·복구0으로 PASS했다. 같은 길이 영상 쌍은 이 실기기20회에 없었으므로 해당 조건의 실기기 재현 성공을 주장하지 않는다.
 

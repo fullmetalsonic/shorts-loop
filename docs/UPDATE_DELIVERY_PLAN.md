@@ -1,10 +1,82 @@
-# 통합 업데이트 계획 · 2026-08-28
+# 업데이트·배포 계획 · ShortsLoop 0.2.8
 
-## 최신 0.2.7/code29 · 정식 배포 / Stable distribution
+**ShortsLoop 0.2.8/code30**은 앱 이름·버전만 표시하고 디버깅이 비활성화된 release APK를 사용합니다. 기존 패키지·서명을 유지합니다. 실제 시험 범위와 게시 상태는 [0.2.8 기록](releases/v0.2.8.md)을 확인하세요.
 
-기존 패키지·서명·설치하한API26·업데이트 메타데이터 형식은 유지한다. 플로팅 표시만 수정한 동일APK726467bytes,SHA256 `809CD1EF1287209E23A31896B00FEFF9585511319939FC8113CBC2B1876DAF1A`를 배포한다. GitHub 시험판 표시는 해제하되 선택형 화면 분석은 실험 기능으로 유지한다. 게시·CI·익명 다운로드 동일성 상태는 [0.2.7 릴리스 기록](releases/v0.2.7.md)에 누적한다.
+**ShortsLoop0.2.8/code30** uses neutral app/version labels and a non-debuggable release APK, preserving the existing package and signer. See the linked0.2.8 record for actual test coverage and publication status.
 
-EN: Stable0.2.7/code29 retains the package,signer,minSdk26 and update-metadata contract. Publish the verified726467-byte APK with the SHA256 above,not a CI-resigned binary. GitHub pre-release is false;optional visual assistance remains experimental. Publication,CI and anonymous-download parity are tracked in the release record.
+## 0.2.8 변경 범위
+
+인앱 하단은 `ShortsLoop 0.2.8`,업데이트 카드는 `설치 버전 0.2.8`처럼 표시합니다. 앱 버전에 ‘시험판/정식/stable/trial’ 같은 등급을 붙이지 않습니다. 이는 배포물의 `debuggable=false` 보장이나 기능의 검증 범위를 대신하지 않습니다. 선택형 **화면 분석 보조의 실험 기능 안내·별도 동의·Android14 이상 제한**은 그대로 유지합니다.
+
+The footer uses `ShortsLoop 0.2.8`,and the update card uses `설치 버전 0.2.8` (installed version),without release-grade suffixes. Neutral wording is not a substitute for verifying `debuggable=false` or feature coverage. Optional **visual-assistance experimental warnings,separate consent and the Android14+ restriction** remain.
+
+배포는 non-debuggable release APK를 사용하고 기존 signer·패키지·최소OS·업데이트 metadata 형식을 유지한다. 예상 APK 이름은`shorts-loop-v0.2.8.apk`이며 최종 파일·해시는 검증 후 확정한다. CI에서 다른 키로 다시 서명한 APK로 바꾸지 않는다. 설치 전 전체 실행만OFF로 하고 나머지 설정을 보존한다. 새 권한·영상 데이터 수집·업데이트 조회 정책 변경은 포함하지 않는다.
+
+## 유지할 제품 범위
+
+0.2.8은 기존 OS별 호환성,GitHub 새 버전 인앱 안내·설치 버튼,중요도·빈도순 메뉴를 유지한다. 기기 시험과 문서·보안 검사를 거쳐 기존 Public 저장소에 동일 산출물을 게시한다. INTERNET는 업데이트 조회·다운로드에만, REQUEST_INSTALL_PACKAGES는 Android 설치 확인창을 여는 데 사용한다. OS 설치 허용과 최종 설치 확인은 사용자가 직접 조작하며 ADB로 대신 허용하지 않는다. 메일 발송은 포함하지 않는다.
+
+YouTube 쇼츠의 라이브 미리보기는 별도 기본OFF 옵션이며 대기0~60초/기본0초(바로)를 제공한다. 일반 반복0회와 독립, 전체 실행OFF는 광고·라이브까지 모두 정지한다. 전용 구조·전면창·안정 페이지와 요청 후 전환 확인을 요구하며 방송 참여 버튼·제목/CTA/시청자 수·OCR을 사용하지 않는다. [라이브 계약](LIVE_SKIP.md).
+
+Live previews inside YouTube Shorts are separately opt-in(defaultOFF), with a0–60-second delay(default0, immediate after safety checks). The option is independent of zero normal plays; main OFF stops ads and live too. Dedicated structure, foreground-window/page checks and confirmed transitions are required; no join-button click, text-based identity or OCR.
+
+## 화면
+
+- 일상 순서: 반복 횟수 → 긴 영상 건너뛰기 → 시간제 → 광고 → YouTube 라이브 → 플로팅 → 적용 앱 → 사용 준비 → 업데이트·앱 정보 → 실험 기능 → 도움말.
+- 전체 실행은 기존 하단 고정으로 언제든 끄고 켤 수 있다.
+- 필수권한이 부족할 때만 상단 준비 바로가기. 새 버전이 있을 때만 상단 작은 배지/버튼. 업데이트가 없으면 주요 설정을 밀어내지 않는다.
+- 앱 진입 시 최대 하루 한 번 조용히 조회, 수동 확인·다운로드·취소·진행률·실패·재시도 제공. 백그라운드 서비스나 알림 권한은 추가하지 않는다.
+
+## 네트워크·업데이트 계약
+
+고정 Public 저장소 fullmetalsonic/shorts-loop의 릴리스 목록만 무인증 조회한다. 앱의 버전 표시와 관계없이 기존 정책대로 draft를 제외하고 공개된 prerelease를 포함한다. 릴리스의 shorts-loop-update.json을 사용하며 schema/packageName/versionCode/versionName/minSdk/apkName/apkSize/sha256를 실제 APK와 비교한다. 버전코드가 높고 기기 OS에 맞는 것만 제공한다. Github 태그만 있는 커밋이나 임의 APK를 업데이트로 취급하지 않는다.
+
+HTTPS·정확한호스트/저장소 경로 허용목록·매리다이렉트 검사·응답/파일 크기제한·연결/읽기/전체시간제한을 적용한다. 토큰·계정·시청내용 업로드 없음. GitHub는 접속 IP 등 일반 네트워크 요청 정보를 볼 수 있다. APK는 내부 임시폴더만 사용하고 취소/실패 시 부분파일을 정리한다.
+
+다운로드 후 크기/SHA256/패키지/버전/최소OS/현재설치앱과동일서명집합 확인. OS 설치기로 보내기 직전 재확인한다. 해시별 읽기 전용 설치 사본을 만들어 후속 다운로드가 설치창의 파일을 바꾸지 못하게 한다. 손상 사본은 검증된 임시 사본으로 교체한다. SHA/인증서대조를 APK 전체 암호학적서명검증으로 과장하지 않으며 Android 설치검증을 우회하지 않는다. 설치직전 전체실행/플로팅은멈추고 다른설정은보존, 취소/복귀에도자동재시작하지 않는다.
+
+## 0.2.8 빌드·포장 경로
+
+실행 전 [release 빌드·서명·검사 안내](RELEASE_BUILD.md)를 확인한다. 명령과 비밀값은 분리하며 실제 서명값을 공개 문서에 기록하지 않는다.
+
+- 로컬 검증: `scripts/verify.ps1 -BuildType release`.
+- 로컬 서명 APK: `app/build/outputs/apk/release/app-release.apk`.
+- 배포 안전 검사: `scripts/verify-release-safety.ps1 -Apk app/build/outputs/apk/release/app-release.apk -DebugApk app/build/outputs/apk/debug/app-debug.apk`. 비교용 debug APK는 별도 개발용 빌드로 준비한다.
+- 포장: `scripts/prepare-release.ps1 -Apk app/build/outputs/apk/release/app-release.apk` → `artifacts/release-v0.2.8-code30/shorts-loop-v0.2.8.apk`, SHA256텍스트, 업데이트JSON. 기존 출력은 덮어쓰지 않는다.
+- 기존 키를 사용하는 로컬 환경만 서명하며 비밀값은 저장소·CI·공개 문서에 두지 않는다. CI의 서명 없는 release 빌드/시험/lint와 debug 검증은 로컬 서명 배포물 검사와 구분한다.
+- 위 경로와 명령이 있다는 사실은 시험 완료나 공개 성공을 뜻하지 않는다.
+
+## 0.2.8 시험·게시 순서
+
+1. 실제 버전0.2.8/code30과 두 인앱 표시를 확인하고 배포등급 접미사 제거·실험 기능 안내 보존을 검사한다.
+2. release APK를 빌드해`debuggable=false`,기존 signer 전체집합,패키지·최소OS·버전,테스트 fixture/진단 probe 제외를 확인한다. debug APK 성공만으로 대체하지 않는다.
+3. 변경 영향 범위의 단위·정적·lint·Android 계측을 수행한다. 실제 배포 APK 설치·설정/접근성·런타임·해시 보존을 확인하고 개발용 계측 결과와 구분한다.
+4. 독립 리뷰와 문서 현재/과거 구분·민감정보 검사를 끝낸다. 미실행·실패 항목을 PASS로 바꾸지 않으며 실제 화면 분석 실험의 한계는 남긴다.
+5. 기존 Public 저장소에 동일 고정 APK·SHA256텍스트·업데이트JSON을 게시한다. 예정 이름`shorts-loop-v0.2.8.apk`과metadata의파일명/크기/해시/버전을 일치시킨다.
+6. CI,공개 Release,익명 다운로드3파일,로컬·설치본·공개본 크기/SHA256/서명을 대조한다. 제품 태그와 후속 문서 커밋을 구분한다.
+
+위 항목은 반복 가능한 배포 절차다. 실제 수행 결과·파일 크기·SHA256·기기/공개 검증은 [검증 원장](VERIFICATION.md)과 [0.2.8 기록](releases/v0.2.8.md)에 구분해 기록한다.
+
+## 근거
+
+- [GitHub Releases API](https://docs.github.com/en/rest/releases/releases): 공개 무인증조회·릴리스목록/시험판·자산 URL.
+- [Android 설치 요청 허용](https://developer.android.com/reference/android/content/pm/PackageManager#canRequestPackageInstalls()): API26부터 앱별 설치허용을 확인.
+- [Android SigningInfo](https://developer.android.com/reference/android/content/pm/SigningInfo): API28 이상서명조회,구형은GET_SIGNATURES호환분기.
+
+진행·증거는 [검증 기록](VERIFICATION.md), 오류는 [디버그 대장](DEBUG_LOG.md), 결정은 [인수인계](../HANDOVER.md)에 누적한다. 이 문서는 완료 선언이 아니다.
+
+## 과거 배포·검증 계획 / Delivery history
+
+아래의0.2.7 이하 빌드·기기·게시 결과는 버전별 과거 기록입니다. 당시 표시·배포 상태와 검증 수치는 보존하지만0.2.8의 PASS나 공개 완료 근거로 재사용하지 않습니다.
+
+<details>
+<summary>0.2.7 이하 배포·검증 기록 / Earlier delivery records</summary>
+
+## 과거0.2.7/code29 · 정식 배포 / Stable distribution
+
+기존 패키지·서명·설치하한API26·업데이트 메타데이터 형식은 유지한다. 플로팅 표시만 수정한 동일APK726467bytes,SHA256 `809CD1EF1287209E23A31896B00FEFF9585511319939FC8113CBC2B1876DAF1A`를 당시 배포했다. GitHub 시험판 표시는 해제하되 선택형 화면 분석은 실험 기능으로 유지한다. 게시·CI·익명 다운로드 동일성 상태는 [0.2.7 릴리스 기록](releases/v0.2.7.md)에 누적한다.
+
+EN: Stable0.2.7/code29 retains the package,signer,minSdk26 and update-metadata contract. The historical plan used the verified726467-byte APK with the SHA256 above,not a CI-resigned binary. GitHub pre-release is false;optional visual assistance remains experimental. Publication,CI and anonymous-download parity are tracked in the release record.
 
 ## 이전 0.2.6/code28 · Public 시험판 검증 완료 / Previous published pre-release
 
@@ -112,30 +184,8 @@ code18은738945bytes/SHA256 `941532517058CB8553EFE5DB34ED1762426C468B2D66F88A567
 
 Code18's retained artifact passed automated/install checks but failed actual recognition. It is not the code20 release candidate. Code16/17/18 histories are preserved; the corrected D-033 cause does not resolve D-021 or prove endurance.
 
-## 제품 범위
 
-OS별 기능 호환성, GitHub 새 버전 인앱 안내·설치 버튼, 중요도·빈도에 따른 메뉴 순서를 함께 개선한다. 기기 시험과 문서·보안 검사를 거쳐 기존 Public 저장소에 동일 산출물을 게시한다. INTERNET는 업데이트 조회·다운로드에만, REQUEST_INSTALL_PACKAGES는 Android 설치 확인창을 여는 데 사용한다. OS 설치 허용과 최종 설치 확인은 사용자가 직접 조작하며 ADB로 대신 허용하지 않는다. 메일 발송은 포함하지 않는다.
-
-YouTube 쇼츠의 라이브 미리보기는 별도 기본OFF 옵션이며 대기0~60초/기본0초(바로)를 제공한다. 일반 반복0회와 독립, 전체 실행OFF는 광고·라이브까지 모두 정지한다. 전용 구조·전면창·안정 페이지와 요청 후 전환 확인을 요구하며 방송 참여 버튼·제목/CTA/시청자 수·OCR을 사용하지 않는다. [라이브 계약](LIVE_SKIP.md).
-
-Live previews inside YouTube Shorts are separately opt-in(defaultOFF), with a0–60-second delay(default0, immediate after safety checks). The option is independent of zero normal plays; main OFF stops ads and live too. Dedicated structure, foreground-window/page checks and confirmed transitions are required; no join-button click, text-based identity or OCR.
-
-## 화면
-
-- 일상 순서: 반복 횟수 → 긴 영상 건너뛰기 → 시간제 → 광고 → YouTube 라이브 → 플로팅 → 적용 앱 → 사용 준비 → 업데이트·앱 정보 → 실험 기능 → 도움말.
-- 전체 실행은 기존 하단 고정으로 언제든 끄고 켤 수 있다.
-- 필수권한이 부족할 때만 상단 준비 바로가기. 새 버전이 있을 때만 상단 작은 배지/버튼. 업데이트가 없으면 주요 설정을 밀어내지 않는다.
-- 앱 진입 시 최대 하루 한 번 조용히 조회, 수동 확인·다운로드·취소·진행률·실패·재시도 제공. 백그라운드 서비스나 알림 권한은 추가하지 않는다.
-
-## 네트워크·업데이트 계약
-
-고정 Public 저장소 fullmetalsonic/shorts-loop의 릴리스 목록만 무인증 조회한다. 현재 공개판이 시험판이므로 draft는 제외하되 prerelease를 포함한다. 릴리스의 shorts-loop-update.json을 사용하며 schema/packageName/versionCode/versionName/minSdk/apkName/apkSize/sha256를 실제 APK와 비교한다. 버전코드가 높고 기기 OS에 맞는 것만 제공한다. Github 태그만 있는 커밋이나 임의 APK를 업데이트로 취급하지 않는다.
-
-HTTPS·정확한호스트/저장소 경로 허용목록·매리다이렉트 검사·응답/파일 크기제한·연결/읽기/전체시간제한을 적용한다. 토큰·계정·시청내용 업로드 없음. GitHub는 접속 IP 등 일반 네트워크 요청 정보를 볼 수 있다. APK는 내부 임시폴더만 사용하고 취소/실패 시 부분파일을 정리한다.
-
-다운로드 후 크기/SHA256/패키지/버전/최소OS/현재설치앱과동일서명집합 확인. OS 설치기로 보내기 직전 재확인한다. 해시별 읽기 전용 설치 사본을 만들어 후속 다운로드가 설치창의 파일을 바꾸지 못하게 한다. 손상 사본은 검증된 임시 사본으로 교체한다. SHA/인증서대조를 APK 전체 암호학적서명검증으로 과장하지 않으며 Android 설치검증을 우회하지 않는다. 설치직전 전체실행/플로팅은멈추고 다른설정은보존, 취소/복귀에도자동재시작하지 않는다.
-
-## 시험·게시 순서
+## 과거 통합 업데이트 시험 순서 / Historical test procedure
 
 1. 제품 정책/파서/네트워크경계/손상·다운그레이드 차단 시험, 빌드/lint/구형OS 재시험. 서명 불일치 거부는 소스 리뷰와 실제 다른 키 APK 시험을 구분해 기록한다.
 2. 기존 폰의 버전·서명·설정을 기록하고 낮은 code의 업데이트 시험 시작 APK를 설치한다. 계측시험의 전송 대체는 시험 APK에만 존재하며 제품에는 외부 시험 진입점이나 검증 우회를 두지 않는다.
@@ -149,10 +199,4 @@ HTTPS·정확한호스트/저장소 경로 허용목록·매리다이렉트 검�
 
 검증 한계: 동일 서명 APK의 정상 설치와 서명 비교 소스 리뷰는 수행했다. **다른 키로 서명한 실물 APK의 설치 전 거부 시험은 미실행**이며 자동시험 PASS로 포함하지 않는다. code20의 개별 라이브 시험과 공개code21의10연속·배포 검증은 각각 통과했으며 남은 개별 라이브 재시험·20연속 상태는 [검증 기록](VERIFICATION.md)을 따른다. code18 합성 계측은 실제 YouTube 노드 노출을 검증하지 못했으므로 기기에서 같은 조회 조건을 확인하는 단계를 생략하지 않는다.
 
-## 근거
-
-- [GitHub Releases API](https://docs.github.com/en/rest/releases/releases): 공개 무인증조회·릴리스목록/시험판·자산 URL.
-- [Android 설치 요청 허용](https://developer.android.com/reference/android/content/pm/PackageManager#canRequestPackageInstalls()): API26부터 앱별 설치허용을 확인.
-- [Android SigningInfo](https://developer.android.com/reference/android/content/pm/SigningInfo): API28 이상서명조회,구형은GET_SIGNATURES호환분기.
-
-진행·증거는 [검증 기록](VERIFICATION.md), 오류는 [디버그 대장](DEBUG_LOG.md), 결정은 [인수인계](../HANDOVER.md)에 누적한다. 이 문서는 완료 선언이 아니다.
+</details>

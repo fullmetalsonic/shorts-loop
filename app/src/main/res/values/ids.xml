@@ -1,4 +1,6 @@
 <resources>
+    <item name="installed_version" type="id" />
+    <item name="app_version" type="id" />
     <item name="update_status" type="id" />
     <item name="update_check" type="id" />
     <item name="update_action" type="id" />

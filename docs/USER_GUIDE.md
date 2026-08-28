@@ -1,51 +1,26 @@
-# 사용 설명서 · ShortsLoop 0.2.7 정식 릴리스
+# 사용 설명서 · ShortsLoop 0.2.8
 
-0.2.7은 플로팅 크기72×56dp와 조작법을 유지하면서 ‘긴영상’ 등의 글자 잘림을 수정합니다. 사용법과 자동 넘김 정책은0.2.6과 같습니다. 정식 릴리스라도 선택형 화면 분석은 실험 기능이며,기기·호스트별 인식 제약은 유지됩니다. [0.2.7 배포·검증 기록](releases/v0.2.7.md).<br>
-Stable0.2.7 fixes floating-label clipping without changing the72×56dp size,controls or0.2.6 playback policies. Optional visual assistance remains experimental,and device/host recognition limitations still apply. See the0.2.7 release record.
+**ShortsLoop 0.2.8/code30**은 앱 이름·버전만 표시하고 디버깅이 비활성화된 release APK를 사용합니다. 기존 패키지·서명을 유지합니다. 실제 시험 범위와 게시 상태는 [0.2.8 기록](releases/v0.2.8.md)을 확인하세요.
 
-## 이전 0.2.6/code28 · Public 시험판 기록 / Previous pre-release
+**ShortsLoop0.2.8/code30** uses neutral app/version labels and a non-debuggable release APK, preserving the existing package and signer. See the linked0.2.8 record for actual test coverage and publication status.
 
-**0.2.6/code28 공개 시험판(pre-release)을 게시하고 공개 파일 검증까지 완료했다.** YouTube의 같은 창·pager·전체 페이지에서 현재 행이 요청 행보다 정확히1 증가하는 근거를 보강했다. 최종 빌드·468JUnit·정적 가드 PASS,로컬lint0오류/기존3경고,동일APK API26/33/34 계측233/233/232 PASS와 설치·설정 보존·접근성·런타임·해시 일치를 확인했다. YouTube20회는148.6초 동안 요청20/확인20(일반4·긴 영상15·라이브1),수동0·실패0·복구0으로 PASS했다. 같은 길이 영상 쌍은 이 실기기20회에 없었으므로 해당 조건의 실기기 재현 성공을 주장하지 않는다.
+인앱 하단은 `ShortsLoop 0.2.8`,업데이트 카드는 `설치 버전 0.2.8`처럼 표시합니다. 앱 버전에 ‘시험판/정식/stable/trial’ 같은 등급을 붙이지 않습니다. 이는 배포물의 `debuggable=false` 보장이나 기능의 검증 범위를 대신하지 않습니다. 선택형 **화면 분석 보조의 실험 기능 안내·별도 동의·Android14 이상 제한**은 그대로 유지합니다.
 
-**0.2.6/code28 is published as a public pre-release,and public artifact verification is complete.** It adds exact current-row=request-row+1 evidence within the same YouTube window,pager and full-page bounds. Build,468 JUnit tests,static guards,233/233/232 exact-APK API26/33/34 checks and installation/settings/accessibility/runtime/hash parity passed;local lint has0 errors/3 existing warnings. YouTube20 passed in148.6 seconds with20 requests/20 confirmations:4 ordinary,15 long-video,1 live,and0 manual swipes,failures or recoveries. No equal-duration pair occurred in this run,so that precise physical case is not claimed as reproduced.
+The footer uses `ShortsLoop 0.2.8`,and the update card uses `설치 버전 0.2.8` (installed version),without release-grade suffixes. Neutral wording is not a substitute for verifying `debuggable=false` or feature coverage. Optional **visual-assistance experimental warnings,separate consent and the Android14+ restriction** remain.
 
-**이번 code26→code28 YouTube 보완에서** Instagram의 일반 확인 경로와 `AdvanceGate`는 변경하지 않았다.0.2.5→0.2.6 전체에서 아무 변화가 없었다는 뜻은 아니다. code26의 Instagram10회 PASS(96.0초,일반3·긴 영상4·시간제2·광고1,수동0)는 해당 버전의 실기기 근거로 보존하고 이번에는 전체10회를 반복하지 않는다. 이 과거 결과를 새 code28 APK에서 Instagram을 재실행한 것처럼 표시하지 않는다. YouTube 재시험과 영향 범위 검증 후 기존 Public 저장소에v0.2.6/code28 pre-release를 게시했으며 CI·공개 다운로드 동일성도 확인했다.
+## 업데이트할 때 알아둘 점
 
-**For this code26→code28 YouTube correction**,the generic Instagram path and AdvanceGate are unchanged from code26;this does not mean they were unchanged throughout0.2.5→0.2.6. Code26's Instagram10 PASS(96.0 seconds:3 ordinary,4 long-video,2 timed,1 ad;0 manual swipes) is retained as version-specific evidence without repeating the full run. It is not described as a new Instagram test on code28. After the YouTube retest and impact-scope checks passed,v0.2.6/code28 was published as a pre-release in the existing Public repository. CI and public-download parity were verified.
+0.2.8은 디버깅 비활성 release APK와 기존 설치본의 서명 일치를 검증했습니다. 기존 앱 위에 설치하며,설정 보존을 위해 먼저 삭제하지 마세요. 설치 후 자동 넘김 실행은 직접 켭니다. [현재 검증 상태](VERIFICATION.md),[배포 점검 기록](RELEASE_PRESENTATION_AUDIT.md).
 
-## 이전 code26 검증 / Previous candidate evidence
+업데이트 조회 정책은 바꾸지 않습니다. 고정 저장소의 공개 릴리스 목록에서 draft를 제외하고 **공개된 prerelease도 포함**해,유효한 메타데이터·더 높은 versionCode·기기 OS 호환성을 만족하는 항목을 확인합니다. 설치 전 크기·SHA256·패키지·버전·현재 설치본과 같은 서명 집합을 검사하고 Android의 최종 설치 확인을 거칩니다. 앱의 중립적인 버전 표시가 prerelease를 제외한다는 뜻은 아닙니다.
 
-**이전0.2.6/code26은 후속 실폰 실패로 배포하지 않았던 후보입니다.** 454제품시험·209/209/208 계측·설치/설정/해시 검증은 PASS했습니다. YouTube 지정10회(긴 영상9+라이브1)와 별도 일반1회를 확인했으나 이후 같은 길이 전환 확인에 실패했습니다. Instagram10개는96.0초 동안 일반3·긴 영상4·시간제2·광고1,수동0으로 통과했습니다. 유튜브 실패 요청의 실제 이동은 전후 화면 쌍이 없어 미확정입니다. 시험 후 긴 영상 기준60초를 복원하고 전체 실행은OFF로 종료했습니다. 이전code23/24/25의 실폰FAIL과 최신 결과는 [VERIFICATION](VERIFICATION.md)에서 구분합니다.<br>
-**Historical code26 remained unpublished after a follow-up phone failure.**454 tests,209/209/208 emulator checks and installation/settings/hash checks passed. The designated YouTube10(9 long-video,1 live) and one separate ordinary transition passed,but later same-duration confirmation failed. Instagram10 passed in96.0 seconds(3 ordinary,4 long-video,2 timed,1 ad;0 manual swipes). Actual movement for the failed YouTube request is unproven without a pre/post screenshot pair. The threshold was restored to60 seconds and execution stopped;earlier code23/24/25 failures remain separate.
+Update selection is unchanged:exclude drafts from the fixed repository's public release feed,but **include published prereleases** with valid metadata,a higher versionCode and compatible OS. Size,SHA256,package,version and the installed signer set are checked before Android's final installation confirmation. Neutral version wording does not imply excluding prereleases.
 
-## 이번 버전 · 새 시작점 복구·긴 영상 건너뛰기
-
-0.2.6(code28)은 로컬 검증·공개 CI·다운로드 동일성 확인을 마친 Public 시험판입니다. 정상 진행 정보를 사용하는 일반 영상에서 넘김 확인 시간이 초과되면, 추가 스와이프 없이 새 재생 시작을 관측하고 이전 카운트를 버린 뒤 설정 횟수를 다시 셉니다. 시작점을 확인하자마자 넘기는 기능은 아닙니다. 광고·라이브·시간제·화면 분석 및 권한·화면 변경의 안전정지는 유지합니다. [복구 예시·조건](PLAYBACK_RECOVERY.md), [최종 검증·게시 결과](VERIFICATION.md).
-
-0.2.6(code28) is a Public pre-release with local,CI and public-download parity verified. After an ordinary progress-based transition times out, recovery waits for a verified fresh playback start without another swipe, then counts the configured plays anew. Finding the start does not advance immediately; other safety stops remain.
-
-code28에는 **긴 영상 건너뛰기**가 추가됩니다. 기본OFF·총길이 기준60초·1~3600초이며 반복0과 별개입니다. 확인한 총길이가 기준 이상이면 재생 처음을 기다리지 않고 안전 확인 후 넘깁니다. 길이를 모르면 추측하지 않습니다. code22의 YouTube 시험은 실제2회 전환 후 기능 추가로 중단했으며 최신 후보의10회 시험에 합산하지 않습니다.
-
-Code28 retains optional long-video skipping: OFF by default, total-duration threshold60 seconds, range1–3600, independent of zero plays. Known durations at least the threshold qualify after safety checks without waiting for a new beginning. Unknown duration is never guessed. Code22's two confirmed YouTube transitions preceded the feature addition and do not count toward the latest ten-transition run.
-
-이전 공개판0.2.5(code21)는 ‘사용 준비 → 이 기기의 기능’, ‘업데이트 · 앱 정보’와 사용 빈도순 메뉴·선택형 YouTube 라이브 미리보기 넘김을 통합했습니다. 2026-08-28 Public 시험판으로 공개한 이력이며 해당 버전의 시험 결과를0.2.6 검증으로 재사용하지 않습니다. 새 APK에서 YouTube10개와 Instagram10개의 실제 자동 전환을 각각 확인하는 것이 이번 시험 목표이며 완료 전 PASS로 표기하지 않습니다.
-
-Android 8(API26)부터 설치 가능하며 8~12L은 빠른 설정 수동 추가, 13(API33) 이상은 추가 요청, 14(API34) 이상만 화면 분석 실험을 제공합니다. Android 10(API29)부터 타일에 별도 상태줄을 표시합니다. Instagram 미설치·미선택 또는 OS 미지원 옵션은 이유와 함께 비활성화하고 저장값은 보존합니다. 기본 반복·시간제·광고·플로팅의 의미는 그대로입니다. 공식 YouTube는 Android 9 이상이며 Instagram 최소 OS는 미확정이므로 기기 Play 스토어의 호환 여부를 확인합니다. [한영 지원표·근거](COMPATIBILITY.md).
-
-## 현재 버전과 검증 범위
-
-이전 공개판 0.2.4는 **정상 N회·시간제·광고를 합친 20연속 자동 이동 검증이 미완료인 시험판**입니다. 당시 code13은 제품227개시험·빌드 PASS, lint0오류/4경고였으며 설치본 해시 일치와 0회 광고1회 자동 이동/일반·시간제 중지를 확인했습니다. 이 결과를 0.2.5 업데이트 경로의 검증으로 재사용하지 않습니다. [0.2.4 이력](releases/v0.2.4.md), [버전별 검증 상태](VERIFICATION.md).
-
-현재 동작은 **일반 영상 N회 / 총길이 기준 긴 영상 건너뛰기 / 정보 없는 Instagram 시간제 / Instagram 광고 / YouTube 라이브 미리보기**로 나뉩니다. 0회이면 일반 반복·시간제·화면 분석은 멈추지만 긴 영상·광고·라이브는 각각 해당 앱 선택·별도 옵션ON·전체 실행ON이면 동작합니다. 전체 실행OFF는 모두 멈춥니다. 과거0.2.1의 ‘0회는 광고 포함 모두 중지’와 달라진 동작입니다.
-
-화면 분석 보조는 기본 OFF·별도 동의·Android 14 이상인 시험 기능으로 보존합니다. 시간제와 둘 다 켜면 시간제가 우선합니다. 정확한 총 N회는 보장하지 않습니다. 별도 미연결 `VisualSequenceTracker` 실험의 20시험 중 2실패는 제품 시간제의 실패와 다릅니다. 실험 원본을 보존하고 배포 제품과 제품 시험에서 제외하며 전체 실험까지 PASS로 보고하지 않습니다. 오디오 수신·패턴 시험은 별도 진단 앱이고 제품 자동 넘김에 연결하지 않았으며 이번 APK 첨부 대상도 아닙니다.
-
-한영 요약은 [README](../README.md), 화면 구성의 이유는 [UI·인간공학 기준](UI_DESIGN.md), 동작 계약은 [제품 기준](PRODUCT_SPEC.md), 시간제 상세는 [시간제 안내](TIMED_FALLBACK.md)를 참고하세요. 과거 0.2.0 UI·0.2.1 광고·0.2.2 공개 기록은 이력이며 최신 APK의 전체 검증을 대신하지 않습니다.
-
+현재 기능은 일반 반복·긴 영상·Instagram 시간제·Instagram 광고·YouTube 라이브로 구분합니다. 반복0은 일반 반복·시간제·화면 분석을 멈추지만 긴 영상·광고·라이브의 독립 옵션을 끄는 것은 아닙니다. 모든 자동 동작을 중지하려면 전체 실행을OFF로 합니다. 화면 분석 보조는 기본OFF·별도 동의·Android14 이상 실험 기능이며 정확한 총N회를 보장하지 않습니다.
 
 ## 1. 처음 사용할 때의 순서
 
-1. 공개 완료된 릴리스의 개발 서명 APK·해시를 확인하고 설치합니다. **0.2.4에는 업데이트 메뉴가 없으므로 브라우저 등에서 새 APK를 직접 받아 기존 앱 위에 설치해야 합니다.** 0.2.5 이상은 인앱에서 호환되는 상위 공개 버전을 확인할 수 있습니다. 삭제 후 재설치하면 설정이 사라지므로 먼저 삭제하지 마세요. ‘쇼츠 자동 넘김’을 엽니다. 기존 YouTube·Instagram은 수정하지 않습니다.
+1. 공개 완료된 릴리스의 배포 APK·해시를 확인하고 설치합니다. **0.2.4에는 업데이트 메뉴가 없으므로 브라우저 등에서 새 APK를 직접 받아 기존 앱 위에 설치해야 합니다.** 0.2.5 이상은 인앱에서 호환되는 상위 공개 버전을 확인할 수 있습니다. 삭제 후 재설치하면 설정이 사라지므로 먼저 삭제하지 마세요. ‘쇼츠 자동 넘김’을 엽니다. 기존 YouTube·Instagram은 수정하지 않습니다.
 2. ‘사용할 앱’에서 YouTube 쇼츠, Instagram 릴스를 선택합니다. 둘 다 선택할 수 있습니다.
 3. ‘일반 영상 · 횟수로 넘김’에서 총 재생 횟수를 정합니다. 처음에는 `2` 입력 후 완료/적용하면 됩니다.
 4. 긴 일반 영상을 건너뛰려면 ‘긴 영상 건너뛰기’를 켜고 총길이 기준을 정합니다. 기본OFF·기준60초·입력1~3600초이며,반복0회와 별도로 동작합니다.
@@ -187,7 +162,7 @@ X는 폭 축소를 위해 24dp×24dp로 작게 만들었습니다. 일반적인 
 
 긴 영상 이동 확인이4.5초 안에 되지 않으면 안전정지합니다. 일반 N회 경로의 재인식 복구로 실패를 우회하거나 같은 영상을 연속 요청하지 않습니다. 광고·라이브도 긴 영상으로 추정하지 않습니다.
 
-code28은 YouTube 페이지의 행 번호가 요청 때보다 정확히1 증가하는지도 확인합니다. 같은 창·pager·페이지 영역,달라진 콘텐츠 키와300ms 이상 안정·실제 전진 재생 검사는 그대로입니다. 행을 모두 읽었는데 같거나 뒤로 가거나2칸 이상 뛰면 총길이가 달라도 확인하지 않습니다. 행 정보 없음은 이동 근거가 아니며,깨진 구조·갱신 실패는 안전정지 조건입니다. code26의 동일 길이 안전정지 사례를 보완하는 후보이며,YouTube20회는 통과했지만 같은 길이 쌍은 실제20회에서 나오지 않았습니다. 조건별 근거는 검증 문서를 확인하세요.
+code28은 YouTube 페이지의 행 번호가 요청 때보다 정확히1 증가하는지도 확인합니다. 같은 창·pager·페이지 영역,달라진 콘텐츠 키와300ms 이상 안정·실제 전진 재생 검사는 그대로입니다. 행을 모두 읽었는데 같거나 뒤로 가거나2칸 이상 뛰면 총길이가 달라도 확인하지 않습니다. 행 정보 없음은 이동 근거가 아니며,깨진 구조·갱신 실패는 안전정지 조건입니다. 이는 code26의 동일 길이 안전정지를 보완한 기존 동작입니다. 과거code28의 YouTube20회는 통과했지만 같은 길이 쌍은 그20회에서 나오지 않았으며,이 결과를0.2.8 신규 시험으로 표시하지 않습니다. 조건별 근거는 검증 문서를 확인하세요.
 
 This independent option skips ordinary videos whose known total duration is at least the configured1–3600-second threshold(default60). It is not a waiting timer. Stable-page and actual-forward-playback checks still apply; unknown duration,ads and live previews do not qualify. At zero plays, long-video skipping can run but the Instagram timer remains stopped. An unconfirmed long-video transition hard-stops after4.5 seconds and does not enter ordinary recount recovery.
 
@@ -336,7 +311,7 @@ For target1, discard the uncertain earlier play and wait for a verified new begi
 
 저장하는 값은 기준/현재 횟수, 마지막 양수 횟수, 실행 요청, 터치 방식, 적용 앱 선택, 플로팅 표시 옵션, 긴 영상 옵션·총길이 기준, 광고 옵션, 라이브 옵션·초 값, 시간제 옵션·초 값, 화면 분석 옵션 및 상대X/Y 위치입니다. 옵션은 서로 독립 저장하며 대상 앱 선택을 해제해도 관련 설정은 보존합니다. 서비스가 다시 연결되면 실행 요청을OFF로 바꿉니다. 클라우드·기기이전 백업은 제외합니다.
 
-업데이트 자동 조회 선택·마지막 시도 시각·새 버전 정보는 재생 설정과 별도 저장합니다. APK는 앱 내부의 업데이트용 파일이며 영상 데이터가 아닙니다. **0.2.4에서 업데이트 메뉴가 있는 버전으로 옮길 때는 최초 수동 APK 설치가 필요**하고, 0.2.5부터 이후 호환되는 공개 버전을 인앱으로 확인할 수 있습니다. 시험판도 업데이트 후보가 될 수 있습니다. 0.2.5는 이전 공개판,0.2.6/code28은 공개 시험판이며 최종 검증·게시 결과는 [VERIFICATION](VERIFICATION.md) 참조.
+업데이트 자동 조회 선택·마지막 시도 시각·새 버전 정보는 재생 설정과 별도 저장합니다. APK는 앱 내부의 업데이트용 파일이며 영상 데이터가 아닙니다. **0.2.4에서 업데이트 메뉴가 있는 버전으로 옮길 때는 최초 수동 APK 설치가 필요**하고, 0.2.5부터 이후 호환되는 공개 버전을 인앱으로 확인할 수 있습니다. 공개된 prerelease도 기존 정책에 따라 업데이트 후보가 될 수 있습니다. 앱 버전의 중립적 표시와 조회 대상은 별개입니다.0.2.8의 최종 검증·게시 결과는 [VERIFICATION](VERIFICATION.md) 참조.
 
 0.1.5에서 업데이트하면 기존 양수 설정은 기준/현재 값으로 옮깁니다. 기존 현재 값이 0이면 현재 0을 보존하고 마지막 양수를 기준값으로 옮깁니다. 기본 선택은 YouTube만, 플로팅 표시 ON, 횟수 순환입니다. 위치도 유지합니다.
 
@@ -371,3 +346,54 @@ Open **Settings → Apps → ShortsLoop → Battery → Unrestricted** for this 
 제한 없음은 배터리 사용량을 늘릴 수 있습니다. 이 설정은 작은 창의 YouTube를 자동으로 넘기도록 지원 범위를 바꾸는 것이 아닙니다. 장시간·재부팅·다른 기기의 효과는 별도 확인이 필요합니다. 앱은 이 설정을 몰래 바꾸지 않습니다. 실제 수행한 시험 범위는 [검증 기록](VERIFICATION.md)의 D-020 후속 시험을 참고하세요.
 
 Unrestricted battery use may increase battery consumption. It does not add auto-advance support inside PiP. Long-running sessions, reboot behavior, and other devices require separate testing. The app does not silently change this setting. See the [verification record](VERIFICATION.md) for the tested scope.
+
+## 과거 버전 설명·검증 기록 / Historical descriptions and evidence
+
+아래의0.2.7 이하 빌드·기기·게시 결과는 버전별 과거 기록입니다. 당시 표시·배포 상태와 검증 수치는 보존하지만0.2.8의 PASS나 공개 완료 근거로 재사용하지 않습니다.
+
+<details>
+<summary>0.2.7 이하의 이전 문서 기록 / Earlier documentation</summary>
+
+0.2.7은 플로팅 크기72×56dp와 조작법을 유지하면서 ‘긴영상’ 등의 글자 잘림을 수정합니다. 사용법과 자동 넘김 정책은0.2.6과 같습니다. 정식 릴리스라도 선택형 화면 분석은 실험 기능이며,기기·호스트별 인식 제약은 유지됩니다. [0.2.7 배포·검증 기록](releases/v0.2.7.md).<br>
+Stable0.2.7 fixes floating-label clipping without changing the72×56dp size,controls or0.2.6 playback policies. Optional visual assistance remains experimental,and device/host recognition limitations still apply. See the0.2.7 release record.
+
+## 이전 0.2.6/code28 · Public 시험판 기록 / Previous pre-release
+
+**0.2.6/code28 공개 시험판(pre-release)을 게시하고 공개 파일 검증까지 완료했다.** YouTube의 같은 창·pager·전체 페이지에서 현재 행이 요청 행보다 정확히1 증가하는 근거를 보강했다. 최종 빌드·468JUnit·정적 가드 PASS,로컬lint0오류/기존3경고,동일APK API26/33/34 계측233/233/232 PASS와 설치·설정 보존·접근성·런타임·해시 일치를 확인했다. YouTube20회는148.6초 동안 요청20/확인20(일반4·긴 영상15·라이브1),수동0·실패0·복구0으로 PASS했다. 같은 길이 영상 쌍은 이 실기기20회에 없었으므로 해당 조건의 실기기 재현 성공을 주장하지 않는다.
+
+**0.2.6/code28 is published as a public pre-release,and public artifact verification is complete.** It adds exact current-row=request-row+1 evidence within the same YouTube window,pager and full-page bounds. Build,468 JUnit tests,static guards,233/233/232 exact-APK API26/33/34 checks and installation/settings/accessibility/runtime/hash parity passed;local lint has0 errors/3 existing warnings. YouTube20 passed in148.6 seconds with20 requests/20 confirmations:4 ordinary,15 long-video,1 live,and0 manual swipes,failures or recoveries. No equal-duration pair occurred in this run,so that precise physical case is not claimed as reproduced.
+
+**이번 code26→code28 YouTube 보완에서** Instagram의 일반 확인 경로와 `AdvanceGate`는 변경하지 않았다.0.2.5→0.2.6 전체에서 아무 변화가 없었다는 뜻은 아니다. code26의 Instagram10회 PASS(96.0초,일반3·긴 영상4·시간제2·광고1,수동0)는 해당 버전의 실기기 근거로 보존하고 이번에는 전체10회를 반복하지 않는다. 이 과거 결과를 새 code28 APK에서 Instagram을 재실행한 것처럼 표시하지 않는다. YouTube 재시험과 영향 범위 검증 후 기존 Public 저장소에v0.2.6/code28 pre-release를 게시했으며 CI·공개 다운로드 동일성도 확인했다.
+
+**For this code26→code28 YouTube correction**,the generic Instagram path and AdvanceGate are unchanged from code26;this does not mean they were unchanged throughout0.2.5→0.2.6. Code26's Instagram10 PASS(96.0 seconds:3 ordinary,4 long-video,2 timed,1 ad;0 manual swipes) is retained as version-specific evidence without repeating the full run. It is not described as a new Instagram test on code28. After the YouTube retest and impact-scope checks passed,v0.2.6/code28 was published as a pre-release in the existing Public repository. CI and public-download parity were verified.
+
+## 이전 code26 검증 / Previous candidate evidence
+
+**이전0.2.6/code26은 후속 실폰 실패로 배포하지 않았던 후보입니다.** 454제품시험·209/209/208 계측·설치/설정/해시 검증은 PASS했습니다. YouTube 지정10회(긴 영상9+라이브1)와 별도 일반1회를 확인했으나 이후 같은 길이 전환 확인에 실패했습니다. Instagram10개는96.0초 동안 일반3·긴 영상4·시간제2·광고1,수동0으로 통과했습니다. 유튜브 실패 요청의 실제 이동은 전후 화면 쌍이 없어 미확정입니다. 시험 후 긴 영상 기준60초를 복원하고 전체 실행은OFF로 종료했습니다. 이전code23/24/25의 실폰FAIL과 최신 결과는 [VERIFICATION](VERIFICATION.md)에서 구분합니다.<br>
+**Historical code26 remained unpublished after a follow-up phone failure.**454 tests,209/209/208 emulator checks and installation/settings/hash checks passed. The designated YouTube10(9 long-video,1 live) and one separate ordinary transition passed,but later same-duration confirmation failed. Instagram10 passed in96.0 seconds(3 ordinary,4 long-video,2 timed,1 ad;0 manual swipes). Actual movement for the failed YouTube request is unproven without a pre/post screenshot pair. The threshold was restored to60 seconds and execution stopped;earlier code23/24/25 failures remain separate.
+
+## 과거0.2.6 도입 기록 · 새 시작점 복구·긴 영상
+
+0.2.6(code28)은 로컬 검증·공개 CI·다운로드 동일성 확인을 마친 Public 시험판입니다. 정상 진행 정보를 사용하는 일반 영상에서 넘김 확인 시간이 초과되면, 추가 스와이프 없이 새 재생 시작을 관측하고 이전 카운트를 버린 뒤 설정 횟수를 다시 셉니다. 시작점을 확인하자마자 넘기는 기능은 아닙니다. 광고·라이브·시간제·화면 분석 및 권한·화면 변경의 안전정지는 유지합니다. [복구 예시·조건](PLAYBACK_RECOVERY.md), [최종 검증·게시 결과](VERIFICATION.md).
+
+0.2.6(code28) is a Public pre-release with local,CI and public-download parity verified. After an ordinary progress-based transition times out, recovery waits for a verified fresh playback start without another swipe, then counts the configured plays anew. Finding the start does not advance immediately; other safety stops remain.
+
+code28에는 **긴 영상 건너뛰기**가 추가됩니다. 기본OFF·총길이 기준60초·1~3600초이며 반복0과 별개입니다. 확인한 총길이가 기준 이상이면 재생 처음을 기다리지 않고 안전 확인 후 넘깁니다. 길이를 모르면 추측하지 않습니다. code22의 YouTube 시험은 실제2회 전환 후 기능 추가로 중단했으며 최신 후보의10회 시험에 합산하지 않습니다.
+
+Code28 retains optional long-video skipping: OFF by default, total-duration threshold60 seconds, range1–3600, independent of zero plays. Known durations at least the threshold qualify after safety checks without waiting for a new beginning. Unknown duration is never guessed. Code22's two confirmed YouTube transitions preceded the feature addition and do not count toward the latest ten-transition run.
+
+이전 공개판0.2.5(code21)는 ‘사용 준비 → 이 기기의 기능’, ‘업데이트 · 앱 정보’와 사용 빈도순 메뉴·선택형 YouTube 라이브 미리보기 넘김을 통합했습니다. 2026-08-28 Public 시험판으로 공개한 이력이며 해당 버전의 시험 결과를0.2.6 검증으로 재사용하지 않습니다. 새 APK에서 YouTube10개와 Instagram10개의 실제 자동 전환을 각각 확인하는 것이 이번 시험 목표이며 완료 전 PASS로 표기하지 않습니다.
+
+Android 8(API26)부터 설치 가능하며 8~12L은 빠른 설정 수동 추가, 13(API33) 이상은 추가 요청, 14(API34) 이상만 화면 분석 실험을 제공합니다. Android 10(API29)부터 타일에 별도 상태줄을 표시합니다. Instagram 미설치·미선택 또는 OS 미지원 옵션은 이유와 함께 비활성화하고 저장값은 보존합니다. 기본 반복·시간제·광고·플로팅의 의미는 그대로입니다. 공식 YouTube는 Android 9 이상이며 Instagram 최소 OS는 미확정이므로 기기 Play 스토어의 호환 여부를 확인합니다. [한영 지원표·근거](COMPATIBILITY.md).
+
+## 당시 버전과 검증 범위
+
+이전 공개판 0.2.4는 **정상 N회·시간제·광고를 합친 20연속 자동 이동 검증이 미완료인 시험판**입니다. 당시 code13은 제품227개시험·빌드 PASS, lint0오류/4경고였으며 설치본 해시 일치와 0회 광고1회 자동 이동/일반·시간제 중지를 확인했습니다. 이 결과를 0.2.5 업데이트 경로의 검증으로 재사용하지 않습니다. [0.2.4 이력](releases/v0.2.4.md), [버전별 검증 상태](VERIFICATION.md).
+
+현재 동작은 **일반 영상 N회 / 총길이 기준 긴 영상 건너뛰기 / 정보 없는 Instagram 시간제 / Instagram 광고 / YouTube 라이브 미리보기**로 나뉩니다. 0회이면 일반 반복·시간제·화면 분석은 멈추지만 긴 영상·광고·라이브는 각각 해당 앱 선택·별도 옵션ON·전체 실행ON이면 동작합니다. 전체 실행OFF는 모두 멈춥니다. 과거0.2.1의 ‘0회는 광고 포함 모두 중지’와 달라진 동작입니다.
+
+화면 분석 보조는 기본 OFF·별도 동의·Android 14 이상인 시험 기능으로 보존합니다. 시간제와 둘 다 켜면 시간제가 우선합니다. 정확한 총 N회는 보장하지 않습니다. 별도 미연결 `VisualSequenceTracker` 실험의 20시험 중 2실패는 제품 시간제의 실패와 다릅니다. 실험 원본을 보존하고 배포 제품과 제품 시험에서 제외하며 전체 실험까지 PASS로 보고하지 않습니다. 오디오 수신·패턴 시험은 별도 진단 앱이고 제품 자동 넘김에 연결하지 않았으며 이번 APK 첨부 대상도 아닙니다.
+
+한영 요약은 [README](../README.md), 화면 구성의 이유는 [UI·인간공학 기준](UI_DESIGN.md), 동작 계약은 [제품 기준](PRODUCT_SPEC.md), 시간제 상세는 [시간제 안내](TIMED_FALLBACK.md)를 참고하세요. 과거 0.2.0 UI·0.2.1 광고·0.2.2 공개 기록은 이력이며 최신 APK의 전체 검증을 대신하지 않습니다.
+
+</details>

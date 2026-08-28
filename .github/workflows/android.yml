@@ -22,7 +22,10 @@ jobs:
       - name: Install Android SDK
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
       - name: Build, product unit tests, and lint (standalone experiments are not the APK)
-        run: ./gradlew --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
+        run: ./gradlew --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug :app:assembleRelease :app:testReleaseUnitTest :app:lintRelease
+      - name: Reject debuggable publication and stale release labels
+        shell: pwsh
+        run: ./scripts/verify-release-safety.ps1 -Apk app/build/outputs/apk/release/app-release-unsigned.apk -DebugApk app/build/outputs/apk/debug/app-debug.apk
       - name: Upload verification reports (not a signed release APK)
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

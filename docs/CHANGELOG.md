@@ -1,5 +1,19 @@
 # 누적이력
 
+## 0.2.8/code30 · 버전 표시·배포 빌드 정리 / Version presentation and distribution
+
+두 버전 표시를 앱명·번호만 남기는 방식으로 수정했다. 실제 화면 분석 실험 안내는 유지한다. 같은 단일 서명을 사용하는 non-debuggable release 빌드, 디버깅 APK 출고 거절, 실제 라벨 계측검사, debug/release CI, 기존 설정 덮어 설치 검사와 소스 커밋 일치 검사를 추가했다. 현재 문서와 과거 기록도 분리했다. 감지·반복·자동 넘김·업데이트 선택 정책은 변경하지 않았다.
+
+468JUnit·정적가드·로컬lint(0오류/기존3경고), API26/33/34 계측5572/5572/5571, 세OS19설정·UID·서명 보존, 휴대폰 두라벨·사용법·접근성·13런타임설정·플로팅 탭/X·설치해시 검사를 수행했다. 새로운 호스트 연속시험은 미실행. 최종 source/artifact/CI/공개 상태는 [0.2.8 기록](releases/v0.2.8.md), 절차는 [배포 빌드](RELEASE_BUILD.md), D-037/038 수정 근거는 [감사](RELEASE_PRESENTATION_AUDIT.md)를 따른다.
+
+EN: Neutral version labels and a non-debuggable release variant preserve the existing signer and real experimental warnings. Added exact UI/publication/source-identity guards and upgrade regression;separated current docs from history.468 unit tests,three-OS native/19-preference upgrades and scoped phone checks passed. No new playback-policy change or host endurance claim. Publication details are recorded separately.
+
+## 이전0.2.7 후속 배포·표시 검토 / Historical follow-up audit
+
+앱/공개APK/문서/검증절차전수검토에서D-037(시험판라벨·현재문서불일치),D-038(디버깅허용배포APK·차단검사부재)을미해결로기록했다. 앱전체의시험/정식표시대신앱명·버전만표시하고실제실험기능안내를유지하는방향을권고한다. 이번에는검토문서만로컬기록했으며제품코드·공개파일·권한변경없음. [검토결과](RELEASE_PRESENTATION_AUDIT.md).
+
+EN: Recorded open release-label/documentation drift and debuggable-artifact findings. Neutral app/version labels are recommended while preserving genuine experimental warnings. Only local review records were added;product/public artifacts and permissions remain unchanged.
+
 ## 0.2.7/code29 · 플로팅 잘림 수정 / Floating-label correction
 
 2026-08-28 **정식 릴리스 공개 완료**(Public,prerelease=false,latest=v0.2.7). 제품5125b33·CI33143291193 SUCCESS와 공개3파일 크기/해시 일치 확인. [최종 배포 기록](releases/v0.2.7.md).<br>
@@ -9,7 +23,7 @@ Stable release published;product5125b33,CI33143291193 and anonymous verification
 
 EN: Fixed compact floating-label clipping without enlarging the window. Added actual ink-boundary,large-font,RTL,bold and state-transition checks.468JUnit and5568/5568/5567 native assertions passed,with physical display/touch checks and independent review. Stable publication/CI/download checks are tracked in the release record;the existing0.2.6 APK is unchanged.
 
-## 최신 0.2.6/code28 · Public 시험판 검증 완료 / Published and verified
+## 이전0.2.6/code28 · Public 시험판 검증 완료 / Historical published version
 
 **0.2.6/code28 공개 시험판(pre-release)을 게시하고 공개 파일 검증까지 완료했다.** YouTube의 같은 창·pager·전체 페이지에서 현재 행이 요청 행보다 정확히1 증가하는 근거를 보강했다. 최종 빌드·468JUnit·정적 가드 PASS,로컬lint0오류/기존3경고,동일APK API26/33/34 계측233/233/232 PASS와 설치·설정 보존·접근성·런타임·해시 일치를 확인했다. YouTube20회는148.6초 동안 요청20/확인20(일반4·긴 영상15·라이브1),수동0·실패0·복구0으로 PASS했다. 같은 길이 영상 쌍은 이 실기기20회에 없었으므로 해당 조건의 실기기 재현 성공을 주장하지 않는다.
 
