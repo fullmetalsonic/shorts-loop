@@ -1,5 +1,11 @@
 # ShortsLoop · 기술 인수인계 / Technical handover
 
+## 0.5.1/code35 · APK 배포 준비 / APK delivery
+
+준비 화면을 포함한 실제 설치용 APK로 업데이트한다. YouTube 광고는 미지원·비활성 유지, 기존 자동화 변경 없음. 버전·설정 보존·기존 서명·PC 검증 후 기존 Public 저장소 Release와 인앱 업데이트를 갱신한다. [릴리스](docs/releases/v0.5.1.md)·[설정과 남은 시험](docs/APP_SETTINGS_0.5.1.md). 아래 소스만 공개/v0.5.0 유지 기록은 이 변경 이전의 이력이다.
+
+An installable0.5.1 update includes the preparation UI, not functioning YouTube ad skipping. Preserve settings/signer and verify the APK before updating the existing Public release feed. Source-only records below are historical.
+
 ## YouTube 광고 추가 준비 · 실제 광고 근거 필요 / Pending physical evidence
 
 YouTube 전용 광고 토글·0.0–9.9초/0.1단위 저장과 UI를 준비했다. 실제 Shorts 광고 구조를 확보하지 못해 감지·자동 넘김 연결은 미구현이며 토글은 현재 미지원으로 비활성화한다. 일반 광고 버튼·협찬 고지를 Shorts 광고로 추측하지 않는다. [준비 소스 공개 범위·근거·다음 시험](docs/YOUTUBE_ADS_PREPARATION.md). 이번 공개는 준비 소스·시험·문서만이며 배포0.5.0 APK·태그·업데이트는 그대로다. 아래 공개 완료는 기존0.5.0 APK에 대한 기록이다.

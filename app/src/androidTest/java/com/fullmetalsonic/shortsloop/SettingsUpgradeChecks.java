@@ -10,7 +10,7 @@ import android.os.Bundle;
 import com.fullmetalsonic.shortsloop.data.SettingsStore;
 import java.util.Map;
 
-/** Test APK only: preserve typed per-host preferences across the public code33 to code34 update. */
+/** Test APK only: preserve typed per-host preferences across the public code34 to code35 update. */
 final class SettingsUpgradeChecks {
     @SuppressWarnings("deprecation")
     static Bundle run(Instrumentation test, String phase) {
@@ -25,7 +25,7 @@ final class SettingsUpgradeChecks {
             SharedPreferences identity = target.getSharedPreferences("upgrade_test_identity", 0);
             SettingsStore store = new SettingsStore(target);
             if ("seed".equals(phase)) {
-                require(info.versionCode == 33 && "0.4.0".equals(info.versionName), "Start with frozen code33");
+                require(info.versionCode == 34 && "0.5.0".equals(info.versionName), "Start with frozen code34");
                 require((info.applicationInfo.flags & ApplicationInfo.FLAG_DEBUGGABLE) == 0, "Previous public release is not debuggable");
                 store.enabled(false); store.ceiling(7); store.target(3); store.tapMode(0); store.target(3);
                 store.floatingEnabled(true); store.position(0.22f, 0.71f);
@@ -52,7 +52,7 @@ final class SettingsUpgradeChecks {
                         .putString("signer", info.signatures[0].toCharsString()).putBoolean("seeded", true).commit(), "Save identity");
             } else if ("verify".equals(phase)) {
                 require(identity.getBoolean("seeded", false), "Seed phase is required");
-                require(info.versionCode == 34 && "0.5.0".equals(info.versionName), "Updated to code34");
+                require(info.versionCode == 35 && "0.5.1".equals(info.versionName), "Updated to code35");
                 require((info.applicationInfo.flags & ApplicationInfo.FLAG_DEBUGGABLE) == 0, "Release debugging is disabled");
                 require(info.applicationInfo.uid == identity.getInt("uid", -1), "Package UID preserved");
                 require(info.signatures.length == 1 && info.signatures[0].toCharsString().equals(identity.getString("signer", "")), "Signing identity preserved");
@@ -62,6 +62,8 @@ final class SettingsUpgradeChecks {
                 require(store.dualMode(), "Existing enabled multi-host choice is preserved");
                 SettingsStore youtube = store.forHost(SettingsStore.YOUTUBE_PACKAGE);
                 SettingsStore instagram = store.forHost(SettingsStore.INSTAGRAM_PACKAGE);
+                require(!youtube.skipAds() && youtube.adDelayTenths() == 0,
+                        "YouTube preparation defaults remain independent and disabled");
                 require(youtube.target() == 3 && youtube.ceiling() == 7 && youtube.lastNonZero() == 3
                         && youtube.skipLong() && youtube.longVideoSeconds() == 73 && youtube.x() == .22f && youtube.y() == .71f,
                         "YouTube saved independent settings survive");

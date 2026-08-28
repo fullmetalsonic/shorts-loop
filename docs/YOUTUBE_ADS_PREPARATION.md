@@ -1,5 +1,11 @@
 # YouTube 쇼츠 광고 · 구현 준비 / Implementation preparation
 
+## 0.5.1 APK 포함 / Included in0.5.1
+
+준비 UI와 저장을0.5.1 설치용 APK에 포함한다. 실제 광고 감지·자동 넘김은 여전히 미지원·비활성이다. [최신 APK·검증](releases/v0.5.1.md)·[사용법·남은 시험](APP_SETTINGS_0.5.1.md). 아래0.5.0 유지/소스만 게시 기록은 이전 체크포인트다.
+
+The preparation UI/storage is included in the0.5.1 APK, without working YouTube ad detection/skipping. The source-only0.5.0 records below are historical.
+
 ## 상태 / Status
 
 **구현 준비 중, 자동 넘김 미지원.** 실제 YouTube Shorts 광고의 접근성 구조가 아직 확보되지 않았다. 이번 공개 범위는 준비 소스·시험·문서뿐이다. 배포된0.5.0 APK·태그·인앱 업데이트는 변경하지 않고 새 설치용 APK를 게시하지 않는다. `main`의 준비 소스와 배포 APK를 동일 산출물로 취급하지 않는다.

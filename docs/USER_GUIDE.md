@@ -1,4 +1,6 @@
-# 사용 설명서 / User guide · ShortsLoop 0.5.0
+# 사용 설명서 / User guide · ShortsLoop 0.5.1
+
+0.5.1은 YouTube 광고 준비 패널을 추가한 설치용 업데이트이며 광고 자동 넘김은 아직 비활성이다. [0.5.1 설정·설치·남은 시험](APP_SETTINGS_0.5.1.md)을 먼저 확인한다. 아래0.5.0의 기존 조작은 그대로 적용된다. / Start with the0.5.1 guide; YouTube ads remain unsupported. Existing controls below are unchanged.
 
 ## 0.5.0 현재 사용법 / Current guide
 

@@ -1,4 +1,6 @@
-# 배포 APK 빌드·검사 / Distribution build and checks · 0.5.0
+# 배포 APK 빌드·검사 / Distribution build and checks · 0.5.1
+
+0.5.1/code35는 같은 서명의 `shorts-loop-v0.5.1.apk`로 배포한다. [현재 결과](releases/v0.5.1.md). 아래0.5.0 이하 산출물 수치는 과거이며 서명·검증 절차는 유지한다. / Current artifact:0.5.1/code35; older artifact values below are historical.
 
 현재배포는0.5.0/code34,파일명shorts-loop-v0.5.0.apk다. 기존패키지/전체서명·non-debuggable·API26하한을유지하고,커밋후빌드→revision대조→원본APK/메타데이터/체크섬고정→공개다운로드동일성을검사한다. [현재결과](releases/v0.5.0.md). 아래0.4.0의숫자는과거산출물이며절차는그대로적용한다.
 

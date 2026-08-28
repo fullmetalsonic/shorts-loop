@@ -1,14 +1,14 @@
-# 쇼츠 자동 넘김 · ShortsLoop 0.5.0
+# 쇼츠 자동 넘김 · ShortsLoop 0.5.1
 
 YouTube Shorts·Instagram Reels·TikTok 추천 영상을 설정에 따라 자동으로 넘기는 Android 앱입니다. 앱별 반복·광고·사진·시간 규칙, 반투명 플로팅, 빠른 설정 토글과 선택형 여러 앱 처리를 제공합니다. 소셜 앱을 개조하지 않습니다.
 
 An Android auto-scroll app for YouTube Shorts, Instagram Reels and supported TikTok recommendation content, with per-app rules, translucent controls, Quick Settings and optional multi-window processing. Host apps are not modified.
 
-[최신 APK / Latest release](https://github.com/fullmetalsonic/shorts-loop/releases/latest) · [앱별 설정 설명서 / Per-app guide](docs/APP_SETTINGS_0.5.0.md) · [0.5.0 검증·릴리스 / Release evidence](docs/releases/v0.5.0.md)
+[최신 APK / Latest release](https://github.com/fullmetalsonic/shorts-loop/releases/latest) · [0.5.1 설정·시험 안내 / Guide](docs/APP_SETTINGS_0.5.1.md) · [0.5.1 검증·릴리스 / Release evidence](docs/releases/v0.5.1.md)
 
-**개발 소스 안내:** `main`에는 YouTube 광고 설정 준비 코드가 추가되어 있지만, 실제 광고 감지·자동 넘김은 아직 미지원이며 해당 토글은 비활성입니다. **배포 APK와 인앱 업데이트는 v0.5.0 그대로**입니다. 배포본과 같은 소스는 [v0.5.0 태그](https://github.com/fullmetalsonic/shorts-loop/tree/v0.5.0)를 사용하세요. [준비 범위·검증·남은 조건](docs/YOUTUBE_ADS_PREPARATION.md).
+**0.5.1 변경:** YouTube 설정에 광고 준비 패널·미지원 안내와 독립 대기시간 저장을 포함한 설치용 APK입니다. **실제 YouTube 광고 자동 넘김은 아직 미지원이며 토글은 비활성**입니다. 기존 Instagram·TikTok 및 YouTube 일반 영상 규칙은 유지합니다. 기존 앱을 삭제하지 말고 덮어 설치하세요. [남은 시험·설정 안내](docs/APP_SETTINGS_0.5.1.md).
 
-**Development source:** `main` includes preparation for YouTube ad settings, not working ad detection/skipping; its toggle is disabled. **The distributed APK and in-app update remain v0.5.0.** Use the v0.5.0 tag for matching release source; see the linked preparation record.
+**0.5.1 changes:** An installable update containing the YouTube ad preparation panel, unsupported notice and independent saved delay. **YouTube ad skipping is still unsupported and disabled.** Existing automation rules are retained. Install over the existing app to preserve settings; see the linked guide for remaining field checks.
 
 ## 0.5.0 변경 / Changes
 

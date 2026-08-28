@@ -1,4 +1,6 @@
-# Android 버전별 기능 / Android compatibility · 0.5.0
+# Android 버전별 기능 / Android compatibility · 0.5.1
+
+0.5.1은0.5.0의 OS·권한·호스트 지원 경계를 유지한다. YouTube 광고 패널은 준비용이며 Android 버전과 관계없이 자동 넘김 미지원이다. [0.5.1 검증](releases/v0.5.1.md). / OS/permission/host boundaries are unchanged; YouTube ad automation remains unsupported on every OS.
 
 0.5.0은API26설치하한·타일API29/33·실험적화면분석API34경계를유지한다. TT기본/특수규칙은선택된지원패키지와읽을수있는관측구조가전제이며,OS설치가능성이감지성공보장은아니다. 새실폰세앱동시재생은NOT RUN.[현재검증](VERIFICATION.md)·[현재릴리스](releases/v0.5.0.md). 아래0.4.0 OS설명은여전히적용되지만해당시험수치는과거기록이다.
 
