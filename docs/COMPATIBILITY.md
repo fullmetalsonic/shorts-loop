@@ -2,9 +2,9 @@
 
 ## 0.2.9/code31 · 언어와 OS 지원 / Language and OS support
 
-설치 하한Android8/API26, API29 타일 상태줄·API33 타일 추가 요청·API34 화면 분석 제한은 그대로다.0.2.9는 앱·플로팅·빠른 설정 실행 상태·도움말·업데이트/오류를 한국어·영어로 표시한다. 새 권한·호스트 앱 개조·언어별 감지 우회를 추가하지 않으며 기존 설정·서명·패키지를 유지한다. 최신 APK의 실폰 두 모드·0/3/10초·댓글창 보호는 확인했다. 번호 없는 사진·사진 직후 광고·혼합 사례와 공개 파일 검증은 미완료다. [조건별 검증](VERIFICATION.md),[언어 안내](LOCALIZATION.md). 아래 과거 결과는 새 시험으로 합산하지 않는다.
+설치 하한Android8/API26, API29 타일 상태줄·API33 타일 추가 요청·API34 화면 분석 제한은 그대로다.0.2.9는 앱·플로팅·빠른 설정 실행 상태·도움말·업데이트/오류를 한국어·영어로 표시한다. 새 권한·호스트 앱 개조·언어별 감지 우회를 추가하지 않으며 기존 설정·서명·패키지를 유지한다. 최신 APK의 실폰 두 모드·0/3/10초·댓글창 보호는 확인했다. 번호 없는 사진·사진 직후 광고·혼합 사례는 미확보이며 공개 파일 검증은 완료했다. [조건별 검증](VERIFICATION.md),[언어 안내](LOCALIZATION.md). 아래 과거 결과는 새 시험으로 합산하지 않는다.
 
-The minimum remains Android8/API26. Tile subtitles require API29, tile-add requests API33, and visual assistance API34. Version0.2.9 localizes app-owned UI, floating controls, runtime tile state, help and update/errors into Korean and English. It adds no permission, host modification or language-based detection bypass; settings, signer and package remain. The latest APK has physical evidence for both photo modes,0/3/10s and comments protection. Unreadable-index,photo-to-ad,mixed cases and public-file verification remain incomplete. Earlier results below are historical.
+The minimum remains Android8/API26. Tile subtitles require API29, tile-add requests API33, and visual assistance API34. Version0.2.9 localizes app-owned UI, floating controls, runtime tile state, help and update/errors into Korean and English. It adds no permission, host modification or language-based detection bypass; settings, signer and package remain. The latest APK has physical evidence for both photo modes,0/3/10s and comments protection. Unreadable-index,photo-to-ad and mixed cases remain unobserved;public-file verification is complete. Earlier results below are historical.
 
 앱 표시 기준은 **시스템 첫 언어가한국어이면한국어,그밖에는영어**다. 영어→한국어 또는 일본어→한국어 목록에서도 영어를 사용한다. Android 자체가 표시하는 런처·접근성 서비스 이름/설명 및 권한·설치 창은OS fallback을 따를 수 있으므로 일부 표기가 다를 수 있다. 시스템 언어 변경 중에도 화면 이탈·진행 소실·서비스 재연결의 안전 동작을 유지하며 필요하면 전체 실행을OFF→ON한다. 언어 변경만으로 기존 옵션을 초기화하지 않는다.
 

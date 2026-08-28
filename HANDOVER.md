@@ -2,11 +2,11 @@
 
 ## 게시·다음 업데이트 경계 / Release and follow-up boundary
 
-현재 검증된0.2.9를 기존 Public 저장소에 배포하는 단계다. 아래 게시 보류 표현은 배포 전 체크포인트이며 최종 상태는 [0.2.9 릴리스 기록](docs/releases/v0.2.9.md)을 따른다. 분할 화면 두 앱 동시 동작과 앱별 플로팅은 [후속 계획](docs/SPLIT_SCREEN_PLAN.md)으로 분리하며 이번 제품 소스에 구현하지 않는다. 기기 구조는 읽기 전용으로 확인했다.
+0.2.9를 기존 **Public 저장소에 공개 완료**했다. 제품태그`v0.2.9`/`eb4bd0c`,제품CI33163186891 SUCCESS,익명3파일 크기·SHA256·업데이트조회API 확인PASS. 최종APK SHA256`5EEB5B8B090B090EB0313CE10CC71102ADF3EDA5728EDE4F01FA0937D831E68D`. 실폰 시험후보1EF와 실행 내용은 같고 내장revision/전체해시만 다르며 분할 화면 보존을 위해 실폰 재설치는 하지 않았다. 아래 보류 표현은 배포 전 체크포인트이고 [릴리스 기록](docs/releases/v0.2.9.md)이 최종 원장이다. 분할 화면 두 앱 동시 동작과 앱별 플로팅은 [후속 계획](docs/SPLIT_SCREEN_PLAN.md)이며 이번 제품에 미구현이다. 기기 구조만 읽기 전용으로 확인했다.
 
-EN: Prepare the verified0.2.9 for the existing Public repository. Hold statements below are pre-release checkpoints;the release record owns final publication status. Dual-host split screen and separate/two-section overlays are follow-up plans,not implemented in this release.
+EN: Public0.2.9 is published,source/tag eb4bd0c,product CI33163186891 SUCCESS and anonymous asset/update-feed parity PASS. Final SHA2565EEB5B8B…31E68D differs from phone candidate1EF only through embedded revision metadata;runtime payload is identical and the phone was not reinstalled. Hold statements below are historical. Dual-host split screen and separate/two-section overlays remain unimplemented follow-up plans.
 
-## 현재 작업 · 사진 릴스 구현 / Photo implementation checkpoint
+## 배포 전 사진 구현 체크포인트 / Pre-publication photo checkpoint
 
 0.2.9/code31 사진 두 모드·각0–10초·기본3초·선택형 번호실패 대체·KO/EN UI를 구현했다. BUILD/522JUnit/가드PASS,lint0오류2경고,같은APK API26/33/34 native25335/25349/25132PASS,독립 소스 재리뷰 P1/P2미해결0. 최신721898-byte 후보를 실폰에 설치하고 SHA256 일치를 확인했다. 통째0·3·10초, 한 장0·3·10초, 마지막 장 이후 다음 릴스 이동과 댓글창 보호를 확인했다. 추가 신속 검사에서8장 릴스의 가로7/7·세로1/1, 한 장10초의 가로1/1·세로1/1을 확인했다. 번호 없는 사진·사진 직후 광고·혼합 게시물은 실폰 사례 미확보이며,20개 표본 탐색은 자동20연속 PASS가 아니다. GitHub 게시 보류. 마지막 복원 상태: 실행ON·사진ON/통째/각3초/대체OFF·반복1,시간제ON/5초·긴영상ON/60초·광고ON·라이브ON/0초·화면분석OFF. [검증·해시](docs/VERIFICATION.md),[사진 계약](docs/PHOTO_REELS.md),D-042 참조. 아래 조사·언어전용 내용은 과거 기록이다.
 

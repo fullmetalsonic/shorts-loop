@@ -1,4 +1,12 @@
-# 업데이트·배포 계획 · ShortsLoop 0.2.8
+# 업데이트·배포 계획 · ShortsLoop 0.2.9
+
+## 현재0.2.9 / Current0.2.9
+
+0.2.9/code31은 한영 표시와 사진 두 모드를 포함해 Public 게시했다. 기존 업데이트 형식·패키지·서명을 유지하며 Android8 이상을 지원한다. 최종APK·CI·공개3파일 검증과 후보/설치본의 구분은 [0.2.9 릴리스](releases/v0.2.9.md)를 따른다. 분할 화면 동시 처리는 미포함이다. 아래0.2.8 계획과 이전 기록은 역사적 근거다.
+
+EN: Public0.2.9/code31 adds Korean/English UI and photo modes,preserving update format,package,signer and Android8+ support. See the0.2.9 release record for final artifact/CI/public verification and installed-candidate distinction. Dual-host split screen is not included. Below are historical plans.
+
+## 이전0.2.8 / Historical0.2.8
 
 **ShortsLoop 0.2.8/code30**은 앱 이름·버전만 표시하고 디버깅이 비활성화된 release APK를 사용합니다. 기존 패키지·서명을 유지합니다. 실제 시험 범위와 게시 상태는 [0.2.8 기록](releases/v0.2.8.md)을 확인하세요.
 

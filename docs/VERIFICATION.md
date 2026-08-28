@@ -2,7 +2,11 @@
 
 ## 현재0.2.9/code31 / Current verification
 
-### 사진 릴스 확장 · 2026-08-28 / Photo extension
+**공개 완료:** 제품 태그/커밋`v0.2.9`/`eb4bd0c`, [CI33163186891](https://github.com/fullmetalsonic/shorts-loop/actions/runs/33163186891) SUCCESS. 최종 APK721898bytes·SHA256`5EEB5B8B090B090EB0313CE10CC71102ADF3EDA5728EDE4F01FA0937D831E68D`. 공개3파일 익명 다운로드 크기·SHA256·GitHub digest 일치/HTTP200/업데이트조회API PASS. 최종 APK의522JUnit·세OS native25335/25349/25132 PASS. 실폰 시험후보1EF와 실행 코드·Manifest·리소스·자산은 같고 내장 소스 revision만 다르다. 실폰에는1EF 후보를 유지했고 전체파일해시일치를 주장하지 않는다. [최종 릴리스·시각·상세근거](releases/v0.2.9.md). 아래 보류 문구는 배포 전 체크포인트다.
+
+EN: Published0.2.9/source eb4bd0c;product CI and anonymous3-asset parity/HTTP/update-feed checks pass. Final APK SHA2565EEB5B8B…31E68D,721898bytes;522JUnit and final three-OS native checks pass. The phone retains the physically tested1EF candidate with identical runtime payload and different embedded revision/whole-file hash. See the release record;hold statements below are historical checkpoints.
+
+### 배포 전 사진 릴스 검증 · 2026-08-28 / Pre-publication photo validation
 
 두 모드의 기본값은 모두3초, 범위0–10초다. 사진옵션 기본OFF, 장 번호 불가 대체 기본OFF이며 일반 반복0회와 독립이다. [사진 계약](PHOTO_REELS.md), [재발방지D-042](DEBUG_LOG.md#d-042--사진-장-번호-조회정상-화면-오인--photo-index-tree-and-false-interaction-guard).
 

@@ -1,5 +1,11 @@
 # 누적이력
 
+## 0.2.9 공개 완료 / Published0.2.9
+
+2026-08-28 19:26KST 기존Public에v0.2.9/eb4bd0c 게시. 제품CI33163186891 SUCCESS,debug/release각522tests·실패/오류/건너뜀0,최종3OS계측PASS,익명3파일 크기·SHA256·GitHub digest·HTTP200·업데이트조회API PASS. 최종5EEB5B8B…31E68D는 실폰시험후보1EF와 실행 내용이 같고 내장revision만 다르다. 실폰재설치/메일발송없음. [릴리스 원장](releases/v0.2.9.md). 아래 보류·local only 표기는 배포 전 이력이다.
+
+EN: Published Public0.2.9 at19:26KST;source eb4bd0c,product CI and final native/public-asset verification pass. Final and phone-tested candidate runtime payloads are identical;embedded revision differs. No phone reinstall/email. See the release record;hold/local-only entries below are historical.
+
 ## 후속 계획 / Follow-up plan
 
 분할 화면의 YouTube·Instagram 동시 처리, 배치 순서 독립, 앱별 플로팅2개 또는 분할형1개를 [별도 계획](SPLIT_SCREEN_PLAN.md)으로 기록했다. 읽기 전용 구조 확인만 수행했으며0.2.9에는 미포함이다.

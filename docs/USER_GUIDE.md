@@ -1,8 +1,8 @@
 # 사용 설명서 / User guide · ShortsLoop 0.2.9
 
-**ShortsLoop 0.2.9/code31**의 한국어·영어 사용 안내입니다. 기존 영상 규칙·설정·패키지·서명을 보존하며 선택형 사진 두 모드를 추가합니다. 최신 APK의 두 모드·0/3/10초·댓글창 보호를 실폰에서 확인했습니다. 번호 없는 사진·사진 직후 광고·혼합 사례는 미확보이고 공개는 보류 중입니다. [사진 설정·예시·한계](PHOTO_REELS.md),[검증 상태](VERIFICATION.md),[언어·메뉴](LOCALIZATION.md).
+**ShortsLoop 0.2.9/code31**의 한국어·영어 사용 안내입니다. 기존 영상 규칙·설정·패키지·서명을 보존하며 선택형 사진 두 모드를 추가합니다. 최신 APK의 두 모드·0/3/10초·댓글창 보호를 실폰에서 확인했습니다. 번호 없는 사진·사진 직후 광고·혼합 사례는 미확보이고 0.2.9를 공개했습니다. [사진 설정·예시·한계](PHOTO_REELS.md),[검증 상태](VERIFICATION.md),[언어·메뉴](LOCALIZATION.md).
 
-This guide covers **ShortsLoop0.2.9/code31** in Korean and English,including optional photo modes while preserving existing settings,package and signer. The latest APK has physical evidence for both modes,0/3/10s and comments protection. Unreadable-index,photo-to-ad and mixed cases remain unobserved;publication is on hold. See the photo guide,verification and [README](../README.md).
+This guide covers **ShortsLoop0.2.9/code31** in Korean and English,including optional photo modes while preserving existing settings,package and signer. The latest APK has physical evidence for both modes,0/3/10s and comments protection. Unreadable-index,photo-to-ad and mixed cases remain unobserved;publication is complete. See the photo guide,verification and [README](../README.md).
 
 인앱 하단은 `ShortsLoop 0.2.9`,업데이트 카드는 `설치 버전 0.2.9` 또는 `Installed version 0.2.9`입니다. 앱 버전에 ‘시험판/정식/stable/trial’ 같은 등급을 붙이지 않습니다. 이는 배포물의 `debuggable=false` 보장이나 기능의 검증 범위를 대신하지 않습니다. 선택형 **화면 분석 보조의 실험 기능 안내·별도 동의·Android14 이상 제한**은 그대로 유지합니다.
 

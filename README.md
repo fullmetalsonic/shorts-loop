@@ -1,8 +1,8 @@
 # 쇼츠 자동 넘김 · ShortsLoop 0.2.9
 
-로컬0.2.9에는 **Instagram 사진 릴스 통째 넘김 / 한 장씩 보기**와 각각0–10초(기본3초), 장 번호 확인 불가 시 선택형 통째 넘김을 추가했습니다. 기본OFF이며 반복0회와 독립입니다. [설정·예시·한계](docs/PHOTO_REELS.md). 최신 APK의 두 모드·0/3/10초·댓글창 보호를 실폰에서 확인했습니다. 번호 없는 사진·사진 직후 광고·혼합 사례는 미확보이며 아직 게시하지 않았습니다. [조건별 검증](docs/VERIFICATION.md).
+로컬0.2.9에는 **Instagram 사진 릴스 통째 넘김 / 한 장씩 보기**와 각각0–10초(기본3초), 장 번호 확인 불가 시 선택형 통째 넘김을 추가했습니다. 기본OFF이며 반복0회와 독립입니다. [설정·예시·한계](docs/PHOTO_REELS.md). 최신 APK의 두 모드·0/3/10초·댓글창 보호를 실폰에서 확인했습니다. 번호 없는 사진·사진 직후 광고·혼합 사례는 미확보이며 0.2.9를 공개했습니다. [조건별 검증](docs/VERIFICATION.md).
 
-Local0.2.9 adds **whole-Reel / each-photo modes for Instagram photos**,separate0–10s delays(default3) and optional unreadable-index fallback. DefaultOFF,independent of repeat0. Both modes,0/3/10s and comments protection are physically tested on the latest APK;unreadable-index,photo-to-ad and mixed cases remain unobserved. Not published. See the linked guide and verification.
+Local0.2.9 adds **whole-Reel / each-photo modes for Instagram photos**,separate0–10s delays(default3) and optional unreadable-index fallback. DefaultOFF,independent of repeat0. Both modes,0/3/10s and comments protection are physically tested on the latest APK;unreadable-index,photo-to-ad and mixed cases remain unobserved. Published as0.2.9. See the linked guide and verification.
 
 ShortsLoop는 **YouTube Shorts와 Instagram Reels를 위한 Android 자동 스크롤(auto scroll) 앱**입니다. 접근성 서비스(AccessibilityService)로 지원되는 재생 정보를 읽고, 재생 횟수 카운터(repeat counter)가 설정한 총 횟수를 확인하면 다음 영상으로 넘깁니다. 한국어·영어(Korean/English) UI, 선택형 플로팅과 빠른 설정 토글을 제공합니다. 모든 영상·언어·기기에서의 감지를 보장하지 않습니다.
 
@@ -16,8 +16,8 @@ ShortsLoop is an **Android auto scroll app for YouTube Shorts and Instagram Reel
 
 Update selection is unchanged:exclude drafts from the fixed repository's public release feed,but **include published prereleases** with valid metadata,a higher versionCode and compatible OS. Size,SHA256,package,version and the installed signer set are checked before Android's final installation confirmation. Neutral version wording does not imply excluding prereleases.
 
-[0.2.9 릴리스 대상 · 공개 검증 대기](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.9) · [검증 상태](docs/VERIFICATION.md) · [배포 점검](docs/RELEASE_PRESENTATION_AUDIT.md). 아직 새 공개 파일의 접근·동일성 검증을 완료했다고 표시하지 않습니다. 현재 게시된 이전 버전은 [0.2.8](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.8)입니다.<br>
-The linked **0.2.9 release target is awaiting publication verification**; it is not a claim that its public files are available or verified. The previously published version is 0.2.8.
+[0.2.9 공개 릴리스](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.9) · [검증 상태](docs/VERIFICATION.md) · [배포 점검](docs/RELEASE_PRESENTATION_AUDIT.md). 공개 APK·SHA256·업데이트JSON을 익명으로 내려받아 원본과 일치함을 확인했습니다. 이전 버전은 [0.2.8](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.8)입니다.<br>
+**0.2.9 is published.** Anonymous downloads of the APK,checksum and update JSON match the frozen originals. Version0.2.8 is the previous release.
 
 Android 8.0 이상. 최종 검증된 같은 서명의 APK를 기존 앱 위에 설치하면 설정을 유지할 수 있습니다. 최신0.2.9 후보에서 사진 두 모드·0/3/10초·댓글 보호를 실폰 확인했습니다. 번호 없는 사진·사진 직후 광고·혼합 사례는 미확보입니다. 후보별 근거는 검증 기록에서 구분합니다. 인앱 하단은 `ShortsLoop 0.2.9`, 업데이트 카드는 `설치 버전 0.2.9` / `Installed version 0.2.9`입니다. 중립적인 버전 표시는 배포 검증이나 기능 보증을 대신하지 않습니다. 화면 분석 보조의 **실험 기능 안내·별도 동의·Android 14 이상 제한**은 유지합니다.<br>
 Android 8.0+. Install the finally verified same-signed APK over the existing app to retain settings. The latest0.2.9 candidate has physical evidence for both photo modes,0/3/10s and comment protection;unreadable-index,photo-to-ad and mixed cases remain unobserved. Evidence is candidate-specific. The footer shows `ShortsLoop 0.2.9` and the update card shows the localized installed version. Neutral version labels do not replace artifact or feature verification. Visual assistance retains its **experimental warning, separate consent and Android 14+ limit**.
