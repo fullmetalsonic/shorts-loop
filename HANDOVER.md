@@ -1,6 +1,42 @@
 # ShortsLoop · 기술 인수인계 / Technical handover
 
-## 현재0.2.8/code30 · 배포·버전 표시 정리 / Release presentation
+## 게시·다음 업데이트 경계 / Release and follow-up boundary
+
+현재 검증된0.2.9를 기존 Public 저장소에 배포하는 단계다. 아래 게시 보류 표현은 배포 전 체크포인트이며 최종 상태는 [0.2.9 릴리스 기록](docs/releases/v0.2.9.md)을 따른다. 분할 화면 두 앱 동시 동작과 앱별 플로팅은 [후속 계획](docs/SPLIT_SCREEN_PLAN.md)으로 분리하며 이번 제품 소스에 구현하지 않는다. 기기 구조는 읽기 전용으로 확인했다.
+
+EN: Prepare the verified0.2.9 for the existing Public repository. Hold statements below are pre-release checkpoints;the release record owns final publication status. Dual-host split screen and separate/two-section overlays are follow-up plans,not implemented in this release.
+
+## 현재 작업 · 사진 릴스 구현 / Photo implementation checkpoint
+
+0.2.9/code31 사진 두 모드·각0–10초·기본3초·선택형 번호실패 대체·KO/EN UI를 구현했다. BUILD/522JUnit/가드PASS,lint0오류2경고,같은APK API26/33/34 native25335/25349/25132PASS,독립 소스 재리뷰 P1/P2미해결0. 최신721898-byte 후보를 실폰에 설치하고 SHA256 일치를 확인했다. 통째0·3·10초, 한 장0·3·10초, 마지막 장 이후 다음 릴스 이동과 댓글창 보호를 확인했다. 추가 신속 검사에서8장 릴스의 가로7/7·세로1/1, 한 장10초의 가로1/1·세로1/1을 확인했다. 번호 없는 사진·사진 직후 광고·혼합 게시물은 실폰 사례 미확보이며,20개 표본 탐색은 자동20연속 PASS가 아니다. GitHub 게시 보류. 마지막 복원 상태: 실행ON·사진ON/통째/각3초/대체OFF·반복1,시간제ON/5초·긴영상ON/60초·광고ON·라이브ON/0초·화면분석OFF. [검증·해시](docs/VERIFICATION.md),[사진 계약](docs/PHOTO_REELS.md),D-042 참조. 아래 조사·언어전용 내용은 과거 기록이다.
+
+EN: Both photo modes default to3s and are independent of repeat0. The latest721898-byte APK is installed with matching SHA256. Whole0/3/10s,each0/3/10s,last-slide exit and comments protection have physical evidence. Additional checks passed7/7 horizontal and1/1 vertical moves on an8-photo post,and1/1 horizontal plus1/1 vertical with each10s. Unreadable-index photos,photo-to-ad and mixed posts were not found for physical testing;20 rapid samples are not20 consecutive automatic passes. Publication remains on hold. Restored executionON,photoON/whole3s/each3s/fallbackOFF,target1 and prior unrelated settings. See verification for artifact-specific PC/native results.
+
+## 후속 조사 · Instagram 사진 릴스 / Photo Reel investigation
+
+2026-08-28 USB 실기기에서 설치0.2.8의 사진 carousel 대기 원인을 확인했다. 사진 첫 장→이전 일반영상→사진 복귀→두 번째 장의 구조 비교에서 사진 전용 요소를 구분했다. 기존 사진/혼합 제외 정책이 시간제보다 먼저 적용되는 것이 원인이다. 사진 전용0–10초(0=안전 확인 후 즉시 다음 릴스) 설정은 **검토안이며 미구현**이다. 일반 영상·진행정보 없음 시간제와 분리하는 방향을 우선 검토하며 혼합·다른 호스트 버전은 추가 검증 대상이다. [원인·증거·예방 항목D-041](docs/DEBUG_LOG.md#d-041--instagram-사진-릴스-제외--photo-reel-diagnosis-not-implemented).
+
+EN: Device diagnosis distinguishes the observed photo carousel from an adjacent ordinary video. Existing unsupported-media policy runs before timeout eligibility. A separate0–10-second photo timeout is a proposal,not an implemented change;no installation or publication occurred. Mixed media and other host versions remain unverified. Structure inspection caused possible accessibility-automation interference;the original photo's first slide is restored and execution remains OFF. The0.2.9 publication hold below still applies.
+
+후속 검토 요구: 통째 넘김/한 장씩 넘김의 선택형2모드와 각0–10초 별도 저장. 현재 사례는 접근성의장번호1/2·2/2로마지막장판별가능하다. 한 장 모드에 ‘장 번호 확인 불가 시 통째로 넘기기’ 선택을 추가한다. OFF는대기,ON은사진릴스확인후기존통째넘김시간을사용하며,최초항상대기안을대체한다. 가로이동후정확한다음장확인과마지막장대기후다른릴스전환확인보호는유지한다. 댓글/메뉴/불명확유형/미확인전환은대체넘김대상이아니다. 기능구현·자동가로넘김·마지막장전환시험은아직수행하지않았다. 상세는D-041의후속요구/마지막장보호안/선택형대체동작을따른다.
+
+## 현재 0.2.9/code31 · 자동 한국어/영어 / Automatic Korean and English
+
+**2026-08-28 후속 상태: 현재 수정분 회귀시험 후 추가 디버그 대기. GitHub 게시·태그·Release·저장소 설명/토픽 갱신은 보류했다.** 새 커밋/푸시 없이 로컬 변경을 유지한다. 최종 검증 후보는704894bytes,SHA256`355920D036C79E7883F4DF8C5B62708F335F630C221BA39FCCED70E0CD981D8B`이며 `artifacts/validation-v0.2.9-code31-20260828-1508/shorts-loop-v0.2.9-validation.apk`에 보존했다. 출고 고정본이 아니므로 추가 수정 후에는 다시 빌드/확인하고, 최종 소스커밋→내장revision 일치→배포고정→CI→공개파일검증 순서를 거쳐야 한다.
+
+EN: Regression checkpoint followed by further-debugging hold;GitHub publication,tags/releases and repository metadata updates are deferred. Work remains local and uncommitted. The preserved704894-byte validation candidate is not a publication-frozen artifact;future delivery still requires committed-source/embedded-revision alignment,CI and public-download verification.
+
+첫 시스템 언어가 한국어일 때만 한국어, 나머지는 영어로 표시한다. UI·도움말·업데이트 오류·플로팅·타일을309개 리소스로 분리하고93개 내부 상태를 언어 중립 코드로 바꿨다. 호스트 감지 어휘·설정 키·권한·자동 넘김 판단·업데이트 선택 정책은 유지한다. 큰 글꼴의 입력·화살표 높이와 실제 창 너비 기반 본문 폭을 보완한다. [언어 계약](docs/LOCALIZATION.md), [릴리스 근거](docs/releases/v0.2.9.md).
+
+The first system language selects Korean only for Korean; every other first language selects English.309 resource pairs and93 neutral status codes separate presentation from decisions. Host lexicons, settings, permissions, playback policy and update selection remain unchanged. Numeric controls grow for large fonts and the content column follows the actual viewport.
+
+현재후보회귀완료:BUILD/470JUnit/기존가드PASS,lint0오류2경고,같은SHA256의API26/33/34 native22873/22881/22702 PASS. 실제OS언어왕복·앞선후보설정19개업그레이드보존과최종후보합성시험은[릴리스기록](docs/releases/v0.2.9.md)에서구분한다. 320dp/글꼴2배의하단제목단어중간줄바꿈은P3개선여지. 추가디버그지시를받기전새작업/게시를시작하지않는다. 새로운휴대폰YouTube/Instagram연속시험은 **NOT RUN**이며과거결과를이번결과로합산하지않는다.
+
+재개후게시준비:현재문서와UI_DESIGN등이전0.2.8기준머리말을최종정렬,README게시대기문구갱신,Public가시성확인. 저장소설명의experimental접미사와topics는아직원격변경하지않았다. 검증완료후실제기능에맞춰android,youtube-shorts,instagram-reels,auto-scroll,accessibilityservice,repeat-counter,floating-widget,quick-settings,java,korean,english 등주제와한영설명반영을검토한다. 소스커밋/내장revision/CI/Release/익명다운로드동일성검증이남았다. 아래는이전버전기록이다.
+
+Validation is limited to PC/emulators in this update. Physical-phone YouTube/Instagram endurance is **NOT RUN**. Publication,final artifact and CI evidence are tracked in the release record; sections below preserve history.
+
+## 이전0.2.8/code30 · 배포·버전 표시 정리 / Release presentation
 
 **게시·공개 검증 완료:**2026-08-28 14:34:29KST Public·draft=false·prerelease=false·latest=v0.2.8. 제품af1ab39·태그4b5647c(문서만 추가), CI33144962247 SUCCESS(debug/release각468시험).14:34:35KST 공개3파일 크기·SHA256 일치와설치본동일성 확인. 최종 APK647418bytes·SHA256`FAA554B16AD5A374A07057FDF2F2195931F77AE77ACC67E2E154A366108F012C`. 메일 미발송.<br>
 Published and public-file parity verified;product source/tag commits are distinguished. No email sent.

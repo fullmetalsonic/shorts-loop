@@ -1,16 +1,28 @@
-# 사용 설명서 · ShortsLoop 0.2.8
+# 사용 설명서 / User guide · ShortsLoop 0.2.9
 
-**ShortsLoop 0.2.8/code30**은 앱 이름·버전만 표시하고 디버깅이 비활성화된 release APK를 사용합니다. 기존 패키지·서명을 유지합니다. 실제 시험 범위와 게시 상태는 [0.2.8 기록](releases/v0.2.8.md)을 확인하세요.
+**ShortsLoop 0.2.9/code31**의 한국어·영어 사용 안내입니다. 기존 영상 규칙·설정·패키지·서명을 보존하며 선택형 사진 두 모드를 추가합니다. 최신 APK의 두 모드·0/3/10초·댓글창 보호를 실폰에서 확인했습니다. 번호 없는 사진·사진 직후 광고·혼합 사례는 미확보이고 공개는 보류 중입니다. [사진 설정·예시·한계](PHOTO_REELS.md),[검증 상태](VERIFICATION.md),[언어·메뉴](LOCALIZATION.md).
 
-**ShortsLoop0.2.8/code30** uses neutral app/version labels and a non-debuggable release APK, preserving the existing package and signer. See the linked0.2.8 record for actual test coverage and publication status.
+This guide covers **ShortsLoop0.2.9/code31** in Korean and English,including optional photo modes while preserving existing settings,package and signer. The latest APK has physical evidence for both modes,0/3/10s and comments protection. Unreadable-index,photo-to-ad and mixed cases remain unobserved;publication is on hold. See the photo guide,verification and [README](../README.md).
 
-인앱 하단은 `ShortsLoop 0.2.8`,업데이트 카드는 `설치 버전 0.2.8`처럼 표시합니다. 앱 버전에 ‘시험판/정식/stable/trial’ 같은 등급을 붙이지 않습니다. 이는 배포물의 `debuggable=false` 보장이나 기능의 검증 범위를 대신하지 않습니다. 선택형 **화면 분석 보조의 실험 기능 안내·별도 동의·Android14 이상 제한**은 그대로 유지합니다.
+인앱 하단은 `ShortsLoop 0.2.9`,업데이트 카드는 `설치 버전 0.2.9` 또는 `Installed version 0.2.9`입니다. 앱 버전에 ‘시험판/정식/stable/trial’ 같은 등급을 붙이지 않습니다. 이는 배포물의 `debuggable=false` 보장이나 기능의 검증 범위를 대신하지 않습니다. 선택형 **화면 분석 보조의 실험 기능 안내·별도 동의·Android14 이상 제한**은 그대로 유지합니다.
 
-The footer uses `ShortsLoop 0.2.8`,and the update card uses `설치 버전 0.2.8` (installed version),without release-grade suffixes. Neutral wording is not a substitute for verifying `debuggable=false` or feature coverage. Optional **visual-assistance experimental warnings,separate consent and the Android14+ restriction** remain.
+The footer uses `ShortsLoop 0.2.9`,and the update card uses `Installed version 0.2.9` or its Korean equivalent,without release-grade suffixes. Neutral wording is not a substitute for verifying `debuggable=false` or feature coverage. Optional **visual-assistance experimental warnings,separate consent and the Android14+ restriction** remain.
+
+## 표시 언어와 메뉴 찾기 / Language and finding menus
+
+시스템 첫 언어가 한국어이면 한국어, 그 밖에는 영어입니다. **일본어→한국어 순서도 영어**입니다. 앱 내부·플로팅·실행 타일은 이 규칙을 따르지만 Android가 직접 표시하는 런처·접근성 이름 및 시스템 권한·설치 창은 OS의 기본 언어 선택을 따를 수 있습니다. 언어를 바꿀 때는 입력을 완료/적용하고 전체 실행을 끈 뒤 Android 설정에서 원하는 언어를 첫 번째로 옮기세요. 앱으로 돌아와 표시를 확인한 다음 전체 화면에서 필요한 때 실행을 다시 켭니다. 안전정지 안내이면 화면을 확인하고OFF→ON하세요. 저장한 옵션·위치는 언어 변경만으로 지우지 않습니다.
+
+Korean as the first system language selects Korean; every other first language selects English, **including Japanese→Korean**. App-owned display, floating controls and runtime tiles follow this rule; Android-owned launcher/accessibility labels and system dialogs may follow OS fallback instead. Apply edited values and stop main execution before reordering system languages. Return, check the display, then enable execution on a full-screen supported video. If safety-stopped, inspect the screen and toggle OFF→ON. Language changes do not erase saved options or position.
+
+자주 쓰는 메뉴는 **일반 영상 · 횟수로 넘김 / Ordinary videos · Play count**, **사용할 앱 / Apps to use**, **사용 준비 / Setup**, **전체 자동 넘김 실행 / Auto-advance**, **업데이트 · 앱 정보 / Updates · App information**입니다. 메뉴의 위치와0회·0초의 의미는 언어별로 같습니다. 전체 메뉴·오류·플로팅 설명은 [언어 안내](LOCALIZATION.md)를 참고하세요.
+
+The bilingual menu names above identify the same controls in the same positions. Zero plays and zero seconds retain their distinct meanings. UI translation does **not** guarantee host detection in every language: existing readers focus on Korean/English labels, supported clocks and accessibility structures. See the localization guide for the full menu map, floating labels and errors.
 
 ## 업데이트할 때 알아둘 점
 
-0.2.8은 디버깅 비활성 release APK와 기존 설치본의 서명 일치를 검증했습니다. 기존 앱 위에 설치하며,설정 보존을 위해 먼저 삭제하지 마세요. 설치 후 자동 넘김 실행은 직접 켭니다. [현재 검증 상태](VERIFICATION.md),[배포 점검 기록](RELEASE_PRESENTATION_AUDIT.md).
+0.2.9도 디버깅 비활성 release APK와 기존 설치본의 서명 일치를 검증한 뒤 배포합니다. 공개 검증이 완료된 파일을 기존 앱 위에 설치하며,설정 보존을 위해 먼저 삭제하지 마세요. 설치 후 자동 넘김 실행은 직접 켭니다. 이전0.2.8의 검증은 [과거 기록](releases/v0.2.8.md)이며0.2.9의 결과로 재사용하지 않습니다. [현재 검증 상태](VERIFICATION.md),[배포 점검 기록](RELEASE_PRESENTATION_AUDIT.md).
+
+Version0.2.9 requires verification of its non-debuggable release artifact and existing signer before distribution. Install the verified same-signed APK over the existing app; do not uninstall first if you want to retain settings. Enable execution yourself after installation. Historical0.2.8 verification does not establish0.2.9 readiness.
 
 업데이트 조회 정책은 바꾸지 않습니다. 고정 저장소의 공개 릴리스 목록에서 draft를 제외하고 **공개된 prerelease도 포함**해,유효한 메타데이터·더 높은 versionCode·기기 OS 호환성을 만족하는 항목을 확인합니다. 설치 전 크기·SHA256·패키지·버전·현재 설치본과 같은 서명 집합을 검사하고 Android의 최종 설치 확인을 거칩니다. 앱의 중립적인 버전 표시가 prerelease를 제외한다는 뜻은 아닙니다.
 
@@ -111,9 +123,9 @@ Android 설정에서 접근성이 ON이어도 OS가 프로세스를 종료한 �
 
 ### 두 가지 터치 방식
 
-`광·라`는 **광고·라이브 옵션이 모두 켜짐**을 뜻합니다. 일반 반복이0회여도 두 옵션은 별도로 동작합니다. 재생 횟수나 현재 영상 종류를 뜻하는 표시는 아닙니다. / `광·라` means both ad and live skipping are enabled independently of zero ordinary plays; it is not a play count or content classification.
+`광·라`(영어 `A+L`)는 **광고·라이브 옵션이 모두 켜짐**을 뜻합니다. 일반 반복이0회여도 두 옵션은 별도로 동작합니다. 재생 횟수나 현재 영상 종류를 뜻하는 표시는 아닙니다. / `A+L` (`광·라` in Korean) means both ad and live skipping are enabled independently of zero ordinary plays; it is not a play count or content classification.
 
-0회에서 긴 영상 옵션도 활성이라면 ‘조건’으로 표시합니다. 이는 길이 조건 등의 독립 옵션이 켜졌다는 뜻이며 실제 현재 영상이 길다는 판정 자체는 아닙니다. / At zero plays, “조건” indicates an active long-video option; it does not classify the current video as long.
+0회에서 긴 영상 옵션도 활성이라면 ‘조건’(영어 `Filters`)으로 표시합니다. 이는 길이 조건 등의 독립 옵션이 켜졌다는 뜻이며 실제 현재 영상이 길다는 판정 자체는 아닙니다. / At zero plays, “Filters” (`조건` in Korean) indicates an active long-video option; it does not classify the current video as long.
 
 플로팅 표시를 켜면 터치 방식이 나타납니다. 표시를 끄면 관련 세부 설정을 숨기지만 선택한 방식은 보존합니다.
 
@@ -147,7 +159,7 @@ X는 폭 축소를 위해 24dp×24dp로 작게 만들었습니다. 일반적인 
 
 앱을 바꾸면 이전 영상의 카운트를 새 앱으로 넘기지 않습니다. 선택하지 않은 앱, 일반 YouTube 동영상, Instagram 홈 게시물·DM 등을 자동 조작하도록 만든 기능이 아닙니다. Instagram이 설치되지 않으면 선택 항목에 ‘미설치’를 표시하고 사용할 수 없게 합니다.
 
-일반 Instagram 릴스는 재생 진행값을 읽을 수 있는 단일 동영상을 대상으로 반복 횟수를 셉니다. 정상 정보가 있으면 시간제보다 횟수 계산이 우선입니다. 재생 정보가 없는 지원 단일 영상만 아래 선택형 시간제를 사용할 수 있습니다. 사진·혼합 콘텐츠·영상 구분 정보를 읽지 못하는 화면은 대기합니다. 재생바가 없다고 광고인 것은 아닙니다.
+일반 Instagram 릴스는 재생 진행값을 읽을 수 있는 단일 동영상을 대상으로 반복 횟수를 셉니다. 정상 정보가 있으면 시간제보다 횟수 계산이 우선입니다. 재생 정보가 없는 지원 단일 영상만 아래 선택형 시간제를 사용할 수 있습니다. 확인된 사진은 별도 사진 설정을 따르며 미지원 혼합 콘텐츠·영상 구분 정보를 읽지 못하는 화면은 대기합니다. 재생바가 없다고 광고인 것은 아닙니다.
 
 ### 긴 영상 건너뛰기
 
@@ -162,7 +174,7 @@ X는 폭 축소를 위해 24dp×24dp로 작게 만들었습니다. 일반적인 
 
 긴 영상 이동 확인이4.5초 안에 되지 않으면 안전정지합니다. 일반 N회 경로의 재인식 복구로 실패를 우회하거나 같은 영상을 연속 요청하지 않습니다. 광고·라이브도 긴 영상으로 추정하지 않습니다.
 
-code28은 YouTube 페이지의 행 번호가 요청 때보다 정확히1 증가하는지도 확인합니다. 같은 창·pager·페이지 영역,달라진 콘텐츠 키와300ms 이상 안정·실제 전진 재생 검사는 그대로입니다. 행을 모두 읽었는데 같거나 뒤로 가거나2칸 이상 뛰면 총길이가 달라도 확인하지 않습니다. 행 정보 없음은 이동 근거가 아니며,깨진 구조·갱신 실패는 안전정지 조건입니다. 이는 code26의 동일 길이 안전정지를 보완한 기존 동작입니다. 과거code28의 YouTube20회는 통과했지만 같은 길이 쌍은 그20회에서 나오지 않았으며,이 결과를0.2.8 신규 시험으로 표시하지 않습니다. 조건별 근거는 검증 문서를 확인하세요.
+code28은 YouTube 페이지의 행 번호가 요청 때보다 정확히1 증가하는지도 확인합니다. 같은 창·pager·페이지 영역,달라진 콘텐츠 키와300ms 이상 안정·실제 전진 재생 검사는 그대로입니다. 행을 모두 읽었는데 같거나 뒤로 가거나2칸 이상 뛰면 총길이가 달라도 확인하지 않습니다. 행 정보 없음은 이동 근거가 아니며,깨진 구조·갱신 실패는 안전정지 조건입니다. 이는 code26의 동일 길이 안전정지를 보완한 기존 동작입니다. 과거code28의 YouTube20회는 통과했지만 같은 길이 쌍은 그20회에서 나오지 않았으며,이 결과를0.2.9 신규 시험으로 표시하지 않습니다. 조건별 근거는 검증 문서를 확인하세요.
 
 This independent option skips ordinary videos whose known total duration is at least the configured1–3600-second threshold(default60). It is not a waiting timer. Stable-page and actual-forward-playback checks still apply; unknown duration,ads and live previews do not qualify. At zero plays, long-video skipping can run but the Instagram timer remains stopped. An unconfirmed long-video transition hard-stops after4.5 seconds and does not enter ordinary recount recovery.
 
@@ -195,7 +207,7 @@ Android 14 이상에서 Instagram을 선택했을 때 별도 동의로 켤 수 �
 3. 하단 ‘전체 자동 넘김 실행’을 켭니다. **광고는 반복 0회에서도 동작합니다.**
 4. Instagram 릴스 화면에서 광고임을 확인하면 완주 횟수를 기다리지 않고 다음 페이지로 한 번 이동을 요청합니다.
 
-광고 옵션만 켜서는 실행이 시작되지 않습니다. **전체 실행ON + Instagram 선택 + 광고 옵션ON**을 모두 만족해야 합니다. 반복 횟수는 광고의 실행 조건이 아니며, 광고만 쓰려면 **반복0회 + 광고ON + 긴 영상·라이브OFF + 전체 실행ON**으로 설정합니다. 실행OFF, 광고 옵션OFF 또는 Instagram 선택 해제에서는 광고를 넘기지 않습니다. Instagram 선택을 해제해도 광고 옵션 값은 보존되므로 다시 선택했을 때 기존 설정을 확인하세요.
+광고 옵션만 켜서는 실행이 시작되지 않습니다. **전체 실행ON + Instagram 선택 + 광고 옵션ON**을 모두 만족해야 합니다. 반복 횟수는 광고의 실행 조건이 아니며, 광고만 쓰려면 **반복0회 + 광고ON + 긴 영상·라이브·사진OFF + 전체 실행ON**으로 설정합니다. 실행OFF, 광고 옵션OFF 또는 Instagram 선택 해제에서는 광고를 넘기지 않습니다. Instagram 선택을 해제해도 광고 옵션 값은 보존되므로 다시 선택했을 때 기존 설정을 확인하세요.
 
 광고 옵션을 끄면 광고는 직접 넘겨야 합니다. 일반 릴스의 반복 횟수 설정을 끄는 것은 아닙니다. 앱의 토글 바로 아래에도 이 차이를 안내합니다.
 
@@ -311,7 +323,11 @@ For target1, discard the uncertain earlier play and wait for a verified new begi
 
 저장하는 값은 기준/현재 횟수, 마지막 양수 횟수, 실행 요청, 터치 방식, 적용 앱 선택, 플로팅 표시 옵션, 긴 영상 옵션·총길이 기준, 광고 옵션, 라이브 옵션·초 값, 시간제 옵션·초 값, 화면 분석 옵션 및 상대X/Y 위치입니다. 옵션은 서로 독립 저장하며 대상 앱 선택을 해제해도 관련 설정은 보존합니다. 서비스가 다시 연결되면 실행 요청을OFF로 바꿉니다. 클라우드·기기이전 백업은 제외합니다.
 
-업데이트 자동 조회 선택·마지막 시도 시각·새 버전 정보는 재생 설정과 별도 저장합니다. APK는 앱 내부의 업데이트용 파일이며 영상 데이터가 아닙니다. **0.2.4에서 업데이트 메뉴가 있는 버전으로 옮길 때는 최초 수동 APK 설치가 필요**하고, 0.2.5부터 이후 호환되는 공개 버전을 인앱으로 확인할 수 있습니다. 공개된 prerelease도 기존 정책에 따라 업데이트 후보가 될 수 있습니다. 앱 버전의 중립적 표시와 조회 대상은 별개입니다.0.2.8의 최종 검증·게시 결과는 [VERIFICATION](VERIFICATION.md) 참조.
+업데이트 자동 조회 선택·마지막 시도 시각·새 버전 정보는 재생 설정과 별도 저장합니다. APK는 앱 내부의 업데이트용 파일이며 영상 데이터가 아닙니다. **0.2.4에서 업데이트 메뉴가 있는 버전으로 옮길 때는 최초 수동 APK 설치가 필요**하고, 0.2.5부터 이후 호환되는 공개 버전을 인앱으로 확인할 수 있습니다. 공개된 prerelease도 기존 정책에 따라 업데이트 후보가 될 수 있습니다. 앱 버전의 중립적 표시와 조회 대상은 별개입니다.0.2.9의 최종 검증·게시 결과는 [VERIFICATION](VERIFICATION.md) 참조.
+
+0.2.9에서는 조회·다운로드·설치와 오류 안내도 표시 언어를 따릅니다. **업데이트 다운로드 / Download update → 업데이트 설치 / Install update** 순서이며 Android에서 최종 확인하기 전에는 설치 완료가 아닙니다. 통신·검증 오류가 발생하면 번역된 안내에 따라 다시 시도하고, 서명·파일 검사를 우회하지 마세요. 알 수 없는 오류의 원문·내부 경로는 표시하지 않습니다.
+
+Version0.2.9 also translates update status and errors. Use **Download update → Install update**, then confirm in Android; opening the installer alone is not completion. Follow localized retry guidance after connection/verification errors without bypassing file or signer checks. Unknown raw error text and internal paths are not displayed.
 
 0.1.5에서 업데이트하면 기존 양수 설정은 기준/현재 값으로 옮깁니다. 기존 현재 값이 0이면 현재 0을 보존하고 마지막 양수를 기준값으로 옮깁니다. 기본 선택은 YouTube만, 플로팅 표시 ON, 횟수 순환입니다. 위치도 유지합니다.
 
@@ -349,7 +365,7 @@ Unrestricted battery use may increase battery consumption. It does not add auto-
 
 ## 과거 버전 설명·검증 기록 / Historical descriptions and evidence
 
-아래의0.2.7 이하 빌드·기기·게시 결과는 버전별 과거 기록입니다. 당시 표시·배포 상태와 검증 수치는 보존하지만0.2.8의 PASS나 공개 완료 근거로 재사용하지 않습니다.
+아래의0.2.7 이하 및 별도 [0.2.8 기록](releases/v0.2.8.md)의 빌드·기기·게시 결과는 버전별 과거 기록입니다. 당시 표시·배포 상태와 검증 수치는 보존하지만0.2.9의 PASS나 공개 완료 근거로 재사용하지 않습니다.
 
 <details>
 <summary>0.2.7 이하의 이전 문서 기록 / Earlier documentation</summary>

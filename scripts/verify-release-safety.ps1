@@ -12,10 +12,14 @@ function Read-Badging([string]$Path) {
 $taskBadging = Read-Badging $Apk
 if ($taskBadging -notmatch "package: name='com.fullmetalsonic.shortsloop' versionCode='\d+' versionName='\d+\.\d+\.\d+'" -or
     $taskBadging -match '(?m)^application-debuggable(?:\s|$)') { throw 'Expected a non-debuggable product release APK.' }
-[xml]$taskStrings = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/res/values/strings.xml') -Raw
-foreach ($taskExpected in @(@('installed_version','설치 버전 %1$s'), @('app_version','ShortsLoop %1$s'))) {
-    $taskValue = $taskStrings.resources.string | Where-Object { $_.name -eq $taskExpected[0] }
-    if ($taskValue.InnerText -cne $taskExpected[1]) { throw 'Release label contains a stage badge or stale version.' }
+foreach ($taskLocale in @(@('values', 'Installed version %1$s'), @('values-ko', '설치 버전 %1$s'))) {
+    [xml]$taskStrings = Get-Content -LiteralPath (Join-Path $taskRoot "app/src/main/res/$($taskLocale[0])/strings.xml") -Raw
+    foreach ($taskExpected in @(@('installed_version', $taskLocale[1]), @('app_version', 'ShortsLoop %1$s'))) {
+        $taskValue = @($taskStrings.resources.string | Where-Object { $_.name -eq $taskExpected[0] })
+        if ($taskValue.Count -ne 1 -or $taskValue[0].InnerText -cne $taskExpected[1]) {
+            throw 'Localized release label contains a stage badge, stale version or duplicate key.'
+        }
+    }
 }
 $taskSources = Get-ChildItem -LiteralPath (Join-Path $taskRoot 'app/src/main/java') -Recurse -Filter '*.java' | Get-Content -Raw
 if ($taskSources -match '공개 시험판|정식판|· 시험판') { throw 'Stale product release labels must not return.' }

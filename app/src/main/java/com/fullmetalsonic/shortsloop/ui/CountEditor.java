@@ -33,26 +33,31 @@ public final class CountEditor extends LinearLayout {
         input.setKeyListener(TextKeyListener.getInstance());
         input.setRawInputType(InputType.TYPE_CLASS_NUMBER); input.setImeOptions(EditorInfo.IME_ACTION_DONE);
         input.setTextSize(40); input.setTextColor(UiTheme.TEXT); input.setGravity(Gravity.CENTER);
-        input.setSelectAllOnFocus(true); input.setContentDescription("기준 반복 횟수, 0에서 99회");
+        input.setSelectAllOnFocus(true); input.setContentDescription(getContext().getString(R.string.ui_count_description));
         input.setBackground(UiTheme.surface(c, UiTheme.BACKGROUND, 14, true));
-        row.addView(input, new LinearLayout.LayoutParams(0, UiTheme.dp(c, 104), 1));
+        input.setMinimumHeight(UiTheme.dp(c, 104));
+        row.addView(input, new LinearLayout.LayoutParams(0, -2, 1));
         LinearLayout arrows = UiTheme.column(c);
-        up = UiTheme.button(c, "▲"); up.setId(R.id.count_up); up.setContentDescription("반복 횟수 한 회 늘리기");
-        down = UiTheme.button(c, "▼"); down.setId(R.id.count_down); down.setContentDescription("반복 횟수 한 회 줄이기");
+        up = UiTheme.button(c, getContext().getString(R.string.ui_count_up_symbol)); up.setId(R.id.count_up); up.setContentDescription(getContext().getString(R.string.ui_count_increase));
+        down = UiTheme.button(c, getContext().getString(R.string.ui_count_down_symbol)); down.setId(R.id.count_down); down.setContentDescription(getContext().getString(R.string.ui_count_decrease));
         up.setFocusable(false); down.setFocusable(false);
-        arrows.addView(up, new LinearLayout.LayoutParams(-1, UiTheme.dp(c, 52)));
-        arrows.addView(down, new LinearLayout.LayoutParams(-1, UiTheme.dp(c, 52)));
+        up.setMinHeight(UiTheme.dp(c, 52)); up.setMinimumHeight(UiTheme.dp(c, 52));
+        arrows.addView(up, new LinearLayout.LayoutParams(-1, -2));
+        down.setMinHeight(UiTheme.dp(c, 52)); down.setMinimumHeight(UiTheme.dp(c, 52));
+        arrows.addView(down, new LinearLayout.LayoutParams(-1, -2));
         LinearLayout.LayoutParams ap = new LinearLayout.LayoutParams(UiTheme.dp(c, 64), -2); ap.leftMargin = UiTheme.dp(c, 8);
         row.addView(arrows, ap); addView(row);
         detail = UiTheme.text(c, "", 14, UiTheme.MUTED, false); detail.setPadding(0, UiTheme.dp(c, 10), 0, 0); addView(detail);
-        apply = UiTheme.button(c, "입력한 횟수 적용"); apply.setId(R.id.count_apply); addView(apply, new LinearLayout.LayoutParams(-1, -2));
+        apply = UiTheme.button(c, getContext().getString(R.string.ui_count_apply)); apply.setId(R.id.count_apply); addView(apply, new LinearLayout.LayoutParams(-1, -2));
         apply.setVisibility(GONE); bind(initial);
         input.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (binding) return;
-                dirty = true; input.setError(null); apply.setVisibility(VISIBLE); up.setEnabled(true); down.setEnabled(true);
-                detail.setText("입력 후 키보드의 완료 또는 적용을 눌러 주세요.");
+                dirty = !s.toString().equals(Integer.toString(committed));
+                input.setError(null); apply.setVisibility(dirty ? VISIBLE : GONE);
+                up.setEnabled(dirty || committed < 99); down.setEnabled(dirty || committed > 0);
+                detail.setText(dirty ? R.string.ui_input_draft : R.string.count_helper);
             }
             @Override public void afterTextChanged(Editable e) {}
         });
@@ -77,7 +82,7 @@ public final class CountEditor extends LinearLayout {
         if (keyboard != null) keyboard.hideSoftInputFromWindow(input.getWindowToken(), 0);
         return true;
     }
-    private void invalid() { input.setError("0~99 사이의 정수를 입력해 주세요"); input.requestFocus(); }
+    private void invalid() { input.setError(getContext().getString(R.string.ui_count_error)); input.requestFocus(); }
     private void save(int value) { dirty = false; bind(value); listener.changed(value); }
     public void render(int value) { if (!dirty && committed != value) bind(value); }
     private void bind(int value) {

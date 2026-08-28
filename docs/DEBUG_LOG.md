@@ -1,5 +1,61 @@
 # 디버그·재발방지 대장
 
+## D-042 · 사진 장 번호 조회·정상 화면 오인 / Photo index tree and false interaction guard
+
+- 증상: 사진은 감지하지만 한 장 모드에서 `photo.index_missing`으로 대기했다. 확장 조회를 적용한 첫 후보에서는 정상 사진 화면을 `screen.interaction`으로 차단했다.
+- 재현·증거: 동일 화면의 compressed tree61개 노드에는 장 번호가 없고 full tree104개 노드에는 전용 TextView의1/2가 있었다. 확장 트리에 추가되는 `bottom_sheet_camera_container`는 자식이 없는 비상호작용 FrameLayout이었다. 원본은 비공개 보존한다.
+- 직접 원인: 조사 도구의 확장 조회와 제품의 중요 노드 전용 조회가 달랐고, 기존 `bottom_sheet` 부분 문자열 차단이 빈 외곽 컨테이너까지 메뉴로 판단했다.
+- 잘못된 접근: 조사 XML에서 읽힌 장 번호가 제품에서도 그대로 제공된다고 가정했다. 빌드·정책시험만으로 실제 감지 성공을 판정하지 않는다.
+- 수정: 실행ON·선택Instagram·사진옵션ON에서만 확장 조회하고 새 트리를 다시 읽는다. 정확한 카메라 외곽ID/FrameLayout/자식0/비중요·비클릭·비포커스·비편집/빈text·description만 예외 처리한다. 실제 댓글·메뉴와 자식 감시는 유지한다.
+- 추가 검토: 사진의 같은 media component 아래에 남는 빈 영상 자리표시자는 허용하되 여러 개·다른 부모·자식 있는 영상·상호작용 요소는 제외한다. 정상 자리표시자의 작성자/재생 description은 영상 재생 증거로 쓰지 않는다.
+- 재무장 보호: 사진 세로 전환은 다른 안정된 게시물 식별값과 별개로 다른 media source-node 식별값을 요구한다. 캡션의 지연 표시·부분 소실만으로 성공 처리하지 않는다. 최초 직전 노드 serial 방식의 A→B→A 키 변경 반례를 검토에서 발견하여 창번호+Android노드해시의 무상태 키로 교체했다. 동일 노드는 동일 키이며 충돌·재사용·메타데이터 부재는 보수적으로 대기/정지한다. 노드 객체나 콘텐츠는 보관하지 않는다. 확인된 사진/영상 광고도 사용 가능한 페이지 키를 보존한다.
+- 자동 예방: 사진조회 opt-in 조합, 빈 외곽의 부정 조건, 캡션만 변경/페이지 근거 롤백, snapshot 복사 보존, 사진 전용 적용 버튼과 기존 안전 연결 시험을 추가했다. 최신 실제 결과와 산출물은 [검증 기록](VERIFICATION.md)을 따른다.
+- 최신 실폰 재시험: 설치 APK 해시 일치 후 통째0/3/10초·한 장0/3/10초·반복0 독립·댓글 보호를 확인했다. 추가8장 한 장0초에서 가로7/7·세로1/1,한 장10초에서 가로1/1·세로1/1,0초·대체ON 댓글 보호에서 새 요청0. 신속20표본 탐색은 수동 이동을 포함하며 번호 없는 사진·사진 직후 광고·혼합 실제 사례는 미확보다. 새 제품 수정 없이 검사했고 두 시간3초·대체OFF·통째·반복1·실행ON으로 복원했다. 미관측 분기를 PASS로 기록하지 않는다.
+
+EN: The debug tool included non-important nodes while the app did not. The observed slide index existed only in the expanded tree. Expanded queries also exposed an empty camera shell that the broad bottom-sheet guard rejected. Opt-in Instagram photo queries now reacquire the tree;only the exact empty,non-interactive shell is exempted,without bypassing descendant/menu checks. A same-media empty video placeholder is distinguished from a populated/mismatched video. Photo vertical confirmation also requires independent media source-node movement,so caption-only changes cannot rearm automation. Node reuse remains a conservative limitation. Regression and artifact-specific device evidence are linked above.
+
+## D-041 · Instagram 사진 릴스 제외 / Photo Reel diagnosis, not implemented
+
+**후속 구현:**0.2.9 로컬 후보에사진감지·통째/한장모드·선택형대체·전환확인·실패고정정지를추가했다.사진관련52개추가시험을포함한522JUnit과native입력·안전연결검사를수행했다. 최신 APK 실폰 두 모드·0/3/10초·댓글 보호를 확인했고 일부 예외 실제 사례는 미확보다. 아래는최초조사/설계기록이며현재상태는[사진설명](PHOTO_REELS.md)과[검증기록](VERIFICATION.md)을따른다. 게시보류다.
+
+- 상태·범위: 2026-08-28 USB 구조 조사. 설치 ShortsLoop0.2.8/code30, Instagram444.0.0.46.85. 사진 전용 시간제는 아직 구현·설치·게시하지 않았다. 미게시0.2.9의 번역 변경과 별개이며 사진 제외 정책은 기존HEAD에도 있다.
+- 증상·원인: 사진 게시물에서0/1로 대기. 구조 조회 전 서비스는 connected/enabled=true, blocked=false, `사진·혼합 릴스 · 대기`였다. `InstagramPolicy.unsupportedMedia`가 `clips_carousel*` 등을 제외하고 `InstagramReader`가 진행정보·광고·시간제 후보 판정 전에 반환한다. 기존 시간제5초 옵션이 켜져 있어도 적용 대상이 아니다. 진행정보를 못 읽어서 생긴 새 회귀가 아니라 기존 미지원 유형이다.
+- 재현·증거: 같은 사진 게시물의 최초1/2, 이전 일반 영상 방문 후 복귀1/2, 가로 이동한2/2에서 각각 `clips_carousel_viewpager`와 `clips_carousel_image_media_content`가1개, 단일영상 요소·SeekBar가0개였다. 비교 일반 영상은 사진/carousel 요소0개, `clips_single_media_component`와SeekBar가각1개였다. 사진 첫 장으로 복원했다. 스크린샷·원본 트리는 비공개 보존하며 내용·계정·기기식별자는 공개 기록에서 제외한다.
+- 해석·한계: 현재 설치 호스트의 해당 사진 carousel은 별도 분류 근거가 있다. 사진으로 편집한 동영상 파일, 다른 호스트 버전, 모든 사진/혼합 게시물까지 검증한 것은 아니다. 사진 화면 트리에도 별도 `clips_video_container`가 존재하므로 영상 노드가 하나라도 있다는 이유만으로 현재 콘텐츠를 영상으로 판정하면 안 된다. 현재 페이지·이미지 요소의 부모 관계와 가시성/안정 상태를 함께 검사해야 한다. 이전 서비스의 position/duration 캐시는 현재 사진의 재생시간 증거가 아니다.
+- 검토안A: 사진으로 확인된 Instagram 릴스에 별도 켜기/끄기와0–10초 대기 설정.0은 꺼짐이 아니라 안전한 현재 페이지 확인 후 즉시 다음 **릴스**로 이동; 여러 장을 자동으로 가로 넘기는 기능과 구분한다. 일반영상의 반복 및 기존 진행정보 없음 시간제 계약은 유지한다. 기본값·반복0과의 관계 등 세부 계약은 구현 전 확정한다.
+- 후속 요구·가능성: 통째로 다음 릴스 이동 / 사진 한 장씩 이동 중 하나를 선택하고 각 모드의0–10초 값을 별도 보존하는 구성을 검토한다. 현재 실기기 원본 트리의 `carousel_index_indicator_text_view`에서1/2와2/2를 읽을 수 있어 이 사례에서는 현재 장/전체 장 및 마지막 장을 구분할 근거가 있다. 가로 이동용 carousel은scrollable=false여서 접근성 scroll action 지원을 가정하지 않으며, 수동ADB 가로 스와이프 성공을 제품의 자동 가로 제스처 성공으로 보고하지 않는다.
+- 마지막 장 보호안: 한 장 모드는 안정된 같은 게시물의유효한i/n을 요구하고,i<n이면가로이동→같은게시물의(i+1)/n확인→새장타이머,i=n이면마지막장대기후다음릴스이동→다른게시물확인 순서다. 최초안은번호누락시항상대기였으나아래선택형대체동작요구로보완한다. 번호/전체장수 모순·이미지유형불명확·전환성공미확인 때는 반복 가로 스와이프나 임의 세로 넘김 대신 기존 보호를 유지한다.0초도전환확인과화면안정검사를생략하지않는다. 손조작/댓글/잠금 보호와혼합콘텐츠 정책은 구현 전 구체화하며 마지막장→다음릴스 제품E2E는NOT RUN이다.
+- 번호 확인 실패 시 선택형 대체 동작: 한 장씩 보기의 하위 옵션으로 ‘장 번호 확인 불가 시 통째로 넘기기’를 제공하는 요구를 추가한다. OFF이면대기,ON이면별도로저장한통째넘김0–10초설정을재사용한다. 사진 릴스로 확인된 안정된 같은 게시물에서 번호를 읽지 못하는 경우만 대상이며,댓글/메뉴/잠금/앱변경/사진유형불명확/미확인전환을 우회하지 않는다. 전환 중 잠깐 사라진 번호는 재확인하고, 대체 동작 진입 시 통째넘김 시간을 새로 계산하는 방향으로 검토한다.0초는안전확인후즉시이며새로운반복제스처허용이아니다. 설정UI·저장·동작·회귀시험은아직미구현이다.
+
+EN: The per-photo mode gains a proposed optional fallback for an unreadable slide index:OFF waits;ON reuses the separately saved whole-Reel delay. It requires a confirmed stable photo Reel and cannot bypass comments,menus,unknown content or an unconfirmed transition. Brief index loss during movement is rechecked;starting a fresh whole-Reel timer on fallback entry is the proposed timing rule. This updates the initial always-wait design;implementation and automatic tests remain pending.
+- 검토안B: 별도 판별이 불가능한 유형은 안전한 릴스 페이지임이 확인된 경우에 한해 진행정보 없음 시간제와의 통합을 검토한다. 댓글/메뉴/불명확한 화면까지 ‘진행정보 없음’으로 묶지 않는다. 현재 사례에는A안 근거가 있어B안으로 일괄 통합할 필요는 없다.
+- 예방·미실행: 구현 시 사진→영상·영상→사진·사진→사진,0/1/10초,사진 가로 조작 중 중지,댓글/잠금/앱 전환,전환 확인 실패·중복 요청 차단을 시험해야 한다. 현재는 구조 비교만 완료했으며 신규 자동 넘김·회귀/연속 시험은NOT RUN이다.
+- 진단 도구 영향: 첫 UIAutomator 구조 조회 뒤 서비스 인스턴스 재연결과 실행OFF를 확인했다(D-007과 같은 시험 간섭 가능). 이후 구조 비교는OFF 상태로 분리했다. 재생 중 일반 영상의 첫XML조회는idle 실패; 잠깐 일시정지하여 조회 후 재생을 복원했다. 임의 권한 변경·자동 재시작은 하지 않았으며 최종 서비스connected=true/enabled=false다. 구조 수집을 실제 자동 넘김 성공으로 보고하지 않는다.
+
+EN: On the installed host, the two-image carousel exposes dedicated image/carousel elements on both slides and after re-entry; the adjacent ordinary video exposes single-video/SeekBar elements instead. Existing policy rejects the photo/mixed type before timer eligibility, so this is an unsupported-type boundary, not a localization regression. A separate opt-in0–10-second photo timeout is feasible to investigate;zero means immediate after safe page qualification, not disabled. This would advance to the next Reel, not cycle photos. Mixed media, encoded slideshow videos and other host versions remain unverified. No product change, installation, new automatic-transition pass or publication occurred. UIAutomator inspection was separated from automation after service reconnection; final execution is OFF.
+
+## D-039 · 언어 표시와 내부 상태 결합 / Localization boundary
+
+- 증상·재현: 기존 코드의한국어 상태를번역하면플로팅의정확한문자열비교가맞지않아상태표시가달라질수있음. 영어리소스가없는기존앱은시스템영어에서도한국어표시.
+- 원인·증거: LiveSkipPolicy/LongVideoPolicy/RuntimeState의한국어출력과FloatingController의동일문자열분기. 직접번역만하는접근은표시/판단계약을분리하지못함.
+- 수정·영향:93개고정중립코드→StatusText→KO/EN리소스. 호스트검출한국어/영어어휘는유지. 알려진업데이트오류만코드로번역,알수없는예외본문차단.
+- 자동예방:verify-localization 리소스/서식/하드코딩가드,언어별오류검사,기존카운트/광고/라이브/안전정지회귀시험.
+- 실제언어전환후속발견:Android가같은EditText값을복원해도TextWatcher가무조건dirty로처리하여적용버튼이표시됨.4입력에서저장값과문자열이같으면미편집,다르면임시입력유지로수정.언어별viewstate복원34검사로재발방지하며설정저장은발생하지않음.
+- 재시험·최종결과:[0.2.9](releases/v0.2.9.md). 독립검토에서OS설정이한국어이름을선택할수있는데영문이름만찾으라는안내를발견해this app기준으로보완.
+
+EN: Language-neutral status/error codes separate display from decisions. Bilingual host detection terms remain untouched. Resource/format guards and existing behavior tests prevent translation from changing automation;unknown exception text is suppressed. OS-owned labels may differ from the app language,so setup instructions refer to this app.
+
+## D-040 · 큰 글꼴·좁은 뷰포트 잘림 / Large text and narrow viewport
+
+- 증상·재현:320dp·글꼴2배native시험에서▲의텍스트높이가고정52dp버튼의내부높이를초과. 합성좁은창스크린샷에서본문컨테이너가창보다넓어양쪽잘림.
+- 원인·증거:입력/화살표고정높이,SettingsScreen의전체DisplayMetrics폭기반고정컬럼. 기존텍스트자체레이아웃검사만으로는부모컨테이너가화면밖으로나가는것을검출못함.
+- 잘못된접근:텍스트줄폭만검사하거나단순시험PASS를전체시각PASS로간주. getLineWidth의줄끝공백은보이는글자가아니므로실제잘림검사는getLineMax사용.
+- 수정:입력/화살표는기존최소터치높이를유지하며내용에맞게증가,ContentFrame은실제측정된창폭에서여백을빼고600dp상한적용.
+- 자동예방:KO/EN·320dp·글꼴1/1.5/2의실제native레이아웃·모든컨테이너좌우경계·본문/도움말/입력검사와스크린샷육안대조. 플로팅72×56dp는변경하지않음.
+- 재시험·최종결과:[0.2.9](releases/v0.2.9.md). 일반실제411dp화면정상표시와좁은합성창문제는구분해서기록.
+
+EN: Fixed-height numeric controls clipped at large fonts;display-based column width exceeded narrow viewports. Growing controls preserve minimum touch targets,and ContentFrame follows measured viewport width. Native text and all-container bounds checks plus visual review cover both languages. Trailing wrap spaces are excluded from visible-width checks. Final retest evidence is linked above.
+
 ## D-037 · 배포 상태·앱 라벨·문서 불일치 / Fixed in0.2.8
 
 - 증상/재현: 공개0.2.7의업데이트메뉴와사용법아래하단을열면‘공개시험판’/‘시험판’표시. README일부는최신code29가아닌code28을현재로설명.

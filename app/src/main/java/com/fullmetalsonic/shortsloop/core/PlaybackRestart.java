@@ -2,8 +2,8 @@ package com.fullmetalsonic.shortsloop.core;
 
 /** Read-only recovery after an ordinary advance timeout. Never counts an unseen play. */
 public final class PlaybackRestart {
-    public static final String WAITING = "재인식 · 다음 시작 대기";
-    public static final String COUNTING = "재인식 완료 · 처음부터 계산";
+    public static final String WAITING = "restart.waiting";
+    public static final String COUNTING = "restart.counting";
     public static final class Start {
         public final Progress progress;
         public final long at;

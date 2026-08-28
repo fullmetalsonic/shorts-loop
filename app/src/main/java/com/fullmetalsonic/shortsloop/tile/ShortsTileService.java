@@ -11,6 +11,8 @@ import android.provider.Settings;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 import com.fullmetalsonic.shortsloop.R;
+import com.fullmetalsonic.shortsloop.i18n.AppLocale;
+import com.fullmetalsonic.shortsloop.i18n.StatusText;
 import com.fullmetalsonic.shortsloop.core.ModePolicy;
 import com.fullmetalsonic.shortsloop.core.FeatureSupportPolicy;
 import com.fullmetalsonic.shortsloop.core.LiveSkipPolicy;
@@ -46,11 +48,11 @@ public final class ShortsTileService extends TileService implements SharedPrefer
     }
     private void toggle() {
         boolean active = ModePolicy.tileActive(store.enabled(), store.target(), RuntimeState.connected, RuntimeState.blocked);
-        if (store.enabled()) { publish(false, getString(R.string.off)); store.enabled(false); return; }
+        if (store.enabled()) { publish(false, text(R.string.off)); store.enabled(false); return; }
         if (!RuntimeState.connected || !store.hasSelectedApps()
                 || (store.floatingEnabled() && !Settings.canDrawOverlays(this))) { openSetup(); return; }
         // Publish the visible state immediately; preference callbacks reconcile after activation.
-        publish(true, getString(R.string.starting));
+        publish(true, text(R.string.starting));
         if (store.enabled()) store.enabled(false);
         store.start(); render();
     }
@@ -61,26 +63,31 @@ public final class ShortsTileService extends TileService implements SharedPrefer
         boolean longVideo = store.skipLong() && ((store.youtubeEnabled() && installed(SettingsStore.YOUTUBE_PACKAGE))
                 || (store.instagramEnabled() && installed(SettingsStore.INSTAGRAM_PACKAGE)));
         String subtitle = active ? store.target() == 0
-                ? longVideo ? "긴영상·조건 넘김" : getString(R.string.zero_features_short,
-                    getString(ads ? R.string.feature_on_short : R.string.feature_off_short),
-                    getString(live ? R.string.feature_on_short : R.string.feature_off_short))
-                : getString(R.string.tile_count, store.target())
-                : RuntimeState.blocked ? getString(R.string.restart_needed)
-                : !RuntimeState.connected || (store.floatingEnabled() && !Settings.canDrawOverlays(this)) ? getString(R.string.permission_needed)
-                : !store.hasSelectedApps() ? "앱 선택 필요"
-                : getString(R.string.off);
+                ? longVideo ? text(R.string.tile_long) : text(R.string.zero_features_short,
+                    text(ads ? R.string.feature_on_short : R.string.feature_off_short),
+                    text(live ? R.string.feature_on_short : R.string.feature_off_short))
+                : text(R.string.tile_count, store.target())
+                : RuntimeState.blocked ? text(R.string.restart_needed)
+                : !RuntimeState.connected || (store.floatingEnabled() && !Settings.canDrawOverlays(this)) ? text(R.string.permission_needed)
+                : !store.hasSelectedApps() ? text(R.string.tile_select)
+                : text(R.string.off);
         publish(active, subtitle, active && store.target() == 0
-                ? com.fullmetalsonic.shortsloop.core.LongVideoPolicy.zeroCountStatus(ads, live, longVideo) : subtitle);
+                ? StatusText.text(AppLocale.wrap(this), com.fullmetalsonic.shortsloop.core.LongVideoPolicy.zeroCountStatus(ads, live, longVideo)) : subtitle);
     }
     private void publish(boolean active, String subtitle) {
         publish(active, subtitle, subtitle);
     }
     private void publish(boolean active, String subtitle, String description) {
         Tile tile = getQsTile(); if (tile == null) return;
-        tile.setLabel(FeatureSupportPolicy.tileLabel(Build.VERSION.SDK_INT, getString(R.string.tile_label), subtitle));
+        tile.setLabel(FeatureSupportPolicy.tileLabel(Build.VERSION.SDK_INT, text(R.string.tile_label), subtitle));
         tile.setState(active ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE);
         if (Build.VERSION.SDK_INT >= 29) tile.setSubtitle(subtitle);
-        tile.setContentDescription(getString(R.string.tile_label) + " · " + description); tile.updateTile();
+        tile.setContentDescription(text(R.string.tile_label) + " · " + description); tile.updateTile();
+    }
+    private String text(int resource, Object... args) { return AppLocale.wrap(this).getString(resource, args); }
+    @Override public void onConfigurationChanged(android.content.res.Configuration config) {
+        super.onConfigurationChanged(config);
+        if (store != null && listening) render();
     }
     private boolean installed(String packageName) {
         try { getPackageManager().getApplicationInfo(packageName, 0); return true; }

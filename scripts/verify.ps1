@@ -4,6 +4,8 @@ $ErrorActionPreference = 'Stop'
 $taskRoot = Split-Path -Parent $PSScriptRoot
 Push-Location -LiteralPath $taskRoot
 try {
+    & (Join-Path $PSScriptRoot 'verify-localization.ps1')
+    & (Join-Path $PSScriptRoot 'verify-photo-safety.ps1')
     $taskVariant = (Get-Culture).TextInfo.ToTitleCase($BuildType)
     if (-not $SkipBuild) {
         & (Join-Path $taskRoot 'gradlew.bat') --no-daemon ":app:assemble$taskVariant" ":app:compile${taskVariant}UnitTestJavaWithJavac" ":app:lint$taskVariant"
@@ -167,12 +169,12 @@ try {
     }
     'TIMED_FALLBACK_WIRING_AUDIT=PASS'
     $taskFloating = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/java/com/fullmetalsonic/shortsloop/overlay/FloatingController.java') -Raw
-    if (-not $taskFloating.Contains('status.equals("시간제 · 다음 영상 확인 중") ? "다음"') -or
-        $taskFloating.Contains('status.startsWith("시간제")')) {
+    if (-not $taskFloating.Contains('status.equals("timed.confirming") ? localized.getString(R.string.flo_next)') -or
+        $taskFloating.Contains('status.startsWith("timed")')) {
         throw 'Timed errors must not be shown as an in-flight next-page request.'
     }
     'TIMED_PENDING_LABEL_AUDIT=PASS'
-    if (-not $taskService.Contains('if (store.target() == 0 && !adSkippingEnabled() && !liveSkippingEnabled() && !longSkippingEnabled())') -or
+    if (-not $taskService.Contains('if (store.target() == 0 && !adSkippingEnabled() && !liveSkippingEnabled() && !longSkippingEnabled() && !photoSkippingEnabled())') -or
         -not $taskService.Contains('AdSkipPolicy.enabled(store.enabled(), store.skipAds(), store.instagramEnabled())') -or
         $taskService -notmatch '(?s)if \(store.target\(\) == 0\) \{\s*counter.reset\(\); timed.reset\(\); visual.reset\(\);[^}]+return;' -or
         $taskService.IndexOf('if (snapshot.ad) {') -gt $taskService.IndexOf('if (store.target() == 0) {') -or
@@ -195,7 +197,7 @@ try {
     # Guard the service-level lifecycle paths as well as the pure host policy.
     if (-not $taskService.Contains('LiveTreePolicy.includeLayoutNodes(store.enabled() && !RuntimeState.blocked,') -or
         $taskService -notmatch '(?s)if \(configureLiveTree\(pkg\)\) return YouTubeSnapshot.unavailable' -or
-        $taskService -notmatch '(?s)store.target\(\) == 0 && !adSkippingEnabled\(\) && !liveSkippingEnabled\(\) && !longSkippingEnabled\(\)\) \{\s*clearLayoutQuery\(\);' -or
+        $taskService -notmatch '(?s)store.target\(\) == 0 && !adSkippingEnabled\(\) && !liveSkippingEnabled\(\) && !longSkippingEnabled\(\) && !photoSkippingEnabled\(\)\) \{\s*clearLayoutQuery\(\);' -or
         $taskService -notmatch 'RuntimeState.blocked = true; clearLayoutQuery\(\);' -or
         $taskService -notmatch '(?s)void onDestroy\(\) \{\s*handler.removeCallbacksAndMessages\(null\); invalidate\(\);\s*clearLayoutQuery\(\);') {
         throw 'Live tree mode must re-read on change and clear on blocked, idle and shutdown paths.'

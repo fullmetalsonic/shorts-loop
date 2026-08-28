@@ -47,6 +47,7 @@ public final class UiTheme {
     }
     public static Button button(Context c, String label) {
         Button v = new Button(c); v.setText(label); v.setAllCaps(false); v.setTextSize(15);
+        v.setSingleLine(false); v.setMaxLines(Integer.MAX_VALUE);
         v.setTextColor(CYAN); v.setMinHeight(dp(c, 48)); v.setMinimumHeight(dp(c, 48));
         v.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(27, 46, 65))); return v;
     }

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.fullmetalsonic.shortsloop.R;
 import com.fullmetalsonic.shortsloop.core.LongVideoPolicy;
 import com.fullmetalsonic.shortsloop.data.SettingsStore;
+import com.fullmetalsonic.shortsloop.i18n.AppLocale;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Locale;
@@ -22,57 +23,66 @@ import java.util.Locale;
 /** Actual Android text measurement/drawing, not a string-only or HTML substitute. Emulator only. */
 public final class FloatingLayoutChecks {
     private int checks;
-    private static final String[] LABELS = {"긴영상", "99/99", "~99/99", "라이브", "60초", "광·라",
-            "조건", "대기", "정지", "다음", "…/99", "?/99", "1/1", "0/0", "광고", "긴영상"};
+    private static String[] labels(Context context) {
+        return new String[]{context.getString(R.string.flo_long), "99/99", "~99/99",
+                context.getString(R.string.flo_live), context.getString(R.string.flo_seconds, 60),
+                context.getString(R.string.flo_ads_live), context.getString(R.string.flo_rules),
+                context.getString(R.string.flo_wait), context.getString(R.string.flo_stop),
+                context.getString(R.string.flo_next), "…/99", "?/99", "1/1", "0/0",
+                context.getString(R.string.flo_ads), context.getString(R.string.flo_long)};
+    }
 
     public static int run(Context base, SettingsStore store) {
         return new FloatingLayoutChecks().verify(base, store);
     }
 
     private int verify(Context base, SettingsStore store) {
-        for (float scale : new float[]{0.85f, 1f, 1.3f, 1.5f, 2f}) {
-            for (boolean rtl : new boolean[]{false, true}) {
-                Configuration config = new Configuration(base.getResources().getConfiguration());
-                config.fontScale = scale; config.setLayoutDirection(rtl ? new Locale("ar") : Locale.KOREAN);
-                Context context = base.createConfigurationContext(config);
-                for (boolean bold : new boolean[]{false, true}) {
-                    FloatingContent content = new FloatingContent(context);
-                    content.setLayoutDirection(rtl ? View.LAYOUT_DIRECTION_RTL : View.LAYOUT_DIRECTION_LTR);
-                    TextView number = content.findViewById(R.id.floating_count);
-                    TextView close = content.findViewById(R.id.floating_close);
-                    if (bold) { number.setTypeface(Typeface.DEFAULT, Typeface.BOLD); close.setTypeface(Typeface.DEFAULT, Typeface.BOLD); }
-                    for (String label : LABELS) {
-                        number.setText(label); layout(content);
-                        String where = label + " scale=" + scale + " rtl=" + rtl + " bold=" + bold;
-                        fits(number, where); fits(close, "close " + where);
-                        require(content.getWidth() == dp(context, 72) && content.getHeight() == dp(context, 56), "Outer size " + where);
-                        require(close.getWidth() == dp(context, 24) && close.getHeight() == dp(context, 24), "Close size " + where);
-                        require(number.getPaddingTop() >= close.getBottom(), "Text region below close " + where);
-                        require(rtl ? close.getLeft() == 0 : close.getRight() == content.getWidth(), "Close at end " + where);
+        for (String language : new String[]{"ko", "en"}) {
+            Context localized = AppLocale.forLanguage(base, language);
+            for (float scale : new float[]{0.85f, 1f, 1.3f, 1.5f, 2f}) {
+                for (boolean rtl : new boolean[]{false, true}) {
+                    Configuration config = new Configuration(localized.getResources().getConfiguration());
+                    config.fontScale = scale; config.setLayoutDirection(rtl ? new Locale("ar") : Locale.KOREAN);
+                    Context context = localized.createConfigurationContext(config);
+                    for (boolean bold : new boolean[]{false, true}) {
+                        FloatingContent content = new FloatingContent(context);
+                        content.setLayoutDirection(rtl ? View.LAYOUT_DIRECTION_RTL : View.LAYOUT_DIRECTION_LTR);
+                        TextView number = content.findViewById(R.id.floating_count);
+                        TextView close = content.findViewById(R.id.floating_close);
+                        if (bold) { number.setTypeface(Typeface.DEFAULT, Typeface.BOLD); close.setTypeface(Typeface.DEFAULT, Typeface.BOLD); }
+                        for (String label : labels(context)) {
+                            number.setText(label); layout(content);
+                            String where = language + " " + label + " scale=" + scale + " rtl=" + rtl + " bold=" + bold;
+                            fits(number, where); fits(close, "close " + where);
+                            require(content.getWidth() == dp(context, 72) && content.getHeight() == dp(context, 56), "Outer size " + where);
+                            require(close.getWidth() == dp(context, 24) && close.getHeight() == dp(context, 24), "Close size " + where);
+                            require(number.getPaddingTop() >= close.getBottom(), "Text region below close " + where);
+                            require(rtl ? close.getLeft() == 0 : close.getRight() == content.getWidth(), "Close at end " + where);
+                        }
+                        int[] clicks = {0, 0};
+                        number.setOnClickListener(v -> clicks[0]++); close.setOnClickListener(v -> clicks[1]++);
+                        // This detached fixture has no UI queue/attach info. Dispatch synchronously to
+                        // test child hit routing; the actual controller gestures are checked on-device.
+                        View.OnTouchListener synchronousClick = (view, event) -> {
+                            if (event.getActionMasked() == MotionEvent.ACTION_UP) view.performClick();
+                            return true;
+                        };
+                        number.setOnTouchListener(synchronousClick); close.setOnTouchListener(synchronousClick);
+                        tap(content, content.getWidth() / 2f, content.getHeight() * .75f);
+                        require(clicks[0] == 1 && clicks[1] == 0, "Count click isolated");
+                        tap(content, close.getLeft() + close.getWidth() / 2f, close.getHeight() / 2f);
+                        require(clicks[0] == 1 && clicks[1] == 1, "Close click isolated");
+                        content.refreshMetrics(); layout(content); fits(number, "refresh " + scale);
+                        require(context.getString(R.string.flo_long).contentEquals(number.getText()), "Metric refresh preserves text");
+                        tap(content, content.getWidth() / 2f, content.getHeight() * .75f);
+                        require(clicks[0] == 2, "Metric refresh preserves listener");
                     }
-                    int[] clicks = {0, 0};
-                    number.setOnClickListener(v -> clicks[0]++); close.setOnClickListener(v -> clicks[1]++);
-                    // This detached fixture has no UI queue/attach info. Dispatch synchronously to
-                    // test child hit routing; the actual controller gestures are checked on-device.
-                    View.OnTouchListener synchronousClick = (view, event) -> {
-                        if (event.getActionMasked() == MotionEvent.ACTION_UP) view.performClick();
-                        return true;
-                    };
-                    number.setOnTouchListener(synchronousClick); close.setOnTouchListener(synchronousClick);
-                    tap(content, content.getWidth() / 2f, content.getHeight() * .75f);
-                    require(clicks[0] == 1 && clicks[1] == 0, "Count click isolated");
-                    tap(content, close.getLeft() + close.getWidth() / 2f, close.getHeight() / 2f);
-                    require(clicks[0] == 1 && clicks[1] == 1, "Close click isolated");
-                    content.refreshMetrics(); layout(content); fits(number, "refresh " + scale);
-                    require("긴영상".contentEquals(number.getText()), "Metric refresh preserves text");
-                    tap(content, content.getWidth() / 2f, content.getHeight() * .75f);
-                    require(clicks[0] == 2, "Metric refresh preserves listener");
+                    if (!rtl && (scale == 1f || scale == 2f)) renderPreview(base, context, scale);
                 }
-                if (!rtl && (scale == 1f || scale == 2f)) renderPreview(base, context, scale);
             }
         }
         // Reproduce the released defect using the old real layout and prove the regression is meaningful.
-        Configuration config = new Configuration(base.getResources().getConfiguration()); config.fontScale = 1f;
+        Configuration config = new Configuration(base.getResources().getConfiguration()); config.fontScale = 1f; config.setLocale(Locale.KOREAN);
         Context context = base.createConfigurationContext(config);
         TextView legacy = new TextView(context); legacy.setSingleLine(true); legacy.setPadding(dp(context, 2), 0, dp(context, 2), 0);
         legacy.setAutoSizeTextTypeUniformWithConfiguration(12, 21, 1, android.util.TypedValue.COMPLEX_UNIT_SP);
@@ -85,8 +95,8 @@ public final class FloatingLayoutChecks {
             java.lang.reflect.Field field = FloatingController.class.getDeclaredField("number"); field.setAccessible(true);
             TextView number = content.findViewById(R.id.floating_count); field.set(controller, number);
             controller.update(0, 1, LongVideoPolicy.CHECKING); layout(content);
-            require("긴영상".contentEquals(number.getText()), "Controller label retained"); fits(number, "Controller long label");
-            controller.update(99, 99, "재생 중"); layout(content);
+            require(AppLocale.wrap(context).getString(R.string.flo_long).contentEquals(number.getText()), "Controller label retained"); fits(number, "Controller long label");
+            controller.update(99, 99, "playback.counting"); layout(content);
             require("99/99".contentEquals(number.getText()), "Controller count retained"); fits(number, "Controller max count");
         } catch (ReflectiveOperationException error) { throw new AssertionError(error); }
         return checks;
@@ -115,14 +125,16 @@ public final class FloatingLayoutChecks {
         Canvas canvas = new Canvas(bitmap); canvas.drawColor(Color.rgb(55, 66, 78));
         Paint caption = new Paint(Paint.ANTI_ALIAS_FLAG); caption.setColor(Color.WHITE); caption.setTextSize(dp(context, 12));
         canvas.drawText("72 x 56 dp / font scale " + scale, dp(context, 12), dp(context, 20), caption);
-        String[] labels = {"긴영상", "99/99", "~99/99", "라이브", "60초", "광·라"};
+        String[] labels = {context.getString(R.string.flo_long), "99/99", "~99/99",
+                context.getString(R.string.flo_live), context.getString(R.string.flo_seconds, 60),
+                context.getString(R.string.flo_ads_live)};
         for (int i = 0; i < labels.length; i++) {
             FloatingContent content = new FloatingContent(context);
             ((TextView)content.findViewById(R.id.floating_count)).setText(labels[i]); layout(content);
             canvas.save(); canvas.translate(dp(context, 24 + (i % 2) * 120), dp(context, 38 + (i / 2) * 80));
             content.draw(canvas); canvas.restore();
         }
-        try (FileOutputStream stream = new FileOutputStream(new File(output.getCacheDir(), "floating-layout-" + scale + ".png"))) {
+        try (FileOutputStream stream = new FileOutputStream(new File(output.getCacheDir(), "floating-layout-" + context.getResources().getConfiguration().getLocales().get(0).getLanguage() + "-" + scale + ".png"))) {
             if (!bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)) throw new AssertionError("Preview save failed");
         } catch (java.io.IOException error) { throw new AssertionError(error); }
         finally { bitmap.recycle(); }

@@ -22,7 +22,7 @@ public interface UpdateTransport {
 
         @Override public InputStream open(String url, BooleanSupplier cancelled) throws IOException {
             if (!GitHubUpdateClient.RELEASES_URL.equals(url) && !UpdatePolicy.trustedReleaseUrl(url))
-                throw new IOException("허용되지 않은 업데이트 주소입니다.");
+                throw new UpdateFailure(UpdateFailure.Code.UNTRUSTED_URL);
             long deadline = System.nanoTime() + TOTAL_NANOS;
             HttpsURLConnection connection = null;
             try {
@@ -41,19 +41,19 @@ public interface UpdateTransport {
                     int status = connection.getResponseCode();
                     check(cancelled, deadline);
                     if (status == 301 || status == 302 || status == 303 || status == 307 || status == 308) {
-                        if (redirects >= MAX_REDIRECTS) throw new IOException("업데이트 주소 이동이 너무 많습니다.");
+                        if (redirects >= MAX_REDIRECTS) throw new UpdateFailure(UpdateFailure.Code.TOO_MANY_REDIRECTS);
                         String location = connection.getHeaderField("Location");
-                        if (location == null || location.length() > 8192) throw new IOException("업데이트 주소 이동을 확인할 수 없습니다.");
+                        if (location == null || location.length() > 8192) throw new UpdateFailure(UpdateFailure.Code.INVALID_REDIRECT);
                         String next = new URL(new URL(current), location).toExternalForm();
-                        if (!UpdatePolicy.trustedRedirectUrl(next)) throw new IOException("허용되지 않은 업데이트 주소 이동입니다.");
+                        if (!UpdatePolicy.trustedRedirectUrl(next)) throw new UpdateFailure(UpdateFailure.Code.UNTRUSTED_REDIRECT);
                         connection.disconnect(); connection = null;
                         current = next;
                         continue;
                     }
-                    if (status != HttpsURLConnection.HTTP_OK) throw new IOException("업데이트 서버 응답을 확인할 수 없습니다.");
+                    if (status != HttpsURLConnection.HTTP_OK) throw new UpdateFailure(UpdateFailure.Code.SERVER_RESPONSE);
                     String encoding = connection.getContentEncoding();
                     if (encoding != null && !"identity".equalsIgnoreCase(encoding))
-                        throw new IOException("지원하지 않는 업데이트 전송 형식입니다.");
+                        throw new UpdateFailure(UpdateFailure.Code.TRANSFER_FORMAT);
                     InputStream body = connection.getInputStream();
                     HttpsURLConnection owned = connection;
                     connection = null; // Returned stream now owns and releases the connection.
@@ -72,7 +72,7 @@ public interface UpdateTransport {
                         }
                         @Override public void close() throws IOException {
                             try { in.close(); }
-                            catch (IOException ignored) { throw new IOException("업데이트 연결을 종료하지 못했습니다."); }
+                            catch (IOException ignored) { throw new UpdateFailure(UpdateFailure.Code.CONNECTION_CLOSE); }
                             finally { owned.disconnect(); }
                         }
                     };
@@ -80,7 +80,7 @@ public interface UpdateTransport {
             } catch (IOException error) {
                 throw safe(error);
             } catch (RuntimeException error) {
-                throw new IOException("업데이트 서버 연결에 실패했습니다.");
+                throw new UpdateFailure(UpdateFailure.Code.CONNECTION);
             } finally {
                 if (connection != null) connection.disconnect();
             }
@@ -88,19 +88,20 @@ public interface UpdateTransport {
 
         private static int timeout(long deadline) throws IOException {
             long remaining = deadline - System.nanoTime();
-            if (remaining <= 0) throw new SocketTimeoutException("업데이트 응답 시간이 초과되었습니다.");
+            if (remaining <= 0) throw new SocketTimeoutException("UPDATE_TIMEOUT");
             return (int) Math.max(1, Math.min(IO_TIMEOUT_MS, TimeUnit.NANOSECONDS.toMillis(remaining)));
         }
         private static void check(BooleanSupplier cancelled, long deadline) throws IOException {
             if (Thread.currentThread().isInterrupted() || (cancelled != null && cancelled.getAsBoolean()))
-                throw new InterruptedIOException("업데이트 작업을 취소했습니다.");
+                throw new InterruptedIOException("UPDATE_CANCELLED");
             timeout(deadline);
         }
         private static IOException safe(IOException error) {
-            if (error instanceof SocketTimeoutException) return new SocketTimeoutException("업데이트 응답 시간이 초과되었습니다.");
-            if (error instanceof InterruptedIOException) return new InterruptedIOException("업데이트 작업을 취소했습니다.");
+            if (error instanceof SocketTimeoutException) return new SocketTimeoutException("UPDATE_TIMEOUT");
+            if (error instanceof InterruptedIOException) return new InterruptedIOException("UPDATE_CANCELLED");
+            if (error instanceof UpdateFailure) return error;
             // Connection exceptions may contain signed redirect URLs. Never propagate those details.
-            return new IOException("업데이트 서버 연결 또는 응답을 확인하지 못했습니다.");
+            return new UpdateFailure(UpdateFailure.Code.CONNECTION);
         }
     }
 }

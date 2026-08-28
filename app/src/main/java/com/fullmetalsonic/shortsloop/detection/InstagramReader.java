@@ -17,8 +17,9 @@ public final class InstagramReader {
     public static final String PAGER_ID = PACKAGE + ":id/clips_viewer_view_pager";
     private static final String PREFIX = PACKAGE + ":id/";
     private static final int MAX_NODES = 600;
+    private final InstagramPageIdentity pageIdentity = new InstagramPageIdentity();
 
-    private static final class Entry {
+    static final class Entry {
         final AccessibilityNodeInfo node;
         final Entry parent;
         final boolean inPager;
@@ -38,14 +39,15 @@ public final class InstagramReader {
 
     public YouTubeSnapshot read(AccessibilityNodeInfo root) {
         if (root == null || !PACKAGE.contentEquals(string(root.getPackageName())))
-            return YouTubeSnapshot.unavailable("인스타그램 릴스 대기");
+            return YouTubeSnapshot.unavailable("instagram.waiting");
         List<Entry> nodes = new ArrayList<>();
         try {
-            if (!collect(root, nodes, null)) return YouTubeSnapshot.unavailable("화면이 복잡하여 감지 대기");
+            if (!collect(root, nodes, null)) return YouTubeSnapshot.unavailable("screen.complex");
             Rect page = null, pager = null;
             int pagerCount = 0, mediaCount = 0, videoCount = 0, seekCount = 0, menuCount = 0;
-            Entry scrubber = null;
-            boolean unknownSeekBar = false, pausedControl = false;
+            Entry scrubber = null, mediaPage = null;
+            int mediaPages = 0;
+            boolean unknownSeekBar = false, pausedControl = false, specialMedia = false;
             StringBuilder identity = new StringBuilder();
             // Audit the entire visible tree before accepting any ad label or progress.
             for (Entry entry : nodes) {
@@ -55,11 +57,14 @@ public final class InstagramReader {
                 String type = string(node.getClassName());
                 if (entry.inPager && !entry.inCaption && !entry.inAuthor
                         && InstagramPolicy.isPlayControl(string(node.getContentDescription()))) pausedControl = true;
-                if (InstagramPolicy.blocks(id, type, node.isFocused(), node.isEditable()))
-                    return YouTubeSnapshot.unavailable("댓글·메뉴 조작 중 · 대기");
+                if (InstagramPolicy.blocks(id, type, node.isFocused(), node.isEditable())
+                        && !InstagramPolicy.emptyCameraShell(id, type, node.getChildCount(), node.isImportantForAccessibility(),
+                                node.isClickable(), node.isFocused(), node.isEditable(), string(node.getText()), string(node.getContentDescription())))
+                    return YouTubeSnapshot.unavailable("screen.interaction");
                 if (entry.inPager && InstagramPolicy.unsupportedMedia(id))
-                    return YouTubeSnapshot.unavailable("사진·혼합 릴스 · 대기");
+                    specialMedia = true;
                 if (id.equals(PAGER_ID)) { pagerCount++; pager = bounds(node); }
+                if (entry.inPager && id.equals(PREFIX + "clips_media_component")) { mediaPage = entry; mediaPages++; }
                 if (entry.inPager && id.equals(PREFIX + "clips_video_container")) { videoCount++; page = bounds(node); }
                 if (entry.inPager && id.equals(PREFIX + "clips_single_media_component")) mediaCount++;
                 if (entry.inPager && id.equals(PREFIX + "clips_ufi_more_button_component")) menuCount++;
@@ -74,35 +79,50 @@ public final class InstagramReader {
                     if (!text.isBlank()) identity.append(author ? "author:" : "caption:").append(text).append('\n');
                 }
             }
+            if (specialMedia) {
+                if (pagerCount != 1 || !validPage(pager) || pausedControl || mediaCount != 0 || seekCount != 0)
+                    return YouTubeSnapshot.unavailable("instagram.mixed");
+                YouTubeSnapshot photo = InstagramPhotoReader.read(nodes, pager, digest(identity.toString()));
+                if (photo.photo != null && menuCount == 1 && hasAdIndicator(nodes, pager))
+                    return withPageIdentity(YouTubeSnapshot.advertisement(photo.page), mediaPages == 1 ? mediaPage : null);
+                return withPageIdentity(photo, mediaPages == 1 ? mediaPage : null);
+            }
             if (pagerCount != 1 || !validPage(pager) || mediaCount > 1 || videoCount > 1)
-                return YouTubeSnapshot.unavailable("단일 동영상 릴스 화면 대기");
-            if (seekCount > 1 || unknownSeekBar) return YouTubeSnapshot.unavailable("릴스 재생 막대 확인 대기");
+                return YouTubeSnapshot.unavailable("instagram.single");
+            if (seekCount > 1 || unknownSeekBar) return YouTubeSnapshot.unavailable("instagram.bar");
 
             boolean singleVideo = mediaCount == 1 && videoCount == 1 && validPage(page) && pager.contains(page);
             boolean endCard = mediaCount == 0 && videoCount == 0 && seekCount == 0;
             if ((singleVideo || endCard) && menuCount == 1 && hasAdIndicator(nodes, pager))
-                return YouTubeSnapshot.advertisement(singleVideo ? page : pager);
-            if (!singleVideo) return YouTubeSnapshot.unavailable("단일 동영상 릴스 화면 대기");
+                return withPageIdentity(YouTubeSnapshot.advertisement(singleVideo ? page : pager), mediaPages == 1 ? mediaPage : null);
+            if (!singleVideo) return YouTubeSnapshot.unavailable("instagram.single");
 
             String hash = digest(identity.toString());
-            if (hash.isEmpty()) return YouTubeSnapshot.unavailable("릴스 구분 정보 대기");
+            if (hash.isEmpty()) return YouTubeSnapshot.unavailable("instagram.identity");
             if (scrubber == null)
-                return YouTubeSnapshot.withoutClock(hash, page, pausedControl);
+                return withPageIdentity(YouTubeSnapshot.withoutClock(hash, page, pausedControl), mediaPages == 1 ? mediaPage : null);
             AccessibilityNodeInfo node = scrubber.node;
             // The same node can be cached through many playback samples.
             if (!node.refresh() || !node.isVisibleToUser()
                     || !(PREFIX + "scrubber").equals(node.getViewIdResourceName())
                     || !"android.widget.SeekBar".contentEquals(string(node.getClassName()))
                     || !PACKAGE.contentEquals(string(node.getPackageName())))
-                return YouTubeSnapshot.unavailable("재생 시간 갱신 대기");
+                return YouTubeSnapshot.unavailable("playback.refresh");
             AccessibilityNodeInfo.RangeInfo range = node.getRangeInfo();
             Progress progress = range == null ? null
                     : InstagramPolicy.progress(range.getType(), range.getMin(), range.getMax(), range.getCurrent());
-            return progress == null ? YouTubeSnapshot.withoutClock(hash, page, pausedControl)
-                    : new YouTubeSnapshot(progress, hash, page, "");
+            return withPageIdentity(progress == null ? YouTubeSnapshot.withoutClock(hash, page, pausedControl)
+                    : new YouTubeSnapshot(progress, hash, page, ""), mediaPages == 1 ? mediaPage : null);
         } finally {
             for (Entry entry : nodes) if (entry.node != root) YouTubeReader.recycle(entry.node);
         }
+    }
+
+    private YouTubeSnapshot withPageIdentity(YouTubeSnapshot snapshot, Entry media) {
+        if (!snapshot.recognized() || media == null || !media.node.refresh() || !media.node.isVisibleToUser()
+                || !(PREFIX + "clips_media_component").equals(media.node.getViewIdResourceName())
+                || !PACKAGE.contentEquals(string(media.node.getPackageName())) || !bounds(media.node).contains(snapshot.page)) return snapshot;
+        return snapshot.withPhotoPageKey(pageIdentity.key(media.node));
     }
 
     private boolean hasAdIndicator(List<Entry> nodes, Rect pager) {

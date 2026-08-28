@@ -15,6 +15,9 @@ public final class YouTubeSnapshot {
     public final boolean visualCandidate;
     public final int windowId;
     public final Rect windowBounds;
+    public final PhotoFrame photo;
+    /** RAM-only source-node identity, independent of captions; used only by photo transitions. */
+    public final String photoPageKey;
     public YouTubeSnapshot(Progress progress, String identity, Rect page, String reason) {
         this(progress, identity, page, reason, false);
     }
@@ -23,32 +26,48 @@ public final class YouTubeSnapshot {
     }
     private YouTubeSnapshot(Progress progress, String identity, Rect page, String reason, boolean ad,
             boolean visualCandidate, boolean live, int windowId, Rect windowBounds, String contentIdentity) {
+        this(progress, identity, page, reason, ad, visualCandidate, live, windowId, windowBounds, contentIdentity, null);
+    }
+    private YouTubeSnapshot(Progress progress, String identity, Rect page, String reason, boolean ad,
+            boolean visualCandidate, boolean live, int windowId, Rect windowBounds, String contentIdentity, PhotoFrame photo) {
+        this(progress, identity, page, reason, ad, visualCandidate, live, windowId, windowBounds, contentIdentity, photo, "");
+    }
+    private YouTubeSnapshot(Progress progress, String identity, Rect page, String reason, boolean ad,
+            boolean visualCandidate, boolean live, int windowId, Rect windowBounds, String contentIdentity, PhotoFrame photo, String photoPageKey) {
         this.progress = progress; this.identity = identity; this.page = page; this.reason = reason; this.ad = ad;
         this.visualCandidate = visualCandidate; this.live = live; this.windowId = windowId;
         this.contentIdentity = contentIdentity == null ? "" : contentIdentity;
         this.windowBounds = windowBounds == null ? null : new Rect(windowBounds);
+        this.photo = photo;
+        this.photoPageKey = photoPageKey;
+    }
+    public static YouTubeSnapshot photograph(String identity, Rect page, PhotoFrame photo) {
+        return new YouTubeSnapshot(null, identity, page, "photo.ready", false, false, false, -1, null, "", photo);
     }
     public static YouTubeSnapshot withoutClock(String identity, Rect page, boolean paused) {
-        return new YouTubeSnapshot(null, identity, page, paused ? "릴스 일시정지 · 대기"
-                : "재생 정보 없음 · 이 릴스는 수동 넘김 필요", false, !paused, false, -1, null, "");
+        return new YouTubeSnapshot(null, identity, page, paused ? "instagram.paused"
+                : "instagram.no_progress", false, !paused, false, -1, null, "");
     }
     public YouTubeSnapshot inWindow(int id, Rect bounds) {
-        return new YouTubeSnapshot(progress, identity, page, reason, ad, visualCandidate, live, id, bounds, contentIdentity);
+        return new YouTubeSnapshot(progress, identity, page, reason, ad, visualCandidate, live, id, bounds, contentIdentity, photo, photoPageKey);
     }
     public YouTubeSnapshot withIdentity(String value) {
-        return new YouTubeSnapshot(progress, value, page, reason, ad, visualCandidate, live, windowId, windowBounds, contentIdentity);
+        return new YouTubeSnapshot(progress, value, page, reason, ad, visualCandidate, live, windowId, windowBounds, contentIdentity, photo, photoPageKey);
     }
     public YouTubeSnapshot withContentIdentity(String value) {
-        return new YouTubeSnapshot(progress, identity, page, reason, ad, visualCandidate, live, windowId, windowBounds, value);
+        return new YouTubeSnapshot(progress, identity, page, reason, ad, visualCandidate, live, windowId, windowBounds, value, photo, photoPageKey);
+    }
+    public YouTubeSnapshot withPhotoPageKey(String value) {
+        return new YouTubeSnapshot(progress, identity, page, reason, ad, visualCandidate, live, windowId, windowBounds, contentIdentity, photo, value == null ? "" : value);
     }
     public boolean recognized() { return page != null && identity != null && !identity.isEmpty(); }
     public boolean usable() { return progress != null && page != null && !ad && !live; }
     public static YouTubeSnapshot livePreview(String identity, Rect page) {
-        return new YouTubeSnapshot(null, identity, page, "YouTube 라이브 · 대기", false, false, true, -1, null, "");
+        return new YouTubeSnapshot(null, identity, page, "live.waiting", false, false, true, -1, null, "");
     }
     public static YouTubeSnapshot unavailable(String reason) { return new YouTubeSnapshot(null, "", null, reason); }
     // Deliberately constant: changing ad creatives must not permit repeated swipe attempts.
     public static YouTubeSnapshot advertisement(Rect page) {
-        return new YouTubeSnapshot(null, "instagram-ad", page, "광고 릴스 · 대기", true);
+        return new YouTubeSnapshot(null, "instagram-ad", page, "ads.waiting", true);
     }
 }

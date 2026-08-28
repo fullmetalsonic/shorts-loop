@@ -37,6 +37,14 @@ public final class InstagramPolicy {
                 || id.contains("comment_thread") || id.contains("comment_entry");
     }
 
+    /** An observed empty, non-interactive camera shell is not an open bottom sheet. */
+    public static boolean emptyCameraShell(String id, String type, int children, boolean important,
+            boolean clickable, boolean focused, boolean editable, String text, String description) {
+        return (PREFIX + "bottom_sheet_camera_container").equals(id) && "android.widget.FrameLayout".equals(type)
+                && children == 0 && !important && !clickable && !focused && !editable
+                && (text == null || text.isEmpty()) && (description == null || description.isEmpty());
+    }
+
     /** Do not interpret words in a reel caption or username as an advertisement. */
     public static boolean isAdIndicator(String resourceId, String text, boolean captionOrAuthor) {
         if (captionOrAuthor || resourceId == null || !resourceId.startsWith(PREFIX)) return false;

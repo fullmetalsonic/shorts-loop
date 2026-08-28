@@ -20,27 +20,27 @@ final class YouTubeLiveReader implements AutoCloseable {
         if (result.state() != YouTubeLivePolicy.State.LIVE) {
             interrupt();
             return result.state() == YouTubeLivePolicy.State.NOT_LIVE ? null
-                    : YouTubeSnapshot.unavailable("라이브 화면 전환·댓글·메뉴 확인 대기");
+                    : YouTubeSnapshot.unavailable("live.obstructed");
         }
         int[] critical = {0, result.recyclerIndex(), result.pageIndex(), result.liveIndex()};
         for (int index : critical) {
             AccessibilityNodeInfo node = nodes.get(index);
             if (!node.refresh() || !node.isVisibleToUser()) {
-                interrupt(); return YouTubeSnapshot.unavailable("라이브 화면 갱신 대기");
+                interrupt(); return YouTubeSnapshot.unavailable("live.refresh");
             }
         }
         List<YouTubeLivePolicy.Node> refreshed = values(nodes, parents);
         YouTubeLivePolicy.Result freshResult = YouTubeLivePolicy.evaluate(refreshed, true);
         if (!result.equals(freshResult) || !sameCriticalGeometry(values, refreshed, critical)
                 || !freshAncestors(nodes, parents, result.liveIndex())) {
-            interrupt(); return YouTubeSnapshot.unavailable("라이브 화면 전환 확인 대기");
+            interrupt(); return YouTubeSnapshot.unavailable("live.transition_wait");
         }
         AccessibilityNodeInfo page = nodes.get(result.pageIndex());
         boolean same = candidate != null && candidate.equals(page);
         if (!same) { YouTubeReader.recycle(candidate); candidate = copy(page); }
         boolean settled = stability.observe(same, refreshed.get(result.recyclerIndex()).bounds(),
                 refreshed.get(result.pageIndex()).bounds(), refreshed.get(result.liveIndex()).bounds(), SystemClock.uptimeMillis());
-        if (!settled) return YouTubeSnapshot.unavailable("라이브 화면 안정화 대기");
+        if (!settled) return YouTubeSnapshot.unavailable("live.stabilizing");
         Rect bounds = new Rect(); page.getBoundsInScreen(bounds);
         return YouTubeSnapshot.livePreview(identity.key(page), bounds);
     }

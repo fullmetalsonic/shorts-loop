@@ -21,14 +21,14 @@ public final class ApkVerifier {
                 || !UpdatePolicy.compatible(Build.VERSION.SDK_INT, item.minSdk)
                 || !UpdatePolicy.validSha256(item.sha256) || !UpdatePolicy.trustedReleaseUrl(item.apkUrl)
                 || item.apkSize <= 0 || item.apkSize > UpdatePolicy.MAX_APK_BYTES
-                || !file.isFile() || file.length() != item.apkSize) throw new IOException("업데이트 파일 정보가 일치하지 않습니다.");
+                || !file.isFile() || file.length() != item.apkSize) throw new UpdateFailure(UpdateFailure.Code.FILE_INFO);
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             try (FileInputStream input = new FileInputStream(file)) {
                 byte[] buffer = new byte[32768]; int count;
                 while ((count = input.read(buffer)) != -1) digest.update(buffer, 0, count);
             }
-            if (!hex(digest.digest()).equalsIgnoreCase(item.sha256)) throw new IOException("파일 무결성 검사에 실패했습니다. 다시 다운로드해 주세요.");
+            if (!hex(digest.digest()).equalsIgnoreCase(item.sha256)) throw new UpdateFailure(UpdateFailure.Code.INTEGRITY);
             PackageManager manager = context.getPackageManager();
             int flags = Build.VERSION.SDK_INT >= 28 ? PackageManager.GET_SIGNING_CERTIFICATES : PackageManager.GET_SIGNATURES;
             PackageInfo candidate = manager.getPackageArchiveInfo(file.getAbsolutePath(), flags);
@@ -38,13 +38,13 @@ public final class ApkVerifier {
                     || version(candidate) != item.versionCode || !item.versionName.equals(candidate.versionName)
                     || candidate.applicationInfo.minSdkVersion != item.minSdk
                     || !UpdatePolicy.isNewer(version(installed), version(candidate))) {
-                throw new IOException("다른 앱·이전 버전 또는 기기에 맞지 않는 업데이트입니다.");
+                throw new UpdateFailure(UpdateFailure.Code.INCOMPATIBLE);
             }
             String[] expected = signatures(installed), actual = signatures(candidate);
-            if (expected.length == 0 || !Arrays.equals(expected, actual)) throw new IOException("현재 앱과 서명이 다릅니다. 설치하지 않습니다.");
+            if (expected.length == 0 || !Arrays.equals(expected, actual)) throw new UpdateFailure(UpdateFailure.Code.SIGNATURE);
         } catch (PackageManager.NameNotFoundException | java.security.NoSuchAlgorithmException error) {
-            throw new IOException("설치된 앱 정보를 확인할 수 없습니다.", error);
-        } catch (RuntimeException error) { throw new IOException("APK 정보를 읽을 수 없습니다.", error); }
+            throw new UpdateFailure(UpdateFailure.Code.INSTALLED_INFO);
+        } catch (RuntimeException error) { throw new UpdateFailure(UpdateFailure.Code.APK_INFO); }
     }
     @SuppressWarnings("deprecation") public static long version(PackageInfo info) {
         return Build.VERSION.SDK_INT >= 28 ? info.getLongVersionCode() : info.versionCode;

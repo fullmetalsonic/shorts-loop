@@ -36,7 +36,7 @@ public class LongVideoPolicyTest {
         for (int mask = 0; mask < 4; mask++) {
             boolean ads = (mask & 1) != 0, live = (mask & 2) != 0;
             assertEquals(LiveSkipPolicy.zeroCountStatus(ads, live), LongVideoPolicy.zeroCountStatus(ads, live, false));
-            assertTrue(LongVideoPolicy.zeroCountStatus(ads, live, true).contains("긴 영상"));
+            assertTrue(LongVideoPolicy.zeroCountStatus(ads, live, true).startsWith("zero.long"));
         }
     }
 }

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="updates_ready_to_check">You can check for a new version.</string>
+    <string name="updates_version_available">Version %1$s is available.</string>
+    <string name="updates_cancelling">Cancelling download…</string>
+    <string name="updates_install_permission_granted">Installation allowed · Tap Install update to continue.</string>
+    <string name="updates_install_permission_declined">Installation was not allowed. You can keep using the current app.</string>
+    <string name="updates_checking">Checking GitHub for a new version…</string>
+    <string name="updates_no_new_version">No newer compatible update is available for this device.</string>
+    <string name="updates_new_version_download">Version %1$s · Download it, then confirm installation yourself.</string>
+    <string name="updates_check_failed">Update check failed · Check your network and try again.</string>
+    <string name="updates_download_verified">Download verified · Tap Install update.</string>
+    <string name="updates_downloading">Downloading update…</string>
+    <string name="updates_cancelled_no_install">Download cancelled. Nothing will be installed.</string>
+    <string name="updates_cancelled_preserved">Download cancelled. Your current app and settings are unchanged.</string>
+    <string name="updates_download_failed">Download or safety check failed · Nothing was installed. Try again.</string>
+    <string name="updates_install_permission_title">Allow update installation</string>
+    <string name="updates_install_permission_body">On the next Android screen, manually enable “Allow from this source” for this app. Return and tap Install update to open the final installation confirmation. Auto-advance stops for safety.</string>
+    <string name="updates_cancel_button">Cancel</string>
+    <string name="updates_open_settings">Open settings</string>
+    <string name="updates_permission_settings_failed">Unable to open installation permission settings.</string>
+    <string name="updates_preinstall_check">Checking the file again before installation…</string>
+    <string name="updates_preinstall_failed">Pre-installation check failed · Download the update again.</string>
+    <string name="updates_return_to_install">Return to the app and tap Install update.</string>
+    <string name="updates_clip_label">ShortsLoop update</string>
+    <string name="updates_confirm_android_installer">Confirm in the Android installer. Installation is not yet complete.</string>
+    <string name="updates_installer_unavailable">Unable to open the installer. Check installation restrictions on your device.</string>
+    <string name="updates_install_not_completed">Installation is not complete. You can keep using the current app or try installing again.</string>
+    <string name="updates_install_action">Install update</string>
+    <string name="updates_download_action">Download update</string>
+    <string name="updates_banner">Version %1$s · View update</string>
+    <string name="updates_error_timeout">The update request timed out.</string>
+    <string name="updates_error_cancelled">The update operation was cancelled.</string>
+    <string name="updates_error_address">The update address or redirect did not pass the safety check.</string>
+    <string name="updates_error_connection">Unable to verify the update server connection or response.</string>
+    <string name="updates_error_storage">Unable to prepare or verify private update storage.</string>
+    <string name="updates_error_busy">An update download is already in progress.</string>
+    <string name="updates_error_file_info">The update file size or metadata does not match.</string>
+    <string name="updates_error_integrity">File integrity verification failed. Download the update again.</string>
+    <string name="updates_error_download">The update download could not be completed.</string>
+    <string name="updates_error_manifest">The update information is invalid or incomplete.</string>
+    <string name="updates_error_verification">Unable to verify the app or APK information.</string>
+    <string name="updates_error_incompatible">The file is for another app, an older version, or an incompatible device.</string>
+    <string name="updates_error_signature">The signing identity differs from the installed app. Installation is blocked.</string>
+</resources>

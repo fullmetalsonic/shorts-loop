@@ -7,9 +7,9 @@ public final class LiveSkipPolicy {
     public static final int DEFAULT_SECONDS = 0;
     public static final int MIN_SECONDS = 0;
     public static final int MAX_SECONDS = 60;
-    public static final String STATUS_IMMEDIATE = "라이브 · 바로 넘기기";
-    public static final String STATUS_DELAYED = "라이브 · 설정 시간 후 넘김";
-    public static final String STATUS_CONFIRMING = "라이브 · 다음 영상 확인 중";
+    public static final String STATUS_IMMEDIATE = "live.immediate";
+    public static final String STATUS_DELAYED = "live.delayed";
+    public static final String STATUS_CONFIRMING = "live.confirming";
 
     private LiveSkipPolicy() {}
 
@@ -46,15 +46,15 @@ public final class LiveSkipPolicy {
 
     /** Exact status matching prevents a live-related failure message from appearing as progress. */
     public static String floatingLabel(String status, int remainingSeconds) {
-        if (STATUS_CONFIRMING.equals(status)) return "다음";
+        if (STATUS_CONFIRMING.equals(status)) return "next";
         if (!STATUS_IMMEDIATE.equals(status) && !STATUS_DELAYED.equals(status)) return null;
-        return remainingSeconds > 0 ? remainingSeconds + "초" : "라이브";
+        return remainingSeconds > 0 ? "seconds:" + remainingSeconds : "live";
     }
 
     public static String zeroCountStatus(boolean adsEnabled, boolean liveEnabled) {
-        if (adsEnabled && liveEnabled) return "광고·라이브만 자동 넘김 · 일반·시간제 중지";
-        if (liveEnabled) return "라이브만 자동 넘김 · 일반·시간제 중지";
-        if (adsEnabled) return "광고만 자동 넘김 · 일반·시간제 중지";
-        return "0회 · 반복·시간제 중지, 광고·라이브 꺼짐";
+        if (adsEnabled && liveEnabled) return "zero.ads_live";
+        if (liveEnabled) return "zero.live";
+        if (adsEnabled) return "zero.ads";
+        return "zero.off";
     }
 }

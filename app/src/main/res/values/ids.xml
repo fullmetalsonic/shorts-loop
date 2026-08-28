@@ -56,4 +56,18 @@
     <item name="tile_add" type="id" />
     <item name="battery_status" type="id" />
     <item name="battery_settings" type="id" />
+    <item name="photo_panel" type="id" />
+    <item name="photo_toggle" type="id" />
+    <item name="photo_modes" type="id" />
+    <item name="photo_mode_whole" type="id" />
+    <item name="photo_mode_each" type="id" />
+    <item name="photo_fallback" type="id" />
+    <item name="photo_whole_input" type="id" />
+    <item name="photo_whole_minus" type="id" />
+    <item name="photo_whole_plus" type="id" />
+    <item name="photo_whole_apply" type="id" />
+    <item name="photo_slide_input" type="id" />
+    <item name="photo_slide_minus" type="id" />
+    <item name="photo_slide_plus" type="id" />
+    <item name="photo_slide_apply" type="id" />
 </resources>

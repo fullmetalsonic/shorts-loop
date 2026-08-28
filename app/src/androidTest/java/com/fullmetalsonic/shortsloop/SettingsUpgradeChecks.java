@@ -10,7 +10,7 @@ import android.os.Bundle;
 import com.fullmetalsonic.shortsloop.data.SettingsStore;
 import java.util.Map;
 
-/** Test APK only: capture typed preferences before replacing code29 with code30. */
+/** Test APK only: capture typed preferences before replacing code30 with code31. */
 final class SettingsUpgradeChecks {
     @SuppressWarnings("deprecation")
     static Bundle run(Instrumentation test, String phase) {
@@ -25,8 +25,8 @@ final class SettingsUpgradeChecks {
             SharedPreferences identity = target.getSharedPreferences("upgrade_test_identity", 0);
             SettingsStore store = new SettingsStore(target);
             if ("seed".equals(phase)) {
-                require(info.versionCode == 29 && "0.2.7".equals(info.versionName), "Start with frozen code29");
-                require((info.applicationInfo.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0, "Previous public APK is debug-enabled");
+                require(info.versionCode == 30 && "0.2.8".equals(info.versionName), "Start with frozen code30");
+                require((info.applicationInfo.flags & ApplicationInfo.FLAG_DEBUGGABLE) == 0, "Previous public release is not debuggable");
                 store.enabled(false); store.ceiling(7); store.target(3); store.tapMode(0); store.target(3);
                 store.floatingEnabled(true); store.position(0.22f, 0.71f);
                 store.selectedApp(SettingsStore.YOUTUBE_PACKAGE, true);
@@ -41,7 +41,7 @@ final class SettingsUpgradeChecks {
                         .putString("signer", info.signatures[0].toCharsString()).putBoolean("seeded", true).commit(), "Save identity");
             } else if ("verify".equals(phase)) {
                 require(identity.getBoolean("seeded", false), "Seed phase is required");
-                require(info.versionCode == 30 && "0.2.8".equals(info.versionName), "Updated to code30");
+                require(info.versionCode == 31 && "0.2.9".equals(info.versionName), "Updated to code31");
                 require((info.applicationInfo.flags & ApplicationInfo.FLAG_DEBUGGABLE) == 0, "Release debugging is disabled");
                 require(info.applicationInfo.uid == identity.getInt("uid", -1), "Package UID preserved");
                 require(info.signatures.length == 1 && info.signatures[0].toCharsString().equals(identity.getString("signer", "")), "Signing identity preserved");

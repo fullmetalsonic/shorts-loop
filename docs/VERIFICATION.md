@@ -1,6 +1,65 @@
-# 검증 기록 · ShortsLoop 0.2.8
+# 검증 기록 · ShortsLoop 0.2.9
 
-## 현재0.2.8/code30 / Current verification
+## 현재0.2.9/code31 / Current verification
+
+### 사진 릴스 확장 · 2026-08-28 / Photo extension
+
+두 모드의 기본값은 모두3초, 범위0–10초다. 사진옵션 기본OFF, 장 번호 불가 대체 기본OFF이며 일반 반복0회와 독립이다. [사진 계약](PHOTO_REELS.md), [재발방지D-042](DEBUG_LOG.md#d-042--사진-장-번호-조회정상-화면-오인--photo-index-tree-and-false-interaction-guard).
+
+- 최신 PC 검증 후보: non-debuggable0.2.9/code31, **721898 bytes**, SHA256 **`1EF2434F633D119F0DC0CA9356BB7A823120CC8960FB61C15D1D3E1DDE505961`**. 로컬 미커밋 소스의 검증본이며 배포 고정본은 아니다.
+- BUILD PASS, 제품 **522 JUnit PASS**, KO/EN334개 리소스쌍·103개 상태코드 및 기존/신규 정적 가드 PASS. lint0오류·기존2경고(OldTargetApi,ObsoleteSdkInt).
+- 같은 최신 APK의 API26/33/34 native 검사는 각각 **25335 / 25349 / 25132 PASS**. 두 언어·320dp·글꼴1/1.5/2·입력/복원·사진 두 모드/경계/미확인 정지·source-node A→B→A·광고 메타데이터 보존을 포함한다. 합성 노드 시험을 실제 Instagram 시험으로 세지 않는다.
+- 실폰 **앞선 후보** SHA256`C50B4DCCCBD4218DC1A4F8D1EAAD14C830F6C52F06E8DCB9D77F36A1A2C02AB9`(721982bytes): 사진1/2→2/2→다음 일반 릴스 **PASS**. 한 장 모드/각3초/반복1/대체OFF, 관측11.36초, 가로요청1/확인1·세로요청1/확인1·차단0. 실행 구간에는 수동 스와이프 없이 앱이 요청했으며 화면과 카운터를 대조했다. 시험 전후 수동 복귀는 성공 횟수에 넣지 않았다.
+- 초기 후보의 장 번호 누락과 확장 트리의 빈 외곽 오인은 D-042로 수정했다. 이후 노드 키 원본 복귀·광고 메타데이터 보강을 포함한 **최신721898-byte 후보의 USB 설치 및 설치 APK SHA256 일치 PASS**. 기존 접근성 연결과 설정을 보존했고 권한을 ADB로 대신 부여하지 않았다.
+- 2026-08-28 재연결 실폰 시험: 같은 두 장 사진 게시물에서 아래 여섯 조건의 세로 요청6/확인6, 가로 요청2/확인2, 차단0을 확인했다. 댓글창8초 대기는 새 요청0이었다. 시험별 수동 복귀와 설정 변경은 자동 성공 횟수에서 제외한다. 서로 다른 사진 게시물6개나 연속6개 시험을 뜻하지 않는다.
+- 장 번호 누락 대체ON/OFF의 실제 대상, 사진→광고, 혼합 게시물 및 새 YouTube·Instagram10/20연속 시험은 **실폰 NOT RUN**. 아래 추가 신속 검사에서 한 장10초와 대체ON 상태의 댓글 보호를 확인했지만, 실제 번호 누락 분기의 PASS는 아니다. 페이지 노드 재사용이나 노드 정보 없는 광고 끝 화면에서는 보수적으로 정지할 수 있다.
+- 변경 범위 독립 소스 재리뷰 완료, 확인된 P1/P2 미해결0. 제안→반례 검토→보강→재시험을 기록했으며 전체 기기/호스트 동작 보증은 아니다. GitHub 커밋·푸시·태그·Release·새 CI·공개 다운로드 검증은 보류, 메일 미발송.
+- 산출물의 기존 단일 서명 SHA256`3604d3a1cc1f4e8f772d718cf8b9cba5adfd3650708cf169660b653e28b69632`와 package/code31/min26/target35/non-debuggable을 확인했다. 공개 후보240개 파일의 민감 패턴0건·문서 링크406개·diff 공백검사PASS. 이는 공개 전 소스 커밋·내장revision·실제 내려받은 파일 검증을 대신하지 않는다.
+
+EN: Latest local candidate:721898bytes,SHA2561EF2434F…505961;build,522 JUnit,334 resource pairs/103 statuses and static guards pass,with0 lint errors/2 existing warnings. Exact-APK API26/33/34 native checks pass25335/25349/25132. The latest APK is installed with matching SHA256. Six initial physical scenarios on one two-photo post passed6/6 vertical and2/2 horizontal,with0 blocks;comments stayed protected for8s. Additional checks below cover each10s and fallbackON comment protection,not an actual unreadable-index branch. Unreadable-index,photo-to-ad,mixed media and fresh host endurance remain physically unverified. Earlier C50 results remain separate. Independent source re-review found no unresolved P1/P2. Publication and email remain unperformed.
+
+#### 최신 APK 실폰 조건별 결과 / Latest-APK physical cases
+
+| 조건 / Scenario | 실제 반복값 / Target | 결과 / Result | 관측 시간 / Observation |
+|---|---:|---|---:|
+| 통째3초 / Whole3s | 1 | 세로1/1, 가로0 / Vertical1/1,horizontal0 | 6.15s |
+| 한 장3초,1/2→2/2→다음 / Each3s,last-slide exit | 1 | 가로1/1·세로1/1 / Horizontal1/1,vertical1/1 | 11.59s |
+| 통째0초 / Whole0s | 0 | 세로1/1, 일반0회와 독립 / Vertical1/1,independent of repeat0 | 3.33s |
+| 통째10초 / Whole10s | 1 | 세로1/1,10초 대기 후 요청 / Vertical1/1,request after10s wait | 13.88s |
+| 댓글 닫기 후 통째3초 / Close comments,whole3s | 1 | 닫은 뒤 새 대기→세로1/1 / Fresh wait then vertical1/1 | 5.55s |
+| 한 장0초,1/2→2/2→다음 / Each0s,last-slide exit | 0 | 가로1/1·세로1/1 / Horizontal1/1,vertical1/1 | 5.23s |
+
+관측 시간은 앱 복귀/안전한 화면 안정화/전환 확인/PC 표본 수집을 포함하므로 설정한 보기 시간과 다르다. 0초에도 안전한 화면 확인과 이동 완료 확인은 유지한다. 통째10초 시험의 실제 반복값은1이며, 시험 폴더명에 포함된target0과 달라 런타임 값을 기준으로 기록했다. 댓글창에서는8초 동안 `screen.interaction`·요청4/확인4를 유지했다. 재실행 후 열린 댓글창의 대기를 다시 확인하고, 실행을 유지한 채 댓글만 닫아3초 새 대기와 다음 이동을 확인했다. 통째 입력의−는0에서, +는10에서 더 진행되지 않으며 다른 시간3초를 보존했다. 이 검사는 숫자 직접입력·미저장 복원 실폰 시험을 대신하지 않는다.
+
+종료 설정: 사진ON/통째 모드·두 시간3초·대체OFF·반복1, 기존 시간제ON/5초·긴 영상ON/60초·광고ON·라이브ON/0초·화면분석OFF. 조건별 시험은 매번X로 중지했다. 이후 기본 설정으로 실행을 다시 켜 정상 후속 이동을 확인했으며 마지막 확인 상태는 실행ON·blocked=false다. 후속 누적 이동은 위6개 조건의 결과에 합산하지 않는다. 기기 화면과 숫자 런타임을 함께 대조했으며 사진·계정·댓글 원문은 비공개로 보존한다. 신규 코드 변경이 없어 동일 APK의 완료된 PC 전체 시험을 중복 실행하지 않았다.
+
+EN: Elapsed observations include app return,settlement,transition confirmation and PC sampling,not only the configured delay. Zero retains safety/confirmation checks. Whole10s actually ran with target1 despite its private folder name. Comments stayed protected for8 seconds;closing them while execution remainedON started a fresh3-second wait and confirmed the next Reel. Whole-delay buttons bounded values at0 and10 without changing the other3-second delay;this does not claim physical typed-input coverage. Restored whole3s/each3s,photoON,fallbackOFF,target1 and other existing preferences. Individual cases were stopped withX;execution was later turnedON for a successful normal follow-up and remainedON/unblocked at the last check. Follow-up movements are excluded from the six scenarios. No source change or repeated full PC suite;raw handset content remains private.
+
+#### 추가 신속 검사 · 2026-08-28 / Additional rapid checks
+
+같은 최신 APK에서 사진 두 시간을0초로 낮추고 한 장 모드·대체ON으로 검사했다. 안전한 화면 안정화와 전환 확인 시간은 줄이지 않았다.
+
+| 조건 / Scenario | 실제 결과 / Observed result |
+|---|---|
+| 댓글창 열림·한 장0초·대체ON / Comments,each0s,fallbackON | 약6초 동안 screen.interaction, 새 가로/세로 요청0 / No new request |
+| 8장 사진1/8→8/8→다음 릴스 / Eight-photo post,each0s | 가로7/7·세로1/1,18.84초 관측,차단0 / Horizontal7/7,vertical1/1,no block |
+| 한 장10초·7/8→8/8→다음 / Each10s,penultimate/last | 가로1/1·세로1/1,26.35초 관측,차단0 / Horizontal1/1,vertical1/1,no block |
+
+한 장10초에서는1.24초에 사진 대기,11.72초에 가로 요청,13.61초에 다음 장 확인/새 대기,23.87초에 세로 요청,26.35초에 다음 릴스 확인을 관측했다. 전체 관측 시간에는 앱 복귀·안정화·확인·PC 표본 수집이 포함된다. 두 사진 시험 구간에는 수동 스와이프가 없고, 시험 전 수동 위치 복귀는 제외한다. 최초10초 준비 시 목표 사진으로 복귀하지 못한 실행은 해당 조건 PASS에서 제외하고 올바른7/8 시작 화면으로 다시 시험했다.
+
+후속 신속 탐색은20개 화면 표본이다. 일반 재생/긴 영상/시간제/광고 인식이 확인되면 다음 대상으로 이동했으며 수동 탐색을 포함한다. 이것은20개 자동 연속 이동이나20개 예외 사례 PASS가 아니다. 실제 번호 없는 사진·사진 바로 다음 광고·사진/영상 혼합을 확보하지 못했다. 일반 광고 넘김이 관측된 것을 사진→광고 전환 검증으로 대체하지 않는다. 두 사진 시험 종료 직후 시작된 긴 영상 요청2건은 검사 도구의 명시적OFF로 중단됐으므로 누적 requests-confirmed 차이를 제품 전환 실패2건으로 계산하지 않는다.
+
+최종 복원 확인: 실행ON,사진ON/통째/각3초/대체OFF,반복1,기존 시간제ON/5초·긴영상ON/60초·광고ON·라이브ON/0초·화면분석OFF,blocked=false. 사진 모드 변경으로 비활성화되는 대체 스위치는 한 장 모드에서OFF한 후 통째 모드로 복원했다. 원본 화면·런타임은 비공개 보존하고 문서에는 기술 결과만 남긴다. 제품 코드·APK를 바꾸지 않았으므로 완료된 동일 산출물 PC 전체 시험은 반복하지 않았다. 새 GitHub 게시나 메일 발송은 없다.
+
+EN: Rapid checks retained safety timing while setting photo delays to0. Comments with fallbackON issued no request for about6s. An8-photo post completed7/7 horizontal and1/1 vertical moves in18.84s. Each10s from slide7/8 completed1/1 horizontal and1/1 vertical in26.35s,with fresh10-second waits on both slides. No manual swipe occurred inside these two cases. An initial wrong-page setup was excluded and rerun on the verified photo. The20-sample search included manual advances after recognition and is not20 consecutive automatic successes. Actual unreadable-index,photo-to-ad and mixed cases were not found. Two subsequent long requests were intentionally interrupted by the test stop and are not product failures. Restored executionON,photo whole3s/each3s/fallbackOFF,target1 and all prior unrelated options;unblocked. No product changes,rebuild,publication or email.
+
+### 이전 언어 전용 후보 / Earlier localization-only candidate
+
+언어 리소스·오류코드·동작 불변·숫자입력·좁은 창/큰 글꼴·언어전환·0.2.8덮어 설치 설정 보존을 검증한다. 최종 수치·해시·CI·공개 다운로드는 [0.2.9 릴리스 기록](releases/v0.2.9.md),계약은 [언어 안내](LOCALIZATION.md)를 따른다. 휴대폰/실제호스트 연속시험은NOT RUN이다. 아래수치는각과거버전근거로보존하며새시험으로합산하지않는다.
+
+EN: Current scope covers localization,neutral errors,preserved decisions,inputs,narrow/large-text layouts,locale changes,and0.2.8 upgrade retention. Final counts/artifact/CI/public downloads are in the release record. Phone/host endurance NOT RUN;historical numbers below are not new-version evidence.
+
+## 이전0.2.8/code30 / Historical verification
 
 제품CI33144962247 SUCCESS:debug/release각32suites·468tests·실패/오류/건너뜀0,lint각0오류/2경고. Public v0.2.8 게시 후 익명3파일 크기·SHA256·GitHub digest·조회API·HTTP200 확인 PASS. 최종 설치 APK와 공개 APK의 SHA256은 `FAA554B16AD5A374A07057FDF2F2195931F77AE77ACC67E2E154A366108F012C`로 동일하다.<br>
 Product CI passed both variants;anonymous public-file and installed-artifact parity passed. Exact source/tag identities and timing are in the release record.

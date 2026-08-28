@@ -26,6 +26,9 @@ jobs:
       - name: Reject debuggable publication and stale release labels
         shell: pwsh
         run: ./scripts/verify-release-safety.ps1 -Apk app/build/outputs/apk/release/app-release-unsigned.apk -DebugApk app/build/outputs/apk/debug/app-debug.apk
+      - name: Verify Korean and English resources
+        shell: pwsh
+        run: ./scripts/verify-localization.ps1
       - name: Upload verification reports (not a signed release APK)
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

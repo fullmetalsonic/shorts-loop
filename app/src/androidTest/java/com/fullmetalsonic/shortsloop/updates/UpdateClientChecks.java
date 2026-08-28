@@ -35,6 +35,7 @@ public final class UpdateClientChecks {
         File temporary = Files.createTempDirectory(cache.toPath(), "update-client-checks-").toFile();
         UpdateClientChecks suite = new UpdateClientChecks(temporary);
         try {
+            suite.passed += UpdateMessageChecks.run(context);
             suite.clientChecks();
             suite.downloadChecks();
             suite.stateChecks(context);

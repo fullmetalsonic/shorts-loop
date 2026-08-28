@@ -34,7 +34,7 @@ public final class LongVideoPanel extends LinearLayout {
         super(context); this.listener = listener; setOrientation(VERTICAL); setId(R.id.long_video_panel);
         addView(UiTheme.text(context, context.getString(R.string.long_video_independent), 14, UiTheme.CYAN, true));
         toggle = new Switch(context); toggle.setId(R.id.skip_long_toggle); toggle.setText(R.string.long_video_toggle);
-        toggle.setTextSize(16); toggle.setTextColor(UiTheme.TEXT); toggle.setMinHeight(UiTheme.dp(context, 52));
+        toggle.setSingleLine(false); toggle.setTextSize(16); toggle.setTextColor(UiTheme.TEXT); toggle.setMinHeight(UiTheme.dp(context, 52));
         toggle.setThumbTintList(UiTheme.checkedColors());
         toggle.setTrackTintList(android.content.res.ColorStateList.valueOf(UiTheme.BORDER));
         toggle.setSwitchPadding(UiTheme.dp(context, 16)); addView(toggle);
@@ -43,21 +43,25 @@ public final class LongVideoPanel extends LinearLayout {
         UiTheme.space(context, this, 12);
         addView(UiTheme.text(context, context.getString(R.string.long_video_seconds_title), 14, UiTheme.TEXT, true));
         LinearLayout row = new LinearLayout(context); row.setGravity(Gravity.CENTER_VERTICAL);
-        minus = UiTheme.button(context, "−"); minus.setId(R.id.long_video_seconds_minus);
+        minus = UiTheme.button(context, getContext().getString(R.string.ui_minus_symbol)); minus.setId(R.id.long_video_seconds_minus);
         minus.setContentDescription(context.getString(R.string.long_video_minus_description)); minus.setFocusable(false);
-        row.addView(minus, new LinearLayout.LayoutParams(UiTheme.dp(context, 52), UiTheme.dp(context, 64)));
+        minus.setMinHeight(UiTheme.dp(context, 64)); minus.setMinimumHeight(UiTheme.dp(context, 64));
+        row.addView(minus, new LinearLayout.LayoutParams(UiTheme.dp(context, 52), -2));
         input = new EditText(context); input.setId(R.id.long_video_seconds_input); input.setSingleLine(true);
         // Preserve pasted signs/decimals so validation rejects the whole draft rather than changing its meaning.
         input.setKeyListener(TextKeyListener.getInstance()); input.setRawInputType(InputType.TYPE_CLASS_NUMBER);
         input.setImeOptions(EditorInfo.IME_ACTION_DONE); input.setSelectAllOnFocus(true);
         input.setContentDescription(context.getString(R.string.long_video_seconds_description));
+        input.setMinimumHeight(UiTheme.dp(context, 64));
         input.setTextSize(30); input.setTextColor(UiTheme.TEXT); input.setGravity(Gravity.CENTER);
         input.setBackground(UiTheme.surface(context, UiTheme.BACKGROUND, 14, true));
-        LinearLayout.LayoutParams ip = new LinearLayout.LayoutParams(0, UiTheme.dp(context, 64), 1);
-        ip.leftMargin = UiTheme.dp(context, 8); ip.rightMargin = UiTheme.dp(context, 8); row.addView(input, ip);
-        plus = UiTheme.button(context, "+"); plus.setId(R.id.long_video_seconds_plus);
+        LinearLayout.LayoutParams ip = new LinearLayout.LayoutParams(0, -2, 1);
+        // Four digits (3600) must fit at 2x font scale on a 320dp viewport, including API26 fonts.
+        ip.leftMargin = UiTheme.dp(context, 4); ip.rightMargin = UiTheme.dp(context, 4); row.addView(input, ip);
+        plus = UiTheme.button(context, getContext().getString(R.string.ui_plus_symbol)); plus.setId(R.id.long_video_seconds_plus);
         plus.setContentDescription(context.getString(R.string.long_video_plus_description)); plus.setFocusable(false);
-        row.addView(plus, new LinearLayout.LayoutParams(UiTheme.dp(context, 52), UiTheme.dp(context, 64))); addView(row);
+        plus.setMinHeight(UiTheme.dp(context, 64)); plus.setMinimumHeight(UiTheme.dp(context, 64));
+        row.addView(plus, new LinearLayout.LayoutParams(UiTheme.dp(context, 52), -2)); addView(row);
         detail = UiTheme.text(context, "", 13, UiTheme.MUTED, false);
         detail.setPadding(0, UiTheme.dp(context, 6), 0, 0); addView(detail);
         apply = UiTheme.button(context, context.getString(R.string.long_video_seconds_apply)); apply.setId(R.id.long_video_seconds_apply);
@@ -67,8 +71,10 @@ public final class LongVideoPanel extends LinearLayout {
             @Override public void beforeTextChanged(CharSequence text, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence text, int start, int before, int count) {
                 if (binding) return;
-                dirty = true; input.setError(null); apply.setVisibility(VISIBLE); updateAvailability();
-                detail.setText(R.string.long_video_seconds_draft);
+                dirty = !text.toString().equals(Integer.toString(committed));
+                input.setError(null); apply.setVisibility(dirty ? VISIBLE : GONE); updateAvailability();
+                detail.setText(dirty ? getContext().getString(R.string.long_video_seconds_draft)
+                        : getContext().getString(R.string.long_video_seconds_saved, committed));
             }
             @Override public void afterTextChanged(Editable text) {}
         });

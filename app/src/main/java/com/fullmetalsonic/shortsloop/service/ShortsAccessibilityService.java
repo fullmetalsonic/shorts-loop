@@ -16,6 +16,8 @@ import android.provider.Settings;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import com.fullmetalsonic.shortsloop.core.AdvanceGate;
+import com.fullmetalsonic.shortsloop.core.PhotoReelTracker;
+import com.fullmetalsonic.shortsloop.core.PhotoTransition;
 import com.fullmetalsonic.shortsloop.core.AdSkipPolicy;
 import com.fullmetalsonic.shortsloop.core.LoopCounter;
 import com.fullmetalsonic.shortsloop.core.PlaybackRestart;
@@ -49,6 +51,11 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final LoopCounter counter = new LoopCounter();
     private final AdvanceGate gate = new AdvanceGate();
+    private final PhotoReelTracker photos = new PhotoReelTracker();
+    private final PhotoTransition photoTransition = new PhotoTransition();
+    private boolean unresolvedPhotoAttempt;
+    private String photoRequestPageKey = "";
+    private int photoSlideRequests, photoSlideConfirmed, photoReelRequests, photoReelConfirmed;
     private final PlaybackRestart restart = new PlaybackRestart();
     private int ordinaryRequestWindow = -1;
     private int recoveryEntries, recoveryStarts;
@@ -98,8 +105,8 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
             if (store == null) return;
             lastPollAt = SystemClock.uptimeMillis();
             try { tick(); }
-            catch (RuntimeException ignored) { failClosed("화면 조회 오류 · 껐다 켜 주세요"); }
-            if (store != null && store.enabled()) handler.postDelayed(this, store.target() == 0 && !adSkippingEnabled() && !liveSkippingEnabled() && !longSkippingEnabled() ? 900
+            catch (RuntimeException ignored) { failClosed("error.query"); }
+            if (store != null && store.enabled()) handler.postDelayed(this, store.target() == 0 && !adSkippingEnabled() && !liveSkippingEnabled() && !longSkippingEnabled() && !photoSkippingEnabled() ? 900
                     : visual != null && visual.active() ? 450 : 300);
         }
     };
@@ -109,7 +116,7 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         // Never resume unattended gestures after service/process reconnection.
         store.enabled(false);
         RuntimeState.connected = true; RuntimeState.blocked = false; RuntimeState.current = 0;
-        RuntimeState.status = "꺼짐";
+        RuntimeState.status = "off";
         visual = VisualAssistController.create(this, new VisualAssistController.Host() {
             @Override public boolean stillEligible(YouTubeSnapshot expected) { return visualEligible(expected); }
             @Override public void result(YouTubeSnapshot expected, VisualLoopTracker.Result result) {
@@ -132,19 +139,23 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         if ("floating_enabled".equals(key)) { updateFloating(); return; }
         // Only explicit execution OFF/ON may re-arm an unconfirmed live request.
         // A floating count tap can first interrupt the gesture and then change target.
-        if ("enabled".equals(key)) { unresolvedLiveAttempt = false; unresolvedLongAttempt = false; }
+        if ("enabled".equals(key)) { unresolvedLiveAttempt = false; unresolvedLongAttempt = false; unresolvedPhotoAttempt = false; }
+        else if (unresolvedPhotoAttempt && store.enabled()) {
+            failClosed("photo.failed"); return;
+        }
         else if (unresolvedLiveAttempt && store.enabled()) {
-            failClosed("라이브 전환 중 설정 변경 · 전체 실행을 껐다 켜 주세요"); return;
+            failClosed("error.live_settings"); return;
         }
         else if (unresolvedLongAttempt && store.enabled()) {
-            failClosed("긴 영상 전환 중 설정 변경 · 전체 실행을 껐다 켜 주세요"); return;
+            failClosed("error.long_settings"); return;
         }
         if ("target".equals(key) || "enabled".equals(key) || "ceiling".equals(key)
                 || "tap_mode".equals(key) || "youtube_enabled".equals(key) || "instagram_enabled".equals(key)
                 || "skip_ads".equals(key) || "visual_assist".equals(key)
                 || "timed_fallback".equals(key) || "fallback_seconds".equals(key)
                 || "skip_live".equals(key) || "live_delay_seconds".equals(key)
-                || "skip_long".equals(key) || "long_video_seconds".equals(key)) applySettings();
+                || "skip_long".equals(key) || "long_video_seconds".equals(key)
+                || (key != null && key.startsWith("photo_"))) applySettings();
     }
     private void updateFloating() {
         if (!store.enabled() || !store.floatingEnabled()) floating.hide();
@@ -160,15 +171,15 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         handler.removeCallbacks(poll); invalidate();
         RuntimeState.blocked = false; counter.setTarget(store.target());
         if (!store.enabled()) {
-            floating.hide(); publish(0, "꺼짐");
+            floating.hide(); publish(0, "off");
         } else if (!store.hasSelectedApps()) {
-            store.enabled(false); publish(0, "사용할 앱을 선택해 주세요");
+            store.enabled(false); publish(0, "app.select");
         } else if (store.floatingEnabled() && !Settings.canDrawOverlays(this)) {
-            store.enabled(false); publish(0, "다른 앱 위 표시 권한 필요");
+            store.enabled(false); publish(0, "permission.overlay");
         } else {
             try { if (store.floatingEnabled()) floating.show(); else floating.hide();
-                publish(0, store.target() == 0 ? zeroCountStatus() : "쇼츠·릴스 시작 대기"); handler.post(poll); }
-            catch (RuntimeException ignored) { store.enabled(false); publish(0, "플로팅 표시 실패 · 권한 확인"); }
+                publish(0, store.target() == 0 ? zeroCountStatus() : "playback.start_wait"); handler.post(poll); }
+            catch (RuntimeException ignored) { store.enabled(false); publish(0, "error.overlay"); }
         }
         ShortsTileService.refresh(this);
     }
@@ -176,17 +187,30 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         if (!store.enabled() || RuntimeState.blocked) return;
         if (store.floatingEnabled() && !Settings.canDrawOverlays(this)) { store.enabled(false); return; }
         // Zero ordinary plays still permits independently opted-in ads and live previews.
-        if (store.target() == 0 && !adSkippingEnabled() && !liveSkippingEnabled() && !longSkippingEnabled()) {
+        if (store.target() == 0 && !adSkippingEnabled() && !liveSkippingEnabled() && !longSkippingEnabled() && !photoSkippingEnabled()) {
             clearLayoutQuery(); invalidate(); publish(0, zeroCountStatus()); return;
         }
         if (!screenAvailable() || interacting || SystemClock.uptimeMillis() < holdUntil) {
-            if (gate.pending()) { failClosed("전환 중 화면 변경 · 다시 켜 주세요"); return; }
+            if (gate.pending() || photoTransition.pending()) { failClosed("error.transition_restart"); return; }
             if (restart.active()) { restart.suspend(); publish(0, PlaybackRestart.WAITING); return; }
-            invalidate(); publish(0, "화면·조작 대기"); return;
+            invalidate(); publish(0, "screen.waiting"); return;
         }
         YouTubeSnapshot snapshot = snapshot();
         if (RuntimeState.blocked) return;
         long now = SystemClock.uptimeMillis();
+        if (photoTransition.pending()) {
+            PhotoReelTracker.Action requested = photoTransition.action();
+            PhotoTransition.State state = photoTransition.inspect(photoScope(snapshot),
+                    snapshot.recognized() ? snapshot.identity : "", snapshot.photo == null ? null : snapshot.photo.position, now,
+                    !photoRequestPageKey.isEmpty() && !snapshot.photoPageKey.isEmpty() && !photoRequestPageKey.equals(snapshot.photoPageKey));
+            if (state == PhotoTransition.State.FAILED) { failClosed("photo.failed"); return; }
+            if (state == PhotoTransition.State.WAITING) { publish(0, "photo.confirming"); return; }
+            if (state == PhotoTransition.State.CONFIRMED) {
+                if (requested == PhotoReelTracker.Action.SLIDE) photoSlideConfirmed++;
+                else { photoReelConfirmed++; confirmedAdvances++; }
+                unresolvedPhotoAttempt = false; photos.reset();
+            }
+        }
         if (gate.pending()) {
             // Ads have no clock. Only a structurally identified, different page
             // can confirm them; a stale page event alone never confirms another ad.
@@ -199,8 +223,8 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
                     ? gate.inspect(snapshot.identity, snapshot.progress.duration, now)
                     : snapshot.recognized() ? gate.inspectRecognizedPage(snapshot.identity, now) : gate.unavailable(now);
             if (state == AdvanceGate.State.WAITING) {
-                publish(pendingAd || pendingTimed || pendingLive || pendingLong ? 0 : store.target(), pendingLong ? LongVideoPolicy.CONFIRMING : pendingLive ? LiveSkipPolicy.STATUS_CONFIRMING : pendingAd ? "광고 넘김 확인 중"
-                        : pendingTimed ? "시간제 · 다음 영상 확인 중" : "다음 영상 확인 중"); return;
+                publish(pendingAd || pendingTimed || pendingLive || pendingLong ? 0 : store.target(), pendingLong ? LongVideoPolicy.CONFIRMING : pendingLive ? LiveSkipPolicy.STATUS_CONFIRMING : pendingAd ? "ads.confirming"
+                        : pendingTimed ? "timed.confirming" : "advance.confirming"); return;
             }
             if (state == AdvanceGate.State.FAILED) { advanceTimedOut(); return; }
             if (state == AdvanceGate.State.CONFIRMED) {
@@ -216,12 +240,13 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         }
         // Recovery must not fall through into ads/live/timers or issue a retry gesture.
         if (restart.active()) { observeRestart(snapshot, now); return; }
+        if (snapshot.photo == null) photos.reset();
         if (!longCandidate(snapshot)) longVideo.reset();
         if (!timedCandidate(snapshot)) timed.reset();
         if (!snapshot.live) live.reset();
         if (snapshot.live) {
             counter.reset(); timed.reset(); visual.reset(); lastPosition = -1; lastDuration = -1;
-            if (!liveCandidate(snapshot)) { live.reset(); publish(0, "라이브 · 자동 넘김 꺼짐"); return; }
+            if (!liveCandidate(snapshot)) { live.reset(); publish(0, "live.disabled"); return; }
             String key = snapshot.identity + "|" + snapshot.windowId + "|" + snapshot.page.toShortString()
                     + "|" + snapshot.windowBounds.toShortString();
             LiveSkipTracker.Result result = live.observe(key, store.liveDelaySeconds(), now);
@@ -234,9 +259,10 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
             visual.reset();
             counter.reset(); lastPosition = -1; lastDuration = -1;
             if (adSkippingEnabled()) advanceAd(snapshot);
-            else publish(0, "광고 · 바로 넘기기 꺼짐");
+            else publish(0, "ads.disabled");
             return;
         }
+        if (snapshot.photo != null) { observePhoto(snapshot, now); return; }
         // Known total duration is an independent filter, not a watch-time timer.
         if (longCandidate(snapshot)) {
             counter.reset(); timed.reset(); visual.reset();
@@ -259,7 +285,7 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
             String key = snapshot.identity + "|" + snapshot.windowId + "|" + snapshot.page.toShortString()
                     + "|" + snapshot.windowBounds.toShortString();
             ClocklessTimeoutTracker.Result result = timed.observe(key, store.fallbackSeconds(), now);
-            publishState(0, result.qualifying() ? "시간제 · 진행 정보 확인 중" : "시간제 · 설정 시간 후 넘김",
+            publishState(0, result.qualifying() ? "timed.checking" : "timed.waiting",
                     result.remainingSeconds());
             if (result.due()) advanceClockless(snapshot, true);
             return;
@@ -274,13 +300,13 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         if (visual.active()) visual.reset();
         lastPosition = snapshot.progress.position; lastDuration = snapshot.progress.duration;
         LoopCounter.Result result = counter.observe(snapshot.progress, snapshot.identity, now);
-        publish(result.current, result.waitingForStart ? "다음 처음 재생부터 계산" : "재생 횟수 확인 중");
+        publish(result.current, result.waitingForStart ? "playback.next_start" : "playback.counting");
         if (result.advance) advance(snapshot);
     }
     private void advanceTimedOut() {
         if (!PlaybackRestart.ordinaryRequest(pendingAd, pendingLive, pendingTimed, pendingVisual, pendingLong)
                 || ordinaryRequestWindow < 0 || store.target() <= 0) {
-            failClosed("넘김 확인 실패 · 껐다 켜 주세요"); return;
+            failClosed("error.advance"); return;
         }
         int window = ordinaryRequestWindow;
         invalidate(); // Discard emitted counts and invalidate callbacks from the old request.
@@ -314,12 +340,12 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
             if (SessionPolicy.packageChanged(activePackage, pkg)) {
                 interruptSession(); lastPageIndex = -1; activePackage = pkg;
             }
-            // The live container is not important-for-accessibility in YouTube.
+            // YouTube live containers and Instagram photo indices can be non-important nodes.
             // Reacquire after a query-mode change; do not mix two tree shapes.
-            if (configureLiveTree(pkg)) return YouTubeSnapshot.unavailable("라이브 화면 조회 준비");
+            if (configureLiveTree(pkg)) return YouTubeSnapshot.unavailable("live.query_ready");
             Rect window = root == null ? null : windowGuard.allowedBounds(getWindows(), root.getWindowId());
             if (window == null)
-                return YouTubeSnapshot.unavailable("다른 창·빠른 설정·작은 화면 · 대기");
+                return YouTubeSnapshot.unavailable("screen.other_window");
             return reader.read(root, store).inWindow(root.getWindowId(), window);
         } finally { YouTubeReader.recycle(root); }
     }
@@ -327,7 +353,9 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         AccessibilityServiceInfo info = getServiceInfo();
         if (info == null || store == null) return false;
         boolean include = LiveTreePolicy.includeLayoutNodes(store.enabled() && !RuntimeState.blocked,
-                store.youtubeEnabled(), packageName);
+                store.youtubeEnabled(), packageName)
+                || com.fullmetalsonic.shortsloop.core.PhotoReelPolicy.includeLayoutNodes(
+                        store.enabled() && !RuntimeState.blocked, store.instagramEnabled(), store.photoEnabled(), packageName);
         int flag = AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS;
         int flags = include ? info.flags | flag : info.flags & ~flag;
         if (flags == info.flags) return false;
@@ -346,6 +374,45 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
     }
     private boolean longSkippingEnabled() {
         return store != null && store.enabled() && store.skipLong() && store.hasSelectedApps();
+    }
+    private boolean photoSkippingEnabled() {
+        return store != null && store.enabled() && store.instagramEnabled() && store.photoEnabled();
+    }
+    private String photoScope(YouTubeSnapshot value) {
+        return value.windowId < 0 || value.windowBounds == null ? ""
+                : activePackage + "|" + value.windowId + "|" + value.windowBounds.toShortString();
+    }
+    private void observePhoto(YouTubeSnapshot value, long now) {
+        counter.reset(); timed.reset(); visual.reset(); longVideo.reset(); lastPosition = lastDuration = -1;
+        if (!photoSkippingEnabled()) { photos.reset(); publish(0, "photo.disabled"); return; }
+        if (!InstagramReader.PACKAGE.equals(activePackage) || !value.recognized() || value.windowId < 0
+                || value.windowBounds == null || !value.windowBounds.contains(value.page)) {
+            photos.reset(); publish(0, "photo.waiting"); return;
+        }
+        PhotoReelTracker.Result result = photos.observe(photoScope(value) + "|" + value.identity + "|" + value.page.toShortString(),
+                value.photo.position, store.photoMode(), store.photoWholeSeconds(), store.photoSlideSeconds(), store.photoFallback(), now);
+        publishState(0, result.status(), result.remaining());
+        if (result.action() != PhotoReelTracker.Action.NONE) advancePhoto(value, result.action());
+    }
+    private void advancePhoto(YouTubeSnapshot expected, PhotoReelTracker.Action action) {
+        if (!photoSkippingEnabled() || RuntimeState.blocked || gate.pending() || photoTransition.pending()
+                || restart.active() || interacting || !screenAvailable() || SystemClock.uptimeMillis() < holdUntil) return;
+        YouTubeSnapshot fresh = snapshot();
+        if (RuntimeState.blocked || fresh.photoPageKey.isEmpty() || !PhotoGestureDispatcher.samePhoto(expected, fresh)) { photos.reset(); return; }
+        photoRequestPageKey = fresh.photoPageKey;
+        photoTransition.begin(action, photoScope(fresh), fresh.identity, fresh.photo.position, SystemClock.uptimeMillis());
+        unresolvedPhotoAttempt = true;
+        int requestGeneration = generation;
+        if (action == PhotoReelTracker.Action.SLIDE) photoSlideRequests++;
+        else { photoReelRequests++; advanceRequests++; }
+        boolean accepted = PhotoGestureDispatcher.dispatch(this, reader, windowGuard, store, fresh, action, floating.bounds(),
+                new GestureResultCallback() {
+                    @Override public void onCancelled(GestureDescription description) {
+                        if (generation == requestGeneration) failClosed("photo.failed");
+                    }
+                }, handler);
+        if (!accepted) { failClosed("photo.failed"); return; }
+        publish(0, "photo.confirming");
     }
     private boolean longCandidate(YouTubeSnapshot value) {
         return longSkippingEnabled() && store.isSelected(activePackage) && value != null && value.usable()
@@ -465,6 +532,7 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
                 && value.recognized() && value.windowId >= 0 && value.windowBounds != null && value.windowBounds.contains(value.page);
     }
     private String zeroCountStatus() {
+        if (photoSkippingEnabled()) return "photo.rules";
         return LongVideoPolicy.zeroCountStatus(adSkippingEnabled(), liveSkippingEnabled(), longSkippingEnabled());
     }
     private AdvanceGate.State inspectLiveTransition(YouTubeSnapshot value, long now) {
@@ -543,7 +611,7 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
     }
     private void advanceClockless(YouTubeSnapshot expected, boolean timeout) {
         if (!(timeout ? timedEligible(expected) : visualEligible(expected))) { visual.reset(); timed.reset(); return; }
-        String mode = timeout ? "시간제" : "화면 추정";
+        String mode = timeout ? "timed" : "estimate";
         AccessibilityNodeInfo root = getRootInActiveWindow();
         java.util.List<AccessibilityNodeInfo> pagers = java.util.Collections.emptyList();
         try {
@@ -558,25 +626,25 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
             pagers = root.findAccessibilityNodeInfosByViewId(InstagramReader.PAGER_ID);
             AccessibilityNodeInfo pager = null;
             for (AccessibilityNodeInfo candidate : pagers) if (candidate.isVisibleToUser()) {
-                if (pager != null) { failClosed("릴스 화면이 여러 개 · 다시 켜 주세요"); return; }
+                if (pager != null) { failClosed("error.multiple_reels"); return; }
                 pager = candidate;
             }
             if (pager == null || !pager.refresh() || !pager.isVisibleToUser() || !pager.isScrollable()
                     || !InstagramReader.PAGER_ID.equals(pager.getViewIdResourceName())
                     || pager.getWindowId() != expected.windowId
                     || !InstagramReader.PACKAGE.contentEquals(pager.getPackageName() == null ? "" : pager.getPackageName())) {
-                failClosed(mode + " 넘김 동작 없음"); return;
+                failClosed(mode + ".missing_action"); return;
             }
             Rect bounds = new Rect(); pager.getBoundsInScreen(bounds);
-            if (!bounds.contains(fresh.page)) { failClosed(mode + " 넘김 범위 확인 실패"); return; }
+            if (!bounds.contains(fresh.page)) { failClosed(mode + ".invalid_bounds"); return; }
             gate.begin(fresh.identity, -1, SystemClock.uptimeMillis());
             pendingVisual = !timeout; pendingTimed = timeout; pendingAd = false;
             advanceRequests++; if (timeout) timedRequests++; else visualRequests++;
             visual.reset(); timed.reset();
             if (!pager.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)) {
-                failClosed(mode + " 넘김 요청 거부 · 다시 켜 주세요"); return;
+                failClosed(mode + ".request_rejected"); return;
             }
-            publish(timeout ? 0 : store.target(), mode + " · 다음 영상 확인 중");
+            publish(timeout ? 0 : store.target(), mode + ".confirming");
         } finally {
             for (AccessibilityNodeInfo pager : pagers) YouTubeReader.recycle(pager);
             YouTubeReader.recycle(root);
@@ -596,22 +664,22 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
             pagers = root.findAccessibilityNodeInfosByViewId(InstagramReader.PAGER_ID);
             AccessibilityNodeInfo pager = null;
             for (AccessibilityNodeInfo candidate : pagers) if (candidate.isVisibleToUser()) {
-                if (pager != null) { failClosed("릴스 화면이 여러 개 · 다시 켜 주세요"); return; }
+                if (pager != null) { failClosed("error.multiple_reels"); return; }
                 pager = candidate;
             }
             if (pager == null || !pager.refresh() || !pager.isVisibleToUser() || !pager.isScrollable()
                     || !InstagramReader.PAGER_ID.equals(pager.getViewIdResourceName())
                     || !InstagramReader.PACKAGE.contentEquals(pager.getPackageName() == null ? "" : pager.getPackageName())) {
-                failClosed("광고 넘김 동작을 찾지 못함 · 다시 켜 주세요"); return;
+                failClosed("error.ads_action"); return;
             }
             Rect bounds = new Rect(); pager.getBoundsInScreen(bounds);
-            if (!bounds.contains(fresh.page)) { failClosed("광고 화면 확인 실패 · 다시 켜 주세요"); return; }
+            if (!bounds.contains(fresh.page)) { failClosed("error.ads_screen"); return; }
             gate.begin(fresh.identity, -1, SystemClock.uptimeMillis()); pendingAd = true;
             advanceRequests++; adRequests++;
             if (!pager.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)) {
-                failClosed("광고 넘김 요청 거부 · 다시 켜 주세요"); return;
+                failClosed("error.ads_rejected"); return;
             }
-            publish(0, "광고 넘김 확인 중");
+            publish(0, "ads.confirming");
         } finally {
             for (AccessibilityNodeInfo pager : pagers) YouTubeReader.recycle(pager);
             YouTubeReader.recycle(root);
@@ -638,7 +706,7 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
             Rect corridor = new Rect(candidate - 12, (int) endY, candidate + 12, (int) startY);
             if (!Rect.intersects(overlay, corridor)) { x = candidate; break; }
         }
-        if (x < 0) { failClosed("플로팅을 옆으로 옮긴 뒤 다시 켜 주세요"); return; }
+        if (x < 0) { failClosed("error.floating_obstructs"); return; }
         Path path = new Path(); path.moveTo(x, startY); path.lineTo(x, endY);
         GestureDescription gesture = new GestureDescription.Builder()
                 .addStroke(new GestureDescription.StrokeDescription(path, 0, 280)).build();
@@ -654,13 +722,13 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         boolean accepted = dispatchGesture(gesture, new GestureResultCallback() {
             @Override public void onCompleted(GestureDescription description) {
                 // Completion means the gesture ran, not that YouTube changed videos.
-                if (generation == requestGeneration) publish(forLive || forLong ? 0 : store.target(), forLong ? LongVideoPolicy.CONFIRMING : forLive ? LiveSkipPolicy.STATUS_CONFIRMING : "다음 쇼츠 확인 중");
+                if (generation == requestGeneration) publish(forLive || forLong ? 0 : store.target(), forLong ? LongVideoPolicy.CONFIRMING : forLive ? LiveSkipPolicy.STATUS_CONFIRMING : "shorts.confirming");
             }
             @Override public void onCancelled(GestureDescription description) {
-                if (generation == requestGeneration) failClosed("넘김 취소됨 · 껐다 켜 주세요");
+                if (generation == requestGeneration) failClosed("error.cancelled");
             }
         }, handler);
-        if (!accepted) failClosed("넘김 요청 거부 · 껐다 켜 주세요");
+        if (!accepted) failClosed("error.rejected");
     }
     @Override public void onAccessibilityEvent(AccessibilityEvent event) {
         if (store == null || !store.enabled() || event == null) return;
@@ -682,6 +750,12 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         if (source == null) return;
         try {
             String id = source.getViewIdResourceName();
+            if (InstagramReader.PACKAGE.equals(eventPackage) && (photos.active() || photoTransition.pending())) {
+                if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_CLICKED
+                        || (event.getEventType() == AccessibilityEvent.TYPE_VIEW_SCROLLED && !photoTransition.pending())) {
+                    interruptSession(); holdUntil = SystemClock.uptimeMillis() + 900;
+                }
+            }
             if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_CLICKED && (longVideo.active() || pendingLong)) {
                 interruptSession(); holdUntil = SystemClock.uptimeMillis() + 900;
             }
@@ -700,6 +774,8 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
             }
             if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_SCROLLED
                     && ("com.google.android.youtube:id/reel_recycler".equals(id) || InstagramReader.PAGER_ID.equals(id))) {
+                // Photo requests use exact index / stable different identity, never this generic event flag.
+                if (photoTransition.pending()) return;
                 int index = event.getFromIndex();
                 if (pendingLive && gate.pending()) {
                     // A rejected late event must not poison the baseline used by a subsequent fresh event.
@@ -726,6 +802,8 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         } finally { YouTubeReader.recycle(source); }
     }
     private void invalidate() {
+        photos.reset(); photoTransition.reset();
+        photoRequestPageKey = "";
         restart.cancel(); ordinaryRequestWindow = -1;
         longVideo.reset(); pendingLong = false; releaseLongRequest();
         generation++; counter.reset(); gate.cancel(); pendingAd = false; pendingVisual = false; pendingTimed = false; pendingLive = false;
@@ -734,12 +812,13 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         if (visual != null) visual.reset(); RuntimeState.current = 0;
     }
     private void interruptSession() {
+        if (photoTransition.pending()) { failClosed("photo.failed"); return; }
         if (restart.active()) { restart.suspend(); counter.reset(); return; }
-        if (gate.interrupt() == AdvanceGate.State.FAILED) failClosed("전환 중 화면 변경 · 껐다 켜 주세요");
+        if (gate.interrupt() == AdvanceGate.State.FAILED) failClosed("error.transition");
         else invalidate();
     }
     private void failClosed(String message) {
-        invalidate(); RuntimeState.blocked = true; clearLayoutQuery(); publish(0, "안전정지 · " + message); ShortsTileService.refresh(this);
+        invalidate(); RuntimeState.blocked = true; clearLayoutQuery(); publish(0, "blocked:" + message); ShortsTileService.refresh(this);
     }
     private void clearLayoutQuery() {
         // The framework may already be disconnecting. There must be no gesture or
@@ -762,7 +841,7 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
     @Override public void onDestroy() {
         handler.removeCallbacksAndMessages(null); invalidate();
         clearLayoutQuery();
-        RuntimeState.connected = false; RuntimeState.current = 0; RuntimeState.status = "서비스 연결 안 됨";
+        RuntimeState.connected = false; RuntimeState.current = 0; RuntimeState.status = "service.disconnected";
         if (store != null) { store.preferences.unregisterOnSharedPreferenceChangeListener(this); store.enabled(false); }
         if (floating != null) floating.hide();
         reader.close();
@@ -777,6 +856,12 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         writer.println("position=" + lastPosition + " duration=" + lastDuration + " pending=" + gate.pending()
                 + " requests=" + advanceRequests + " confirmed=" + confirmedAdvances);
         writer.println("status=" + RuntimeState.status);
+        writer.println("photoEnabled=" + (store != null && store.photoEnabled()) + " photoMode=" + (store == null ? -1 : store.photoMode())
+                + " photoWholeSeconds=" + (store == null ? -1 : store.photoWholeSeconds())
+                + " photoSlideSeconds=" + (store == null ? -1 : store.photoSlideSeconds())
+                + " photoFallback=" + (store != null && store.photoFallback()) + " photoPending=" + photoTransition.pending()
+                + " photoSlideRequests=" + photoSlideRequests + " photoSlideConfirmed=" + photoSlideConfirmed
+                + " photoReelRequests=" + photoReelRequests + " photoReelConfirmed=" + photoReelConfirmed);
         writer.println("counter=" + counter.diagnostic() + " generation=" + generation);
         writer.println("recovering=" + restart.active() + " recoveryEntries=" + recoveryEntries
                 + " recoveryStarts=" + recoveryStarts + " recoveryEnteredAt=" + recoveryEnteredAt);

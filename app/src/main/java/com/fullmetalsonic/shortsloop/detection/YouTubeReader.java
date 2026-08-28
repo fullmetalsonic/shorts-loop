@@ -19,7 +19,7 @@ public final class YouTubeReader {
     public YouTubeSnapshot read(AccessibilityNodeInfo root) {
         if (root == null || !PACKAGE.contentEquals(root.getPackageName() == null ? "" : root.getPackageName())) {
             liveReader.interrupt();
-            return YouTubeSnapshot.unavailable("유튜브 쇼츠 대기");
+            return YouTubeSnapshot.unavailable("youtube.waiting");
         }
         List<AccessibilityNodeInfo> nodes = new ArrayList<>();
         List<Integer> parents = new ArrayList<>();
@@ -44,12 +44,12 @@ public final class YouTubeReader {
                     Rect bounds = new Rect(); node.getBoundsInScreen(bounds);
                     if (bounds.width() > 200 && bounds.height() > 300) page = bounds;
                 }
-                if (isBlockingNode(id, type, node)) return YouTubeSnapshot.unavailable("댓글·메뉴 조작 중 · 대기");
+                if (isBlockingNode(id, type, node)) return YouTubeSnapshot.unavailable("screen.interaction");
                 if (type.equals("android.widget.SeekBar")) {
                     // Playback may advance without a content-change event. The cached
                     // accessibility node can therefore retain an old time indefinitely.
                     if (!node.refresh() || !node.isVisibleToUser())
-                        return YouTubeSnapshot.unavailable("재생 시간 갱신 대기");
+                        return YouTubeSnapshot.unavailable("playback.refresh");
                     Progress parsed = ProgressParser.parse(node.getContentDescription());
                     if (parsed != null) { progress = parsed; validSeekBars++; }
                 }
@@ -60,8 +60,8 @@ public final class YouTubeReader {
                     if (!value.isBlank() && !value.matches("[\\d\\s:./]+")) identity.append(value).append('|');
                 }
             }
-            if (!reel || !timeBar || page == null) return YouTubeSnapshot.unavailable("쇼츠 화면 대기");
-            if (validSeekBars != 1) return YouTubeSnapshot.unavailable("재생 시간 확인 대기");
+            if (!reel || !timeBar || page == null) return YouTubeSnapshot.unavailable("shorts.waiting");
+            if (validSeekBars != 1) return YouTubeSnapshot.unavailable("playback.waiting");
             return new YouTubeSnapshot(progress, digest(identity.toString()), page, "")
                     .withContentIdentity(YouTubeContentKey.read(nodes, parents, complete));
         } finally {

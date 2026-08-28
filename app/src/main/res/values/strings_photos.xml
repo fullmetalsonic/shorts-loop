@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="photo_title">Instagram photo Reels</string>
+    <string name="photo_independent">Independent of repeat count, including 0</string>
+    <string name="photo_toggle">Auto-advance photo Reels</string>
+    <string name="photo_mode_whole">Skip the whole Reel</string>
+    <string name="photo_mode_each">View each photo, then the next Reel</string>
+    <string name="photo_whole_seconds">Whole-Reel delay (s)</string>
+    <string name="photo_slide_seconds">Time per photo (s)</string>
+    <string name="photo_fallback">Skip the whole Reel if the slide number is unreadable</string>
+    <string name="photo_help">Choose one mode. Each time is saved separately, from 0 to 10 seconds, default 3 seconds for both. 0 means advance immediately after safe screen checks, not disabled.\nEach-photo mode waits the same time on the last photo, then opens the next Reel. If the slide number is unreadable, the optional fallback uses the whole-Reel delay; otherwise it waits.\nComments, menus, ambiguous screens and video items in mixed posts wait. Unconfirmed photo movement causes a safety stop. Turning off auto-advance stops all modes.</string>
+    <string name="photo_seconds_error">Enter a whole number from 0 to 10.</string>
+    <string name="photo_seconds_apply">Apply photo time</string>
+    <string name="photo_decrease">Decrease %1$s</string>
+    <string name="photo_increase">Increase %1$s</string>
+    <string name="flo_photo">Photo</string>
+    <string name="photo_status_remaining">%1$s · %2$ds</string>
+    <string name="state_photo_ready">Photo Reel detected</string>
+    <string name="state_photo_waiting">Waiting for a stable photo Reel</string>
+    <string name="state_photo_disabled">Photo Reel · photo automation off</string>
+    <string name="state_photo_whole">Photo Reel · whole-Reel delay</string>
+    <string name="state_photo_each">Photo Reel · time per photo</string>
+    <string name="state_photo_fallback">Slide number unavailable · whole-Reel delay</string>
+    <string name="state_photo_index_missing">Slide number unavailable · waiting</string>
+    <string name="state_photo_confirming">Confirming photo or Reel movement</string>
+    <string name="state_photo_failed">Photo movement unconfirmed · turn auto-advance off and on</string>
+    <string name="state_photo_rules">Repeat count 0 · enabled independent rules remain active</string>
+</resources>

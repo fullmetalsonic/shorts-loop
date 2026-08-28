@@ -89,8 +89,8 @@ public final class GitHubUpdateClient {
     /** Directory MUST be the caller's dedicated app-private update directory, never shared storage. */
     public File download(UpdateManifest item, File directory, BooleanSupplier cancelled, Progress progress) throws IOException {
         validateDownload(item);
-        if (directory == null) throw new IOException("업데이트 저장 공간을 확인할 수 없습니다.");
-        if (!DOWNLOAD_LOCK.tryLock()) throw new IOException("이미 업데이트를 다운로드하고 있습니다.");
+        if (directory == null) throw new UpdateFailure(UpdateFailure.Code.STORAGE);
+        if (!DOWNLOAD_LOCK.tryLock()) throw new UpdateFailure(UpdateFailure.Code.DOWNLOAD_BUSY);
         File part = null;
         boolean committed = false;
         try {
@@ -98,7 +98,7 @@ public final class GitHubUpdateClient {
             checkCancelled(cancelled, deadline);
             File root = directory.getCanonicalFile();
             if (root.getParentFile() == null || (!root.isDirectory() && !root.mkdirs()))
-                throw new IOException("업데이트 저장 공간을 준비하지 못했습니다.");
+                throw new UpdateFailure(UpdateFailure.Code.STORAGE_PREPARE);
             part = child(root, "update.apk.part");
             File complete = child(root, "update.apk");
             Files.deleteIfExists(part.toPath());
@@ -116,12 +116,12 @@ public final class GitHubUpdateClient {
                     if (count == 0) continue;
                     received += count;
                     if (received > item.apkSize || received > UpdatePolicy.MAX_APK_BYTES)
-                        throw new IOException("업데이트 파일 크기가 일치하지 않습니다.");
+                        throw new UpdateFailure(UpdateFailure.Code.SIZE_MISMATCH);
                     output.write(buffer, 0, count); digest.update(buffer, 0, count);
                     if (progress != null) progress.onProgress(received, item.apkSize);
                 }
                 if (received != item.apkSize || !hex(digest.digest()).equalsIgnoreCase(item.sha256))
-                    throw new IOException("업데이트 파일 검증에 실패했습니다. 다시 다운로드해 주세요.");
+                    throw new UpdateFailure(UpdateFailure.Code.INTEGRITY);
                 output.getFD().sync();
             }
             checkCancelled(cancelled, deadline);
@@ -132,7 +132,7 @@ public final class GitHubUpdateClient {
             committed = true;
             return complete;
         } catch (RuntimeException exception) {
-            throw new IOException("업데이트 다운로드를 완료하지 못했습니다.");
+            throw new UpdateFailure(UpdateFailure.Code.DOWNLOAD);
         } finally {
             try { if (!committed && part != null) Files.deleteIfExists(part.toPath()); }
             finally { DOWNLOAD_LOCK.unlock(); }
@@ -153,7 +153,7 @@ public final class GitHubUpdateClient {
     private static File child(File root, String name) throws IOException {
         File result = new File(root, name);
         if (!root.equals(result.getCanonicalFile().getParentFile()))
-            throw new IOException("업데이트 저장 경로를 확인할 수 없습니다.");
+            throw new UpdateFailure(UpdateFailure.Code.STORAGE_PATH);
         return result;
     }
 
@@ -183,7 +183,7 @@ public final class GitHubUpdateClient {
                 if (count < 0) break;
                 if (count == 0) continue;
                 if (output.size() + (long) count > maximum || (expected >= 0 && output.size() + (long) count > expected))
-                    throw new IOException("업데이트 정보 크기가 올바르지 않습니다.");
+                    throw new UpdateFailure(UpdateFailure.Code.MANIFEST_SIZE);
                 output.write(buffer, 0, count);
             }
             if (expected >= 0 && output.size() != expected) throw UpdateManifest.invalid();
@@ -196,7 +196,7 @@ public final class GitHubUpdateClient {
 
     private static MessageDigest digest() throws IOException {
         try { return MessageDigest.getInstance("SHA-256"); }
-        catch (NoSuchAlgorithmException unavailable) { throw new IOException("파일 검증을 시작하지 못했습니다."); }
+        catch (NoSuchAlgorithmException unavailable) { throw new UpdateFailure(UpdateFailure.Code.HASH_UNAVAILABLE); }
     }
     private static String hex(byte[] bytes) {
         StringBuilder result = new StringBuilder(bytes.length * 2);
@@ -205,7 +205,7 @@ public final class GitHubUpdateClient {
     }
     private static void checkCancelled(BooleanSupplier cancelled, long deadline) throws IOException {
         if (Thread.currentThread().isInterrupted() || (cancelled != null && cancelled.getAsBoolean()))
-            throw new InterruptedIOException("업데이트 작업을 취소했습니다.");
-        if (System.nanoTime() - deadline >= 0) throw new IOException("업데이트 처리 시간이 초과되었습니다.");
+            throw new InterruptedIOException("UPDATE_CANCELLED");
+        if (System.nanoTime() - deadline >= 0) throw new UpdateFailure(UpdateFailure.Code.PROCESS_TIMEOUT);
     }
 }

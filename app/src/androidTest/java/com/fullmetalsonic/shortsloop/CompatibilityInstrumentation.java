@@ -54,6 +54,7 @@ public final class CompatibilityInstrumentation extends Instrumentation {
             SettingsStore store = new SettingsStore(getTargetContext());
             prefs = store.preferences; original = prefs.getAll();
             runOnMainSync(() -> checks += RecoveryServiceChecks.run(getTargetContext(), store));
+            runOnMainSync(() -> checks += PhotoServiceChecks.run(getTargetContext(), store));
             // Simulate restored choices without granting permissions or starting automation.
             store.enabled(false); store.visualAssist(true); store.timedFallback(true); store.skipAds(true);
             store.skipLong(true); store.longVideoSeconds(321);
@@ -62,9 +63,12 @@ public final class CompatibilityInstrumentation extends Instrumentation {
             waitForIdleSync();
             runOnMainSync(() -> {
                 checks += ReleasePresentationChecks.run(activity);
+                checks += LocalizationChecks.run(activity, store);
+                checks += com.fullmetalsonic.shortsloop.overlay.FloatingLocaleLifecycleChecks.run(activity, store);
+                checks += EditorRestoreChecks.run(activity);
                 require(activity.findViewById(R.id.compatibility_panel) != null, "Compatibility panel exists");
                 Button tile = activity.findViewById(R.id.tile_add);
-                require(tile.getText().toString().equals(getTargetContext().getString(Build.VERSION.SDK_INT >= 33
+                require(tile.getText().toString().equals(activity.getString(Build.VERSION.SDK_INT >= 33
                         ? R.string.compat_tile_add_button : R.string.compat_tile_manual_button)), "Correct tile action");
                 Switch visual = activity.findViewById(R.id.visual_assist_toggle);
                 boolean installed = installedInstagram();
@@ -77,16 +81,18 @@ public final class CompatibilityInstrumentation extends Instrumentation {
                 String reason = ((TextView)activity.findViewById(R.id.visual_support)).getText().toString();
                 int reasonId = Build.VERSION.SDK_INT < 34 ? R.string.compat_visual_unsupported
                         : installed ? R.string.compat_visual_supported : R.string.compat_instagram_missing;
-                require(reason.startsWith(getTargetContext().getString(reasonId)), "Specific capability reason");
+                require(reason.startsWith(activity.getString(reasonId)), "Specific capability reason");
                 require(!((Switch)activity.findViewById(R.id.execution_toggle)).isChecked(), "No auto start");
                 require(activity.findViewById(R.id.update_status) != null, "Update panel exists");
                 require(((Button)activity.findViewById(R.id.permission_accessibility)).getText().toString()
-                        .equals(getTargetContext().getString(R.string.accessibility_reconnect_action)), "Reconnect action explains recovery");
+                        .equals(activity.getString(R.string.accessibility_reconnect_action)), "Reconnect action explains recovery");
                 require(!((Switch)activity.findViewById(R.id.update_automatic)).isChecked(), "Automatic network check stays off in fixture tests");
-                require(CompatibilityPanel.visualReason(activity, 33, true, true, true).contains("이전 선택"), "Old OS explanation preserves choice");
+                require(CompatibilityPanel.visualReason(activity, 33, true, true, true).contains(activity.getString(R.string.compat_saved_inactive)), "Old OS explanation preserves choice");
                 require(FeatureSupportPolicy.instagramFeature(true, true), "Basic Instagram capability remains available");
                 checks += LiveUiChecks.run(activity, store);
                 checks += LongVideoUiChecks.run(activity, store);
+                checks += PhotoUiChecks.run(activity, store);
+                checks += com.fullmetalsonic.shortsloop.detection.PhotoNodeIdentityChecks.run(activity);
                 checks += com.fullmetalsonic.shortsloop.overlay.FloatingLayoutChecks.run(activity, store);
             });
             VisualAssistController controller = VisualAssistController.create(null, null);

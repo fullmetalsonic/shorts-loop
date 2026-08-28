@@ -1,6 +1,20 @@
 # Android 버전별 기능 / Android compatibility
 
-## 0.2.7/code29 · 호환 범위 유지 / Unchanged compatibility
+## 0.2.9/code31 · 언어와 OS 지원 / Language and OS support
+
+설치 하한Android8/API26, API29 타일 상태줄·API33 타일 추가 요청·API34 화면 분석 제한은 그대로다.0.2.9는 앱·플로팅·빠른 설정 실행 상태·도움말·업데이트/오류를 한국어·영어로 표시한다. 새 권한·호스트 앱 개조·언어별 감지 우회를 추가하지 않으며 기존 설정·서명·패키지를 유지한다. 최신 APK의 실폰 두 모드·0/3/10초·댓글창 보호는 확인했다. 번호 없는 사진·사진 직후 광고·혼합 사례와 공개 파일 검증은 미완료다. [조건별 검증](VERIFICATION.md),[언어 안내](LOCALIZATION.md). 아래 과거 결과는 새 시험으로 합산하지 않는다.
+
+The minimum remains Android8/API26. Tile subtitles require API29, tile-add requests API33, and visual assistance API34. Version0.2.9 localizes app-owned UI, floating controls, runtime tile state, help and update/errors into Korean and English. It adds no permission, host modification or language-based detection bypass; settings, signer and package remain. The latest APK has physical evidence for both photo modes,0/3/10s and comments protection. Unreadable-index,photo-to-ad,mixed cases and public-file verification remain incomplete. Earlier results below are historical.
+
+앱 표시 기준은 **시스템 첫 언어가한국어이면한국어,그밖에는영어**다. 영어→한국어 또는 일본어→한국어 목록에서도 영어를 사용한다. Android 자체가 표시하는 런처·접근성 서비스 이름/설명 및 권한·설치 창은OS fallback을 따를 수 있으므로 일부 표기가 다를 수 있다. 시스템 언어 변경 중에도 화면 이탈·진행 소실·서비스 재연결의 안전 동작을 유지하며 필요하면 전체 실행을OFF→ON한다. 언어 변경만으로 기존 옵션을 초기화하지 않는다.
+
+The **first system language selects Korean if Korean, otherwise English**, including English→Korean and Japanese→Korean. Android-owned launcher/accessibility labels and permission/installer screens may use OS fallback. Language changes retain screen-change, lost-progress and service-reconnection safeguards; toggle main execution OFF→ON if needed. Saved options are not reset solely by a language change.
+
+**표시 번역과 호스트 인식의 호환성은 별개다.** 기존 판독은 한국어·영어 텍스트·지원되는 시계 표기·접근성 구조 중심이며, 모든 언어·국가·YouTube/Instagram 버전의 카운트·광고 인식을 보장하지 않는다. OS 지원·앱 설치·영어 UI 표시만으로 자동 넘김이 검증되지는 않는다. 읽기 불가능한 화면은 기존 대기·정지 계약을 따른다.
+
+**UI translation is separate from host-detection compatibility.** Readers retain existing Korean/English text, supported clocks and accessibility structures; counts and ads are not guaranteed in every language, region or host version. OS support, installation and English UI alone do not prove auto-advance. Unreadable screens retain existing waits/stops.
+
+## 과거 0.2.7/code29 · 호환 범위 유지 / Historical unchanged compatibility
 
 정식0.2.7의 설치 하한/API별 기능은0.2.6과 같다. 플로팅 표시 수정의 동일APK API26/33/34 계측5568/5568/5567항목과 실제Android17 표시/조작 검증을 완료했다. 이 수치는 호스트별 새로운 연속시험이 아니다. [0.2.7 배포·검증](releases/v0.2.7.md).
 
@@ -61,8 +75,8 @@ YouTube live previews use basic accessibility independently of API34 visual assi
 
 ## 화면에서 확인하기 / On-device instructions
 
-1. **사용할 앱**에서 설치된 앱을 선택합니다. 미설치 앱은 ‘미설치’로 표시됩니다.<br>Select an installed host app. Missing apps are labeled and disabled.
-2. **사용 준비 → 이 기기의 기능**에서 현재 Android 버전과 가능한 기능을 확인합니다.<br>See the current OS and supported features under device capabilities in setup.
+1. **사용할 앱 / Apps to use**에서 설치된 앱을 선택합니다. 미설치 앱은 ‘미설치’로 표시됩니다.<br>Select an installed host under **Apps to use**. Missing apps are labeled and disabled.
+2. **사용 준비 / Setup → 이 기기의 기능**에서 현재 Android 버전과 가능한 기능을 확인합니다.<br>See the current OS and supported features under device capabilities in **Setup**.
 3. Android 8~12L에서는 **빠른 설정 직접 추가 방법**을 눌러 안내를 확인합니다. 상단 빠른 설정을 펼치고 편집에서 ‘쇼츠 넘김’을 활성 영역으로 옮깁니다. 제조사마다 편집 버튼 모양이 다릅니다. 13 이상에서는 앱 버튼으로 추가 요청 후 시스템 확인을 직접 선택합니다.<br>On Android 8–12L, open manual tile help, expand Quick Settings, edit tiles and add ShortsLoop. OEM controls vary. On 13+, use the in-app request and confirm in the system dialog.
 4. Android 14 미만에서는 **화면 분석 보조**가 꺼진 비활성 상태이며 이유가 보입니다. 이전 기기에서 켰던 선택은 지우지 않지만 여기서는 실행하지 않습니다. Instagram의 시간제·광고는 별도로 사용할 수 있습니다.<br>Below Android 14, visual assist is disabled with a reason. A previous saved choice is retained but cannot run here. Instagram timer and ads remain separate options.
 5. Instagram 미설치·미선택이면 관련 옵션이 비활성화됩니다. 저장값은 보존되며 앱 설치·재선택 후 다시 적용됩니다. 전체 실행을 임의로 켜거나 권한을 자동 허용하지 않습니다.<br>Missing/deselected Instagram disables its options without erasing preferences. They become applicable again after installation/selection. This never auto-starts execution or grants permission.
@@ -79,7 +93,7 @@ Since code17, the app shows accessibility help and a settings/reconnect button w
 
 인앱 업데이트는 앱의 기존 설치 하한인 API26부터 제공하며 화면 분석의 API34 제한과 별개입니다. ‘사용 준비’ 다음의 **업데이트 · 앱 정보**에서 설치 버전과 수동 **업데이트 확인**을 찾습니다. 기본 ON인 **앱 열 때 새 버전 확인**은 앱을 열거나 돌아올 때 마지막 시도 후 24시간 간격으로 조회하며 OFF로 바꿀 수 있습니다. 더 높고 기기에 맞는 버전이 확인된 경우만 상단 배너로 알립니다. 앱을 닫아 둔 동안의 주기 감시·시스템 알림은 없습니다.
 
-The updater is available from the existing API26 app minimum, independently of the API34 visual trial. Find the installed version and manual check under **업데이트 · 앱 정보**, after setup. Opening/resuming the app can check automatically, at most once per 24 hours since the last attempt; this defaults ON and can be disabled. Only a known compatible newer version produces a top banner. There is no background polling or system notification.
+The updater is available from the existing API26 app minimum, independently of the API34 visual trial. Find **Installed version 0.2.9** and the manual check under **Updates · App information**, after Setup. Opening/resuming the app can check automatically, at most once per 24 hours since the last attempt; this defaults ON and can be disabled. Only a known compatible newer version produces a top banner. There is no background polling or system notification.
 
 **조회 → 직접 다운로드 → 검사 완료 후 직접 설치**를 구분합니다. `INTERNET`은 GitHub 업데이트 정보·APK 수신용이며 영상·계정·시청이력을 업로드하지 않습니다. `REQUEST_INSTALL_PACKAGES`는 설치 화면 연결용 선언입니다. 실제 ‘이 출처 허용’과 시스템 최종 설치 확인은 사용자가 직접 합니다. 기기 정책으로 설치가 제한될 수 있으며 우회하지 않습니다. 저장소 전체 접근·알림 권한·무인 자동 설치는 없습니다.
 

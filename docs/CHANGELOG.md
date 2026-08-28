@@ -1,5 +1,27 @@
 # 누적이력
 
+## 후속 계획 / Follow-up plan
+
+분할 화면의 YouTube·Instagram 동시 처리, 배치 순서 독립, 앱별 플로팅2개 또는 분할형1개를 [별도 계획](SPLIT_SCREEN_PLAN.md)으로 기록했다. 읽기 전용 구조 확인만 수행했으며0.2.9에는 미포함이다.
+
+EN: Dual-host split screen,order-independent operation and per-host/two-section overlays are planned separately. Read-only inspection only;not part of0.2.9.
+
+## 0.2.9/code31 후속 · 사진 릴스 / Photo Reel modes, local only
+
+후속 검증(2026-08-28): 두 기본값3초와 기존 노드·광고 보강을 유지했다. 최신721898-byte 후보를 실폰에 설치하고 SHA256 일치를 확인했다. 통째0·3·10초, 한 장0·3·10초, 마지막 장 이후 다음 릴스 이동과 댓글창 보호를 확인했다. 추가 신속 검사에서8장 릴스의 가로7/7·세로1/1, 한 장10초의 가로1/1·세로1/1을 확인했다. 번호 없는 사진·사진 직후 광고·혼합 게시물은 실폰 사례 미확보이며,20개 표본 탐색은 자동20연속 PASS가 아니다. GitHub 게시 보류. 신속 검사 후 실행ON·통째3초/한 장3초·대체OFF·반복1과 기존 다른 옵션을 복원했다. 제품 코드 변경/재빌드 없이 같은 APK를 시험했다. [검증 기록](VERIFICATION.md),D-042.
+
+EN: Both defaults remain3s. The latest721898-byte APK is installed with matching SHA256. Whole0/3/10s,each0/3/10s,last-slide exit and comments protection have physical evidence. Additional checks passed7/7 horizontal and1/1 vertical moves on an8-photo post,and1/1 horizontal plus1/1 vertical with each10s. Unreadable-index photos,photo-to-ad and mixed posts were not found for physical testing;20 rapid samples are not20 consecutive automatic passes. Publication remains on hold. Restored executionON,whole3s/each3s,fallbackOFF,target1 and prior unrelated options. No product-code change/rebuild in this test pass.
+
+Instagram 사진carousel 전용 감지와 통째/한장씩2모드,각0–10초(초기3)별도저장,장번호실패시선택형통째넘김을구현했다. 사진옵션은기본OFF이며반복0회와독립이다. 정확한다음사진/안정된다른릴스를확인하고미확인요청은재시도하지않는다. KO/EN설정·플로팅·0회및광고전용안내를정리했다. [설명·안전경계](PHOTO_REELS.md),[빌드별검증](VERIFICATION.md). GitHub미게시. 과거아래언어전용후보와사진확장후보의근거를분리한다.
+
+EN: Local photo-carousel detection,two modes,separate0–10-second waits and optional unreadable-index fallback. DefaultOFF,independent of repeat0. Exact slide/stable post confirmation and hard-stop protections prevent blind retries. Bilingual controls/status/help are updated. Not published;verification distinguishes the earlier localization-only candidate from the photo extension.
+
+## 0.2.9/code31 · 한국어/영어 자동 선택 / Automatic localization
+
+시스템 첫 언어 기준KO/EN표시,309개 리소스쌍·93개 중립 상태코드·업데이트 오류 분리. 큰 글꼴과 작은 창 레이아웃 보완. GitHub 검색 설명/토픽/한영 안내 정리. 기존 감지·넘김·권한·설정·서명 계약 유지. [상세 언어 안내](LOCALIZATION.md),[최종 시험·게시 근거](releases/v0.2.9.md). 휴대폰 시험NOT RUN;검증/게시 진행상태는 릴리스 기록을 따른다.
+
+EN: First-system-language KO/EN UI,309 paired resources,93 neutral statuses,localized update failures,and large-text/narrow-viewport layout fixes. Existing detection,permissions,settings and signer are retained. Discoverability docs/metadata are updated. Physical-phone tests NOT RUN;see the linked release record for current verification/publication evidence.
+
 ## 0.2.8/code30 · 버전 표시·배포 빌드 정리 / Version presentation and distribution
 
 2026-08-28 Public 게시·제품CI33144962247·공개3파일 크기/해시 확인 완료. 제품af1ab39,태그v0.2.8→4b5647c(문서만 추가). [배포 기록](releases/v0.2.8.md).<br>

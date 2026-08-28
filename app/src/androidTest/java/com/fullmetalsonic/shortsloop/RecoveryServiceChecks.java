@@ -11,6 +11,7 @@ import com.fullmetalsonic.shortsloop.core.LiveSkipPolicy;
 import com.fullmetalsonic.shortsloop.core.PlaybackRestart;
 import com.fullmetalsonic.shortsloop.core.Progress;
 import com.fullmetalsonic.shortsloop.data.SettingsStore;
+import com.fullmetalsonic.shortsloop.i18n.AppLocale;
 import com.fullmetalsonic.shortsloop.detection.YouTubeSnapshot;
 import com.fullmetalsonic.shortsloop.overlay.FloatingController;
 import com.fullmetalsonic.shortsloop.service.RuntimeState;
@@ -153,19 +154,20 @@ final class RecoveryServiceChecks {
             }
             set(service, "unresolvedLongAttempt", false);
             store.skipLong(false); store.target(1);
+            Context displayContext = AppLocale.wrap(context);
             FloatingController floating = new FloatingController(context, store, null);
             TextView number = new TextView(context); set(floating, "number", number);
-            floating.update(0, 1, PlaybackRestart.WAITING); require(number.getText().toString().equals("대기"), "Waiting label");
-            floating.update(0, 1, "안전정지 · 넘김 확인 실패"); require(number.getText().toString().equals("정지"), "Stop label");
+            floating.update(0, 1, PlaybackRestart.WAITING); require(number.getText().toString().equals(displayContext.getString(R.string.flo_wait)), "Waiting label");
+            floating.update(0, 1, "blocked:error.advance"); require(number.getText().toString().equals(displayContext.getString(R.string.flo_stop)), "Stop label");
             floating.update(1, 1, PlaybackRestart.COUNTING); require(number.getText().toString().equals("1/1"), "Recovered count label");
             store.skipLong(true);
-            floating.update(0, 0, LongVideoPolicy.zeroCountStatus(true, true, true)); require(number.getText().toString().equals("조건"), "Zero length-filter label");
-            floating.update(0, 0, LongVideoPolicy.CHECKING); require(number.getText().toString().equals("긴영상"), "Active length-filter label");
-            floating.update(0, 0, LiveSkipPolicy.STATUS_CONFIRMING); require(number.getText().toString().equals(LiveSkipPolicy.floatingLabel(LiveSkipPolicy.STATUS_CONFIRMING, -1)), "Long setting does not mask live label");
-            floating.update(0, 0, "광고 넘김 확인 중"); require(number.getText().toString().equals("광고"), "Long setting does not mask ad label");
+            floating.update(0, 0, LongVideoPolicy.zeroCountStatus(true, true, true)); require(number.getText().toString().equals(displayContext.getString(R.string.flo_rules)), "Zero length-filter label");
+            floating.update(0, 0, LongVideoPolicy.CHECKING); require(number.getText().toString().equals(displayContext.getString(R.string.flo_long)), "Active length-filter label");
+            floating.update(0, 0, LiveSkipPolicy.STATUS_CONFIRMING); require(number.getText().toString().equals(displayContext.getString(R.string.flo_next)), "Long setting does not mask live label");
+            floating.update(0, 0, "ads.confirming"); require(number.getText().toString().equals(displayContext.getString(R.string.flo_ads)), "Long setting does not mask ad label");
             return checks;
         } catch (ReflectiveOperationException e) { throw new AssertionError("Service wiring check failed", e); }
-        finally { store.enabled(false); store.skipLong(false); RuntimeState.blocked = false; RuntimeState.current = 0; RuntimeState.status = "꺼짐"; }
+        finally { store.enabled(false); store.skipLong(false); RuntimeState.blocked = false; RuntimeState.current = 0; RuntimeState.status = "off"; }
     }
     private static YouTubeSnapshot snapshot(double position, int window) {
         Rect bounds = new Rect(0, 0, 400, 700);

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="updates_ready_to_check">새 버전을 확인할 수 있습니다.</string>
+    <string name="updates_version_available">새 버전 %1$s을 사용할 수 있습니다.</string>
+    <string name="updates_cancelling">다운로드 취소 중…</string>
+    <string name="updates_install_permission_granted">설치 허용됨 · ‘업데이트 설치’를 눌러 계속하세요.</string>
+    <string name="updates_install_permission_declined">설치 허용을 선택하지 않았습니다. 기존 앱은 그대로 사용할 수 있습니다.</string>
+    <string name="updates_checking">GitHub에서 새 버전 확인 중…</string>
+    <string name="updates_no_new_version">이 기기에 적용할 새 업데이트가 없습니다.</string>
+    <string name="updates_new_version_download">새 버전 %1$s · 다운로드 후 직접 설치할 수 있습니다.</string>
+    <string name="updates_check_failed">업데이트 확인 실패 · 네트워크를 확인하고 다시 시도하세요.</string>
+    <string name="updates_download_verified">다운로드·검사 완료 · 업데이트 설치를 눌러 주세요.</string>
+    <string name="updates_downloading">업데이트 다운로드 중…</string>
+    <string name="updates_cancelled_no_install">다운로드를 취소했습니다. 설치하지 않습니다.</string>
+    <string name="updates_cancelled_preserved">다운로드를 취소했습니다. 기존 앱과 설정은 그대로입니다.</string>
+    <string name="updates_download_failed">다운로드 또는 안전 검사 실패 · 설치하지 않았습니다. 다시 시도하세요.</string>
+    <string name="updates_install_permission_title">업데이트 설치 허용</string>
+    <string name="updates_install_permission_body">다음 Android 화면에서 이 앱의 ‘이 출처 허용’을 직접 켜 주세요. 돌아온 뒤 업데이트 설치를 누르면 최종 설치 확인창이 열립니다. 자동 넘김은 안전을 위해 중지합니다.</string>
+    <string name="updates_cancel_button">취소</string>
+    <string name="updates_open_settings">설정 열기</string>
+    <string name="updates_permission_settings_failed">설치 허용 설정을 열 수 없습니다.</string>
+    <string name="updates_preinstall_check">설치 전 파일 다시 확인 중…</string>
+    <string name="updates_preinstall_failed">설치 전 검사 실패 · 다시 다운로드해 주세요.</string>
+    <string name="updates_return_to_install">앱으로 돌아와 업데이트 설치를 눌러 주세요.</string>
+    <string name="updates_clip_label">ShortsLoop 업데이트</string>
+    <string name="updates_confirm_android_installer">Android 설치창에서 직접 확인해 주세요. 아직 설치 완료가 아닙니다.</string>
+    <string name="updates_installer_unavailable">설치창을 열 수 없습니다. 기기의 설치 제한을 확인해 주세요.</string>
+    <string name="updates_install_not_completed">설치가 완료되지 않았습니다. 기존 앱을 사용하거나 다시 설치할 수 있습니다.</string>
+    <string name="updates_install_action">업데이트 설치</string>
+    <string name="updates_download_action">업데이트 다운로드</string>
+    <string name="updates_banner">새 버전 %1$s · 업데이트 보기</string>
+    <string name="updates_error_timeout">업데이트 요청 시간이 초과되었습니다.</string>
+    <string name="updates_error_cancelled">업데이트 작업을 취소했습니다.</string>
+    <string name="updates_error_address">업데이트 주소 또는 주소 이동의 안전성을 확인하지 못했습니다.</string>
+    <string name="updates_error_connection">업데이트 서버 연결 또는 응답을 확인하지 못했습니다.</string>
+    <string name="updates_error_storage">업데이트 전용 저장 공간을 준비하거나 확인하지 못했습니다.</string>
+    <string name="updates_error_busy">이미 업데이트를 다운로드하고 있습니다.</string>
+    <string name="updates_error_file_info">업데이트 파일 크기 또는 정보가 일치하지 않습니다.</string>
+    <string name="updates_error_integrity">파일 무결성 검사에 실패했습니다. 다시 다운로드해 주세요.</string>
+    <string name="updates_error_download">업데이트 다운로드를 완료하지 못했습니다.</string>
+    <string name="updates_error_manifest">업데이트 정보가 올바르지 않거나 완전하지 않습니다.</string>
+    <string name="updates_error_verification">앱 또는 APK 정보를 검증할 수 없습니다.</string>
+    <string name="updates_error_incompatible">다른 앱·이전 버전 또는 기기에 맞지 않는 업데이트입니다.</string>
+    <string name="updates_error_signature">현재 앱과 서명이 다릅니다. 설치하지 않습니다.</string>
+</resources>

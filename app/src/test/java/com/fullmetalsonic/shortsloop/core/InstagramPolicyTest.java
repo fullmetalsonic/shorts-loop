@@ -4,6 +4,19 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class InstagramPolicyTest {
+    @Test public void onlyEmptyNoninteractiveCameraShellIsExempt() {
+        String id="com.instagram.android:id/bottom_sheet_camera_container", type="android.widget.FrameLayout";
+        assertTrue(InstagramPolicy.emptyCameraShell(id,type,0,false,false,false,false,"",""));
+        assertFalse(InstagramPolicy.emptyCameraShell(id,type,1,false,false,false,false,"",""));
+        assertFalse(InstagramPolicy.emptyCameraShell(id,type,0,true,false,false,false,"",""));
+        assertFalse(InstagramPolicy.emptyCameraShell(id,type,0,false,true,false,false,"",""));
+        assertFalse(InstagramPolicy.emptyCameraShell(id,type,0,false,false,true,false,"",""));
+        assertFalse(InstagramPolicy.emptyCameraShell(id,type,0,false,false,false,true,"",""));
+        assertFalse(InstagramPolicy.emptyCameraShell(id,type,0,false,false,false,false,"camera",""));
+        assertFalse(InstagramPolicy.emptyCameraShell(id,type,0,false,false,false,false,"","open"));
+        assertFalse(InstagramPolicy.emptyCameraShell("com.instagram.android:id/comments_sheet",type,0,false,false,false,false,"",""));
+        assertFalse(InstagramPolicy.emptyCameraShell(id,"android.widget.EditText",0,false,false,false,false,"",""));
+    }
     private static final String PREFIX = "com.instagram.android:id/";
     private void check(double current, double max, double position, double duration) {
         Progress p = InstagramPolicy.progress(0, 0, max, current);

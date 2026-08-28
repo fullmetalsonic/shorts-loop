@@ -32,7 +32,7 @@ public abstract class VisualAssistController {
         @Override public void reset() { }
         @Override public boolean active() { return false; }
         @Override public int current() { return 0; }
-        @Override public String status() { return "화면 분석 미지원 · 시간제 넘김을 사용해 주세요"; }
+        @Override public String status() { return "visual.error.fallback"; }
         @Override public String diagnostic() { return "visual=false frames=0 errors=0 supported=false"; }
         @Override public void observe(YouTubeSnapshot snapshot, int count, long now) { }
     }

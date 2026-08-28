@@ -23,7 +23,7 @@ final class Api34VisualAssistController extends VisualAssistController {
     private long epoch, requestStarted, lastFrame = -1, nextCaptureAt, requestId, activeRequestId;
     private boolean inFlight, failed;
     private int target, frames, errors, current;
-    private String status = "화면 분석 · 학습 대기";
+    private String status = "visual.waiting";
     private long captureCost;
 
     Api34VisualAssistController(AccessibilityService service, Host host) {
@@ -32,7 +32,7 @@ final class Api34VisualAssistController extends VisualAssistController {
     public void reset() {
         // Invalidate results, but retain the physical in-flight slot until its callback returns.
         epoch++; context = null; failed = false; lastFrame = -1; nextCaptureAt = 0;
-        current = 0; tracker.reset(); status = "화면 분석 · 학습 대기";
+        current = 0; tracker.reset(); status = "visual.waiting";
     }
     public boolean active() { return context != null; }
     public int current() { return current; }
@@ -46,11 +46,11 @@ final class Api34VisualAssistController extends VisualAssistController {
         if (!samePage(context, snapshot) || target != count) {
             reset(); context = snapshot; target = count;
         }
-        if (Build.VERSION.SDK_INT < 34) { status = "화면 분석 · Android 14 미만, 수동 넘김 필요"; return; }
+        if (Build.VERSION.SDK_INT < 34) { status = "visual.error.unsupported"; return; }
         if (count <= 0 || failed) return;
         if (inFlight) {
             if (now - requestStarted > 2000) {
-                reset(); context = snapshot; failed = true; errors++; status = "화면 분석 · 캡처 응답 없음, 수동 넘김 필요";
+                reset(); context = snapshot; failed = true; errors++; status = "visual.error.timeout";
             }
             return;
         }
@@ -74,14 +74,14 @@ final class Api34VisualAssistController extends VisualAssistController {
                             reset(); return;
                         }
                         Rect window = snapshot.windowBounds;
-                        if (window == null || !window.contains(snapshot.page)) { unavailable("캡처 범위 확인 실패"); return; }
+                        if (window == null || !window.contains(snapshot.page)) { unavailable("capture_bounds"); return; }
                         hardware = Bitmap.wrapHardwareBuffer(buffer, screenshot.getColorSpace());
                         if (hardware == null || hardware.getWidth() != window.width() || hardware.getHeight() != window.height()) {
-                            unavailable("창 크기 변경 · 다시 학습 필요"); return;
+                            unavailable("window_changed"); return;
                         }
                         // Hardware bitmaps cannot be read with getPixel or drawn into a software canvas.
                         software = hardware.copy(Bitmap.Config.ARGB_8888, false);
-                        if (software == null) { unavailable("화면 복사 실패"); return; }
+                        if (software == null) { unavailable("copy_failed"); return; }
                         Rect p = snapshot.page;
                         Rect roi = new Rect(p.left - window.left + (int) (p.width() * .10),
                                 p.top - window.top + (int) (p.height() * .18),
@@ -100,15 +100,15 @@ final class Api34VisualAssistController extends VisualAssistController {
                         lastFrame = timestamp; frames++; captureCost = SystemClock.uptimeMillis() - requestedAt;
                         VisualLoopTracker.Result result = tracker.observe(features, timestamp, count);
                         current = result.current;
-                        status = result.learning ? "화면 분석 · 학습 중 (추가 재생 가능)" : "화면 추정 · 재생 횟수 확인 중";
-                        if ("STATIC".equals(result.reason)) status = "화면 분석 · 정지 화면 대기";
+                        status = result.learning ? "visual.learning" : "estimate.counting";
+                        if ("STATIC".equals(result.reason)) status = "visual.static";
                         if ("LEARNING_TIMEOUT".equals(result.reason) || "SHORT_PERIOD".equals(result.reason)) {
                             failed = true; // No more screenshots for this page until an explicit reset/new page.
-                            status = "화면 분석 · 반복 확인 불가, 수동 넘김 필요";
+                            status = "visual.error.repeat_unknown";
                         }
                         host.result(snapshot, result);
                     } catch (RuntimeException ignored) {
-                        if (token == epoch) unavailable("화면 처리 실패");
+                        if (token == epoch) unavailable("processing_failed");
                     } finally {
                         if (features != null) Arrays.fill(features, 0);
                         if (small != null) small.recycle();
@@ -123,16 +123,16 @@ final class Api34VisualAssistController extends VisualAssistController {
                     errors++;
                     if (errorCode == AccessibilityService.ERROR_TAKE_SCREENSHOT_INTERVAL_TIME_SHORT) {
                         tracker.reset(); current = 0; nextCaptureAt = SystemClock.uptimeMillis() + 2000;
-                        status = "화면 분석 · 캡처 간격 조정 중";
+                        status = "visual.capture_throttle";
                     } else unavailable(errorCode == AccessibilityService.ERROR_TAKE_SCREENSHOT_NO_ACCESSIBILITY_ACCESS
-                            ? "접근성 캡처 기능 연결 필요" : errorCode == AccessibilityService.ERROR_TAKE_SCREENSHOT_SECURE_WINDOW
-                            ? "보호된 화면 · 수동 넘김 필요" : "캡처 불가 · 수동 넘김 필요");
+                            ? "capture_disconnected" : errorCode == AccessibilityService.ERROR_TAKE_SCREENSHOT_SECURE_WINDOW
+                            ? "secure_window" : "capture_unavailable");
                 }
             });
-        } catch (RuntimeException ignored) { inFlight = false; errors++; unavailable("캡처 기능 연결 필요"); }
+        } catch (RuntimeException ignored) { inFlight = false; errors++; unavailable("capture_connection"); }
     }
     private void unavailable(String message) {
         tracker.reset(); current = 0; failed = true;
-        status = "화면 분석 · " + message + (message.contains("수동 넘김") ? "" : " · 수동 넘김 필요");
+        status = "visual.error." + message;
     }
 }

@@ -1,22 +1,26 @@
-# 쇼츠 자동 넘김 · ShortsLoop 0.2.8
+# 쇼츠 자동 넘김 · ShortsLoop 0.2.9
 
-**ShortsLoop 0.2.8/code30**은 앱 이름·버전만 표시하고 디버깅이 비활성화된 release APK를 사용합니다. 기존 패키지·서명을 유지합니다. 실제 시험 범위와 게시 상태는 [0.2.8 기록](docs/releases/v0.2.8.md)을 확인하세요.
+로컬0.2.9에는 **Instagram 사진 릴스 통째 넘김 / 한 장씩 보기**와 각각0–10초(기본3초), 장 번호 확인 불가 시 선택형 통째 넘김을 추가했습니다. 기본OFF이며 반복0회와 독립입니다. [설정·예시·한계](docs/PHOTO_REELS.md). 최신 APK의 두 모드·0/3/10초·댓글창 보호를 실폰에서 확인했습니다. 번호 없는 사진·사진 직후 광고·혼합 사례는 미확보이며 아직 게시하지 않았습니다. [조건별 검증](docs/VERIFICATION.md).
 
-**ShortsLoop0.2.8/code30** uses neutral app/version labels and a non-debuggable release APK, preserving the existing package and signer. See the linked0.2.8 record for actual test coverage and publication status.
+Local0.2.9 adds **whole-Reel / each-photo modes for Instagram photos**,separate0–10s delays(default3) and optional unreadable-index fallback. DefaultOFF,independent of repeat0. Both modes,0/3/10s and comments protection are physically tested on the latest APK;unreadable-index,photo-to-ad and mixed cases remain unobserved. Not published. See the linked guide and verification.
 
-인앱 하단은 `ShortsLoop 0.2.8`,업데이트 카드는 `설치 버전 0.2.8`처럼 표시합니다. 앱 버전에 ‘시험판/정식/stable/trial’ 같은 등급을 붙이지 않습니다. 이는 배포물의 `debuggable=false` 보장이나 기능의 검증 범위를 대신하지 않습니다. 선택형 **화면 분석 보조의 실험 기능 안내·별도 동의·Android14 이상 제한**은 그대로 유지합니다.
+ShortsLoop는 **YouTube Shorts와 Instagram Reels를 위한 Android 자동 스크롤(auto scroll) 앱**입니다. 접근성 서비스(AccessibilityService)로 지원되는 재생 정보를 읽고, 재생 횟수 카운터(repeat counter)가 설정한 총 횟수를 확인하면 다음 영상으로 넘깁니다. 한국어·영어(Korean/English) UI, 선택형 플로팅과 빠른 설정 토글을 제공합니다. 모든 영상·언어·기기에서의 감지를 보장하지 않습니다.
 
-The footer uses `ShortsLoop 0.2.8`,and the update card uses `설치 버전 0.2.8` (installed version),without release-grade suffixes. Neutral wording is not a substitute for verifying `debuggable=false` or feature coverage. Optional **visual-assistance experimental warnings,separate consent and the Android14+ restriction** remain.
+ShortsLoop is an **Android auto scroll app for YouTube Shorts and Instagram Reels**. Its AccessibilityService reads supported playback information, and a repeat counter advances after your chosen total plays. It includes a Korean/English interface, an optional floating control and a Quick Settings toggle. Detection is not guaranteed for every video, language or device.
+
+**0.2.9/code31**은 앱·플로팅·빠른 설정의 안내, 도움말과 업데이트 오류를 한국어·영어로 제공합니다. 시스템의 **첫 번째 언어가 한국어이면 한국어, 그 밖에는 영어**입니다. 예를 들어 일본어가 첫 번째이고 한국어가 두 번째이면 영어로 표시합니다. 기존 설정·패키지·서명·권한은 유지하며 사진 릴스 감지를 별도로 추가합니다. [언어 선택·지원 범위](docs/LOCALIZATION.md).
+
+**0.2.9/code31** localizes the app, floating control, Quick Settings, help and update errors. The **first system language selects Korean when it is Korean, otherwise English**: Japanese first and Korean second still selects English. Existing settings, package, signing identity and permissions remain; photo-Reel detection is added separately. See the localization guide for scope and exceptions.
 
 업데이트 조회 정책은 바꾸지 않습니다. 고정 저장소의 공개 릴리스 목록에서 draft를 제외하고 **공개된 prerelease도 포함**해,유효한 메타데이터·더 높은 versionCode·기기 OS 호환성을 만족하는 항목을 확인합니다. 설치 전 크기·SHA256·패키지·버전·현재 설치본과 같은 서명 집합을 검사하고 Android의 최종 설치 확인을 거칩니다. 앱의 중립적인 버전 표시가 prerelease를 제외한다는 뜻은 아닙니다.
 
 Update selection is unchanged:exclude drafts from the fixed repository's public release feed,but **include published prereleases** with valid metadata,a higher versionCode and compatible OS. Size,SHA256,package,version and the installed signer set are checked before Android's final installation confirmation. Neutral version wording does not imply excluding prereleases.
 
-[0.2.8 APK 다운로드](https://github.com/fullmetalsonic/shorts-loop/releases/download/v0.2.8/shorts-loop-v0.2.8.apk) · [릴리스](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.8) · [검증 상태](docs/VERIFICATION.md) · [배포 점검](docs/RELEASE_PRESENTATION_AUDIT.md).<br>
-Download0.2.8 above. Public publication, product CI and anonymous APK/checksum/metadata parity were verified.
+[0.2.9 릴리스 대상 · 공개 검증 대기](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.9) · [검증 상태](docs/VERIFICATION.md) · [배포 점검](docs/RELEASE_PRESENTATION_AUDIT.md). 아직 새 공개 파일의 접근·동일성 검증을 완료했다고 표시하지 않습니다. 현재 게시된 이전 버전은 [0.2.8](https://github.com/fullmetalsonic/shorts-loop/releases/tag/v0.2.8)입니다.<br>
+The linked **0.2.9 release target is awaiting publication verification**; it is not a claim that its public files are available or verified. The previously published version is 0.2.8.
 
-APK **647418 bytes**, SHA256 `FAA554B16AD5A374A07057FDF2F2195931F77AE77ACC67E2E154A366108F012C`. Android8.0 이상, 기존 앱 위로 설치하세요. GitHub Public·draft=false·prerelease=false, 2026-08-28 공개 검증 완료. 새 호스트 연속시험을 수행한 업데이트는 아닙니다.<br>
-Android8.0+; install over the existing app. Published in the Public repository with draft/prerelease false and verified on2026-08-28. This update does not claim a new host endurance run.
+Android 8.0 이상. 최종 검증된 같은 서명의 APK를 기존 앱 위에 설치하면 설정을 유지할 수 있습니다. 최신0.2.9 후보에서 사진 두 모드·0/3/10초·댓글 보호를 실폰 확인했습니다. 번호 없는 사진·사진 직후 광고·혼합 사례는 미확보입니다. 후보별 근거는 검증 기록에서 구분합니다. 인앱 하단은 `ShortsLoop 0.2.9`, 업데이트 카드는 `설치 버전 0.2.9` / `Installed version 0.2.9`입니다. 중립적인 버전 표시는 배포 검증이나 기능 보증을 대신하지 않습니다. 화면 분석 보조의 **실험 기능 안내·별도 동의·Android 14 이상 제한**은 유지합니다.<br>
+Android 8.0+. Install the finally verified same-signed APK over the existing app to retain settings. The latest0.2.9 candidate has physical evidence for both photo modes,0/3/10s and comment protection;unreadable-index,photo-to-ad and mixed cases remain unobserved. Evidence is candidate-specific. The footer shows `ShortsLoop 0.2.9` and the update card shows the localized installed version. Neutral version labels do not replace artifact or feature verification. Visual assistance retains its **experimental warning, separate consent and Android 14+ limit**.
 
 ## 주요 기능 / Features
 
@@ -45,8 +49,8 @@ Android8.0+; install over the existing app. Published in the Public repository w
 
 ## 설치와 첫 실행 / Install and get started
 
-Android 8.0(API26) 이상이 설치 대상입니다. 공식 YouTube 설치 안내는 Android 9 이상이며 Instagram의 최소 OS는 확인되지 않아 기기 Play 스토어의 호환 여부를 확인해야 합니다. API29부터 타일 상태줄, API33부터 인앱 타일 추가 요청, API34부터 화면 분석 시험을 지원합니다. [지원표와 근거](docs/COMPATIBILITY.md). 과거 실기기 시험은 Galaxy Z Fold8 / Android17에서 했으며 모든 기기를 보장하지 않습니다. 인앱 언어는 현재 한국어입니다.<br>
-The app minimum is Android 8.0/API26. YouTube's official requirement is Android 9+; Instagram's minimum is unverified, so check its device Play Store listing. Tile subtitles require API29, in-app tile-add requests API33, and visual assist API34. See the linked support table and sources. Earlier device tests used Galaxy Z Fold8 / Android17, not every device. The interface is currently Korean.
+Android 8.0(API26) 이상이 설치 대상입니다. 공식 YouTube 설치 안내는 Android 9 이상이며 Instagram의 최소 OS는 확인되지 않아 기기 Play 스토어의 호환 여부를 확인해야 합니다. API29부터 타일 상태줄, API33부터 인앱 타일 추가 요청, API34부터 화면 분석 시험을 지원합니다. [지원표와 확인 시점의 근거](docs/COMPATIBILITY.md). 과거 실기기 시험은 Galaxy Z Fold8 / Android17에서 했으며 모든 기기를 보장하지 않습니다. 인앱 언어는 시스템 첫 언어에 따른 한국어 또는 영어입니다.<br>
+The app minimum is Android 8.0/API26. YouTube's documented requirement is Android 9+; Instagram's minimum is unverified, so check its device Play Store listing. Tile subtitles require API29, in-app tile-add requests API33, and visual assist API34. See the linked support table and dated sources. Earlier device tests used Galaxy Z Fold8 / Android17, not every device. The interface selects Korean or English from the first system language.
 
 1. 공개가 완료된 Release에서 배포 APK를 내려받고 첨부 SHA256을 확인해 설치하세요. Play Store 배포본이 아닙니다. **0.2.4에는 인앱 업데이트가 없으므로 브라우저 등에서 새 APK를 직접 받아 덮어쓰기 설치해야 합니다.** 0.2.5 이상은 인앱에서 호환되는 상위 공개 버전을 확인할 수 있습니다.<br>
    Download the published APK from a completed public release and verify its SHA256. This is not a Play Store release. **0.2.4 has no updater: manually download and install the newer APK over the existing app.** Version0.2.5 and later can check for compatible newer public releases in-app.
@@ -68,6 +72,9 @@ Accessibility is a powerful permission that can read and interact with the scree
 Accessibility is required for clock reading, ad/live recognition and advancing even with visual assist OFF. Since code17, the app shows accessibility help and a settings/reconnect button when disconnected. If the Android setting is ON but the service is disconnected, toggle this app's accessibility OFF→ON, then re-enable main execution after reconnection. Help buttons never grant permission or start execution automatically. Overlay permission is only needed when floating display is ON.
 
 ## 횟수와 플로팅 사용법 / Counts and floating controls
+
+메뉴는 같은 위치에서 번역됩니다. 예: **일반 영상 · 횟수로 넘김 / Ordinary videos · Play count**, **전체 자동 넘김 실행 / Auto-advance**, **업데이트 · 앱 정보 / Updates · App information**. 영어 플로팅의 `Filters`, `Ads`, `Live`, `A+L`은 한국어의 `조건`, `광고`, `라이브`, `광·라`에 해당하며 현재 영상 종류가 아닌 독립 옵션 상태입니다. [메뉴 대응표·언어 변경 방법](docs/LOCALIZATION.md).<br>
+Menus keep the same positions in both languages. Floating labels describe independent options, not the current content type. See the linked menu map and language-change instructions. Android itself may choose a different fallback language for launcher/accessibility labels; this does not change playback rules.
 
 횟수는 추가 반복이 아닌 **처음 재생을 포함한 총 횟수**입니다. `2`이면 정상 추적 중 `1/2 → 2/2 → 다음 영상`입니다. 중간부터 켜면 다음 처음 재생부터 셉니다.<br>
 The count means **total plays, including the first play**, not additional repeats. With `2`, normal tracking shows `1/2 → 2/2 → next video`. Starting mid-video waits for a fresh playback cycle.
@@ -162,8 +169,8 @@ Add the “쇼츠 넘김” tile from setup, or manually through the phone's Qui
 - 시간 정보가 없는 릴스는 지원되는 단일 영상에 한해 선택형 시간제를 쓰지만 완주는 보장하지 않습니다. 식별 불가능한 연속 광고, 특수 팝업 및 앱 UI 변경은 미지원 또는 추가 검증 대상입니다. 동작이 불확실하면 실행을 끄고 직접 넘기세요.<br>
   Eligible clockless single-video Reels can use the optional timer, without a completion guarantee. Indistinguishable consecutive ads, special popups and changed app UIs may remain unsupported. If uncertain, stop execution and advance manually.
 
-과거code28에서 YouTube20연속 전환을 확인했지만0.2.8의 새 시험 결과는 아닙니다. 같은 길이 영상 쌍의 실기기 관측·드문 timeout 복구·모든 알림 상황은 별도 한계입니다. 상세 증상·증거·재시험 기록은 [디버그 대장](docs/DEBUG_LOG.md)에 보존합니다.<br>
-Historical code28 passed the YouTube20 run; this is not a new0.2.8 test result. The exact equal-duration pair,rare-timeout recovery and universal notification behavior remain unverified. See the debug log for evidence and limits.
+과거code28에서 YouTube20연속 전환을 확인했지만0.2.9의 새 시험 결과는 아닙니다. 같은 길이 영상 쌍의 실기기 관측·드문 timeout 복구·모든 알림 상황은 별도 한계입니다. 표시 언어 번역이 호스트 감지 언어를 확장하지는 않습니다. 기존 판독은 한국어·영어 및 지원되는 시계 표기 중심이며 다른 언어의 모든 영상·광고를 보장하지 않습니다. 시스템 언어 변경 중에도 안전 대기·정지 조건을 유지하며, 복귀 후 재시작 안내가 있으면 화면을 확인하고 전체 실행을OFF→ON하세요. 상세 기록은 [디버그 대장](docs/DEBUG_LOG.md)에 보존합니다.<br>
+Historical code28 passed the YouTube20 run; this is not a new0.2.9 test result. The exact equal-duration pair,rare-timeout recovery and universal notification behavior remain unverified. UI translation does not expand host detection: readers focus on Korean/English and supported clock formats, not all videos or ads in every language. Language changes preserve safety waits/stops; if restart is requested after returning, inspect the screen and toggle main execution OFF→ON. See the debug log for evidence and limits.
 
 ## 데이터와 업데이트 / Data and updates
 
@@ -191,8 +198,8 @@ An APK signed with the same key can update the installed app while preserving se
 
 ## 빌드·시험 / Build and test
 
-0.2.8의 배포 대상은 **release 빌드·debuggable=false·기존 서명 유지**를 확인한 APK입니다. 빌드 유형만 바꾸고 서명이 달라지면 기존 앱 위 업데이트가 되지 않으므로 서명 집합·패키지·버전·설정 보존도 확인합니다. 예상 파일명은 `shorts-loop-v0.2.8.apk`이며 크기·해시·시험 결과는 아직 미확정입니다. 최종 절차·결과는 [검증 기록](docs/VERIFICATION.md)에 누적합니다.<br>
-The0.2.8 distribution target is a **release build with debuggable=false and the existing signer**. Changing build type alone is insufficient:the signer set,package,version and settings preservation must also be checked. Filename:`shorts-loop-v0.2.8.apk` (expected);size,hash and test results are not finalized.
+0.2.9의 배포 대상은 **release 빌드·debuggable=false·기존 서명 유지**를 확인한 APK입니다. 빌드 유형만 바꾸고 서명이 달라지면 기존 앱 위 업데이트가 되지 않으므로 서명 집합·패키지·버전·설정 보존도 확인합니다. 파일명은 `shorts-loop-v0.2.9.apk`이며 최종 산출물과 시험·공개 결과는 [검증 기록](docs/VERIFICATION.md)에 누적합니다. 이 명령 안내 자체는 검사 완료 선언이 아닙니다.<br>
+The0.2.9 distribution target is a **release build with debuggable=false and the existing signer**. Changing build type alone is insufficient:the signer set,package,version and settings preservation must also be checked. The filename is `shorts-loop-v0.2.9.apk`; final artifact, test and publication evidence belongs in the verification record. These instructions do not declare that checks have completed.
 
 ### 배포용 release 검증 / Distribution release checks
 
@@ -206,13 +213,13 @@ The0.2.8 distribution target is a **release build with debuggable=false and the 
 .\scripts\prepare-release.ps1 -Apk app/build/outputs/apk/release/app-release.apk
 ```
 
-안전 검사의 비교용 debug APK는 아래 개발용 절차로 별도 준비합니다. 로컬 서명 출력은 `app/build/outputs/apk/release/app-release.apk`이며, 포장 스크립트는 안전 검사 후 `artifacts/release-v0.2.8-code30/shorts-loop-v0.2.8.apk`와 SHA256·업데이트 JSON을 만듭니다. 기존 출력 폴더는 덮어쓰지 않습니다. CI는 서명 비밀 없이 release 빌드·단위시험·lint와 debug 경로를 검사하며 CI APK를 공개 업데이트로 대체하지 않습니다.<br>
+안전 검사의 비교용 debug APK는 아래 개발용 절차로 별도 준비합니다. 로컬 서명 출력은 `app/build/outputs/apk/release/app-release.apk`이며, 포장 스크립트는 안전 검사 후 `artifacts/release-v0.2.9-code31/shorts-loop-v0.2.9.apk`와 SHA256·업데이트 JSON을 만듭니다. 기존 출력 폴더는 덮어쓰지 않습니다. CI는 서명 비밀 없이 release 빌드·단위시험·lint와 debug 경로를 검사하며 CI APK를 공개 업데이트로 대체하지 않습니다.<br>
 These are the release-check commands, not completed results. Keep signing secrets local, prepare the comparison debug APK separately, and publish only the verified locally signed artifact. CI checks both build variants without the signing secrets.
 
 ### 개발용 debug 검증 / Development-only debug checks
 
-아래 기존 명령은 개발용 debug APK 확인 절차이며0.2.8 배포 APK를 만드는 최종 검증을 대신하지 않습니다. `app-debug.apk`를 새 공개 파일로 올리지 않습니다.<br>
-The existing commands below check a development debug APK;they do not replace0.2.8 release-artifact verification. Do not publish `app-debug.apk` as the new distribution artifact.
+아래 기존 명령은 개발용 debug APK 확인 절차이며0.2.9 배포 APK를 만드는 최종 검증을 대신하지 않습니다. `app-debug.apk`를 새 공개 파일로 올리지 않습니다.<br>
+The existing commands below check a development debug APK;they do not replace0.2.9 release-artifact verification. Do not publish `app-debug.apk` as the new distribution artifact.
 
 JDK17 이상, Android SDK35, Build Tools35.0.0, Gradle wrapper8.9 / Android Gradle Plugin8.7.3. SDK는 `ANDROID_HOME` 또는 Git에서 제외된 `local.properties`로 지정합니다. 빌드 의존성 다운로드에는 인터넷이 필요합니다.<br>
 Use JDK17+, Android SDK35, Build Tools35.0.0, Gradle wrapper8.9 / AGP8.7.3. Set `ANDROID_HOME` or an ignored `local.properties`. Building requires dependency downloads.
@@ -254,7 +261,13 @@ The separate, unwired `VisualSequenceTracker` experiment has **18 PASS/2 FAIL ou
 
 ## 과거 버전 기록 / Version history
 
-아래의0.2.7 이하 빌드·기기·게시 결과는 버전별 과거 기록입니다. 당시 표시·배포 상태와 검증 수치는 보존하지만0.2.8의 PASS나 공개 완료 근거로 재사용하지 않습니다.
+아래의0.2.8 이하 빌드·기기·게시 결과는 버전별 과거 기록입니다. 당시 표시·배포 상태와 검증 수치는 보존하지만0.2.9의 PASS나 공개 완료 근거로 재사용하지 않습니다.<br>
+Evidence for0.2.8 and earlier remains historical; it is not a0.2.9 test or publication result.
+
+### 이전 0.2.8/code30 / Previous0.2.8
+
+앱명·버전만 표시하는 non-debuggable release APK로 기존 패키지·서명을 유지했습니다. [0.2.8 APK](https://github.com/fullmetalsonic/shorts-loop/releases/download/v0.2.8/shorts-loop-v0.2.8.apk) · [릴리스 기록](docs/releases/v0.2.8.md). APK **647418 bytes**, SHA256 `FAA554B16AD5A374A07057FDF2F2195931F77AE77ACC67E2E154A366108F012C`. GitHub Public·draft=false·prerelease=false, 2026-08-28 공개·제품CI·익명 APK/체크섬/메타데이터 동일성 검증 완료. 새 호스트 연속시험을 수행한 버전은 아닙니다.<br>
+Version0.2.8 used neutral app/version labels and a non-debuggable release APK with the existing package and signer. Its647418-byte APK and SHA256 above were verified with Public visibility,draft/prerelease false,product CI and anonymous APK/checksum/metadata parity on2026-08-28. It did not add a new host endurance run.
 
 <details>
 <summary>0.2.7·0.2.6의 기존 설명과 검증 기록 / Earlier descriptions and evidence</summary>
@@ -332,10 +345,13 @@ Code28 passed468 tests,build,static guards,233/233/232 API26/33/34 checks and in
 
 ## 문서 / Documentation
 
+- [다음 업데이트: 분할 화면·앱별 플로팅 계획(미구현) / Split-screen and per-host floating plan(not implemented)](docs/SPLIT_SCREEN_PLAN.md)
+
 이 README는 한영 사용 안내입니다. 아래 상세 개발·시험 문서는 주로 한국어입니다.<br>
 This README is the bilingual user guide. Detailed development and test records below are primarily Korean.
 
 - [상세 사용 설명서 / Detailed guide](docs/USER_GUIDE.md)
+- [한국어·영어 선택과 감지 언어 한계 / Localization and detection-language limits](docs/LOCALIZATION.md)
 - [Android 버전별 지원 / Per-Android support](docs/COMPATIBILITY.md)
 - [시간제 보조 설정·한계 / Timed fallback](docs/TIMED_FALLBACK.md)
 - [YouTube 라이브 설정·한계 / Live-preview skipping](docs/LIVE_SKIP.md)

@@ -5,8 +5,8 @@ import java.text.Normalizer;
 /** Optional total-duration filter, independent of repeat count. Unknown durations never qualify. */
 public final class LongVideoPolicy {
     public static final int DEFAULT_SECONDS = 60, MIN_SECONDS = 1, MAX_SECONDS = 3600;
-    public static final String CHECKING = "긴 영상 · 길이 확인 중";
-    public static final String CONFIRMING = "긴 영상 · 다음 영상 확인 중";
+    public static final String CHECKING = "long.checking";
+    public static final String CONFIRMING = "long.confirming";
     private LongVideoPolicy() {}
     public static int clamp(int value) { return Math.max(MIN_SECONDS, Math.min(MAX_SECONDS, value)); }
     public static int sanitizeSeconds(int value) {
@@ -24,6 +24,6 @@ public final class LongVideoPolicy {
     }
     public static String zeroCountStatus(boolean ads, boolean live, boolean longVideo) {
         if (!longVideo) return LiveSkipPolicy.zeroCountStatus(ads, live);
-        return "반복 꺼짐 · 긴 영상" + (ads ? "·광고" : "") + (live ? "·라이브" : "") + "만 넘김";
+        return "zero.long" + (ads ? "_ads" : "") + (live ? "_live" : "");
     }
 }

@@ -44,32 +44,32 @@ public class LiveSkipPolicyTest {
         assertTrue(LiveSkipPolicy.isLiveStatus(LiveSkipPolicy.STATUS_IMMEDIATE));
         assertTrue(LiveSkipPolicy.isLiveStatus(LiveSkipPolicy.STATUS_DELAYED));
         assertTrue(LiveSkipPolicy.isLiveStatus(LiveSkipPolicy.STATUS_CONFIRMING));
-        for (String invalid : new String[]{null, "", "라이브", "라이브 · 다음 영상 확인 중 실패", "라이브 · 넘김 확인 실패", "라이브 일시정지"})
+        for (String invalid : new String[]{null, "", "라이브", "live.confirming.failed", "라이브 · 넘김 확인 실패", "라이브 일시정지"})
             assertFalse(LiveSkipPolicy.isLiveStatus(invalid));
     }
     @Test public void immediateAndElapsedLiveShowLiveNotZeroSeconds() {
-        assertEquals("라이브", LiveSkipPolicy.floatingLabel(LiveSkipPolicy.STATUS_IMMEDIATE, 0));
-        assertEquals("라이브", LiveSkipPolicy.floatingLabel(LiveSkipPolicy.STATUS_DELAYED, 0));
-        assertEquals("라이브", LiveSkipPolicy.floatingLabel(LiveSkipPolicy.STATUS_IMMEDIATE, -1));
+        assertEquals("live", LiveSkipPolicy.floatingLabel(LiveSkipPolicy.STATUS_IMMEDIATE, 0));
+        assertEquals("live", LiveSkipPolicy.floatingLabel(LiveSkipPolicy.STATUS_DELAYED, 0));
+        assertEquals("live", LiveSkipPolicy.floatingLabel(LiveSkipPolicy.STATUS_IMMEDIATE, -1));
     }
     @Test public void liveDelayShowsRemainingSeconds() {
-        assertEquals("5초", LiveSkipPolicy.floatingLabel(LiveSkipPolicy.STATUS_DELAYED, 5));
-        assertEquals("60초", LiveSkipPolicy.floatingLabel(LiveSkipPolicy.STATUS_DELAYED, 60));
+        assertEquals("seconds:5", LiveSkipPolicy.floatingLabel(LiveSkipPolicy.STATUS_DELAYED, 5));
+        assertEquals("seconds:60", LiveSkipPolicy.floatingLabel(LiveSkipPolicy.STATUS_DELAYED, 60));
     }
     @Test public void confirmationTakesPriorityOverStaleRemainingSeconds() {
-        assertEquals("다음", LiveSkipPolicy.floatingLabel(LiveSkipPolicy.STATUS_CONFIRMING, -1));
-        assertEquals("다음", LiveSkipPolicy.floatingLabel(LiveSkipPolicy.STATUS_CONFIRMING, 5));
+        assertEquals("next", LiveSkipPolicy.floatingLabel(LiveSkipPolicy.STATUS_CONFIRMING, -1));
+        assertEquals("next", LiveSkipPolicy.floatingLabel(LiveSkipPolicy.STATUS_CONFIRMING, 5));
     }
     @Test public void errorsNeverBecomeLiveOrNextLabels() {
         assertNull(LiveSkipPolicy.floatingLabel("라이브 · 다음 영상 확인 중 실패", 5));
-        assertNull(LiveSkipPolicy.floatingLabel("라이브 · 바로 넘기기 실패", 0));
-        assertNull(LiveSkipPolicy.floatingLabel("시간제 · 다음 영상 확인 중", -1));
+        assertNull(LiveSkipPolicy.floatingLabel("live.immediate.failed", 0));
+        assertNull(LiveSkipPolicy.floatingLabel("timed.confirming", -1));
         assertNull(LiveSkipPolicy.floatingLabel(null, 5));
     }
     @Test public void zeroCountExplainsEveryIndependentOptionCombination() {
-        assertEquals("광고·라이브만 자동 넘김 · 일반·시간제 중지", LiveSkipPolicy.zeroCountStatus(true, true));
-        assertEquals("라이브만 자동 넘김 · 일반·시간제 중지", LiveSkipPolicy.zeroCountStatus(false, true));
-        assertEquals("광고만 자동 넘김 · 일반·시간제 중지", LiveSkipPolicy.zeroCountStatus(true, false));
-        assertEquals("0회 · 반복·시간제 중지, 광고·라이브 꺼짐", LiveSkipPolicy.zeroCountStatus(false, false));
+        assertEquals("zero.ads_live", LiveSkipPolicy.zeroCountStatus(true, true));
+        assertEquals("zero.live", LiveSkipPolicy.zeroCountStatus(false, true));
+        assertEquals("zero.ads", LiveSkipPolicy.zeroCountStatus(true, false));
+        assertEquals("zero.off", LiveSkipPolicy.zeroCountStatus(false, false));
     }
 }

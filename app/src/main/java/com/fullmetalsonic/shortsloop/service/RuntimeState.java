@@ -8,5 +8,5 @@ public final class RuntimeState {
     public static volatile int current;
     /** -1 means ordinary repeat/status display; nonnegative is a time fallback countdown. */
     public static volatile int timedRemainingSeconds = -1;
-    public static volatile String status = "꺼짐";
+    public static volatile String status = "off";
 }

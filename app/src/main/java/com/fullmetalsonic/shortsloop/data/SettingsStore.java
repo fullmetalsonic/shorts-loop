@@ -60,6 +60,16 @@ public final class SettingsStore {
     public boolean youtubeEnabled() { return booleanValue("youtube_enabled", true); }
     public boolean instagramEnabled() { return booleanValue("instagram_enabled", false); }
     public boolean skipAds() { return booleanValue("skip_ads", false); }
+    public boolean photoEnabled() { return booleanValue("photo_enabled", false); }
+    public int photoMode() { return com.fullmetalsonic.shortsloop.core.PhotoReelPolicy.mode(intValue("photo_mode", 0)); }
+    public int photoWholeSeconds() { return com.fullmetalsonic.shortsloop.core.PhotoReelPolicy.seconds(intValue("photo_whole_seconds", com.fullmetalsonic.shortsloop.core.PhotoReelPolicy.DEFAULT_SECONDS)); }
+    public int photoSlideSeconds() { return com.fullmetalsonic.shortsloop.core.PhotoReelPolicy.seconds(intValue("photo_slide_seconds", com.fullmetalsonic.shortsloop.core.PhotoReelPolicy.DEFAULT_SECONDS)); }
+    public boolean photoFallback() { return booleanValue("photo_fallback", false); }
+    public void photoEnabled(boolean value) { preferences.edit().putBoolean("photo_enabled", value).apply(); }
+    public void photoMode(int value) { preferences.edit().putInt("photo_mode", com.fullmetalsonic.shortsloop.core.PhotoReelPolicy.mode(value)).apply(); }
+    public void photoWholeSeconds(int value) { preferences.edit().putInt("photo_whole_seconds", com.fullmetalsonic.shortsloop.core.PhotoReelPolicy.seconds(value)).apply(); }
+    public void photoSlideSeconds(int value) { preferences.edit().putInt("photo_slide_seconds", com.fullmetalsonic.shortsloop.core.PhotoReelPolicy.seconds(value)).apply(); }
+    public void photoFallback(boolean value) { preferences.edit().putBoolean("photo_fallback", value).apply(); }
     public boolean skipLong() { return booleanValue("skip_long", false); }
     public int longVideoSeconds() {
         return com.fullmetalsonic.shortsloop.core.LongVideoPolicy.sanitizeSeconds(intValue("long_video_seconds", 60));

@@ -101,5 +101,5 @@ public final class UpdateManifest {
         return ((Number) value).longValue();
     }
 
-    static IOException invalid() { return new IOException("업데이트 정보가 올바르지 않습니다."); }
+    static IOException invalid() { return new UpdateFailure(UpdateFailure.Code.INVALID_MANIFEST); }
 }

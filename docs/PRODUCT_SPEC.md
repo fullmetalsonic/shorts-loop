@@ -1,32 +1,44 @@
-# 제품 기준 · ShortsLoop 0.2.8
+# 제품 기준 / Product contract · ShortsLoop 0.2.9
 
-**ShortsLoop 0.2.8/code30**은 앱 이름·버전만 표시하고 디버깅이 비활성화된 release APK를 사용합니다. 기존 패키지·서명을 유지합니다. 실제 시험 범위와 게시 상태는 [0.2.8 기록](releases/v0.2.8.md)을 확인하세요.
+**ShortsLoop 0.2.9/code31**은 한국어·영어 표시와 선택형 Instagram 사진 릴스 두 모드를 추가한다. 설정·서명·권한을 보존하고 영상과 사진 규칙을 분리한다. 사진은 반복0회와 독립이며 전체OFF는 모두 중지한다. 최신721898-byte 후보를 실폰에 설치하고 SHA256 일치를 확인했다. 통째0·3·10초, 한 장0·3·10초, 마지막 장 이후 다음 릴스 이동과 댓글창 보호를 확인했다. 추가 신속 검사에서8장 릴스의 가로7/7·세로1/1, 한 장10초의 가로1/1·세로1/1을 확인했다. 번호 없는 사진·사진 직후 광고·혼합 게시물은 실폰 사례 미확보이며,20개 표본 탐색은 자동20연속 PASS가 아니다. GitHub 게시 보류. [사진 계약](PHOTO_REELS.md),[언어 계약](LOCALIZATION.md),[검증 상태](VERIFICATION.md),[이전 배포](releases/v0.2.8.md).
 
-**ShortsLoop0.2.8/code30** uses neutral app/version labels and a non-debuggable release APK, preserving the existing package and signer. See the linked0.2.8 record for actual test coverage and publication status.
+**ShortsLoop0.2.9/code31** adds Korean/English UI and optional Instagram photo rules,independent of repeat0;mainOFF stops all rules. The latest721898-byte APK is installed with matching SHA256. Whole0/3/10s,each0/3/10s,last-slide exit and comments protection have physical evidence. Additional checks passed7/7 horizontal and1/1 vertical moves on an8-photo post,and1/1 horizontal plus1/1 vertical with each10s. Unreadable-index photos,photo-to-ad and mixed posts were not found for physical testing;20 rapid samples are not20 consecutive automatic passes. Publication remains on hold.
 
-## 0.2.8 표시·배포 계약
+## 0.2.9 언어·표시 계약 / Language and display
 
-인앱 하단은 `ShortsLoop 0.2.8`,업데이트 카드는 `설치 버전 0.2.8`처럼 표시합니다. 앱 버전에 ‘시험판/정식/stable/trial’ 같은 등급을 붙이지 않습니다. 이는 배포물의 `debuggable=false` 보장이나 기능의 검증 범위를 대신하지 않습니다. 선택형 **화면 분석 보조의 실험 기능 안내·별도 동의·Android14 이상 제한**은 그대로 유지합니다.
+인앱 하단은 `ShortsLoop 0.2.9`,업데이트 카드는 `설치 버전 0.2.9` / `Installed version 0.2.9`로 표시한다. 앱 버전에 ‘시험판/정식/stable/trial’ 등급을 붙이지 않는다. 중립적인 문구가 `debuggable=false`나 검증 범위를 대신하지 않는다. 선택형 화면 분석의 **실험 기능 경고·별도 동의·Android14 이상 제한**은 유지한다.
 
-The footer uses `ShortsLoop 0.2.8`,and the update card uses `설치 버전 0.2.8` (installed version),without release-grade suffixes. Neutral wording is not a substitute for verifying `debuggable=false` or feature coverage. Optional **visual-assistance experimental warnings,separate consent and the Android14+ restriction** remain.
+The footer uses `ShortsLoop 0.2.9`,and the update card uses the Korean/English installed-version label,without release-grade suffixes. Neutral wording does not replace `debuggable=false` or feature verification. Optional **visual-assistance experimental warnings,separate consent and the Android14+ restriction** remain.
+
+- 제품이 직접 표시하는 언어는 시스템 언어 목록의 첫 항목만으로 선택한다. 첫 언어 `ko`이면 한국어, 그 밖에는 영어다. `ja,ko`도 영어이며 두 번째 지원 언어를 찾아 한국어로 바꾸지 않는다.
+- 앱 메뉴·입력/오류·도움말·접근성 설명용 인앱 대화상자·배터리 안내·업데이트·플로팅·빠른 설정 실행 상태를 번역한다. Android가 직접 읽는 런처 앱명·접근성 서비스 이름/설명 및 시스템 설정·설치 창은 OS의 리소스 fallback을 따를 수 있다.
+- 표시용 Context만 언어를 정하며 시스템 언어·기본 전역 Locale·호스트 앱의 설정을 변경하지 않는다. 별도 번역 다운로드·언어 선택 설정키·새 권한을 추가하지 않는다.
+- 언어 변경 시 저장한 기능 설정·횟수·위치는 보존한다. 화면 재생성 전 확정하지 않은 입력 보존을 약속하지 않으며 사용자는 완료/적용한다. 화면 이탈·조회 중단·설정 갱신·서비스 재연결의 기존 안전 동작은 유지한다. 실행 자동 재시작을 추가하지 않으며 필요하면 전체OFF→ON한다.
+- 정상 카운트·시간·임계값의 단위와0회/라이브0초 의미는 동일하다. 플로팅 `조건/Filters`, `광고/Ads`, `라이브/Live`, `광·라/A+L`은 독립 옵션 표시이며 콘텐츠 분류·완주 증거가 아니다. 내부 상태 코드와 호스트 감지 문구는 표시 번역과 분리한다.
+- 업데이트의 알려진 실패는 코드별 리소스로 표시한다. 알 수 없는 실패는 일반 문구로 처리하고 예외 원문·내부 경로·서버 응답을 UI에 붙이지 않는다. 고정 GitHub 주소·허용 범위·파일/서명 검사를 바꾸지 않는다.
+- UI 언어 지원은 감지 언어 지원이 아니다. 기존 판독은 한국어·영어·지원 시계 표기와 접근성 구조 중심이며 모든 언어·지역·호스트 버전의 완주/광고 인식을 보장하지 않는다. 언어 변경을 이유로 안전 가드를 완화하지 않는다.
+
+EN: Product-owned display uses only the first system language: `ko` selects Korean; otherwise English, including `ja,ko`. Menus, help, errors, floating controls and runtime tile state are localized; Android-owned launcher/accessibility/system screens may use OS fallback. Display contexts do not modify system/host language, global locale, saved options or permissions. Existing interruption/reconnection safeguards and manual restart requirements remain. Zero counts, seconds and filter semantics are unchanged. Known update errors use translated codes; unknown raw errors are not exposed. UI translation does not extend detection beyond existing Korean/English, supported-clock and structural readers.
+
+## 0.2.9 배포 계약 / Delivery contract
 
 - 배포 APK는 release 변형으로 만들고 최종 패키지의`debuggable=false`를 확인한다. 개발용 debug APK·테스트 runner·테스트 fixture를 배포하지 않는다.
 - 패키지·설치하한API26·기존 서명 집합을 유지한다. 서명키 변경이나 삭제 후 재설치를 설정 보존 수단으로 삼지 않는다.
-- 예상 파일명은`shorts-loop-v0.2.8.apk`이다. 최종 버전/코드/파일명/크기/해시/서명/디버깅 플래그/기존 설정 보존은 새 산출물에서 검증한다.
+- 파일명은`shorts-loop-v0.2.9.apk`이다. 최종 버전/코드/파일명/크기/해시/서명/디버깅 플래그/기존 설정 보존은 새 산출물에서 검증한다.
 - 앱명·버전 표시 변경이 감지·카운트·스와이프·플로팅 크기·옵션 기본값을 바꾸지는 않는다. 화면 분석 실험 경고와 안전 제약은 유지한다.
-- 아래 계약은 승인된0.2.8 기준이며,아직 미실행인 검사를 PASS로 의미하지 않는다.
+- 아래 계약은0.2.9 기준이며,아직 미실행인 검사를 PASS로 의미하지 않는다.
 
 업데이트 조회 정책은 바꾸지 않습니다. 고정 저장소의 공개 릴리스 목록에서 draft를 제외하고 **공개된 prerelease도 포함**해,유효한 메타데이터·더 높은 versionCode·기기 OS 호환성을 만족하는 항목을 확인합니다. 설치 전 크기·SHA256·패키지·버전·현재 설치본과 같은 서명 집합을 검사하고 Android의 최종 설치 확인을 거칩니다. 앱의 중립적인 버전 표시가 prerelease를 제외한다는 뜻은 아닙니다.
 
 Update selection is unchanged:exclude drafts from the fixed repository's public release feed,but **include published prereleases** with valid metadata,a higher versionCode and compatible OS. Size,SHA256,package,version and the installed signer set are checked before Android's final installation confirmation. Neutral version wording does not imply excluding prereleases.
 
-## 0.2.8에서 유지하는 재생 계약 · 새 시작점 복구·긴 영상
+## 0.2.9에서 유지하는 재생 계약 · 새 시작점 복구·긴 영상
 
 0.2.6에서 도입한 일반 진행 정보 기반 넘김 요청의 **4.5초 전환 확인 시간 초과**만 제한적으로 자동 복구한다. 추가 스와이프 없이 같은 요청 앱·창에서 현재의 안전한 일반 영상을 관측한다. 시작 부근(`min(1초, 영상 길이의10%)` 이내) 표본과300ms~3초 이내의 정상 전진 재생을 확인하면 이전 누적값을 버리고 기존 정상 카운터로 설정 횟수를 다시 센다. 시작 확인 자체는 넘김 요청이 아니며, 0초 한 표본·정지0초·시간 경과만으로 복구하지 않는다.
 
 긴 영상·광고·라이브·시간제·화면 분석 실패, 제스처 거부/취소, 권한 문제와 전환 중 앱·창 이탈 등 기존 안전정지는 유지한다. 복구 대기에서 긴 영상·광고·라이브·시간제·화면 분석으로 우회 이동하지 않는다. 전체OFF·목표0·설정 변경과 서비스 재연결의 기존 계약이 우선한다. 플로팅의 복구 대기·안전정지를 정상 회차와 구분한다. 상세 상태·예방 시험은 [PLAYBACK_RECOVERY](PLAYBACK_RECOVERY.md)를 따른다.
 
-0.2.6에서 이전의 ‘모든 전환 확인 실패는 수동 재시작까지 정지’ 계약 중 위 일반 진행 시간 초과만 변경했다. 실패한 요청을 재전송하거나 감지되지 않은 재생을 완주로 가산하지 않는다. 최초 실패와 알림의 인과관계는 미확정이며,복구 구현을 원인 규명 완료라고 하지 않는다. 과거code28의 YouTube20회와 code26의 Instagram10회 PASS는 각각의 버전·앱에 한정된 기록이다. 같은 길이 쌍의 실기기 미관측 등 한계는 유지하며0.2.8의 새 검증·게시 결과와 혼합하지 않는다. [검증](VERIFICATION.md)과 [누적이력](CHANGELOG.md)에서 결과를 구분한다.
+0.2.6에서 이전의 ‘모든 전환 확인 실패는 수동 재시작까지 정지’ 계약 중 위 일반 진행 시간 초과만 변경했다. 실패한 요청을 재전송하거나 감지되지 않은 재생을 완주로 가산하지 않는다. 최초 실패와 알림의 인과관계는 미확정이며,복구 구현을 원인 규명 완료라고 하지 않는다. 과거code28의 YouTube20회와 code26의 Instagram10회 PASS는 각각의 버전·앱에 한정된 기록이다. 같은 길이 쌍의 실기기 미관측 등 한계는 유지하며0.2.9의 새 검증·게시 결과와 혼합하지 않는다. [검증](VERIFICATION.md)과 [누적이력](CHANGELOG.md)에서 결과를 구분한다.
 
 code22의 YouTube 실기기 관측2회는 긴 영상 기능 추가에 따라 중단된 이전 후보 기록이다. code26의 실제10개 시험이나 새 기능 검증에 합산하지 않는다.
 
@@ -40,7 +52,7 @@ code22의 YouTube 실기기 관측2회는 긴 영상 기능 추가에 따라 중
 - 한 번 요청한 뒤 새 페이지 확인 전에는 다시 요청하지 않는다. **긴 영상의4.5초 확인 시간 초과는 안전정지**이며 일반N회 실패 복구로 바꿔 우회하지 않는다. 복구 대기·다른 요청pending 중 긴 영상 필터가 새 요청을 발행하지 않는다.
 - code28의 YouTube 보조 콘텐츠 키 경로는 요청 시 직접 자식 단일 전체 페이지의 `CollectionItemInfo` 행 번호를 저장하고 확인할 때 다시 읽는다. 같은 창·동일 pager 객체·동일 전체 페이지 영역과 전후 콘텐츠 표본 일치를 확인한다. 요청/현재 행을 모두 알 때는 **현재 행=요청 행+1**만 허용하며,같음·역방향·+2 이상은 총길이가 달라도 거절한다. 정확한+1은 기존 pager 이동·유효한 총길이 차이 외에 추가로 인정하는 독립 근거다. **다른 콘텐츠 키·300ms 이상 안정·최신 실제 전진 재생**은 계속 필요하고 길이·행 번호 하나만으로 이동을 확정하지 않는다. 과거+1을 저장해 재사용하지 않으므로 행이 되돌아가면 이전 이동 근거도 유지되지 않는다.
 - `CollectionItemInfo` 자체가 없는 것은UNKNOWN이다. UNKNOWN은+1 근거가 아니며 기존 안전한 확인 경로만 평가한다. refresh 실패·잘못된 행/열/span·다른 창·pager·영역·복수 페이지·전후 콘텐츠 불일치는UNSAFE로 구분해 기존 길이 근거로도 우회하지 않는다. 콘텐츠 키의 등장·소실은 요청 시 고정한 출처를 바꾸지 않는다. 읽기 전용이며 새 권한·오디오·화면 캡처·영상 내용 저장/전송을 추가하지 않는다. 일반 반복 복구·광고·라이브·Instagram 확인·4.5초 긴 영상 안전정지는 유지한다.
-- 과거code26→code28 YouTube 보완에서 Instagram의 일반 확인 경로와`AdvanceGate`는 code26 그대로 유지했다. code26 Instagram10개 PASS는 당시 근거이며,code28이나0.2.8에서 실기기10개를 재실행했다는 의미가 아니다.
+- 과거code26→code28 YouTube 보완에서 Instagram의 일반 확인 경로와`AdvanceGate`는 code26 그대로 유지했다. code26 Instagram10개 PASS는 당시 근거이며,code28이나0.2.9에서 실기기10개를 재실행했다는 의미가 아니다.
 - 0회에서 긴 영상 옵션이 활성인 플로팅은 ‘조건’으로 표시한다. 이는 현재 콘텐츠 종류나 완주 횟수가 아닌 독립 옵션 표시다. 광고 전용 예시에는 긴 영상OFF와 라이브OFF를 함께 명시한다.
 - 기존 설정 스키마1·권한·업데이트 범위를 유지한다. 새 긴 영상 설정키 외에 기존 횟수·시간제·광고·라이브·앱 선택·위치를 변경하지 않는다.
 
@@ -50,7 +62,7 @@ code22의 YouTube 실기기 관측2회는 긴 영상 기능 추가에 따라 중
 
 0.2.5(code21)는 호환성·GitHub 인앱 업데이트·빈도순 메뉴 배치·YouTube 라이브 미리보기 넘김을 통합한다. 새 인터넷/설치 연결 권한은 업데이트에만 한정하며 영상·계정·시청이력 전송은 금지한다. 2026-08-28 Public 시험판으로 공개했으며 과거 code14 호환성 시험과 공개판0.2.4 결과를 통합판의 PASS로 재사용하지 않는다. 최종 검증·게시 결과는 [VERIFICATION](VERIFICATION.md) 참조.
 
-0.2.5의 계약은 **일반 영상의N회 반복 / 진행 정보 없는Instagram의 선택형 시간제 / 독립된Instagram 광고 / YouTube 라이브**였다. 0.2.6/code28은 여기에 위의 독립된 긴 영상 필터를 추가한다. 시간제 기본OFF·10초·5~60초·±1초는 유지하고, 정상 영상 중 긴 영상 조건에 해당하지 않으면 기존N회를 유지한다. **현재0회는 일반 반복·시간제·화면 분석 중지, 긴 영상·광고·라이브는 별도 옵션에 따름. 전체 실행OFF는 모두 중지**한다. 과거0.2.1의 ‘0회 광고 중지’는 아래 역사적 시험에만 적용한다.
+0.2.5의 계약은 **일반 영상의N회 반복 / 진행 정보 없는Instagram의 선택형 시간제 / 독립된Instagram 광고 / YouTube 라이브**였다. 0.2.6/code28은 여기에 위의 독립된 긴 영상 필터를 추가한다. 시간제 기본OFF·10초·5~60초·±1초는 유지하고, 정상 영상 중 긴 영상 조건에 해당하지 않으면 기존N회를 유지한다. **현재0회는 일반 반복·시간제·화면 분석 중지, 긴 영상·광고·라이브·사진은 별도 옵션에 따름. 전체 실행OFF는 모두 중지**한다. 과거0.2.1의 ‘0회 광고 중지’는 아래 역사적 시험에만 적용한다.
 
 이 문서는 동작 계약이며 시험 완료 선언이 아니다. code28의 YouTube20연속(일반4·긴 영상15·라이브1)은 통과했다. Instagram은 code26 별도10회 근거를 유지하며 후보별·앱별 관측을 합산하지 않는다. 최신 빌드·시험·기기·독립 리뷰·공개 결과는 [VERIFICATION](VERIFICATION.md), 과거 공개판은 [0.2.4 릴리스](releases/v0.2.4.md)를 기준으로 한다. [사용 설명서](USER_GUIDE.md), [UI·인간공학 기준](UI_DESIGN.md), [시간제 계약](TIMED_FALLBACK.md), [최초 조사](UPDATE_PLAN_2026-08-27.md), [과거 광고 설계](ADS_PLAN_2026-08-27.md)를 함께 관리한다.
 
@@ -165,7 +177,7 @@ N=0이면 M도0이며 실행 ON이나 플로팅 탭이 과거 양수 설정을 �
 - 선택된 앱 패키지와 포커스를 확인한 다음 해당 앱 전용 감지기를 호출한다. 두 앱이 선택되어도 현재 앞에 있는 앱만 대상이다.
 - YouTube는 쇼츠 컨테이너와 단일 진행막대의 최신 시간을 확인한다.
 - Instagram은 릴스 pager 내부의 단일 영상 컨테이너, 단일 media, `scrubber` 진행막대와 유효한 밀리초 범위를 확인한다.
-- 일반 Instagram 릴스의 사진/혼합 콘텐츠, 댓글/메뉴 또는 영상 식별 정보 부족을 감지하면 대기한다. 정상 진행 정보를 읽으면 긴 영상 조건을 먼저 검사하고 해당하지 않으면 기존 횟수, 진행 정보 없는 지원 단일 영상이면 선택한 시간제/화면 분석 경로를 적용한다. 별도로 확인된 광고만 광고 계약을 적용한다. 모든 광고·메뉴 유형의 판별을 보장하지 않는다.
+- 확인된 Instagram 사진 carousel은0.2.9의별도사진계약을따른다. 그밖의미지원사진/혼합,댓글/메뉴,식별정보부족은대기한다. 정상영상은긴영상조건→기존횟수,진행정보없는지원단일영상은기존시간제/화면분석을따른다. 확인된광고는광고계약을우선하며사진옵션으로광고OFF를우회하지않는다. 모든광고·메뉴·사진형태의판별을보장하지않는다.
 - 앱 패키지를 포함한 식별값으로 영상과 앱을 구분한다. 앱 전환 때 진행 상태를 초기화하여 다른 앱의 카운트를 이어 쓰지 않는다.
 - 정상 진행 정보는 약 300ms 간격으로 관측하고 영상 끝→처음 이동·관측 진행량·최소 경과시간을 확인한다. 이 N회 경로를 단순 시간 타이머로 대체하지 않는다.
 - 중간에 켜면 현재 부분 재생은 완주로 세지 않는다. 다음 시작까지 C=0, 추적 중 C=1…M이다.
@@ -278,11 +290,11 @@ core(순수 시간/반복/모드/입력/앱전환/업데이트 정책), detectio
 
 0.2.5부터 `INTERNET`은 공개 GitHub 업데이트 조회·다운로드에, `REQUEST_INSTALL_PACKAGES`는 사용자가 요청한 설치 연결에만 사용한다. 이것이 과거 ‘인터넷 권한 없음’ 규칙을 대체하는 유일한 범위다. 저장소 전체 접근·알림 권한·무인 설치는 없다. 영상 내용·계정·시청이력은 외부 전송·영구 저장하지 않는다. 비교용 지문은 실행 메모리에만 보유한다. 화면 분석은 접근성 screenshot capability를 쓰는 선택 시험이며 시간제 자체가 새 캡처/오디오 권한을 요구하지 않는다.
 
-0.2.8의 새 검증·게시와0.2.7 이하 과거 결과를 구분한다. code28 YouTube20 PASS는 해당 버전의 기록이며 남은 조건별 실기기 한계를 없애지 않는다. 최종 게시·소스/산출물/CI·해시 일치는 검증/릴리스 기록에 따른다. 문서만으로 게시 완료라고 하지 않는다. 기존 서명 정체성을 유지한 non-debuggable release APK만 배포하며 QA 후크·임의 URL·검증 우회를 포함하지 않는다. 개인 화면·계정·기기 원본 로그·서명 개인키는 공개 대상에서 제외한다.
+0.2.9의 새 검증·게시와0.2.8 이하 과거 결과를 구분한다. code28 YouTube20 PASS는 해당 버전의 기록이며 남은 조건별 실기기 한계를 없애지 않는다. 최종 게시·소스/산출물/CI·해시 일치는 검증/릴리스 기록에 따른다. 문서만으로 게시 완료라고 하지 않는다. 기존 서명 정체성을 유지한 non-debuggable release APK만 배포하며 QA 후크·임의 URL·검증 우회를 포함하지 않는다. 개인 화면·계정·기기 원본 로그·서명 개인키는 공개 대상에서 제외한다.
 
 ## 과거 버전 설명·검증 기록 / Historical descriptions and evidence
 
-아래의0.2.7 이하 빌드·기기·게시 결과는 버전별 과거 기록입니다. 당시 표시·배포 상태와 검증 수치는 보존하지만0.2.8의 PASS나 공개 완료 근거로 재사용하지 않습니다.
+아래의0.2.7 이하 및 별도 [0.2.8 기록](releases/v0.2.8.md)의 빌드·기기·게시 결과는 버전별 과거 기록입니다. 당시 표시·배포 상태와 검증 수치는 보존하지만0.2.9의 PASS나 공개 완료 근거로 재사용하지 않습니다.
 
 <details>
 <summary>0.2.7 이하의 이전 문서 기록 / Earlier documentation</summary>
