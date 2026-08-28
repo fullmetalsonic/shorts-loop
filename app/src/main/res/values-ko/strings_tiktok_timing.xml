@@ -1,0 +1,22 @@
+<resources>
+    <string name="tiktok_tap_quick">반복 켜기·끄기\n0 ↔ 기준 횟수</string>
+    <string name="ui_tiktok">TikTok</string>
+    <string name="tiktok_count_helper">0회는 TikTok 자동 넘김 중지 · 최대 99회\n중간에 시작하면 영상 처음까지 기다립니다. 넘김 확인 실패로 정지하면 이 앱 다시 시작 또는 전체 실행을 껐다 켜 주세요.</string>
+    <string name="ui_tiktok_missing">TikTok · 설치되지 않음</string>
+    <string name="mw_tiktok_repeat">TikTok만 적용 · 추천 피드에서 진행 정보를 읽을 수 있는 영상을 총 몇 번 볼까요?</string>
+    <string name="tiktok_capabilities">TikTok(com.ss.android.ugc.trill)만 지원합니다. 진행 정보 없는 영상의 시간제와 광고·라이브·사진·긴 영상 넘김은 지원하지 않습니다. 모르는 화면은 대기합니다. 실제 자동 넘김과 세 앱 동시 재생은 추가 실기기 검증이 필요합니다.</string>
+    <string name="ad_delay_title">넘기기 전 대기 시간 (초)</string>
+    <string name="ad_delay_decrease">광고 대기 시간 0.1초 줄이기</string>
+    <string name="ad_delay_increase">광고 대기 시간 0.1초 늘리기</string>
+    <string name="ad_delay_description">광고 대기 시간, 0.0~9.9초, 0.1초 단위</string>
+    <string name="ad_delay_apply">광고 대기 시간 적용</string>
+    <string name="ad_delay_error">0.0~9.9 사이, 소수 첫째 자리까지만 입력해 주세요</string>
+    <string name="ad_delay_saved">기본 0.0초 · +/−는 0.1초씩 · 0.0초는 끄기가 아니라 안전 확인 후 즉시 넘김</string>
+    <string name="state_ads_delayed">광고 넘기기 전 대기</string>
+    <string name="state_tiktok_waiting">TikTok 추천 영상 대기</string>
+    <string name="state_tiktok_no_progress">TikTok 진행 정보 없음 · 대기</string>
+    <string name="state_tiktok_unsupported">지원하지 않는 TikTok 콘텐츠 · 대기</string>
+    <string name="state_tiktok_paused">TikTok 일시정지 또는 조작 중 · 대기</string>
+    <string name="host_overlay_tiktok_short">TT</string>
+    <string name="host_overlay_tiktok_name">TikTok</string>
+</resources>

@@ -30,6 +30,7 @@ public class WindowPolicyTest {
     @Test public void genuineOwnOverlayAllowedAndOtherBubbleBlocked() {
         var a=w(1,1,1,true,false,false,LEFT); var small=new WindowPolicy.Box(100,100,180,160);
         assertTrue(WindowPolicy.allowed(List.of(a,w(2,3,3,false,false,true,small)),1));
+        assertFalse(WindowPolicy.inputClear(List.of(a,w(2,3,3,false,false,true,small)),1,LEFT));
         assertFalse(WindowPolicy.allowed(List.of(a,w(2,3,3,false,false,false,small)),1));
     }
     @Test public void shadeKeyboardAndPipFailClosed() {

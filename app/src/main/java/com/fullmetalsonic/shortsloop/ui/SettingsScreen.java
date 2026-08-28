@@ -16,17 +16,19 @@ import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 import com.fullmetalsonic.shortsloop.R;
+import com.fullmetalsonic.shortsloop.data.SettingsStore;
 
 /** Layout only: settings and service state are bound by MainActivity. */
 public final class SettingsScreen {
     public final LinearLayout root;
     public final CountEditor count;
     public final SecondsEditor seconds;
+    public final AdDelayEditor adDelay;
     public final LiveSkipPanel live;
     public final LongVideoPanel longVideo;
     public final PhotoReelPanel photos;
     public final TextView applied, status, permissionStatus, timedSupport, adSupport, visualSupport;
-    public final CheckBox youtube, instagram;
+    public final CheckBox youtube, instagram, tiktok;
     public final Switch floating, execution, skipAds, visualAssist, timedFallback, dualMode;
     public final RadioGroup tapModes;
     public final RadioButton rotary, quick;
@@ -35,7 +37,7 @@ public final class SettingsScreen {
     public final BatterySetupPanel battery;
     public final UpdatePanel updates;
     public final Button setupJump, updateBanner;
-    public final HostSettingsPanel youtubeSettings, instagramSettings;
+    public final HostSettingsPanel youtubeSettings, instagramSettings, tiktokSettings;
     public final RadioGroup hostTabs;
     private final ScrollView scroll;
     private final LinearLayout appsCard, setupCard, updateCard, timedCard, photoCard, adsCard, liveCard, experimental;
@@ -49,6 +51,14 @@ public final class SettingsScreen {
             SecondsEditor.Listener secondsListener, int initialLiveDelay, LiveSkipPanel.Listener liveListener,
             int initialLongSeconds, LongVideoPanel.Listener longListener, int instagramCount,
             CountEditor.Listener instagramCountListener, int instagramLongSeconds, LongVideoPanel.Listener instagramLongListener) {
+        this(c, initial, countListener, initialSeconds, secondsListener, initialLiveDelay, liveListener, initialLongSeconds,
+                longListener, instagramCount, instagramCountListener, instagramLongSeconds, instagramLongListener, 2, value -> {}, 0, value -> {});
+    }
+    public SettingsScreen(Context c, int initial, CountEditor.Listener countListener, int initialSeconds,
+            SecondsEditor.Listener secondsListener, int initialLiveDelay, LiveSkipPanel.Listener liveListener,
+            int initialLongSeconds, LongVideoPanel.Listener longListener, int instagramCount,
+            CountEditor.Listener instagramCountListener, int instagramLongSeconds, LongVideoPanel.Listener instagramLongListener,
+            int tiktokCount, CountEditor.Listener tiktokCountListener, int initialAdDelay, AdDelayEditor.Listener adDelayListener) {
         root = UiTheme.column(c); root.setBackgroundColor(UiTheme.BACKGROUND);
         scroll = new ScrollView(c); scroll.setFillViewport(true); scroll.setClipToPadding(false);
         FrameLayout holder = new ContentFrame(c); LinearLayout content = UiTheme.column(c);
@@ -71,14 +81,20 @@ public final class SettingsScreen {
         dualCard.addView(UiTheme.text(c, c.getString(R.string.mw_mode_help), 13, UiTheme.MUTED, false));
         LinearLayout tabsCard = UiTheme.card(c, content, c.getString(R.string.mw_settings_title));
         tabsCard.addView(UiTheme.text(c, c.getString(R.string.mw_settings_help), 13, UiTheme.MUTED, false));
-        hostTabs = new RadioGroup(c); hostTabs.setId(R.id.mw_host_tabs); hostTabs.setOrientation(RadioGroup.HORIZONTAL);
+        hostTabs = new RadioGroup(c); hostTabs.setId(R.id.mw_host_tabs);
+        boolean stackedTabs = c.getResources().getConfiguration().screenWidthDp < 480 || c.getResources().getConfiguration().fontScale > 1.3f;
+        hostTabs.setOrientation(stackedTabs ? RadioGroup.VERTICAL : RadioGroup.HORIZONTAL);
         RadioButton ytTab = radio(c, c.getString(R.string.ui_youtube), R.id.mw_tab_youtube);
         RadioButton igTab = radio(c, c.getString(R.string.ui_instagram), R.id.mw_tab_instagram);
-        hostTabs.addView(ytTab, new RadioGroup.LayoutParams(0, -2, 1));
-        hostTabs.addView(igTab, new RadioGroup.LayoutParams(0, -2, 1)); tabsCard.addView(hostTabs);
+        RadioButton ttTab = radio(c, c.getString(R.string.ui_tiktok), R.id.mw_tab_tiktok);
+        for (RadioButton tab : new RadioButton[]{ytTab, igTab, ttTab})
+            hostTabs.addView(tab, new RadioGroup.LayoutParams(stackedTabs ? -1 : 0, -2, stackedTabs ? 0 : 1));
+        tabsCard.addView(hostTabs);
         youtubeSettings = new HostSettingsPanel(c, initial, countListener, initialLongSeconds, longListener, false);
         instagramSettings = new HostSettingsPanel(c, instagramCount, instagramCountListener, instagramLongSeconds, instagramLongListener, true);
+        tiktokSettings = new HostSettingsPanel(c, tiktokCount, tiktokCountListener, 60, value -> {}, SettingsStore.TIKTOK_PACKAGE);
         content.addView(youtubeSettings.root); content.addView(instagramSettings.root); instagramSettings.root.setVisibility(View.GONE);
+        content.addView(tiktokSettings.root); tiktokSettings.root.setVisibility(View.GONE);
         count = youtubeSettings.count; longVideo = youtubeSettings.longVideo; applied = youtubeSettings.applied;
         tapModes = youtubeSettings.tapModes; rotary = youtubeSettings.rotary; quick = youtubeSettings.quick;
         timedCard = UiTheme.card(c, content, c.getString(R.string.ui_timer_title));
@@ -96,6 +112,7 @@ public final class SettingsScreen {
         adSupport = UiTheme.text(c, "", 13, UiTheme.CYAN, false); adSupport.setId(R.id.ad_support); adsCard.addView(adSupport);
         adsCard.addView(UiTheme.text(c, c.getString(R.string.ui_ads_helper), 13, UiTheme.MUTED, false));
         UiTheme.space(c, adsCard, 8);
+        adDelay = new AdDelayEditor(c, initialAdDelay, adDelayListener); adsCard.addView(adDelay);
         adsCard.addView(UiTheme.text(c, c.getString(R.string.ui_ads_only_help), 13, UiTheme.TEXT, false));
         liveCard = UiTheme.card(c, content, c.getString(R.string.live_card_title));
         live = new LiveSkipPanel(c, initialLiveDelay, liveListener); liveCard.addView(live);
@@ -110,6 +127,7 @@ public final class SettingsScreen {
         apps.addView(UiTheme.text(c, c.getString(R.string.ui_apps_help), 14, UiTheme.MUTED, false));
         youtube = appChoice(c, c.getString(R.string.ui_youtube), R.id.app_youtube); apps.addView(youtube);
         instagram = appChoice(c, c.getString(R.string.ui_instagram), R.id.app_instagram); apps.addView(instagram);
+        tiktok = appChoice(c, c.getString(R.string.ui_tiktok), R.id.app_tiktok); apps.addView(tiktok);
         LinearLayout setup = UiTheme.card(c, content, c.getString(R.string.ui_setup_title));
         setupCard = setup;
         permissionStatus = UiTheme.text(c, "", 14, UiTheme.MUTED, false); setup.addView(permissionStatus);
@@ -150,14 +168,20 @@ public final class SettingsScreen {
     }
     public void showSetup(boolean appsMissing) { scroll.smoothScrollTo(0, (appsMissing ? appsCard : setupCard).getTop()); }
     public void showHost(boolean instagramHost) {
-        youtubeSettings.root.setVisibility(instagramHost ? View.GONE : View.VISIBLE);
+        showHost(instagramHost ? SettingsStore.INSTAGRAM_PACKAGE : SettingsStore.YOUTUBE_PACKAGE);
+    }
+    public void showHost(String host) {
+        if (!SettingsStore.supportedHost(host)) throw new IllegalArgumentException("Unsupported host");
+        boolean instagramHost = SettingsStore.INSTAGRAM_PACKAGE.equals(host), tiktokHost = SettingsStore.TIKTOK_PACKAGE.equals(host);
+        youtubeSettings.root.setVisibility(!instagramHost && !tiktokHost ? View.VISIBLE : View.GONE);
         instagramSettings.root.setVisibility(instagramHost ? View.VISIBLE : View.GONE);
+        tiktokSettings.root.setVisibility(tiktokHost ? View.VISIBLE : View.GONE);
         timedCard.setVisibility(instagramHost ? View.VISIBLE : View.GONE);
         photoCard.setVisibility(instagramHost ? View.VISIBLE : View.GONE);
         adsCard.setVisibility(instagramHost ? View.VISIBLE : View.GONE);
-        liveCard.setVisibility(instagramHost ? View.GONE : View.VISIBLE);
+        liveCard.setVisibility(!instagramHost && !tiktokHost ? View.VISIBLE : View.GONE);
         experimental.setVisibility(instagramHost ? View.VISIBLE : View.GONE);
-        hostTabs.check(instagramHost ? R.id.mw_tab_instagram : R.id.mw_tab_youtube);
+        hostTabs.check(tiktokHost ? R.id.mw_tab_tiktok : instagramHost ? R.id.mw_tab_instagram : R.id.mw_tab_youtube);
     }
     public void showUpdates() { scroll.smoothScrollTo(0, updateCard.getTop()); }
     private static CheckBox appChoice(Context c, String label, int id) {

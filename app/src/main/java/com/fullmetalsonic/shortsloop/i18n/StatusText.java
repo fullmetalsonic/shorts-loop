@@ -14,6 +14,11 @@ public final class StatusText {
     public static int resource(String code) {
         if (code == null) return R.string.state_unknown;
         switch (code) {
+            case "tiktok.waiting": return R.string.state_tiktok_waiting;
+            case "tiktok.no_progress": return R.string.state_tiktok_no_progress;
+            case "tiktok.unsupported": return R.string.state_tiktok_unsupported;
+            case "tiktok.paused": return R.string.state_tiktok_paused;
+            case "ads.delayed": return R.string.state_ads_delayed;
             case "photo.ready": return R.string.state_photo_ready;
             case "photo.waiting": return R.string.state_photo_waiting;
             case "photo.disabled": return R.string.state_photo_disabled;

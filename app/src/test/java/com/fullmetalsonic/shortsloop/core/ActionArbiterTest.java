@@ -28,7 +28,8 @@ public class ActionArbiterTest {
     @Test public void waitingReservationExpiresWithoutAutomaticInput() {
         ActionArbiter a = new ActionArbiter(); long first = a.acquire("yt", 0);
         a.available("ig", 20); a.release(first, 300);
-        assertFalse(a.available("yt", 1000)); assertTrue(a.available("yt", 2020));
+        assertFalse(a.available("yt", 1000)); assertFalse(a.available("yt", 2020));
+        assertTrue(a.available("yt", 2320));
         assertFalse(a.busy());
     }
 }

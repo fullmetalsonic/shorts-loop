@@ -1,5 +1,63 @@
 # 누적이력
 
+## 0.4.0/code33 · 2026-08-29 구현 및 전달 준비 / Implementation and delivery preparation
+
+기준0.3.0 이후 계획을 다음 범위로 구현했다. 현재 게시·최종 산출물 결과는 [릴리스 원장](releases/v0.4.0.md)과 [검증 원장](VERIFICATION.md)이 우선한다. 이 항목은 게시 완료나 새 실폰 시험 성공을 미리 선언하지 않는다.
+
+The post0.3.0 batch is implemented within the following scope. Final release/artifact/test status is recorded separately,not assumed here.
+
+- TikTok 추천 피드의 읽을 수 있는 비율 진행 경로,정확한 패키지 제한,독립 일반 카운터/창/페이지 확인을 추가했다. 시간제·광고·LIVE·사진·총길이 필터는 지원하지 않는다. / Limited normalized TikTok recommendation progress;unsupported filters remain off.
+- 명시적 세 호스트 등록,독립 설정·상태·플로팅,공정 입력 대기와 최신 창 재검증을 추가했다. 기존 `dual_mode` 키와 선택을 유지하며 기본OFF다. / Three-host registration/isolation,fair input and revalidation preserve the existing opt-in preference.
+- 호스트 설정schema v2는 기존값·자료형을 보존하고 TikTok 선택OFF·반복2를 초기화한다. / Incremental migration preserves typed preferences and conservative TikTok defaults.
+- Instagram 시간제2–60초·미설정3초·판별2초 포함,광고 대기0.0–9.9초·기본0.0·0.1초 단위와 동일 광고 식별/중단 처리를 구현했다. / Updated clockless range/default and exact pre-ad delay with identity-bound cancellation.
+- 일반 초단위 시작 상한1.3초와 길이10% 제한,초기화 사유 진단을 반영했다. 다른0초기화의 원인이 모두 밝혀지거나 수정된 것은 아니다. / Start tolerance and reset diagnostics do not prove a universal reset fix.
+- 한국어/영어 UI,지원하지 않는 TikTok 카드 숨김,좁은 화면 앱 선택 세로 배치,TT 플로팅 라벨,설정/입력/정책 회귀시험을 추가했다. / Localized capability-scoped UI and regression coverage.
+- 독립 리뷰에서 노드 스크롤을 물리 터치 경로처럼 검사해 자기 플로팅이 차단하는 P2를 발견했다. TikTok 일반·Instagram 광고 두 호출에 별도 의미 기반 창/페이지 검사를 적용하고 실제 스와이프 경로 보호를 유지했다. [D-046](DEBUG_LOG.md#d-046--의미-기반-스크롤과-터치-경로-혼동--semantic-scroll-versus-touch-path-guard). / Corrected semantic-scroll self-overlay blocking without weakening real swipe protection.
+- 관련 설정/시간 정책90개 JUnit과 release 단위시험·debug 네이티브시험 컴파일,해당 시점 번역 검사를 실행했다. 전체 최종 검사 수치는 검증 원장에 기록한다. 새 실폰 자동 넘김은 NOT RUN이다. / Focused90 tests and compilation/localization checks ran;final broad results stay in the ledger,and physical automation remains unrun.
+- [현장 점검표](FIELD_TEST_0.4.0.md)와 [0.4.0 릴리스 원장](releases/v0.4.0.md)을 추가하고 README·사용법·제품/호환성·계획·인수인계·색인을 최신화했다. 개인 화면·원시 로그·대화 원문은 공개 자료에 포함하지 않는다. / Updated documentation and field checklist without private device artifacts or conversation transcripts.
+
+### 이전 체크포인트 / Historical checkpoints
+
+아래 대기·미구현·과거시험 표현은 기록 당시 상태이며 위 현재 구현 상태와 버전별 검증 원장을 대체하지 않는다. / Older statuses and tests belong to their historical checkpoints.
+
+## 2026-08-29 · TikTok6페이지 신속 비교 / Six-page TikTok comparison
+
+첫이동미확인1회와실제다른6페이지확인을구분했다. 진행값있는영상4·없는영상1·리워드홍보1을화면/구조로비교했다. 보이는SeekBar의0–10000값증가를확인하여최초시계미관측결과를보완했다. 홍보에도player/TextureView가남는반례와홍보구조후보를[관측기록](TIKTOK_FEASIBILITY_2026-08-29.md)에누적했다. 전체길이/자연반복/광고범용판별/제품자동넘김/사진/LIVE는미검증,추가구현·설치·게시없이대기한다. / Six distinct pages after one unconfirmed input:four moving ranges,one hidden zero range and one reward promotion. Progress was observed but duration/loops/general ads/automation remain unverified. Player-only recognition has a promotion counterexample. No implementation,installation or publication in this follow-up.
+
+## 2026-08-29 · 시작 상한1.3초·TikTok 구분 사전 관측 / Entry cap and TikTok survey
+
+일반 카운터 시작 상한을1.3초로 변경하고10% 길이 제한/기존 보호를 유지했다. 새6개 시험 포함570JUnit/컴파일/정적 가드PASS. 새APK/설치/실폰 수정 검증은 미실행으로,폰에는 미적용이다. 별도[틱톡 관측](TIKTOK_FEASIBILITY_2026-08-29.md)은 현재 추천 영상 한 화면에서 선택 탭·내부 pager·보이는 player 구조를 확인했다. 설치본은기획 후보와 다른 `com.ss.android.ugc.trill`46.7.3이다. 유효 시계/반복/광고·LIVE·사진 구분/자동 입력은 미검증. 비억제 읽기전용 프로브 종료,서비스/설정 보존,개인 화면·로그 비공개. 독립 리뷰 후 추가 구현/기기 시험/게시 없이 대기한다.
+
+EN: The local ordinary-start cap is1.3s with the10% limit and safety rules unchanged;compilation/570 tests/static guards pass. No new APK or phone installation. A separate read-only survey of one TikTok recommendation video found screen-structure evidence,not a usable clock or verified automation. Actual package differs from the earlier candidate. Probe exited,settings/service preserved,private captures unshared. Further work and publication are on hold.
+
+## 2026-08-29 · Instagram 무접촉 시작 정보 손실 진단 / Entry-start loss diagnosis
+
+연속 광고 재현 추가: 수동 이전 이동2회와 제품 자동 광고 복귀2회를 구분해 관측했다. 두 복귀 모두 확인 완료 후 첫 카운터 표본1.103초/1.015초가1초 기준을 넘겨0으로 대기했고,추가 세션 초기화는 없었다. 확인 대기 중 유효 초기 snapshot의 존재는 미확정으로 유지하며 독립 리뷰·기획·인수인계에 반영했다. / Two controlled ad returns reproduced late-seed counting failure with no subsequent session invalidation;early-snapshot availability remains unverified. Diagnosis only.
+
+후속 광고 표본도[D-044](DEBUG_LOG.md#d-044--가벼운-접촉-후-카운트-초기화--light-contact-reset-investigation)에 추가했다. 광고 확인1건 증가 뒤6초·15표본에서 영상 진행3.539→9.496초/현재0/세대 유지가 관측됐다. 전환 대기와 카운터만 초기화하는 경로를 전체 세션 초기화와 분리하며,최초 목적지 표본 미포착·구현 없음·광고 지연 효과 미검증을 명시한다. / Added a post-ad current0 observation with advancing progress and unchanged session generation;first destination sample and delay efficacy remain unverified,no implementation.
+
+문제 영상과 다음 영상 사이 수동2왕복(총4회)으로 추가 미세 접촉 없이 현재 카운트0을 재현했다. 옆 영상은 시작을 인식했지만 문제 영상은 refresh 후1.047초에서 새로 읽혀1초 시작 인정 범위를 벗어났고,다른 복귀에서는0.540초에 잡힌 현재1이 세션 초기화 후2.161초에서0으로 바뀌었다. 두 번째 초기화의 호출 사유와 YouTube 동일 원인은 미확정이다. 앞선 자연 반복 후 재시작·추가 전체 회차 후 자동 전환도 관측했으나 수정 성공으로 보고하지 않는다. [D-044](DEBUG_LOG.md#d-044--가벼운-접촉-후-카운트-초기화--light-contact-reset-investigation),기획·인수인계에 근거/미확정 범위와 초기 표본 보관·초기화 사유 구분을 반영하고 독립 읽기 전용 검토를 받았다. 수동 이동을 자동 시험 실적으로 합산하지 않았으며 캡처는 비공개로 유지한다. 제품/설정/권한/빌드/설치/게시 변경 없음; 아래 기기 미접근 문구는 앞선 사전기획 기록이다.
+
+EN: Two controlled Instagram round trips reproduced start loss without additional light contact. One return reseeded after refresh at1.047s, outside the1s start window; another counted at0.540s then reset at2.161s. The latter reset caller and YouTube causation remain unknown. Natural-wrap recovery was observed but is not a fix. Updated evidence, planning and handover underwent independent read-only review. Manual moves are not automatic successes; captures remain private. No product/settings/permission/build/install/publication changes; no-device statements below are historical planning checkpoints.
+
+## 후속 조사 · 접촉 민감도와 카운트 보존 / Light-contact investigation
+
+YouTube의 가벼운 접촉 후 카운트0 보고를 [D-044](DEBUG_LOG.md#d-044--가벼운-접촉-후-카운트-초기화--light-contact-reset-investigation)와 [기획 §4.2](TIKTOK_MULTI_APP_PLAN.md#42-가벼운-접촉짧은-관측-누락-후-카운트-보존--light-contact-continuity-review)에 추가했다. 후속 Instagram 직접 재현 보고도 반영해 두 앱 모두 사용자에게서 재현된 증상으로 갱신했다. 클릭/진행정보 누락/identity/창 변화의 코드상 초기화 경로를 확인했으나 개발 측 기기/로그 재현은 아직 없고 동일 원인인지 미확정이다. 제한적 입력 보류·연속성 확인 후 카운트 보존을 검토하되 실제 탐색/정지/메뉴/전환 실패 보호는 유지한다. **문서만 변경,제품·기기·빌드·게시 변경 없음.**
+
+EN: Recorded code-level reset candidates and updated the symptom scope after the user reproduced it on Instagram as well as YouTube. Developer-side device/log reproduction and shared causation remain unconfirmed. Proposed bounded suspension requires verified same-page playback continuity. Diagnosis and implementation remain pending;no device/product/build/publication action occurred.
+
+## 후속 기획 추가 · 시간제 범위와 광고 지연 / Additional timing plan
+
+[기획서 §4.1](TIKTOK_MULTI_APP_PLAN.md#41-다음-묶음에-추가할-시간-설정-두-항목--two-additional-timing-requirements)에 다음 묶음의 두 요구를 추가했다: Instagram 진행정보 없는 일반 영상**2–60초·기본3초**, 광고 넘김 전 지연0.0–9.9초·0.1초 단위. 최초 시간제0초안은 동일 페이지의2초 안정 확인을 유지하기 위해 최소2초로 변경했다. 확인 시간은 총 설정 시간에 포함하며3초 설정이5초가 되지 않는다. 광고 지연 기본값은 미정. 저장값/횟수0 의미 보존, 시간제0/1 입력 거부, 지연 중 큐 미점유, 다음 릴스 시작 인식 비교 시험을 포함한다. 빠른 광고 넘김이 원인이라는 가설은 미확정으로 기록한다. 다음 TikTok/여러 앱 구현·시험·기존 Public 게시 묶음에 포함하되 **이번에는 로컬 문서만 수정, 제품·기기·빌드·게시 변경 없음**.
+
+EN: Added Instagram clockless2–60s/default3, superseding the zero-second proposal to retain2s qualification within the selected total, and an independent0.0–9.9s ad pre-skip delay in0.1s steps. The ad default awaits evidence. Migration,lower-bound checks,queue isolation and next-Reel startup comparisons join the next combined implementation/test/release plan. No product/device/build/publication action occurred.
+
+## 2026-08-28 · TikTok·세 앱 사전기획 / Planning only
+
+[후속 기획서](TIKTOK_MULTI_APP_PLAN.md)에 TikTok 일반 영상 우선 지원, 진행정보/버튼/제스처/시간제/미디어·화면·오디오 대안, 세 앱 독립 상태와 공정 입력 큐, 설정 보존, 플로팅 UX와 단계별 검증을 정리했다. 공식 플랫폼 조건과 코드상 위험, 실기기 미확인 사항을 분리했다. README·인수인계·분할 설계에 연결했으며 **제품 구현·폰 조작·빌드/시험·버전 변경·GitHub 게시 없음**. 공개 제품은0.3.0을 유지한다.
+
+EN: Local planning documents only. The proposal covers detection alternatives, three-host isolation/fairness, migration, UX and evidence gates. Device feasibility remains untested; no product change, device action, build/test, version change or publication occurred.
+
 ## 0.3.0/code32 · 듀얼모드 공개 완료 / Dual-mode release published
 
 2026-08-28 21:25:22KST 기존Public에v0.3.0/6bfe330 게시,제품CI33170840370SUCCESS(debug/release각564시험),21:25:52KST 공개3파일익명크기/SHA256/digest·HTTP200·업데이트조회PASS. 최종9AA1E884…AF394AA APK742854bytes,실폰덮어설치해시일치·설정보존·실행OFF. 최종3OSnativePASS,개인정보감사/독립리뷰차단사항0. 메일없음. / Published with product CI,final three-OS checks,phone-installed identity and anonymous release/update-feed parity verified;no email.

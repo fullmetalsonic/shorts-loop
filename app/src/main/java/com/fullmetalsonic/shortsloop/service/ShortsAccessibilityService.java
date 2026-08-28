@@ -11,6 +11,7 @@ import android.os.SystemClock;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import com.fullmetalsonic.shortsloop.core.ActionArbiter;
+import com.fullmetalsonic.shortsloop.core.HostRegistry;
 import com.fullmetalsonic.shortsloop.data.SettingsStore;
 import com.fullmetalsonic.shortsloop.detection.HostWindowAccess;
 import com.fullmetalsonic.shortsloop.tile.ShortsTileService;
@@ -20,20 +21,25 @@ import java.io.PrintWriter;
 /** Shared OS resources only. Each host owns its complete playback and failure state. */
 public final class ShortsAccessibilityService extends AccessibilityService implements SharedPreferences.OnSharedPreferenceChangeListener {
     private SettingsStore store;
-    private HostPlaybackSession youtube, instagram;
+    private final java.util.List<HostPlaybackSession> sessions = new java.util.ArrayList<>();
     private HostWindowAccess windowAccess;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final ActionArbiter inputs = new ActionArbiter();
     @Override protected void onServiceConnected() {
         super.onServiceConnected();
+        if (store != null) {
+            store.preferences.unregisterOnSharedPreferenceChangeListener(this);
+            store.enabled(false);
+        }
+        for (HostPlaybackSession session : sessions) session.destroySession();
+        sessions.clear();
         store = new SettingsStore(this);
         // Never resume unattended inputs after process/service reconnection.
         store.enabled(false);
         RuntimeState.connected = true;
         windowAccess = new HostWindowAccess(this);
-        youtube = new HostPlaybackSession(this, SettingsStore.YOUTUBE_PACKAGE, this);
-        instagram = new HostPlaybackSession(this, SettingsStore.INSTAGRAM_PACKAGE, this);
-        youtube.startSession(); instagram.startSession();
+        for (String host : HostRegistry.packages()) sessions.add(new HostPlaybackSession(this, host, this));
+        for (HostPlaybackSession session : sessions) session.startSession();
         store.preferences.registerOnSharedPreferenceChangeListener(this);
         publishSummary();
     }
@@ -48,14 +54,19 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
     boolean updateQueryMode() {
         AccessibilityServiceInfo info = getServiceInfo();
         if (info == null) return false;
-        boolean include = youtube != null && youtube.needsLayoutNodes() || instagram != null && instagram.needsLayoutNodes();
+        boolean include = false;
+        for (HostPlaybackSession session : sessions) include |= session.needsLayoutNodes();
         int flag = AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS;
         int flags = include ? info.flags | flag : info.flags & ~flag;
         flags |= AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS;
         if (info.flags == flags) return false;
         info.flags = flags; setServiceInfo(info); return true;
     }
-    boolean multipleHostsVisible() { return youtube != null && instagram != null && youtube.visible() && instagram.visible(); }
+    boolean multipleHostsVisible() {
+        int count = 0;
+        for (HostPlaybackSession session : sessions) if (session.visible() && ++count >= 2) return true;
+        return false;
+    }
     boolean actionAvailable(String host) { return store != null && store.forHost(host).enabled() && inputs.available(host, SystemClock.uptimeMillis()); }
     void cancelWaiting(String host) { inputs.cancelWaiting(host); }
     boolean dispatchFor(String host, GestureDescription gesture, GestureResultCallback callback, Handler callbackHandler) {
@@ -91,11 +102,13 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         return accepted;
     }
     void publishSummary() {
-        RuntimeState.HostState yt = RuntimeState.forHost(SettingsStore.YOUTUBE_PACKAGE);
-        RuntimeState.HostState ig = RuntimeState.forHost(SettingsStore.INSTAGRAM_PACKAGE);
-        boolean ytOn = store != null && store.forHost(SettingsStore.YOUTUBE_PACKAGE).enabled();
-        boolean igOn = store != null && store.forHost(SettingsStore.INSTAGRAM_PACKAGE).enabled();
-        boolean blocked = (ytOn || igOn) && (!ytOn || yt.blocked) && (!igOn || ig.blocked);
+        boolean anyOn = false, allBlocked = true;
+        for (String host : HostRegistry.packages()) {
+            if (store != null && store.forHost(host).enabled()) {
+                anyOn = true; allBlocked &= RuntimeState.forHost(host).blocked;
+            }
+        }
+        boolean blocked = anyOn && allBlocked;
         String status = store == null || !store.enabled() ? "off" : blocked ? "blocked:error.transition" : "playback.counting";
         boolean changed = RuntimeState.blocked != blocked || !status.equals(RuntimeState.status);
         RuntimeState.blocked = blocked;
@@ -104,26 +117,22 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         if (changed) ShortsTileService.refresh(this);
     }
     @Override public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
-        if (youtube != null) youtube.onSharedPreferenceChanged(preferences, key);
-        if (instagram != null) instagram.onSharedPreferenceChanged(preferences, key);
+        for (HostPlaybackSession session : sessions) session.onSharedPreferenceChanged(preferences, key);
         updateQueryMode(); publishSummary();
     }
     @Override public void onAccessibilityEvent(AccessibilityEvent event) {
-        if (youtube != null) youtube.onAccessibilityEvent(event);
-        if (instagram != null) instagram.onAccessibilityEvent(event);
+        for (HostPlaybackSession session : sessions) session.onAccessibilityEvent(event);
     }
     @Override public void onConfigurationChanged(Configuration configuration) {
         super.onConfigurationChanged(configuration);
-        if (youtube != null) youtube.onConfigurationChanged(configuration);
-        if (instagram != null) instagram.onConfigurationChanged(configuration);
+        for (HostPlaybackSession session : sessions) session.onConfigurationChanged(configuration);
     }
     @Override public void onInterrupt() { if (store != null) store.enabled(false); }
     @Override public void onDestroy() {
         handler.removeCallbacksAndMessages(null);
         if (store != null) { store.preferences.unregisterOnSharedPreferenceChangeListener(this); store.enabled(false); }
-        if (youtube != null) youtube.destroySession();
-        if (instagram != null) instagram.destroySession();
-        youtube = instagram = null;
+        for (HostPlaybackSession session : sessions) session.destroySession();
+        sessions.clear();
         updateQueryMode();
         RuntimeState.connected = false; RuntimeState.blocked = false;
         RuntimeState.current = 0; RuntimeState.status = "service.disconnected";
@@ -133,7 +142,6 @@ public final class ShortsAccessibilityService extends AccessibilityService imple
         writer.println("ShortsLoop " + com.fullmetalsonic.shortsloop.BuildConfig.VERSION_NAME
                 + " connected=" + RuntimeState.connected + " enabled=" + (store != null && store.enabled())
                 + " dualVisible=" + multipleHostsVisible() + " inputBusy=" + inputs.busy());
-        if (youtube != null) youtube.dump(writer);
-        if (instagram != null) instagram.dump(writer);
+        for (HostPlaybackSession session : sessions) session.dump(writer);
     }
 }

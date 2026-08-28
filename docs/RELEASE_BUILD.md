@@ -1,4 +1,16 @@
-# 배포 APK 빌드·검사 / Distribution build and checks
+# 배포 APK 빌드·검사 / Distribution build and checks · 0.4.0
+
+## 현재0.4.0/code33 산출물 / Current artifact
+
+최종 배포 이름은 `shorts-loop-v0.4.0.apk`이며 기존 패키지·서명을 유지한 non-debuggable release를 사용한다. 소스를 먼저 확정한 뒤 빌드하고 APK 내장 revision·versionName0.4.0/versionCode33·minSdk26·서명 집합을 대조한다. debug APK나 네이티브시험 APK를 배포 파일로 혼동하지 않는다.
+
+Build the committed source as the same-signed non-debuggable release,verify embedded revision/version/OS/signer set,and keep debug/test artifacts separate.
+
+아래 재현 명령·키 보호·산출물 준비 절차는 유지하되 과거 버전·크기·해시·시험은 해당 버전 이력이다. 현재 최종 APK/CI/익명 다운로드·업데이트 경로 확인은 [0.4.0 릴리스](releases/v0.4.0.md),[검증](VERIFICATION.md)을 따른다. 새 폰 설치·소셜 앱 자동 넘김은 연결 종료로 NOT RUN이다.
+
+Retain the procedures below but do not reuse old artifact/test evidence. Current delivery evidence belongs in the linked records;new phone installation/playback is unrun.
+
+## 기존 절차 및 과거 산출물 기록 / Procedures and historical artifacts
 
 0.2.8/code30부터 사용자 배포는 `release` 변형을 사용한다. 앱 하단은 `ShortsLoop <버전>`, 업데이트 메뉴는 `설치 버전 <버전>`만 표시한다. 화면 분석 보조의 실제 실험 안내는 유지한다. [발견 원인](RELEASE_PRESENTATION_AUDIT.md), [검증 결과](VERIFICATION.md).
 

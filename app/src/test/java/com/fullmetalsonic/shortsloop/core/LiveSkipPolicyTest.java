@@ -7,7 +7,7 @@ public class LiveSkipPolicyTest {
     @Test public void defaultIsImmediateAndRangeIsIndependentOfInstagram() {
         assertEquals(0, LiveSkipPolicy.DEFAULT_SECONDS);
         assertEquals(0, LiveSkipPolicy.MIN_SECONDS); assertEquals(60, LiveSkipPolicy.MAX_SECONDS);
-        assertEquals(5, ClocklessTimeoutPolicy.MIN_SECONDS); assertEquals(10, ClocklessTimeoutPolicy.DEFAULT_SECONDS);
+        assertEquals(2, ClocklessTimeoutPolicy.MIN_SECONDS); assertEquals(3, ClocklessTimeoutPolicy.DEFAULT_SECONDS);
     }
     @Test public void everySupportedIntegerParsesWithoutClamping() {
         for (int seconds = 0; seconds <= 60; seconds++)

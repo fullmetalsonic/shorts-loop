@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import com.fullmetalsonic.shortsloop.R;
+import com.fullmetalsonic.shortsloop.data.SettingsStore;
 
 /** Compact presentation only: the controller owns state, gestures and persistence. */
 final class FloatingContent extends FrameLayout {
@@ -31,11 +32,13 @@ final class FloatingContent extends FrameLayout {
         addView(number, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
         if (!host.isEmpty()) {
+            if (!SettingsStore.supportedHost(host)) throw new IllegalArgumentException("Unsupported host");
             TextView badge = new TextView(context);
             badge.setId(R.id.floating_host);
             boolean youtube = com.fullmetalsonic.shortsloop.data.SettingsStore.YOUTUBE_PACKAGE.equals(host);
-            badge.setText(youtube ? R.string.host_overlay_youtube_short : R.string.host_overlay_instagram_short);
-            badge.setTextColor(youtube ? Color.rgb(116, 220, 255) : Color.rgb(224, 190, 255));
+            boolean tiktok = SettingsStore.TIKTOK_PACKAGE.equals(host);
+            badge.setText(tiktok ? R.string.host_overlay_tiktok_short : youtube ? R.string.host_overlay_youtube_short : R.string.host_overlay_instagram_short);
+            badge.setTextColor(tiktok ? Color.rgb(148, 242, 216) : youtube ? Color.rgb(116, 220, 255) : Color.rgb(224, 190, 255));
             badge.setGravity(Gravity.CENTER); badge.setMaxLines(1); badge.setHorizontallyScrolling(false);
             badge.setPadding(dp(4), 0, dp(2), 0);
             badge.setAutoSizeTextTypeUniformWithConfiguration(6, 12, 1, TypedValue.COMPLEX_UNIT_SP);
@@ -59,8 +62,10 @@ final class FloatingContent extends FrameLayout {
     }
 
     static String hostName(Context context, String host) {
-        return context.getString(com.fullmetalsonic.shortsloop.data.SettingsStore.YOUTUBE_PACKAGE.equals(host)
-                ? R.string.host_overlay_youtube_name : R.string.host_overlay_instagram_name);
+        if (SettingsStore.YOUTUBE_PACKAGE.equals(host)) return context.getString(R.string.host_overlay_youtube_name);
+        if (SettingsStore.INSTAGRAM_PACKAGE.equals(host)) return context.getString(R.string.host_overlay_instagram_name);
+        if (SettingsStore.TIKTOK_PACKAGE.equals(host)) return context.getString(R.string.host_overlay_tiktok_name);
+        throw new IllegalArgumentException("Unsupported host");
     }
 
     /** Recalculate dp and sp after font/display settings change, without losing listeners/state. */

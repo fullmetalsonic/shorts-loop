@@ -1,6 +1,38 @@
 # 검증 기록 · ShortsLoop
 
-## 현재0.3.0/code32 · 최종 기능 검증 / Current functional verification
+## 현재0.4.0/code33 · PC 검증 / Current PC verification
+
+제품 소스·서명 APK를 고정하여 기존 Public 저장소에 게시하는 단계다. 최종 소스/태그/해시/CI/익명 다운로드는 [0.4.0 릴리스 원장](releases/v0.4.0.md)에 확정한다. 아래 과거 버전의 실제 폰 성공을0.4.0 시험으로 재사용하지 않는다.
+
+- BUILD PASS: release/debug APK, release/debug 단위시험 클래스, Android instrumentation APK, release lint를 컴파일했다.
+- Unit PASS: 직접 JUnit4.13.2로 debug/release 각각638개, 실패0. Windows 한글 경로의 Gradle worker 대신 동일 컴파일 클래스를 실행했다. 비제품 VisualSequence 실험20개는 제품과 분리하며 PASS에 포함하지 않는다.
+- 정적 안전/권한/모듈/전환/시간제/사진/자기 플로팅 의미 스크롤 분리 검사 PASS. 새 권한·추가 네트워크 대상 없음. 한국어/영어 리소스379쌍·상태108개 PASS(후속 TT 라디오 안내1쌍 추가 후 최종 재검사 예정).
+- 후보 `5B5AB6DA39B9F372DC723274DF2685921BE0DBF1C971989823D4AF9954C50EEC`,763158bytes의 API26/33/34 native 검사 **38145/38153/37764 PASS**. 분리된 합성 창/노드·설정·UI·상태·전환 검사 수이며 실제 소셜 앱 전환 수가 아니다. 마지막 TT 라디오 안내 분리 이후 최종 APK로 다시 실행한다.
+- 업그레이드 PASS: 공개0.3.0/code32→이전0.4.0 후보 `5771129C1633E14D0CD6E8FAF085429706AE95E7797347DA689453F565431008`를 일회용 API26/33/34에 덮어 설치. 기존44개 자료형/값을 보존(schema1→2 제외),전체53키,서로 다른 앱별 반복·길이·좌표/dual/업데이트 선호/UID/서명 유지,TT 선택OFF·반복2·특수OFF 추가,실행OFF·재실행 비파괴 확인. 이후 변경은 의미 입력 검증·TT 도움말·시험 코드이며 설정 이전 로직은 동일하다.
+- Lint: 오류0/경고13(OldTargetApi1,ObsoleteSdkInt1,UnusedResources11). min26/target35를 유지하며 미해결 오류로 숨기지 않는다.
+- UI/UX: KO/EN,320dp,글꼴1/1.5/2배의 보존 뷰 검사와 광고/TT 화면 렌더 수행. 앱별 탭·서로 다른 입력초안·저장·무효값·재생성·0.1초 증감 검사 PASS. TT 횟수 입력을 지원 설명보다 먼저 배치하고 지원하지 않는 특수정책·일반 복구 안내를 분리했다. API33 실제 Activity에서 숫자7 표시도 육안 확인했다. 분리된 뷰의 정적 렌더는 EditText 숫자가 비어 보여 숫자 표시 증거로 쓰지 않는다. 큰 글꼴의 영어 하단 제목은 여러 줄로 접히며 화면 스크롤이 필요하다.
+- 독립 리뷰: 비율 카운트/새 페이지 확인/3호스트 공정 직렬 입력/설정·UI 범위의 새 미해결P1/P2=0. 리뷰에서 발견한 미디어 키 재사용,누락된 페이지 번호,대기 중 탐색,재연결 중복세션,실패 후 임의 재무장,자기 플로팅 의미 스크롤 오차를 수정하고 자동 회귀검사를 추가했다.
+- 개인정보 점검: 공개 대상에서 원시 로그·개인 캡처·계정·기기 식별자·키·토큰·불필요한 내부 경로 제외. 기존 출처 요청/라이선스 상태 유지.
+- **NOT RUN:** 새 버전 실폰 설치·YT/IG 영상 회귀·틱톡 자연반복/10연속·세 앱 각10/총30·광고 대기 비교·독립 장시간 배터리. 휴대폰 연결 종료로 [현장 점검표](FIELD_TEST_0.4.0.md)에 구분한다.1.3초는 모든 카운트 초기화 원인을 해결했다는 의미가 아니다.
+
+EN: Candidate build,638 unit tests per variant,static guards,native API26/33/34 checks and typed-preference upgrade pass. Final signed-artifact reruns and public delivery evidence will be recorded in the release ledger. Native synthetic checks are not social-app playback success. Independent scoped review has no open P1/P2. Physical playback/triple-host/endurance and ad-delay comparison remain NOT RUN;earlier0.3.0 results are historical only.
+
+## 이전 체크포인트 / Historical checkpoints
+
+이하 현재·최신·대기·미게시 문구와 수치는 당시 상태이며 위0.4.0 결과 및 릴리스 원장이 우선한다. / Relative status wording below refers to its historical checkpoint.
+
+## 2026-08-29 · 시작 상한1.3초 로컬 시험 / Local1.3-second entry tolerance
+
+- 제품 변경: 일반 LoopCounter의seed 상한1→1.3초,길이10% 제한 유지. 전환 완료 조건/관측 공백/탐색/특수 정책/복구1초 기준은 그대로다.
+- 컴파일 PASS: `:app:compileReleaseUnitTestJavaWithJavac`로 변경 제품·시험 소스를 컴파일했다. 새APK assemble/서명/설치는 수행하지 않았다.
+- 제품 단위시험 PASS: `verify.ps1 -SkipBuild -BuildType release`의 최신 컴파일 클래스570JUnit(기존564+신규6),실패0.1.015/1.103/1.3 인정,1.3 바로 초과 거부,짧은 영상10%,실제 반복 후1회 입력,반복0,엄격한 복구 유지 등을 검사했다. 소스 정적 가드·다국어 감사PASS.
+- 산출물 한계: 위SkipBuild의 끝에 출력된742854-byte/9AA…APK 및 기존 아이콘/릴리스 검사는 과거 공개0.3.0 산출물이다. 이를 변경 소스의BUILD/APK PASS로 재사용하지 않는다. 새APK/설치/실폰 광고 왕복/YouTube 회귀/lint/native 검사는이번 변경에 대해 NOT RUN이며 추가 지시까지 보류한다.
+- 독립 소스 리뷰: 범위 내 새P1/P2 차단사항0. 시작 보관/일시 실패 유예 구조는 미구현이고1.3초 밖의 지연·별도 초기화는 여전히 발생할 수 있다.
+- 별도 TikTok 화면 관측은[조사 기록](TIKTOK_FEASIBILITY_2026-08-29.md)에 구분한다. 이는 반복/자동 넘김 시험이 아니다. GitHub/메일 없음.
+
+EN: Changed-source compilation and570 product tests/static guards pass for the1.3s ordinary seed cap,retaining10% and existing recovery/safety rules. No new APK,installation,device regression,lint or native run. Skip-build output referencing the old9AA… release APK is not evidence for this changed source. Independent scoped review found no new P1/P2 blocker. TikTok screen observation is separate,not automation validation. Further work is on hold.
+
+## 이전0.3.0/code32 · 최종 기능 검증 / Historical functional verification
 
 **공개 검증 완료:** 제품/태그6bfe330/v0.3.0,CI33170840370SUCCESS(debug/release각564tests·0실패/오류/건너뜀,lint0/12). 최종9AA1E884…AF394AA APK742854bytes는API26/33/34 native28043/28053/27794PASS,휴대폰설치본·익명공개다운로드·GitHubdigest일치. 공개3파일HTTP200·latest/인앱feed·메타데이터PASS. 아래53FD후보와내장revision외모든ZIP항목동일. / Public artifact,installed phone APK,product CI and anonymous assets/update feeds are verified;see release record for full hashes and timing.
 

@@ -116,6 +116,21 @@ final class LocalizationChecks {
                 inspect(screen.root, language.equals("en"), where);
                 render(activity, screen.root, "localization-" + language + "-" + scale + "-main.png");
 
+                for (String host : new String[]{SettingsStore.INSTAGRAM_PACKAGE, SettingsStore.TIKTOK_PACKAGE}) {
+                    screen.showHost(host);
+                    measure(screen.root, dp(context, 320), dp(context, 800));
+                    inspect(screen.root, language.equals("en"), where + " " + host);
+                    ScrollView previewScroll = findScroll(screen.root);
+                    View focus = host.equals(SettingsStore.INSTAGRAM_PACKAGE) ? screen.adDelay : screen.tiktokSettings.root;
+                    Rect previewArea = new Rect(); focus.getDrawingRect(previewArea);
+                    previewScroll.offsetDescendantRectToMyCoords(focus, previewArea);
+                    previewScroll.scrollTo(0, previewArea.top);
+                    render(activity, screen.root, "localization-" + language + "-" + scale
+                            + (host.equals(SettingsStore.INSTAGRAM_PACKAGE) ? "-ads.png" : "-tiktok.png"));
+                    previewScroll.scrollTo(0, 0);
+                }
+                screen.showHost(SettingsStore.YOUTUBE_PACKAGE);
+
                 Button help = screen.root.findViewById(R.id.help_toggle);
                 require(help.performClick(), "Help expands: " + where);
                 require(help.getText().toString().equals(context.getString(R.string.ui_help_hide)), "Localized help toggle: " + where);
@@ -239,6 +254,7 @@ final class LocalizationChecks {
         }
     }
     private static void render(Context output, View view, String filename) {
+        view.getViewTreeObserver().dispatchOnPreDraw();
         Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
         try (FileOutputStream stream = new FileOutputStream(new File(output.getCacheDir(), filename))) {
             view.draw(new Canvas(bitmap));

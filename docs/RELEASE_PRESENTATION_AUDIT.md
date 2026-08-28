@@ -1,4 +1,18 @@
-# 배포·버전 표시 전수 검토 / Release presentation audit
+# 배포·버전 표시 전수 검토 / Release presentation audit · 0.4.0
+
+## 현재0.4.0/code33 기준 / Current presentation contract
+
+인앱 하단은 `ShortsLoop 0.4.0`,업데이트 카드는 설치 버전0.4.0으로 표시한다. 앱 전체에 시험판·정식판 등급을 붙이지 않는다. 선택형 화면 분석의 실험적 안내와 TikTok 미지원/실폰 검증 필요 안내는 정확한 기능 한계이므로 유지한다.
+
+Use neutral app/version labels. Keep experimental visual-assistance and limited/unverified TikTok disclosures;neutral wording is not universal feature verification.
+
+README·제품/사용법·호환성·릴리스는0.4.0/code33으로 정렬하며,실제 배포 APK의debuggable=false·패키지·서명·revision·업데이트 메타데이터 일치와 공개3파일/CI 확인은 [릴리스 원장](releases/v0.4.0.md),[검증](VERIFICATION.md)에 기록한다. 이 문서의 현재 단계는 검증·게시 준비이며 최종PASS를 미리 선언하지 않는다.
+
+Current-version documents must align with actual non-debuggable artifact identity,metadata,CI and public assets. Final checks belong in the linked records,not assumed here.
+
+## 이전 전수 검토 원문 / Historical presentation audits
+
+아래 버전·PASS·공개 상태는 각 당시 기록이다. / Results below belong to their historical versions.
 
 ## 현재0.3.0/code32 · 공개 완료 감사 / Current publication audit
 

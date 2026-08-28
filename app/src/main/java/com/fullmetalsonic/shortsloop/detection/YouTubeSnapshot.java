@@ -2,9 +2,14 @@ package com.fullmetalsonic.shortsloop.detection;
 
 import android.graphics.Rect;
 import com.fullmetalsonic.shortsloop.core.Progress;
+import com.fullmetalsonic.shortsloop.core.NormalizedProgress;
 
 public final class YouTubeSnapshot {
     public final Progress progress;
+    /** TikTok unitless progress. Never pass this range to second-based policies. */
+    public final NormalizedProgress normalizedProgress;
+    public final String normalizedPagerKey, normalizedMediaKey;
+    public final int normalizedPageIndex;
     public final String identity;
     /** Optional page metadata key for strict duration-filter confirmation, not ordinary counting. */
     public final String contentIdentity;
@@ -34,7 +39,24 @@ public final class YouTubeSnapshot {
     }
     private YouTubeSnapshot(Progress progress, String identity, Rect page, String reason, boolean ad,
             boolean visualCandidate, boolean live, int windowId, Rect windowBounds, String contentIdentity, PhotoFrame photo, String photoPageKey) {
+        this(progress, identity, page, reason, ad, visualCandidate, live, windowId, windowBounds,
+                contentIdentity, photo, photoPageKey, null);
+    }
+    private YouTubeSnapshot(Progress progress, String identity, Rect page, String reason, boolean ad,
+            boolean visualCandidate, boolean live, int windowId, Rect windowBounds, String contentIdentity,
+            PhotoFrame photo, String photoPageKey, NormalizedProgress normalizedProgress) {
+        this(progress, identity, page, reason, ad, visualCandidate, live, windowId, windowBounds,
+                contentIdentity, photo, photoPageKey, normalizedProgress, "", "", -1);
+    }
+    private YouTubeSnapshot(Progress progress, String identity, Rect page, String reason, boolean ad,
+            boolean visualCandidate, boolean live, int windowId, Rect windowBounds, String contentIdentity,
+            PhotoFrame photo, String photoPageKey, NormalizedProgress normalizedProgress,
+            String normalizedPagerKey, String normalizedMediaKey, int normalizedPageIndex) {
         this.progress = progress; this.identity = identity; this.page = page; this.reason = reason; this.ad = ad;
+        this.normalizedProgress = normalizedProgress;
+        this.normalizedPagerKey = normalizedPagerKey;
+        this.normalizedMediaKey = normalizedMediaKey;
+        this.normalizedPageIndex = normalizedPageIndex;
         this.visualCandidate = visualCandidate; this.live = live; this.windowId = windowId;
         this.contentIdentity = contentIdentity == null ? "" : contentIdentity;
         this.windowBounds = windowBounds == null ? null : new Rect(windowBounds);
@@ -49,19 +71,30 @@ public final class YouTubeSnapshot {
                 : "instagram.no_progress", false, !paused, false, -1, null, "");
     }
     public YouTubeSnapshot inWindow(int id, Rect bounds) {
-        return new YouTubeSnapshot(progress, identity, page, reason, ad, visualCandidate, live, id, bounds, contentIdentity, photo, photoPageKey);
+        return new YouTubeSnapshot(progress, identity, page, reason, ad, visualCandidate, live, id, bounds, contentIdentity, photo, photoPageKey, normalizedProgress, normalizedPagerKey, normalizedMediaKey, normalizedPageIndex);
     }
     public YouTubeSnapshot withIdentity(String value) {
-        return new YouTubeSnapshot(progress, value, page, reason, ad, visualCandidate, live, windowId, windowBounds, contentIdentity, photo, photoPageKey);
+        return new YouTubeSnapshot(progress, value, page, reason, ad, visualCandidate, live, windowId, windowBounds, contentIdentity, photo, photoPageKey, normalizedProgress, normalizedPagerKey, normalizedMediaKey, normalizedPageIndex);
     }
     public YouTubeSnapshot withContentIdentity(String value) {
-        return new YouTubeSnapshot(progress, identity, page, reason, ad, visualCandidate, live, windowId, windowBounds, value, photo, photoPageKey);
+        return new YouTubeSnapshot(progress, identity, page, reason, ad, visualCandidate, live, windowId, windowBounds, value, photo, photoPageKey, normalizedProgress, normalizedPagerKey, normalizedMediaKey, normalizedPageIndex);
     }
     public YouTubeSnapshot withPhotoPageKey(String value) {
-        return new YouTubeSnapshot(progress, identity, page, reason, ad, visualCandidate, live, windowId, windowBounds, contentIdentity, photo, value == null ? "" : value);
+        return new YouTubeSnapshot(progress, identity, page, reason, ad, visualCandidate, live, windowId, windowBounds, contentIdentity, photo, value == null ? "" : value, normalizedProgress, normalizedPagerKey, normalizedMediaKey, normalizedPageIndex);
     }
     public boolean recognized() { return page != null && identity != null && !identity.isEmpty(); }
     public boolean usable() { return progress != null && page != null && !ad && !live; }
+    public boolean normalizedUsable() {
+        return normalizedProgress != null && normalizedProgress.valid() && recognized() && !ad && !live && photo == null;
+    }
+    public static YouTubeSnapshot normalizedVideo(String identity, Rect page, NormalizedProgress progress) {
+        return new YouTubeSnapshot(null, identity, page, "", false, false, false, -1, null, "", null, "", progress);
+    }
+    public YouTubeSnapshot withNormalizedIdentity(String pagerKey, String mediaKey, int pageIndex) {
+        return new YouTubeSnapshot(progress, identity, page, reason, ad, visualCandidate, live, windowId,
+                windowBounds, contentIdentity, photo, photoPageKey, normalizedProgress,
+                pagerKey == null ? "" : pagerKey, mediaKey == null ? "" : mediaKey, pageIndex);
+    }
     public static YouTubeSnapshot livePreview(String identity, Rect page) {
         return new YouTubeSnapshot(null, identity, page, "live.waiting", false, false, true, -1, null, "");
     }

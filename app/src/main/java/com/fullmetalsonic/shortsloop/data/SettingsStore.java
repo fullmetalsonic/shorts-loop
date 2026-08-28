@@ -11,6 +11,7 @@ import com.fullmetalsonic.shortsloop.core.LiveSkipPolicy;
 public final class SettingsStore {
     public static final String YOUTUBE_PACKAGE = "com.google.android.youtube";
     public static final String INSTAGRAM_PACKAGE = "com.instagram.android";
+    public static final String TIKTOK_PACKAGE = "com.ss.android.ugc.trill";
     private static final int SETTINGS_VERSION = 1;
     private static final Object MIGRATION_LOCK = new Object();
     public final SharedPreferences preferences;
@@ -48,8 +49,15 @@ public final class SettingsStore {
         if (host == null) throw new IllegalStateException("A host view is required");
         preferences.edit().putBoolean(scopedKey("paused"), value).apply();
     }
-    private static boolean supportedHost(String value) { return YOUTUBE_PACKAGE.equals(value) || INSTAGRAM_PACKAGE.equals(value); }
-    private static String prefix(String value) { return YOUTUBE_PACKAGE.equals(value) ? "host.youtube." : "host.instagram."; }
+    public static boolean supportedHost(String value) {
+        return YOUTUBE_PACKAGE.equals(value) || INSTAGRAM_PACKAGE.equals(value) || TIKTOK_PACKAGE.equals(value);
+    }
+    private static String prefix(String value) {
+        if (YOUTUBE_PACKAGE.equals(value)) return "host.youtube.";
+        if (INSTAGRAM_PACKAGE.equals(value)) return "host.instagram.";
+        if (TIKTOK_PACKAGE.equals(value)) return "host.tiktok.";
+        throw new IllegalArgumentException("Unsupported host");
+    }
 
     /** Playback listeners can ignore another host's edits and global presentation-only keys. */
     public static boolean affectsHost(String key, String packageName) {
@@ -57,15 +65,17 @@ public final class SettingsStore {
         if (key.startsWith("host.")) return key.startsWith(prefix(packageName)) && !key.endsWith(".x") && !key.endsWith(".y");
         if ("enabled".equals(key) || "dual_mode".equals(key)) return true;
         if (YOUTUBE_PACKAGE.equals(packageName)) return "youtube_enabled".equals(key) || "skip_live".equals(key) || "live_delay_seconds".equals(key);
+        if (TIKTOK_PACKAGE.equals(packageName)) return "tiktok_enabled".equals(key);
         return "instagram_enabled".equals(key) || "skip_ads".equals(key) || "visual_assist".equals(key)
-                || "timed_fallback".equals(key) || "fallback_seconds".equals(key) || key.startsWith("photo_");
+                || "ad_delay_tenths".equals(key) || "timed_fallback".equals(key) || "fallback_seconds".equals(key) || key.startsWith("photo_");
     }
 
     private void migrateHosts() {
         synchronized (MIGRATION_LOCK) {
-            if (intValue("host_settings_version", 0) >= 1) return;
+            int version = intValue("host_settings_version", 0);
+            if (version >= 2) return;
             SharedPreferences.Editor edit = preferences.edit();
-            for (String packageName : new String[] {YOUTUBE_PACKAGE, INSTAGRAM_PACKAGE}) {
+            if (version < 1) for (String packageName : new String[] {YOUTUBE_PACKAGE, INSTAGRAM_PACKAGE}) {
                 String p = prefix(packageName);
                 String[] ints = {"target", "ceiling", "last_nonzero", "tap_mode", "long_video_seconds"};
                 int[] values = {ModePolicy.clampTarget(intValue("target", 2), ModePolicy.sanitize(intValue("ceiling", 2))),
@@ -78,7 +88,17 @@ public final class SettingsStore {
                 if (!preferences.contains(p + "x")) edit.putFloat(p + "x", PositionPolicy.fraction(floatValue("x", 0.9f)));
                 if (!preferences.contains(p + "y")) edit.putFloat(p + "y", PositionPolicy.fraction(floatValue("y", 0.35f)));
             }
-            edit.putInt("host_settings_version", 1).apply();
+            // New hosts never inherit legacy special-content switches or another host's count.
+            String p = prefix(TIKTOK_PACKAGE);
+            for (String key : new String[]{"target", "ceiling", "last_nonzero"})
+                if (!preferences.contains(p + key)) edit.putInt(p + key, ModePolicy.DEFAULT_COUNT);
+            if (!preferences.contains(p + "tap_mode")) edit.putInt(p + "tap_mode", ModePolicy.ROTARY);
+            if (!preferences.contains(p + "paused")) edit.putBoolean(p + "paused", false);
+            if (!preferences.contains(p + "x")) edit.putFloat(p + "x", 0.9f);
+            if (!preferences.contains(p + "y")) edit.putFloat(p + "y", 0.35f);
+            if (!preferences.contains("tiktok_enabled")) edit.putBoolean("tiktok_enabled", false);
+            if (!preferences.contains("ad_delay_tenths")) edit.putInt("ad_delay_tenths", 0);
+            edit.putInt("host_settings_version", 2).apply();
         }
     }
 
@@ -124,7 +144,10 @@ public final class SettingsStore {
     public void dualMode(boolean value) { preferences.edit().putBoolean("dual_mode", value).apply(); }
     public boolean youtubeEnabled() { return booleanValue("youtube_enabled", true); }
     public boolean instagramEnabled() { return booleanValue("instagram_enabled", false); }
+    public boolean tiktokEnabled() { return booleanValue("tiktok_enabled", false); }
     public boolean skipAds() { return (host == null || INSTAGRAM_PACKAGE.equals(host)) && booleanValue("skip_ads", false); }
+    public int adDelayTenths() { return com.fullmetalsonic.shortsloop.core.AdDelayPolicy.sanitize(intValue("ad_delay_tenths", 0)); }
+    public void adDelayTenths(int value) { preferences.edit().putInt("ad_delay_tenths", com.fullmetalsonic.shortsloop.core.AdDelayPolicy.sanitize(value)).apply(); }
     public boolean photoEnabled() { return (host == null || INSTAGRAM_PACKAGE.equals(host)) && booleanValue("photo_enabled", false); }
     public int photoMode() { return com.fullmetalsonic.shortsloop.core.PhotoReelPolicy.mode(intValue("photo_mode", 0)); }
     public int photoWholeSeconds() { return com.fullmetalsonic.shortsloop.core.PhotoReelPolicy.seconds(intValue("photo_whole_seconds", com.fullmetalsonic.shortsloop.core.PhotoReelPolicy.DEFAULT_SECONDS)); }
@@ -135,7 +158,7 @@ public final class SettingsStore {
     public void photoWholeSeconds(int value) { preferences.edit().putInt("photo_whole_seconds", com.fullmetalsonic.shortsloop.core.PhotoReelPolicy.seconds(value)).apply(); }
     public void photoSlideSeconds(int value) { preferences.edit().putInt("photo_slide_seconds", com.fullmetalsonic.shortsloop.core.PhotoReelPolicy.seconds(value)).apply(); }
     public void photoFallback(boolean value) { preferences.edit().putBoolean("photo_fallback", value).apply(); }
-    public boolean skipLong() { return booleanValue(scopedKey("skip_long"), false); }
+    public boolean skipLong() { return !TIKTOK_PACKAGE.equals(host) && booleanValue(scopedKey("skip_long"), false); }
     public int longVideoSeconds() {
         return com.fullmetalsonic.shortsloop.core.LongVideoPolicy.sanitizeSeconds(intValue(scopedKey("long_video_seconds"), 60));
     }
@@ -188,14 +211,16 @@ public final class SettingsStore {
     public void selectedApp(String packageName, boolean selected) {
         if (YOUTUBE_PACKAGE.equals(packageName)) preferences.edit().putBoolean("youtube_enabled", selected).apply();
         else if (INSTAGRAM_PACKAGE.equals(packageName)) preferences.edit().putBoolean("instagram_enabled", selected).apply();
+        else if (TIKTOK_PACKAGE.equals(packageName)) preferences.edit().putBoolean("tiktok_enabled", selected).apply();
     }
 
     public boolean isSelected(String packageName) {
         if (YOUTUBE_PACKAGE.equals(packageName)) return youtubeEnabled();
-        return INSTAGRAM_PACKAGE.equals(packageName) && instagramEnabled();
+        if (INSTAGRAM_PACKAGE.equals(packageName)) return instagramEnabled();
+        return TIKTOK_PACKAGE.equals(packageName) && tiktokEnabled();
     }
 
-    public boolean hasSelectedApps() { return youtubeEnabled() || instagramEnabled(); }
+    public boolean hasSelectedApps() { return youtubeEnabled() || instagramEnabled() || tiktokEnabled(); }
     public void enabled(boolean value) {
         if (host != null) { hostPaused(!value); return; }
         preferences.edit().putBoolean("enabled", value).apply();
@@ -206,7 +231,7 @@ public final class SettingsStore {
             return;
         }
         SharedPreferences.Editor edit = preferences.edit().putInt("target", ceiling()).putBoolean("enabled", true);
-        for (String packageName : new String[] {YOUTUBE_PACKAGE, INSTAGRAM_PACKAGE}) {
+        for (String packageName : new String[] {YOUTUBE_PACKAGE, INSTAGRAM_PACKAGE, TIKTOK_PACKAGE}) {
             if (!isSelected(packageName) || intValue("host_settings_version", 0) < 1) continue;
             SettingsStore scoped = new SettingsStore(preferences, packageName);
             edit.putInt(scoped.scopedKey("target"), scoped.ceiling()).putBoolean(scoped.scopedKey("paused"), false);

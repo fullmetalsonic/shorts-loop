@@ -1,4 +1,18 @@
-# 진행 정보 없는 릴스 시간제 넘김 / Clockless Reels timeout
+# 진행 정보 없는 릴스 시간제 넘김 / Clockless Reels timeout · 0.4.0
+
+## 현재 설정 / Current setting
+
+0.4.0/code33의 Instagram 전용 시간제는 **기본OFF,미설정3초,정수2–60초**다. 기존5–60초 저장값과 토글은 그대로 유지한다. 첫2초 안전 판별을 총시간에 포함하므로3초 설정이면 총3초이며 추가2초를 더하지 않는다.0/1초·소수·잘못된 입력은 저장하지 않는다.
+
+Instagram-only timing is**OFF by default,3s when unset,whole2–60s**. Preserve existing valid5–60s values and the toggle. Qualification's2s are included,so3 means3 total,not5.
+
+반복0에서는 중지하며 광고·사진·정지·댓글·가림·불명확한 페이지에 적용하지 않는다. 정상 진행이 돌아오면 반복 횟수 규칙을 사용한다. 관측 공백/페이지·설정 변경은 타이머를 다시 시작하고 동일 페이지 완료 요청을 중복 발행하지 않는다. TikTok에는 이 시간제를 적용하지 않는다.
+
+Count0 disables the timer. Ads,photos,pauses,comments,obstruction and unknown pages are not eligible. Valid playback returns to ordinary counting;gaps/page/setting changes restart timing without duplicate attempts. This timer is not a TikTok feature.
+
+[0.4.0 사용법](USER_GUIDE.md) · [검증](VERIFICATION.md) · [현장점검](FIELD_TEST_0.4.0.md). 아래10초·5–60초와 이전 시험은 당시 버전 기록이며 현재 기본값보다 우선하지 않는다. / Old defaults and tests below are historical,not the current contract.
+
+## 이전 구현·시험 원문 / Historical implementation and tests
 
 최종 제품은 **0.2.4/code13**이다. 제품227시험·빌드·lint(0오류/4경고)·설치본동일성검사를통과했고,0회광고1회자동전환과일반·시간제중지를실기기확인했다. 시간제기본10초/5~60초는유지한다. CI·공개다운로드최신상태는 [릴리스 기록](releases/v0.2.4.md),상세시험은 [검증 원장](VERIFICATION.md)을따른다. 아래timed-test A/B는최종광고독립변경전의과거후보다.
 

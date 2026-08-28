@@ -4,7 +4,7 @@
     android:accessibilityEventTypes="typeWindowStateChanged|typeWindowContentChanged|typeWindowsChanged|typeViewScrolled|typeViewClicked"
     android:accessibilityFeedbackType="feedbackGeneric"
     android:accessibilityFlags="flagReportViewIds|flagRetrieveInteractiveWindows"
-    android:packageNames="com.google.android.youtube,com.instagram.android"
+    android:packageNames="com.google.android.youtube,com.instagram.android,com.ss.android.ugc.trill"
     android:notificationTimeout="100"
     android:canRetrieveWindowContent="true"
     android:canPerformGestures="true"

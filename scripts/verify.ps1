@@ -199,12 +199,35 @@ try {
     if (-not $taskService.Contains('store != null && store.enabled() && !state.blocked') -or
         $taskService -notmatch 'if \(configureLiveTree\(activePackage\)\) return YouTubeSnapshot.unavailable' -or
         $taskService -notmatch 'state.blocked = true; clearLayoutQuery\(\);' -or
-        -not $taskCoordinator.Contains('youtube.needsLayoutNodes() || instagram != null && instagram.needsLayoutNodes()') -or
-        -not $taskCoordinator.Contains('youtube = instagram = null;') -or
-        $taskCoordinator -notmatch '(?s)youtube = instagram = null;\s*updateQueryMode\(\);') {
+        -not $taskCoordinator.Contains('for (HostPlaybackSession session : sessions) include |= session.needsLayoutNodes();') -or
+        -not $taskCoordinator.Contains('for (HostPlaybackSession session : sessions) session.destroySession();') -or
+        $taskCoordinator -notmatch '(?s)sessions.clear\(\);\s*updateQueryMode\(\);') {
         throw 'Shared tree mode must use the union of enabled unblocked hosts and clear on shutdown.'
     }
     'LIVE_TREE_LIFECYCLE_AUDIT=PASS'
+    foreach ($taskGuard in @('if (pendingNormalized) { failClosed("error.advance"); return; }',
+        'normalizedTransition.inspect(normalizedFrame(snapshot), now)',
+        'normalizedCounter.permitsAdvance(verified.normalizedProgress, normalizedCounterKey(verified), SystemClock.uptimeMillis())',
+        'TikTokReader.findPager(root, fresh.page, fresh.windowId)',
+        'else if (unresolvedNormalizedAttempt && store.enabled())',
+        'normalizedTransition.cancel(); pendingNormalized = false;',
+        'if (!snapshot.ad) adDelay.reset();', 'if (store.adDelayTenths() == 0) advanceAd(snapshot);',
+        'AdDelayTracker.Result delay = adDelay.observe(key, store.adDelayTenths(), now);')) {
+        if (-not $taskService.Contains($taskGuard)) { throw "Multi-host/timing protection missing: $taskGuard" }
+    }
+    if ($taskService.IndexOf('if (TikTokReader.PACKAGE.equals(activePackage)) {') -lt $taskService.IndexOf('if (store.target() == 0) {')) {
+        throw 'Normalized repeat must remain disabled by count zero.'
+    }
+    $taskTikTokReader = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/java/com/fullmetalsonic/shortsloop/detection/TikTokReader.java') -Raw
+    if ($taskTikTokReader -match 'new Progress\(|Thread.sleep|ACTION_CLICK|\.performAction\(') {
+        throw 'TikTok detection cannot guess seconds or perform input.'
+    }
+    'MULTI_HOST_TIMING_WIRING_AUDIT=PASS'
+    if ($taskService.Contains('allowsInput(getWindows(), fresh.windowId, fresh.windowBounds, fresh.page)') -or
+        ([regex]::Matches($taskService, 'allowsSemantic\(getWindows\(\), fresh.windowId, fresh.windowBounds, fresh.page\)')).Count -ne 2) {
+        throw 'Semantic ad/TikTok actions must not treat the full page as a physical touch corridor.'
+    }
+    'SEMANTIC_WINDOW_INPUT_SEPARATION_AUDIT=PASS'
     $taskReader = Get-Content -LiteralPath (Join-Path $taskRoot 'app/src/main/java/com/fullmetalsonic/shortsloop/detection/ShortsReader.java') -Raw
     if (-not $taskReader.Contains('return snapshot.withIdentity(identity);')) {
         throw 'App routing must preserve snapshot visual eligibility metadata.'

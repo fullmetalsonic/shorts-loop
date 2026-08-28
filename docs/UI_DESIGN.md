@@ -1,4 +1,22 @@
-# UI·인간공학 기준 / UI and usability · ShortsLoop 0.3.0
+# UI·인간공학 기준 / UI and usability · ShortsLoop 0.4.0
+
+## 현재0.4.0 UI 변경 / Current UI delta
+
+기존 스타일과 하단 전체 실행을 유지한다. 세 앱 선택과 편집 대상을 분리하며,좁은 폭/큰 글꼴에서 YouTube·Instagram·TikTok 선택을 세로로 배치한다. 세 개의 좁은 편집 칼럼을 만들지 않는다. 각 앱의 입력 초안·적용·현재 상태·재개를 분리한다.
+
+Retain the existing visual language and persistent master control. Separate runnable-app selection from editing;stack selectors on narrow/large-font screens instead of forcing three columns.
+
+광고 토글 아래에 ‘넘기기 전 대기 시간’을 두고0.0–9.9초·0.1초 단위·0초는OFF아님을 설명한다. Instagram 시간제는2–60초·미설정3초·판별2초 포함을 같은 카드에서 설명한다. TikTok의 미지원 특수옵션은 숨기고 읽을 수 있는 일반 추천 영상만 지원한다는 안내를 표시한다.
+
+Group pre-ad delay under the ad toggle,explain exact tenths and zero semantics,and keep the Instagram timer's qualification-inclusive contract nearby. Hide unsupported TikTok controls with an explicit capability note.
+
+YT/IG/TT 플로팅은72×56dp를 유지하고 각 X는 해당 앱만 정지한다. 새 한영 UI·숫자/초안/복원·320dp/큰 글꼴 검사와 실제 시각 결과는 [검증](VERIFICATION.md)에 기록하며,실제 세 앱 배치에서 겹침·가림·재생은 [현장 점검](FIELD_TEST_0.4.0.md)의 미검증 항목이다.
+
+Preserve compact host-labelled floats and scopedX. Native/layout checks and physical three-window behavior remain distinct.
+
+## 이전 화면·시각 검증 원문 / Historical UI contracts and audits
+
+아래0.3.0 및 이전 버전 결과는 당시 화면의 근거다. / Earlier results below describe their historical builds.
 
 ## 현재 화면 계약 · 공개 완료 / Current UI contract · Published
 

@@ -1,4 +1,24 @@
-# 업데이트·배포 계획 · ShortsLoop 0.3.0
+# 업데이트·배포 계획 · ShortsLoop 0.4.0
+
+## 0.4.0/code33 전달 계약 / Delivery contract
+
+기존 Public 저장소에 non-debuggable release APK `shorts-loop-v0.4.0.apk`,고정 형식의 업데이트 메타데이터와SHA256 파일을 게시한다. 현재 단계는 구현·검증·게시 준비이며,완료 판정은 [0.4.0 릴리스](releases/v0.4.0.md),[검증 원장](VERIFICATION.md)의 최종 소스·태그·산출물·CI·공개다운로드 결과를 따른다. 이번 체크포인트에서 게시 완료를 선언하지 않는다.
+
+Distribute the non-debuggable same-signed release APK,update metadata and checksum to the existing Public repository. Final source/tag/artifact/CI/download evidence determines publication status,not this preparation checkpoint.
+
+- 패키지·현재 전체 서명 집합·minSdk26·업데이트 경로를 보존한다. 새 권한·새 외부 전송 경로·몰래 설치를 추가하지 않는다. / Preserve package,signer set,minimumOS and fixed update endpoints.
+- 이전 0.3.0/code32에서 0.4.0/code33으로 덮어 설치할 때 legacy·YouTube·Instagram 저장키/자료형·옵션을 보존한다. host schema는 v2로 증가하고 TikTok은 선택OFF·반복2로 추가한다. / Upgrade preserving typed preferences,with incrementalv2 migration and conservative TikTok defaults.
+- Instagram 시간제는 미설정일 때만 3초이며 기존의 유효한 5–60초 값은 그대로다. 광고 대기는 새 키에 기본0을 사용하며 0.0–9.9초를 정수 0.1초 단위로 저장한다. / New timer default only when unset;ad delay uses a new integer-tenths key.
+- 설치 전에 전체 실행만OFF로 두고 다른 값은 삭제하지 않는다. 권한·출처 허용·Android 최종 설치 확인은 사용자가 직접 한다. / Stop execution before installation without clearing settings;permissions and installation remain manual.
+- 공개 prerelease 포함·draft 제외 정책과 상위 versionCode·OS·메타데이터·크기·SHA256·패키지·서명 검사를 유지한다. / Retain all existing update eligibility and validation checks.
+- 소스 커밋을 확정한 뒤 같은 서명으로 빌드하고 내장 revision과 최종 APK를 대조한다. 실제 실행한 검사만 PASS로 표시하며 PC 검사와 실폰 자동 넘김을 분리한다. / Freeze source before building;verify embedded revision and distinguish PC checks from real social-app playback.
+- 게시 후 저장소 Public·태그/Release·Actions와 APK/메타데이터/SHA256의 익명 다운로드·로컬 바이트/해시·업데이트 피드를 검사한다. 개인 화면·기기 식별자·원시 로그·인증정보·서명 개인키를 게시하지 않는다. / Verify public repository,release,CI,anonymous assets and feed parity;exclude private captures,identifiers,logs and secrets.
+
+새 실폰 시험은 연결 종료로 NOT RUN이다. 특히 TikTok 일반10연속·세 앱 각각10/총30·광고 지연 후 다음 시작 인식은 후속 검증이며,기존 0.3.0 설치본 해시를 새 APK의 실폰 설치 증거로 사용하지 않는다. [실사용 점검](FIELD_TEST_0.4.0.md).
+
+Physical new-version tests remainunrun. Do not reuse the old installed APK hash or historical endurance results for the new artifact.
+
+## 이전 전달·공개 기록 / Historical delivery records
 
 ## 현재0.3.0/code32 · 공개 완료 / Current published release
 

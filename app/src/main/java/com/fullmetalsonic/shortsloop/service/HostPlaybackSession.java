@@ -24,6 +24,10 @@ import com.fullmetalsonic.shortsloop.core.AdvanceGate;
 import com.fullmetalsonic.shortsloop.core.PhotoReelTracker;
 import com.fullmetalsonic.shortsloop.core.PhotoTransition;
 import com.fullmetalsonic.shortsloop.core.AdSkipPolicy;
+import com.fullmetalsonic.shortsloop.core.AdDelayTracker;
+import com.fullmetalsonic.shortsloop.core.NormalizedLoopCounter;
+import com.fullmetalsonic.shortsloop.core.NormalizedTransition;
+import com.fullmetalsonic.shortsloop.detection.TikTokReader;
 import com.fullmetalsonic.shortsloop.core.LoopCounter;
 import com.fullmetalsonic.shortsloop.core.PlaybackRestart;
 import com.fullmetalsonic.shortsloop.core.LongVideoPolicy;
@@ -69,6 +73,13 @@ public final class HostPlaybackSession extends ContextWrapper implements SharedP
     }
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final LoopCounter counter = new LoopCounter();
+    private final NormalizedLoopCounter normalizedCounter = new NormalizedLoopCounter();
+    private final NormalizedTransition normalizedTransition = new NormalizedTransition();
+    private boolean pendingNormalized;
+    private boolean unresolvedNormalizedAttempt;
+    private double lastNormalized = -1;
+    private final AdDelayTracker adDelay = new AdDelayTracker();
+    private String lastResetReason = "initial";
     private final AdvanceGate gate = new AdvanceGate();
     private final PhotoReelTracker photos = new PhotoReelTracker();
     private final PhotoTransition photoTransition = new PhotoTransition();
@@ -126,7 +137,7 @@ public final class HostPlaybackSession extends ContextWrapper implements SharedP
             try { tick(); }
             catch (RuntimeException ignored) { failClosed("error.query"); }
             if (store != null && store.enabled()) handler.postDelayed(this, store.target() == 0 && !adSkippingEnabled() && !liveSkippingEnabled() && !longSkippingEnabled() && !photoSkippingEnabled() ? 900
-                    : visual != null && visual.active() ? 450 : 300);
+                    : adDelay.active() ? 100 : visual != null && visual.active() ? 450 : 300);
         }
     };
     public void startSession() {
@@ -156,7 +167,10 @@ public final class HostPlaybackSession extends ContextWrapper implements SharedP
         if ("paused".equals(key)) key = "enabled";
         // Only explicit execution OFF/ON may re-arm an unconfirmed live request.
         // A floating count tap can first interrupt the gesture and then change target.
-        if ("enabled".equals(key)) { unresolvedLiveAttempt = false; unresolvedLongAttempt = false; unresolvedPhotoAttempt = false; }
+        if ("enabled".equals(key)) { unresolvedLiveAttempt = false; unresolvedLongAttempt = false; unresolvedPhotoAttempt = false; unresolvedNormalizedAttempt = false; }
+        else if (unresolvedNormalizedAttempt && store.enabled()) {
+            failClosed("error.transition"); return;
+        }
         else if (unresolvedPhotoAttempt && store.enabled()) {
             failClosed("photo.failed"); return;
         }
@@ -167,8 +181,8 @@ public final class HostPlaybackSession extends ContextWrapper implements SharedP
             failClosed("error.long_settings"); return;
         }
         if ("dual_mode".equals(key) || "target".equals(key) || "enabled".equals(key) || "ceiling".equals(key)
-                || "tap_mode".equals(key) || "youtube_enabled".equals(key) || "instagram_enabled".equals(key)
-                || "skip_ads".equals(key) || "visual_assist".equals(key)
+                || "tap_mode".equals(key) || "youtube_enabled".equals(key) || "instagram_enabled".equals(key) || "tiktok_enabled".equals(key)
+                || "skip_ads".equals(key) || "ad_delay_tenths".equals(key) || "visual_assist".equals(key)
                 || "timed_fallback".equals(key) || "fallback_seconds".equals(key)
                 || "skip_live".equals(key) || "live_delay_seconds".equals(key)
                 || "skip_long".equals(key) || "long_video_seconds".equals(key)
@@ -185,9 +199,11 @@ public final class HostPlaybackSession extends ContextWrapper implements SharedP
     }
     private void applySettings() {
         configureLiveTree(activePackage);
-        handler.removeCallbacks(poll); invalidate();
+        handler.removeCallbacks(poll); lastResetReason = "settings"; invalidate();
         state.blocked = false; counter.setTarget(store.target());
+        normalizedCounter.setTarget(store.target());
         if (!store.enabled()) {
+            observedWindow = -1; observedBounds = null;
             floating.hide(); publish(0, "off");
         } else if (!store.hasSelectedApps()) {
             store.enabled(false); publish(0, "app.select");
@@ -237,7 +253,8 @@ public final class HostPlaybackSession extends ContextWrapper implements SharedP
             // Ads have no clock. Only a structurally identified, different page
             // can confirm them; a stale page event alone never confirms another ad.
             // A newly appearing clock on the SAME visual page is not a page transition.
-            AdvanceGate.State state = pendingLive ? inspectLiveTransition(snapshot, now)
+            AdvanceGate.State state = pendingNormalized ? normalizedTransition.inspect(normalizedFrame(snapshot), now)
+                    : pendingLive ? inspectLiveTransition(snapshot, now)
                     : pendingLong ? inspectLongTransition(snapshot, now)
                     : (pendingVisual || pendingTimed)
                     ? gate.inspectRecognizedPage(snapshot.recognized() ? snapshot.identity : "", now)
@@ -250,6 +267,7 @@ public final class HostPlaybackSession extends ContextWrapper implements SharedP
             }
             if (state == AdvanceGate.State.FAILED) { advanceTimedOut(); return; }
             if (state == AdvanceGate.State.CONFIRMED) {
+                if (pendingNormalized) { gate.cancel(); pendingNormalized = false; unresolvedNormalizedAttempt = false; normalizedCounter.reset(); }
                 confirmedAdvances++; if (pendingAd) confirmedAds++;
                 if (pendingVisual) confirmedVisual++;
                 if (pendingTimed) confirmedTimed++;
@@ -263,6 +281,7 @@ public final class HostPlaybackSession extends ContextWrapper implements SharedP
         // Recovery must not fall through into ads/live/timers or issue a retry gesture.
         if (restart.active()) { observeRestart(snapshot, now); return; }
         if (snapshot.photo == null) photos.reset();
+        if (!snapshot.ad) adDelay.reset();
         if (!longCandidate(snapshot)) longVideo.reset();
         if (!timedCandidate(snapshot)) timed.reset();
         if (!snapshot.live) live.reset();
@@ -280,7 +299,19 @@ public final class HostPlaybackSession extends ContextWrapper implements SharedP
         if (snapshot.ad) {
             visual.reset();
             counter.reset(); lastPosition = -1; lastDuration = -1;
-            if (adSkippingEnabled()) advanceAd(snapshot);
+            if (adSkippingEnabled()) {
+                // Ad identity stays constant for confirmation. Delay timing instead uses
+                // independent source-page evidence; an unreadable source cannot run a timer.
+                if (store.adDelayTenths() == 0) advanceAd(snapshot);
+                else if (snapshot.photoPageKey.isEmpty()) { adDelay.reset(); publish(0, "ads.waiting"); }
+                else {
+                    String key = snapshot.photoPageKey + "|" + snapshot.windowId + "|" + snapshot.page.toShortString()
+                            + "|" + snapshot.windowBounds.toShortString();
+                    AdDelayTracker.Result delay = adDelay.observe(key, store.adDelayTenths(), now);
+                    publishState(0, "ads.delayed", (int) ((delay.remainingMillis() + 999) / 1000));
+                    if (delay.due()) advanceAd(snapshot);
+                }
+            }
             else publish(0, "ads.disabled");
             return;
         }
@@ -298,6 +329,14 @@ public final class HostPlaybackSession extends ContextWrapper implements SharedP
         if (store.target() == 0) {
             counter.reset(); timed.reset(); visual.reset(); lastPosition = -1; lastDuration = -1;
             publish(0, snapshot.recognized() ? zeroCountStatus() : snapshot.reason); return;
+        }
+        if (TikTokReader.PACKAGE.equals(activePackage)) {
+            if (!snapshot.normalizedUsable()) { lastResetReason = snapshot.reason; invalidate(); publish(0, snapshot.reason); return; }
+            lastPosition = lastDuration = -1; lastNormalized = snapshot.normalizedProgress.fraction;
+            LoopCounter.Result result = normalizedCounter.observe(snapshot.normalizedProgress, normalizedCounterKey(snapshot), now);
+            publish(result.current, result.waitingForStart ? "playback.next_start" : "playback.counting");
+            if (result.advance) advanceNormalized(snapshot);
+            return;
         }
         // A real clock always wins, including current=0 while awaiting the next start.
         // This path needs a structurally identified, unpaused Instagram video, not merely current=0.
@@ -319,7 +358,7 @@ public final class HostPlaybackSession extends ContextWrapper implements SharedP
             visual.observe(snapshot, store.target(), now);
             publish(visual.current(), visual.status()); return;
         }
-        if (!snapshot.usable()) { invalidate(); publish(0, snapshot.reason); return; }
+        if (!snapshot.usable()) { lastResetReason = snapshot.reason; invalidate(); publish(0, snapshot.reason); return; }
         if (visual.active()) visual.reset();
         lastPosition = snapshot.progress.position; lastDuration = snapshot.progress.duration;
         LoopCounter.Result result = counter.observe(snapshot.progress, snapshot.identity, now);
@@ -327,6 +366,7 @@ public final class HostPlaybackSession extends ContextWrapper implements SharedP
         if (result.advance) advance(snapshot);
     }
     private void advanceTimedOut() {
+        if (pendingNormalized) { failClosed("error.advance"); return; }
         if (!PlaybackRestart.ordinaryRequest(pendingAd, pendingLive, pendingTimed, pendingVisual, pendingLong)
                 || ordinaryRequestWindow < 0 || store.target() <= 0) {
             failClosed("error.advance"); return;
@@ -363,6 +403,7 @@ public final class HostPlaybackSession extends ContextWrapper implements SharedP
             Rect window = root == null ? null : windowGuard.allowedBounds(getWindows(), root.getWindowId());
             int id = window == null ? -1 : root.getWindowId();
             if (id != observedWindow || !Objects.equals(window, observedBounds)) {
+                lastResetReason = "window.geometry";
                 interruptSession(); lastPageIndex = -1;
                 observedWindow = id; observedBounds = window == null ? null : new Rect(window);
                 holdUntil = SystemClock.uptimeMillis() + 700;
@@ -376,10 +417,15 @@ public final class HostPlaybackSession extends ContextWrapper implements SharedP
         } finally { YouTubeReader.recycle(root); }
     }
     private void refreshWindowVisibility() {
-        if (!screenAvailable()) { if (floating != null) floating.setAllowedBounds(null); return; }
+        if (!screenAvailable()) {
+            observedWindow = -1; observedBounds = null;
+            if (floating != null) floating.setAllowedBounds(null); return;
+        }
         AccessibilityNodeInfo root = getHostRoot();
         try {
             Rect window = root == null ? null : windowGuard.allowedBounds(getWindows(), root.getWindowId());
+            observedWindow = window == null ? -1 : root.getWindowId();
+            observedBounds = window == null ? null : new Rect(window);
             if (floating != null) {
                 floating.setAllowedBounds(window);
                 if (window != null && store.floatingEnabled()) floating.show();
@@ -391,9 +437,9 @@ public final class HostPlaybackSession extends ContextWrapper implements SharedP
     }
     boolean needsLayoutNodes() {
         return store != null && store.enabled() && !state.blocked
-                && (YouTubeReader.PACKAGE.equals(activePackage) || photoSkippingEnabled());
+                && (YouTubeReader.PACKAGE.equals(activePackage) || TikTokReader.PACKAGE.equals(activePackage) || photoSkippingEnabled());
     }
-    boolean visible() { return observedBounds != null; }
+    boolean visible() { return store != null && store.enabled() && observedBounds != null; }
     AccessibilityNodeInfo getHostRoot() { return coordinator == null ? null : coordinator.hostRoot(activePackage); }
     List<AccessibilityWindowInfo> getWindows() { return coordinator == null ? java.util.Collections.emptyList() : coordinator.getWindows(); }
     boolean dispatchGesture(GestureDescription gesture, GestureResultCallback callback, Handler callbackHandler) {
@@ -420,6 +466,12 @@ public final class HostPlaybackSession extends ContextWrapper implements SharedP
                 && Objects.equals(a.identity, b.identity) && a.ad == b.ad && a.live == b.live
                 && Objects.equals(a.contentIdentity, b.contentIdentity)
                 && Objects.equals(a.photoPageKey, b.photoPageKey)
+                && Objects.equals(a.normalizedPagerKey, b.normalizedPagerKey)
+                && Objects.equals(a.normalizedMediaKey, b.normalizedMediaKey)
+                && a.normalizedPageIndex == b.normalizedPageIndex
+                && (a.normalizedProgress == null ? b.normalizedProgress == null : b.normalizedUsable()
+                    && b.normalizedProgress.fraction >= a.normalizedProgress.fraction
+                    && b.normalizedProgress.fraction - a.normalizedProgress.fraction <= .16)
                 && (a.photo == null ? b.photo == null : PhotoGestureDispatcher.samePhoto(a, b))
                 && (a.progress == null ? b.progress == null : b.usable() && Math.abs(a.progress.duration-b.progress.duration) <= 0.5);
     }
@@ -433,7 +485,7 @@ public final class HostPlaybackSession extends ContextWrapper implements SharedP
         return store != null && LiveSkipPolicy.enabled(store.enabled(), store.skipLive(), store.youtubeEnabled());
     }
     private boolean longSkippingEnabled() {
-        return store != null && store.enabled() && store.skipLong() && store.hasSelectedApps();
+        return store != null && !TikTokReader.PACKAGE.equals(activePackage) && store.enabled() && store.skipLong() && store.hasSelectedApps();
     }
     private boolean photoSkippingEnabled() {
         return store != null && store.enabled() && store.instagramEnabled() && store.photoEnabled();
@@ -719,14 +771,18 @@ public final class HostPlaybackSession extends ContextWrapper implements SharedP
     private void advanceAd(YouTubeSnapshot original) {
         if (deferIfBusy(original, () -> advanceAd(original))) return;
         if (!adSkippingEnabled()
-                || state.blocked || gate.pending() || interacting || !screenAvailable()) return;
+                || state.blocked || gate.pending() || interacting || !screenAvailable()
+                || SystemClock.uptimeMillis() < holdUntil) return;
         AccessibilityNodeInfo root = getHostRoot();
         java.util.List<AccessibilityNodeInfo> pagers = java.util.Collections.emptyList();
         try {
-            if (root == null || !InstagramReader.PACKAGE.contentEquals(root.getPackageName() == null ? "" : root.getPackageName())
-                    || !windowGuard.allows(getWindows(), root.getWindowId()) || !root.refresh()) return;
-            YouTubeSnapshot fresh = reader.read(root, store);
-            if (!fresh.ad || !fresh.recognized() || !Objects.equals(original.identity, fresh.identity)) return;
+            if (root == null || root.getWindowId() != original.windowId
+                    || !InstagramReader.PACKAGE.contentEquals(root.getPackageName() == null ? "" : root.getPackageName())
+                    || !root.refresh()) { adDelay.reset(); return; }
+            Rect allowed = windowGuard.allowedBounds(getWindows(), root.getWindowId());
+            if (!Objects.equals(allowed, original.windowBounds)) { adDelay.reset(); return; }
+            YouTubeSnapshot fresh = reader.read(root, store).inWindow(root.getWindowId(), allowed);
+            if (!fresh.ad || !sameDeferredPage(original, fresh)) { adDelay.reset(); return; }
             pagers = root.findAccessibilityNodeInfosByViewId(InstagramReader.PAGER_ID);
             AccessibilityNodeInfo pager = null;
             for (AccessibilityNodeInfo candidate : pagers) if (candidate.isVisibleToUser()) {
@@ -735,11 +791,19 @@ public final class HostPlaybackSession extends ContextWrapper implements SharedP
             }
             if (pager == null || !pager.refresh() || !pager.isVisibleToUser() || !pager.isScrollable()
                     || !InstagramReader.PAGER_ID.equals(pager.getViewIdResourceName())
+                    || pager.getWindowId() != fresh.windowId
                     || !InstagramReader.PACKAGE.contentEquals(pager.getPackageName() == null ? "" : pager.getPackageName())) {
                 failClosed("error.ads_action"); return;
             }
             Rect bounds = new Rect(); pager.getBoundsInScreen(bounds);
-            if (!bounds.contains(fresh.page)) { failClosed("error.ads_screen"); return; }
+            YouTubeSnapshot verified = reader.read(root, store).inWindow(root.getWindowId(), allowed);
+            if (!verified.ad || !sameDeferredPage(fresh, verified) || !adSkippingEnabled()
+                    || interacting || !screenAvailable() || SystemClock.uptimeMillis() < holdUntil) {
+                adDelay.reset(); return;
+            }
+            if (!bounds.contains(fresh.page) || !windowGuard.allowsSemantic(getWindows(), fresh.windowId, fresh.windowBounds, fresh.page)) {
+                failClosed("error.ads_screen"); return;
+            }
             gate.begin(fresh.identity, -1, SystemClock.uptimeMillis()); pendingAd = true;
             advanceRequests++; adRequests++;
             if (!performScroll(pager)) {
@@ -765,6 +829,47 @@ public final class HostPlaybackSession extends ContextWrapper implements SharedP
                 || fresh.windowBounds == null || !fresh.windowBounds.contains(fresh.page)) { invalidate(); return; }
         if (state.blocked || gate.pending()) return;
         dispatchPageSwipe(fresh, false, false);
+    }
+    private NormalizedTransition.Frame normalizedFrame(YouTubeSnapshot value) {
+        if (value == null || !value.normalizedUsable() || !value.recognized() || value.windowId < 0
+                || value.windowBounds == null || !value.windowBounds.contains(value.page)) return null;
+        return new NormalizedTransition.Frame(activePackage + "|" + value.windowId + "|"
+                + value.windowBounds.toShortString() + "|" + value.page.toShortString(),
+                value.normalizedPagerKey, value.identity, value.normalizedMediaKey,
+                value.normalizedPageIndex, value.normalizedProgress.fraction);
+    }
+    private String normalizedCounterKey(YouTubeSnapshot value) {
+        return value.identity + "|" + value.normalizedPagerKey + "|" + value.normalizedMediaKey + "|" + value.normalizedPageIndex;
+    }
+    /** TikTok uses only the verified inner vertical pager, never a screen-wide blind swipe. */
+    private void advanceNormalized(YouTubeSnapshot expected) {
+        if (deferIfBusy(expected, () -> advanceNormalized(expected))) return;
+        if (!TikTokReader.PACKAGE.equals(activePackage) || !store.enabled() || store.target() <= 0
+                || state.blocked || gate.pending() || interacting || !screenAvailable()
+                || SystemClock.uptimeMillis() < holdUntil) return;
+        int expectedGeneration = generation;
+        AccessibilityNodeInfo root = getHostRoot(), pager = null;
+        try {
+            if (root == null || !root.refresh() || root.getWindowId() != expected.windowId) { invalidate(); return; }
+            Rect allowed = windowGuard.allowedBounds(getWindows(), root.getWindowId());
+            if (!Objects.equals(allowed, expected.windowBounds)) { invalidate(); return; }
+            YouTubeSnapshot fresh = reader.read(root, store).inWindow(root.getWindowId(), allowed);
+            if (!sameDeferredPage(expected, fresh) || normalizedFrame(fresh) == null) { invalidate(); return; }
+            pager = TikTokReader.findPager(root, fresh.page, fresh.windowId);
+            if (pager == null) { failClosed("error.rejected"); return; }
+            // Re-read after pager lookup; do not combine a previous page with a new action target.
+            YouTubeSnapshot verified = reader.read(root, store).inWindow(root.getWindowId(), allowed);
+            if (!sameDeferredPage(fresh, verified) || expectedGeneration != generation
+                    || !windowGuard.allowsSemantic(getWindows(), fresh.windowId, fresh.windowBounds, fresh.page)
+                    || !normalizedCounter.permitsAdvance(verified.normalizedProgress, normalizedCounterKey(verified), SystemClock.uptimeMillis())
+                    || !store.enabled() || !screenAvailable()) { invalidate(); return; }
+            long now = SystemClock.uptimeMillis();
+            normalizedTransition.begin(normalizedFrame(verified), now);
+            gate.begin(verified.identity, -1, now); pendingNormalized = true; unresolvedNormalizedAttempt = true;
+            advanceRequests++;
+            if (!performScroll(pager)) { failClosed("error.rejected"); return; }
+            publish(store.target(), "advance.confirming");
+        } finally { YouTubeReader.recycle(pager); YouTubeReader.recycle(root); }
     }
     private void dispatchPageSwipe(YouTubeSnapshot fresh, boolean forLive, boolean forLong) {
         if (!store.enabled() || state.blocked || interacting || !screenAvailable()
@@ -825,6 +930,17 @@ public final class HostPlaybackSession extends ContextWrapper implements SharedP
         if (source == null) return;
         try {
             String id = source.getViewIdResourceName();
+            if (TikTokReader.PACKAGE.equals(eventPackage) && deferredAction != null
+                    && event.getEventType() == AccessibilityEvent.TYPE_VIEW_SCROLLED
+                    && "android.widget.SeekBar".contentEquals(source.getClassName() == null ? "" : source.getClassName())) {
+                lastResetReason = "tiktok.seek"; interruptSession(); holdUntil = SystemClock.uptimeMillis() + 900;
+            }
+            if (InstagramReader.PACKAGE.equals(eventPackage) && adDelay.active()
+                    && (event.getEventType() == AccessibilityEvent.TYPE_VIEW_CLICKED
+                    || InstagramReader.PAGER_ID.equals(id))) {
+                adDelay.reset();
+                if (!gate.pending()) { interruptSession(); holdUntil = SystemClock.uptimeMillis() + 900; }
+            }
             if (InstagramReader.PACKAGE.equals(eventPackage) && (photos.active() || photoTransition.pending())) {
                 if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_CLICKED
                         || (event.getEventType() == AccessibilityEvent.TYPE_VIEW_SCROLLED && !photoTransition.pending())) {
@@ -869,7 +985,7 @@ public final class HostPlaybackSession extends ContextWrapper implements SharedP
                     if (index >= 0 && lastPageIndex >= 0 && index != lastPageIndex) {
                         if (gate.pending()) gate.pageChanged();
                         else if (restart.active()) restart.suspend();
-                        else invalidate();
+                        else { lastResetReason = "pager.index"; invalidate(); }
                     }
                     if (index >= 0) lastPageIndex = index;
                 }
@@ -877,6 +993,8 @@ public final class HostPlaybackSession extends ContextWrapper implements SharedP
         } finally { YouTubeReader.recycle(source); }
     }
     private void invalidate() {
+        adDelay.reset(); normalizedCounter.reset();
+        normalizedTransition.cancel(); pendingNormalized = false; lastNormalized = -1;
         deferredAction = null; deferredPage = null;
         if (coordinator != null) coordinator.cancelWaiting(activePackage);
         photos.reset(); photoTransition.reset();
@@ -937,7 +1055,9 @@ public final class HostPlaybackSession extends ContextWrapper implements SharedP
                 + " photoFallback=" + (store != null && store.photoFallback()) + " photoPending=" + photoTransition.pending()
                 + " photoSlideRequests=" + photoSlideRequests + " photoSlideConfirmed=" + photoSlideConfirmed
                 + " photoReelRequests=" + photoReelRequests + " photoReelConfirmed=" + photoReelConfirmed);
-        writer.println("counter=" + counter.diagnostic() + " generation=" + generation);
+        writer.println("counter=" + counter.diagnostic() + " generation=" + generation + " resetReason=" + lastResetReason);
+        writer.println("normalized=" + lastNormalized + " normalizedPending=" + pendingNormalized
+                + " normalizedCounter=" + normalizedCounter.diagnostic());
         writer.println("recovering=" + restart.active() + " recoveryEntries=" + recoveryEntries
                 + " recoveryStarts=" + recoveryStarts + " recoveryEnteredAt=" + recoveryEnteredAt);
         writer.println("skipLong=" + (store != null && store.skipLong()) + " longSeconds=" + (store == null ? -1 : store.longVideoSeconds())

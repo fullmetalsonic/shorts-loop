@@ -11,8 +11,8 @@ public class ClocklessTimeoutTrackerTest {
         for (long t = start; t <= end; t += 1000) result = tracker.observe(page, seconds, t);
         return result;
     }
-    @Test public void defaultTenSecondsIncludesQualificationAndFiresAtExactDeadline() {
-        assertEquals(10, ClocklessTimeoutPolicy.DEFAULT_SECONDS);
+    @Test public void savedTenSecondsIncludesQualificationAndFiresAtExactDeadline() {
+        assertEquals(3, ClocklessTimeoutPolicy.DEFAULT_SECONDS);
         ClocklessTimeoutTracker tracker = new ClocklessTimeoutTracker();
         for (long now = 100; now <= 9100; now += 1000) assertFalse(tracker.observe(PAGE, 10, now).due());
         ClocklessTimeoutTracker.Result before = tracker.observe(PAGE, 10, 10099);
@@ -123,7 +123,7 @@ public class ClocklessTimeoutTrackerTest {
         assertTrue(feed(tracker, PAGE, 5, 7000, 11000).due());
     }
     @Test public void minimumAndMaximumDurationsRespectBounds() {
-        for (int seconds : new int[]{5, 60}) {
+        for (int seconds : new int[]{2, 3, 5, 60}) {
             ClocklessTimeoutTracker tracker = new ClocklessTimeoutTracker();
             for (long now = 0; now < seconds * 1000L; now += 1000)
                 assertFalse(tracker.observe(PAGE, seconds, now).due());
@@ -132,8 +132,8 @@ public class ClocklessTimeoutTrackerTest {
     }
     @Test public void invalidStoredDurationUsesPolicyDefault() {
         ClocklessTimeoutTracker tracker = new ClocklessTimeoutTracker();
-        assertEquals(10, tracker.observe(PAGE, 0, 0).remainingSeconds());
-        assertTrue(feed(tracker, PAGE, 0, 1000, 10000).due());
+        assertEquals(3, tracker.observe(PAGE, 0, 0).remainingSeconds());
+        assertTrue(feed(tracker, PAGE, 0, 1000, 3000).due());
     }
     @Test public void largeTimestampsDoNotOverflowDeadlineArithmetic() {
         ClocklessTimeoutTracker tracker = new ClocklessTimeoutTracker();

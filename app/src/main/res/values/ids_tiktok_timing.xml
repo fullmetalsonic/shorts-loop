@@ -1,0 +1,24 @@
+<resources>
+    <item name="app_tiktok" type="id" />
+    <item name="mw_tab_tiktok" type="id" />
+    <item name="mw_tiktok_settings" type="id" />
+    <item name="mw_tiktok_state" type="id" />
+    <item name="mw_tiktok_resume" type="id" />
+    <item name="mw_tiktok_count_input" type="id" />
+    <item name="mw_tiktok_count_up" type="id" />
+    <item name="mw_tiktok_count_down" type="id" />
+    <item name="mw_tiktok_count_apply" type="id" />
+    <item name="mw_tiktok_rotary" type="id" />
+    <item name="mw_tiktok_quick" type="id" />
+    <item name="mw_tiktok_long_panel" type="id" />
+    <item name="mw_tiktok_skip_long" type="id" />
+    <item name="mw_tiktok_long_support" type="id" />
+    <item name="mw_tiktok_long_input" type="id" />
+    <item name="mw_tiktok_long_minus" type="id" />
+    <item name="mw_tiktok_long_plus" type="id" />
+    <item name="mw_tiktok_long_apply" type="id" />
+    <item name="ad_delay_input" type="id" />
+    <item name="ad_delay_minus" type="id" />
+    <item name="ad_delay_plus" type="id" />
+    <item name="ad_delay_apply" type="id" />
+</resources>

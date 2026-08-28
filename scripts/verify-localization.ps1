@@ -25,7 +25,7 @@ $taskSources = Get-ChildItem -LiteralPath (Join-Path $taskRoot 'app/src/main/jav
 foreach ($taskFile in $taskSources) {
     $taskText = Get-Content -LiteralPath $taskFile.FullName -Raw -Encoding utf8
     # Host recognition lexicons must remain bilingual; they are not display copy.
-    if ($taskFile.Name -notin @('ProgressParser.java','InstagramPolicy.java','YouTubeContentKey.java') -and $taskText -match '[가-힣]') {
+    if ($taskFile.Name -notin @('ProgressParser.java','InstagramPolicy.java','YouTubeContentKey.java','TikTokStructurePolicy.java') -and $taskText -match '[가-힣]') {
         throw "Hardcoded Korean outside the host-recognition lexicon: $($taskFile.Name)"
     }
 }

@@ -52,7 +52,7 @@ public final class FloatingController {
 
     /** One controller belongs to one host. Changing hosts never carries another host's count or position. */
     public void setHost(String packageName) {
-        if (!SettingsStore.YOUTUBE_PACKAGE.equals(packageName) && !SettingsStore.INSTAGRAM_PACKAGE.equals(packageName))
+        if (!com.fullmetalsonic.shortsloop.core.HostRegistry.supports(packageName))
             throw new IllegalArgumentException("Unsupported floating host");
         if (host.equals(packageName)) return;
         hide(); host = packageName; store = baseStore.forHost(packageName);

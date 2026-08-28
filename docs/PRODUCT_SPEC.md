@@ -1,4 +1,35 @@
-# 제품 기준 / Product contract · ShortsLoop 0.3.0
+# 제품 기준 / Product contract · ShortsLoop 0.4.0
+
+## 현재0.4.0/code33 계약 / Current contract
+
+구현 기준이며 게시·최종 검사 상태는 [릴리스](releases/v0.4.0.md),[검증 원장](VERIFICATION.md)을 따른다. 실폰 신규 자동 넘김 시험은 미실행이다.
+
+Implementation contract;release and artifact validation are recorded separately. New physical automatic-advance testing is not yet performed.
+
+| 대상 / Host | 일반 반복 / Ordinary counting | 별도 지원 / Separate support |
+| --- | --- | --- |
+| YouTube | 기존 초단위 시계 / Existing seconds clock | 알려진 총길이·라이브 / Known duration,live previews |
+| Instagram | 기존 초단위 시계 / Existing seconds clock | 시간제·광고·사진·알려진 총길이 / Timer,ads,photos,known duration |
+| TikTok `com.ss.android.ugc.trill` | 추천 피드의 비율 진행 / Normalized recommendation progress | 없음 / None |
+
+1. 전체OFF는 모든 자동 입력을 중지한다. 호스트는 전체ON·선택ON·호스트일시정지OFF·안전한 가시 창·지원 콘텐츠를 모두 필요로 한다. 반복0은 일반 반복/시간제/화면 분석을 멈추지만 지원된 독립 광고·사진·라이브·긴 영상은 별도 토글을 따른다. / MasterOFF stops all;host eligibility and count-zero semantics remain explicit.
+2. `dual_mode` 기본OFF는 활성 창 하나,ON은 선택된1·2·3개 가시 호스트를 각각 처리한다. 앱별 반복·탭 방식·위치·일시정지·실패 상태는 분리한다. 강제 초점 왕복·강제 재생은 하지 않는다. / DefaultOFF handles the active host;ON follows eligible visible hosts independently without forced focus/playback.
+3. `host_settings_version=2`는 기존legacy/YT/IG 키와 자료형을 보존한다. TikTok 선택은OFF,기준/목표2,특수 옵션 비활성으로 새로 시작하며 기존 앱 옵션을 복사하지 않는다. / Incremental migration preserves old values and initializes TikTok conservatively.
+4. Instagram 진행정보 없는 일반 영상 시간제는 기본OFF,미설정3초,정수2–60초다. 기존5–60초 저장값·토글은 유지하며 판별2초는 총시간에 포함된다. 사진·광고·정지·불명확한 화면에 시간제를 우회 적용하지 않는다. / Clockless timer2–60/default3 includes2s qualification and preserves saved values;no unsafe eligibility bypass.
+5. Instagram 광고 대기 `ad_delay_tenths`는 정수0–99,기본0이며 UI에서0.0–9.9초로 표시한다. 광고 옵션·선택·전체ON일 때만,반복0과 독립적으로 적용한다. 추가 대기는 넘기기 전이며0은 안전 확인 후 즉시다. 양수에서는 같은 광고 source identity를 읽을 수 있어야 하고 정보가 없으면 대기한다. 광고 변경·창/메뉴/가림/설정/실행 변경에서 낡은 대기는 폐기하며 기다리는 동안 입력 소유권을 점유하지 않는다. / Exact integer tenths,pre-skip delay,independent of count0;positive waits require identifiable ad continuity and never hold the shared input lease.
+6. 초단위 일반 카운터 시작 인정은 `min(1.3초,총길이×0.1)`다. 시작을 늦게 잡으면 다음 처음을 기다린다. 기존 반복 완료·정상 진행·탐색/일시정지·페이지/창·전환 확인 보호와 실패 후 엄격한 읽기 전용 복구는 유지한다. 모든0초기화의 해결을 주장하지 않는다. / Second-based start tolerance is min(1.3s,10% duration),not a universal reset fix.
+7. TikTok0–10000 범위는 초가 아니며 총길이나 긴 영상 여부를 추정하지 않는다. 일반 진행값·페이지·창 근거가 불충분하면 기다리고,미확정 전환 실패는 화면 확인 후 전체OFF→ON이 필요할 수 있다. 광고·LIVE·사진·진행정보 없는 페이지는 지원 기능으로 간주하지 않는다. / Normalized range is not duration;unsupported or unconfirmed pages fail closed.
+8. 호스트별72×56dp 플로팅은 선택형이다. YT/IG/TT 라벨,각 호스트 탭·끌기·X를 분리한다. X는그앱만 일시정지,전체OFF는전부중지. 여러 대상이 보이면 실험적 화면 분석은 저장값을 유지한 채 비활성이다. / Optional labelled overlays and existing visual-assistance guards remain scoped.
+9. 설정 UI는 한국어/영어,좁은 폭·큰 글꼴에서 세로 앱 선택을 사용하며 지원하지 않는 TikTok 특수 옵션은 숨긴다. 미완성 입력은 자동 저장하지 않는다. / Localized retained editors stack host selectors on narrow/large-font displays and hide unsupported filters.
+10. 새 권한·통신 경로·개인정보 수집을 추가하지 않는다. 접근성·오버레이·설치 승인은 직접 하며 기존 패키지·서명·업데이트 검사 계약을 유지한다. / No added permissions,telemetry or silent permission/install actions.
+
+검증된 읽기 관측과 실제 자동 넘김을 구분한다. TikTok46.7.3 표본·기능별 PC 검사·후속 실폰 시험은 [기획 상태표](TIKTOK_MULTI_APP_PLAN.md),[실사용 점검](FIELD_TEST_0.4.0.md),[검증](VERIFICATION.md)에 별도 기록한다.
+
+Keep read-only observations,synthetic tests and physical auto-advance evidence separate.
+
+## 이전0.3.0 및0.2.x 계약·검증 원문 / Historical contracts and evidence
+
+아래의 상대 상태·수치는 당시 기록이다. 위0.4.0 변경 계약이 우선하며,과거 시험을 이번 성공으로 합산하지 않는다. / Earlier relative statuses and counts belong to their versions;the0.4.0 contract above supersedes conflicting behavior.
 
 ## 현재0.3.0 계약 · 공개 완료 / Current contract · Published
 

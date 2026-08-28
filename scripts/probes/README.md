@@ -1,6 +1,6 @@
 # Instagram 읽기 전용 조사 프로브
 
-제품에 포함하지 않는 개발용 도구다. 앱/권한을 설치하거나 변경하지 않는다. UIAutomator는 기존 접근성 서비스 연결에 간섭하므로 **ShortsLoop 실행을 OFF한 뒤에만** 사용한다. 제품 E2E 중에는 사용하지 않는다.
+제품에 포함하지 않는 개발용 도구다. 앱/권한을 설치하거나 변경하지 않는다. 아래 기존 Instagram UIAutomator 프로브는 기존 접근성 서비스 연결에 간섭하므로 **ShortsLoop 실행을 OFF한 뒤에만** 사용한다. 제품 E2E 중에는 사용하지 않는다. 별도 비억제 방식의 TikTok 프로브는 마지막 절의 제한을 따른다.
 
 ## 확인 순서
 
@@ -86,3 +86,13 @@ app_process /system/bin probes.InstagramVisualProbe 38
 두 프로브를 동시에 실행하지 않는다. 화면 프로브 동안 탭/스와이프 금지. 이벤트 양성 대조의 수동 일시정지는 별도 구간으로 명시한다. 프로세스 종료 후 일시정지를 해제하고 원래 앱 실행/설정을 복원한다. 제품 연속 자동이동 시험은 UIAutomator와 분리해 `observe-device.ps1`만 사용하며 실제 이동·카운트·요청/확인을 기록한다.
 
 현재 C차 기기 사용본은 각각 이벤트v1/화면v2 JAR이며, 위 통합 재빌드 JAR의 해시와 혼동하지 않는다. 실기기 결과·원본 파일·20개 기준 실패·새 capability/설치 승인 대기는 [조사 기록](../../docs/INSTAGRAM_TIMING_RESEARCH_2026-08-27.md)을 따른다. These are research probes, not an APK, a permission grant, or a verified loop counter.
+
+## TikTok 비억제 화면 조사 / Non-suppressing TikTok screen survey
+
+[TikTokReadOnlyProbe.java](TikTokReadOnlyProbe.java)는 API33+ shell 전용이며 이번 실기기 확인은 API37 한 대다. `FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES`로만 연결하고 실패 시 기본 억제 모드로 대체하지 않는다. 기존 Instagram 프로브의 기본 연결 방식과 혼용하지 않는다. 조사 승인 후 대상 TikTok이 활성이고기존 YouTube/Instagram 창이 비표시인지 먼저 확인한다. 서비스 연결/실행 상태를 전후 비교하며 단독으로 실행한다. 전후 상태 유지가 모든 기기의 무간섭 보증은 아니다.
+
+위 Java8→class JAR→d8→dex JAR 절차에서 소스를 이 파일로 바꾸고 android35의android.jar만 classpath/lib로 사용한다. 새 비공개 출력 폴더와 새 기기 임시 JAR 이름을 사용하고 d8 min-api는33으로 지정한다. 로컬/전송본 SHA256 확인 후,전송한 JAR 하나만 CLASSPATH로 지정해 `app_process /system/bin probes.TikTokReadOnlyProbe`를 실행한다. API/연결 오류가 나면 중단한다. 앱설치/권한부여/제스처는 포함하지 않는다.
+
+4표본마다캐시를비우고최대700노드/48깊이/25초로제한한다.대상패키지이탈시중단하며,제목/계정/캡션/임의설명은출력하지않는다.텍스트는정확한기본탭역할과엄격한시간형식후보만분류한다.숨겨진SeekBar·범위상한·시간후보만으로재생중/전체길이를확정하지않는다.결과와미검증범위는[관측기록](../../docs/TIKTOK_FEASIBILITY_2026-08-29.md)을따른다.
+
+EN: This separate API33+ shell probe connects only in non-suppressing mode and was inspected on API37. Run it alone with TikTok active and both existing hosts hidden,comparing service state before/after. Build with the same Java/dex steps using only android.jar and min-api33;transfer a uniquely named JAR and verify its hash. There are no input,APK-install or permission-grant calls. Four cache-cleared,bounded observations are structural evidence,not a counter or autoplay test. Stop on connection/API failure;never fall back to suppressing automation.

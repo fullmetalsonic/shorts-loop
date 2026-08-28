@@ -7,9 +7,10 @@ import com.fullmetalsonic.shortsloop.data.SettingsStore;
 public final class ShortsReader {
     private final YouTubeReader youtube = new YouTubeReader();
     private final InstagramReader instagram = new InstagramReader();
+    private final TikTokReader tiktok = new TikTokReader();
 
     /** Release the bounded RAM-only live page identity when the owning service is destroyed. */
-    public void close() { youtube.close(); }
+    public void close() { youtube.close(); tiktok.close(); }
 
     public YouTubeSnapshot read(AccessibilityNodeInfo root, SettingsStore store) {
         if (root == null || root.getPackageName() == null)
@@ -19,6 +20,7 @@ public final class ShortsReader {
         YouTubeSnapshot snapshot;
         if (YouTubeReader.PACKAGE.equals(packageName)) snapshot = youtube.read(root);
         else if (InstagramReader.PACKAGE.equals(packageName)) snapshot = instagram.read(root);
+        else if (TikTokReader.PACKAGE.equals(packageName)) snapshot = tiktok.read(root);
         else return YouTubeSnapshot.unavailable("app.supported");
         if (!snapshot.usable() && !snapshot.recognized()) return snapshot;
         // Preserve YouTube's unknown-identity sentinel: it must not confirm a swipe.

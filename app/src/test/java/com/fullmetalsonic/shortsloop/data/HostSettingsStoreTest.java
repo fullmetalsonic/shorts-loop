@@ -15,7 +15,7 @@ public final class HostSettingsStoreTest {
                 "long_video_seconds", 321, "x", 0.23f, "y", 0.67f, "enabled", false));
         Map<String, ?> before = p.getAll(); SettingsStore root = new SettingsStore(p);
         p.registerOnSharedPreferenceChangeListener((changed, key) -> {
-            assertEquals(1, changed.getInt("host_settings_version", 0));
+            assertEquals(2, changed.getInt("host_settings_version", 0));
             assertEquals(7, changed.getInt("host.youtube.ceiling", 0));
             assertEquals(7, changed.getInt("host.instagram.ceiling", 0));
         });
@@ -121,7 +121,7 @@ public final class HostSettingsStoreTest {
     }
     @Test public void malformedPauseFlagFailsClosedUntilExplicitResume() {
         MemoryPreferences p = new MemoryPreferences(Map.of("settings_version", 1, "enabled", true,
-                "host_settings_version", 1, "host.youtube.paused", "false"));
+                "host_settings_version", 2, "host.youtube.paused", "false"));
         SettingsStore yt = new SettingsStore(p).forHost(YT);
         assertTrue(yt.hostPaused()); assertFalse(yt.enabled()); assertEquals(0, p.writes.size());
         yt.start(); assertFalse(yt.hostPaused()); assertTrue(yt.enabled());

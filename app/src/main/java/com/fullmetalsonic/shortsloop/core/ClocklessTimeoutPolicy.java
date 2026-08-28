@@ -4,8 +4,8 @@ import java.text.Normalizer;
 
 /** Settings for an explicitly selected time limit, never a fabricated playback clock. */
 public final class ClocklessTimeoutPolicy {
-    public static final int DEFAULT_SECONDS = 10;
-    public static final int MIN_SECONDS = 5;
+    public static final int DEFAULT_SECONDS = 3;
+    public static final int MIN_SECONDS = 2;
     public static final int MAX_SECONDS = 60;
 
     private ClocklessTimeoutPolicy() {}

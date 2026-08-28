@@ -28,11 +28,11 @@ import com.fullmetalsonic.shortsloop.tile.ShortsTileService;
 import com.fullmetalsonic.shortsloop.updates.UpdateController;
 
 public final class MainActivity extends Activity {
-    private static final String YOUTUBE = "com.google.android.youtube", INSTAGRAM = "com.instagram.android";
+    private static final String YOUTUBE = SettingsStore.YOUTUBE_PACKAGE, INSTAGRAM = SettingsStore.INSTAGRAM_PACKAGE, TIKTOK = SettingsStore.TIKTOK_PACKAGE;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private SettingsStore store;
-    private SettingsStore youtubeStore, instagramStore;
-    private boolean instagramSettingsSelected;
+    private SettingsStore youtubeStore, instagramStore, tiktokStore;
+    private String settingsHost = YOUTUBE;
     private SettingsScreen screen;
     private boolean rendering;
     private String appliedLanguage;
@@ -51,17 +51,22 @@ public final class MainActivity extends Activity {
     }
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState); store = new SettingsStore(this);
-        youtubeStore = store.forHost(YOUTUBE); instagramStore = store.forHost(INSTAGRAM);
-        instagramSettingsSelected = savedInstanceState != null && savedInstanceState.getBoolean("instagram_settings_tab", false);
+        youtubeStore = store.forHost(YOUTUBE); instagramStore = store.forHost(INSTAGRAM); tiktokStore = store.forHost(TIKTOK);
+        if (savedInstanceState != null) settingsHost = savedInstanceState.getString("settings_host",
+                savedInstanceState.getBoolean("instagram_settings_tab", false) ? INSTAGRAM : YOUTUBE);
+        if (!SettingsStore.supportedHost(settingsHost)) settingsHost = YOUTUBE;
         screen = new SettingsScreen(this, youtubeStore.ceiling(), value -> { youtubeStore.ceiling(value); render(); },
                 store.fallbackSeconds(), value -> { store.fallbackSeconds(value); render(); },
                 store.liveDelaySeconds(), value -> { store.liveDelaySeconds(value); render(); },
                 youtubeStore.longVideoSeconds(), value -> { youtubeStore.longVideoSeconds(value); render(); },
                 instagramStore.ceiling(), value -> { instagramStore.ceiling(value); render(); },
-                instagramStore.longVideoSeconds(), value -> { instagramStore.longVideoSeconds(value); render(); });
+                instagramStore.longVideoSeconds(), value -> { instagramStore.longVideoSeconds(value); render(); },
+                tiktokStore.ceiling(), value -> { tiktokStore.ceiling(value); render(); },
+                store.adDelayTenths(), value -> { store.adDelayTenths(value); render(); });
         setContentView(screen.root);
         bindHostPanel(screen.youtubeSettings, youtubeStore, false);
         bindHostPanel(screen.instagramSettings, instagramStore, true);
+        bindHostPanel(screen.tiktokSettings, tiktokStore, false);
         screen.hostTabs.setOnCheckedChangeListener((group, id) -> {
             if (rendering) return;
             View focused = getCurrentFocus();
@@ -70,7 +75,7 @@ public final class MainActivity extends Activity {
                 android.view.inputmethod.InputMethodManager keyboard = getSystemService(android.view.inputmethod.InputMethodManager.class);
                 if (keyboard != null) keyboard.hideSoftInputFromWindow(focused.getWindowToken(), 0);
             }
-            instagramSettingsSelected = id == R.id.mw_tab_instagram;
+            settingsHost = id == R.id.mw_tab_tiktok ? TIKTOK : id == R.id.mw_tab_instagram ? INSTAGRAM : YOUTUBE;
             render();
         });
         screen.photos.whole.changed = value -> { store.photoWholeSeconds(value); render(); };
@@ -91,13 +96,19 @@ public final class MainActivity extends Activity {
         screen.setupJump.setOnClickListener(v -> screen.showSetup(RuntimeState.connected && !hasInstalledSelection()));
         screen.youtube.setOnCheckedChangeListener((v, checked) -> { if (!rendering) { store.selectedApp(YOUTUBE, checked); render(); } });
         screen.instagram.setOnCheckedChangeListener((v, checked) -> { if (!rendering) { store.selectedApp(INSTAGRAM, checked); render(); } });
+        screen.tiktok.setOnCheckedChangeListener((v, checked) -> { if (!rendering) { store.selectedApp(TIKTOK, checked); render(); } });
         screen.timedFallback.setOnCheckedChangeListener((v, checked) -> {
             if (rendering) return;
             if (!checked) { store.timedFallback(false); render(); return; }
             if (!FeatureSupportPolicy.instagramFeature(installed(INSTAGRAM), store.instagramEnabled()) || !screen.seconds.commit()) { render(); return; }
             store.timedFallback(true); render();
         });
-        screen.skipAds.setOnCheckedChangeListener((v, checked) -> { if (!rendering) { store.skipAds(checked); render(); } });
+        screen.skipAds.setOnCheckedChangeListener((v, checked) -> {
+            if (rendering) return;
+            if (!checked) { store.skipAds(false); render(); return; }
+            if (!installed(INSTAGRAM) || !store.instagramEnabled() || !screen.adDelay.commit()) { render(); return; }
+            store.skipAds(true); render();
+        });
         screen.live.toggle.setOnCheckedChangeListener((v, checked) -> {
             if (rendering) return;
             if (!checked) { store.skipLive(false); render(); return; }
@@ -117,12 +128,14 @@ public final class MainActivity extends Activity {
             if (rendering) return;
             if (!checked) { store.enabled(false); render(); return; }
             if (!commitHost(screen.youtubeSettings, youtubeStore, false)
-                    || !commitHost(screen.instagramSettings, instagramStore, true)) { render(); return; }
+                    || !commitHost(screen.instagramSettings, instagramStore, true)
+                    || !commitHost(screen.tiktokSettings, tiktokStore, false)) { render(); return; }
             if (instagramStore.ceiling() > 0 && store.timedFallback() && store.instagramEnabled() && installed(INSTAGRAM) && !screen.seconds.commit()) { showHost(true); return; }
             if (store.skipLive() && store.youtubeEnabled() && installed(YOUTUBE) && !screen.live.commit()) { showHost(false); return; }
             if (store.photoEnabled() && store.instagramEnabled() && installed(INSTAGRAM) && !screen.photos.commit(store)) { showHost(true); return; }
+            if (store.skipAds() && store.instagramEnabled() && installed(INSTAGRAM) && !screen.adDelay.commit()) { showHost(true); return; }
             if (!store.hasSelectedApps()) { toast(getString(R.string.ui_select_app_error)); render(); return; }
-            if (!(store.youtubeEnabled() && installed(YOUTUBE)) && !(store.instagramEnabled() && installed(INSTAGRAM))) {
+            if (!hasInstalledSelection()) {
                 toast(getString(R.string.ui_app_missing_error)); render(); return;
             }
             if (!RuntimeState.connected) { toast(getString(R.string.ui_accessibility_required)); render(); return; }
@@ -145,20 +158,24 @@ public final class MainActivity extends Activity {
         if (screen == null) return;
         rendering = true;
         try {
-            boolean youtubeInstalled = installed(YOUTUBE), instagramInstalled = installed(INSTAGRAM);
+            boolean youtubeInstalled = installed(YOUTUBE), instagramInstalled = installed(INSTAGRAM), tiktokInstalled = installed(TIKTOK);
             boolean instagramReady = FeatureSupportPolicy.instagramFeature(instagramInstalled, store.instagramEnabled());
             boolean youtubeReady = youtubeInstalled && store.youtubeEnabled();
-            screen.showHost(instagramSettingsSelected);
+            screen.showHost(settingsHost);
             renderHostPanel(screen.youtubeSettings, youtubeStore, youtubeInstalled, false);
             renderHostPanel(screen.instagramSettings, instagramStore, instagramInstalled, true);
+            renderHostPanel(screen.tiktokSettings, tiktokStore, tiktokInstalled, false);
             screen.photos.render(store, instagramReady);
             screen.photos.support.setText(CompatibilityPanel.instagramReason(this, instagramInstalled, store.instagramEnabled()));
             screen.seconds.render(store.fallbackSeconds()); screen.seconds.setAvailable(instagramReady);
+            screen.adDelay.render(store.adDelayTenths()); screen.adDelay.setAvailable(instagramReady);
             screen.live.render(store.liveDelaySeconds()); screen.live.setAvailable(youtubeReady);
             screen.live.toggle.setChecked(store.skipLive() && youtubeReady);
             screen.live.support.setText(!youtubeInstalled ? R.string.live_youtube_missing
                     : !store.youtubeEnabled() ? R.string.live_youtube_select : R.string.live_youtube_ready);
             screen.youtube.setChecked(store.youtubeEnabled()); screen.instagram.setChecked(store.instagramEnabled());
+            screen.tiktok.setChecked(store.tiktokEnabled()); screen.tiktok.setEnabled(tiktokInstalled);
+            screen.tiktok.setText(tiktokInstalled ? R.string.ui_tiktok : R.string.ui_tiktok_missing);
             screen.youtube.setEnabled(youtubeInstalled); screen.instagram.setEnabled(instagramInstalled);
             screen.youtube.setText(youtubeInstalled ? getString(R.string.ui_youtube) : getString(R.string.ui_youtube_missing));
             screen.instagram.setText(instagramInstalled ? getString(R.string.ui_instagram) : getString(R.string.ui_instagram_missing));
@@ -199,7 +216,7 @@ public final class MainActivity extends Activity {
         });
         panel.tapModes.setOnCheckedChangeListener((view, id) -> {
             if (rendering) return;
-            hostStore.tapMode(id == (instagramHost ? R.id.mw_instagram_quick : R.id.tap_quick) ? ModePolicy.TOGGLE : ModePolicy.ROTARY);
+            hostStore.tapMode(id == panel.quick.getId() ? ModePolicy.TOGGLE : ModePolicy.ROTARY);
             render();
         });
         panel.resume.setOnClickListener(view -> {
@@ -212,14 +229,14 @@ public final class MainActivity extends Activity {
     private boolean commitHost(HostSettingsPanel panel, SettingsStore hostStore, boolean instagramHost) {
         if (!hostStore.isSelected(hostStore.hostPackage()) || !installed(hostStore.hostPackage())) return true;
         if (panel.count.commit() && (!hostStore.skipLong() || panel.longVideo.commit())) return true;
-        showHost(instagramHost); return false;
+        settingsHost = hostStore.hostPackage(); render(); return false;
     }
-    private void showHost(boolean instagramHost) { instagramSettingsSelected = instagramHost; render(); }
+    private void showHost(boolean instagramHost) { settingsHost = instagramHost ? INSTAGRAM : YOUTUBE; render(); }
     private void renderHostPanel(HostSettingsPanel panel, SettingsStore hostStore, boolean appInstalled, boolean instagramHost) {
         boolean selected = hostStore.isSelected(hostStore.hostPackage());
         boolean available = selected && appInstalled;
         panel.count.render(hostStore.ceiling());
-        panel.longVideo.render(hostStore.longVideoSeconds()); panel.longVideo.setAvailable(available);
+        panel.longVideo.render(hostStore.longVideoSeconds()); panel.longVideo.setAvailable(available && !TIKTOK.equals(hostStore.hostPackage()));
         panel.longVideo.toggle.setChecked(hostStore.skipLong() && available);
         panel.longVideo.support.setText(!appInstalled ? R.string.mw_host_missing : !selected ? R.string.mw_host_unselected : R.string.long_video_host_ready);
         panel.applied.setText(hostStore.target() == hostStore.ceiling()
@@ -246,12 +263,11 @@ public final class MainActivity extends Activity {
         panel.state.setTextColor(runtime.blocked && hostStore.enabled() ? UiTheme.WARNING : UiTheme.MUTED);
         panel.resume.setVisibility(hostStore.hostPaused() || runtime.blocked ? View.VISIBLE : View.GONE);
         panel.resume.setEnabled(store.enabled() && available);
-        panel.tapModes.check(hostStore.tapMode() == ModePolicy.TOGGLE
-                ? instagramHost ? R.id.mw_instagram_quick : R.id.tap_quick
-                : instagramHost ? R.id.mw_instagram_rotary : R.id.tap_rotary);
+        panel.tapModes.check(hostStore.tapMode() == ModePolicy.TOGGLE ? panel.quick.getId() : panel.rotary.getId());
     }
     private boolean hasInstalledSelection() {
-        return (store.youtubeEnabled() && installed(YOUTUBE)) || (store.instagramEnabled() && installed(INSTAGRAM));
+        return (store.youtubeEnabled() && installed(YOUTUBE)) || (store.instagramEnabled() && installed(INSTAGRAM))
+                || (store.tiktokEnabled() && installed(TIKTOK));
     }
     private boolean visualAssistAvailable() {
         return FeatureSupportPolicy.visualAvailability(Build.VERSION.SDK_INT, installed(INSTAGRAM), store.instagramEnabled())
@@ -296,7 +312,7 @@ public final class MainActivity extends Activity {
         render();
     }
     @Override protected void onSaveInstanceState(Bundle state) {
-        state.putBoolean("instagram_settings_tab", instagramSettingsSelected);
+        state.putString("settings_host", settingsHost);
         super.onSaveInstanceState(state);
     }
     @Override protected void onResume() {

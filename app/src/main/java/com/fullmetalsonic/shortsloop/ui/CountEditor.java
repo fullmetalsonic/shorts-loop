@@ -24,8 +24,13 @@ public final class CountEditor extends LinearLayout {
     private final Listener listener;
     private boolean binding, dirty;
     private int committed;
+    private final int helperResource;
     public CountEditor(Context c, int initial, Listener listener) {
+        this(c, initial, listener, R.string.count_helper);
+    }
+    public CountEditor(Context c, int initial, Listener listener, int helperResource) {
         super(c); this.listener = listener; setOrientation(VERTICAL); committed = initial;
+        this.helperResource = helperResource;
         LinearLayout row = new LinearLayout(c); row.setGravity(Gravity.CENTER_VERTICAL);
         input = new EditText(c); input.setId(R.id.count_input); input.setSingleLine(true);
         // Request a numeric keyboard without deleting signs/decimals from pasted text.
@@ -57,7 +62,7 @@ public final class CountEditor extends LinearLayout {
                 dirty = !s.toString().equals(Integer.toString(committed));
                 input.setError(null); apply.setVisibility(dirty ? VISIBLE : GONE);
                 up.setEnabled(dirty || committed < 99); down.setEnabled(dirty || committed > 0);
-                detail.setText(dirty ? R.string.ui_input_draft : R.string.count_helper);
+                detail.setText(dirty ? R.string.ui_input_draft : helperResource);
             }
             @Override public void afterTextChanged(Editable e) {}
         });
@@ -87,7 +92,7 @@ public final class CountEditor extends LinearLayout {
     public void render(int value) { if (!dirty && committed != value) bind(value); }
     private void bind(int value) {
         committed = value; binding = true; input.setText(String.format(java.util.Locale.ROOT, "%d", value)); binding = false;
-        apply.setVisibility(GONE); detail.setText(R.string.count_helper);
+        apply.setVisibility(GONE); detail.setText(helperResource);
         up.setEnabled(value < 99); down.setEnabled(value > 0);
     }
 }

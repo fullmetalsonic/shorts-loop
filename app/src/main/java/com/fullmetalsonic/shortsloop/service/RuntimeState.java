@@ -10,9 +10,11 @@ public final class RuntimeState {
     }
     private static final HostState YOUTUBE = new HostState();
     private static final HostState INSTAGRAM = new HostState();
+    private static final HostState TIKTOK = new HostState();
     public static HostState forHost(String packageName) {
         if ("com.google.android.youtube".equals(packageName)) return YOUTUBE;
         if ("com.instagram.android".equals(packageName)) return INSTAGRAM;
+        if ("com.ss.android.ugc.trill".equals(packageName)) return TIKTOK;
         throw new IllegalArgumentException("Unsupported host");
     }
     private RuntimeState() {}

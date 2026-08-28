@@ -61,7 +61,7 @@ public final class HostOverlayChecks {
     }
 
     private void layout(Context base) {
-        for (String language : new String[]{"ko", "en"}) for (String host : new String[]{YT, IG}) {
+        for (String language : new String[]{"ko", "en"}) for (String host : com.fullmetalsonic.shortsloop.core.HostRegistry.packages()) {
             for (float scale : new float[]{1f, 2f}) for (boolean rtl : new boolean[]{false, true}) {
                 Context localized = AppLocale.forLanguage(base, language);
                 Configuration config = new Configuration(localized.getResources().getConfiguration());
@@ -78,8 +78,8 @@ public final class HostOverlayChecks {
                     require(badge.getBottom() <= count.getPaddingTop(), "Badge cannot cover count text");
                     require(rtl ? badge.getLeft() >= close.getRight() : badge.getRight() <= close.getLeft(), "Badge and close do not overlap in either direction");
                 }
-                require((YT.equals(host) ? "YT" : "IG").contentEquals(badge.getText()), "App badge is unambiguous without color");
-                require(close.getContentDescription().toString().contains(YT.equals(host) ? "YouTube" : "Instagram"), "Close action announces the full app name");
+                require((YT.equals(host) ? "YT" : IG.equals(host) ? "IG" : "TT").contentEquals(badge.getText()), "App badge is unambiguous without color");
+                require(close.getContentDescription().toString().contains(YT.equals(host) ? "YouTube" : IG.equals(host) ? "Instagram" : "TikTok"), "Close action announces the full app name");
                 require(!badge.isClickable() && !badge.isFocusable() && badge.getImportantForAccessibility() == View.IMPORTANT_FOR_ACCESSIBILITY_NO,
                         "Decorative badge does not add a duplicate focus target");
                 int[] clicks = {0, 0};

@@ -1,4 +1,57 @@
-# 사용 설명서 / User guide · ShortsLoop 0.3.0
+# 사용 설명서 / User guide · ShortsLoop 0.4.0
+
+## 0.4.0 빠른 사용법 / Current quick guide
+
+게시·최종 APK 상태는 [0.4.0 릴리스](releases/v0.4.0.md),검사 결과는 [검증 원장](VERIFICATION.md)을 확인하세요. 이번 버전은 폰 연결 종료 후 PC 검증으로 준비하며 신규 TikTok·세 앱 실폰 자동 넘김은 아직 미검증입니다.
+
+See the release record for publication/artifact status and verification ledger for results. New TikTok and triple-host physical automation remain unverified.
+
+1. 기존 앱을 삭제하지 않고 같은 서명의 업데이트를 설치합니다. 인앱 메뉴에서 설치 버전0.4.0을 확인합니다. 설치 승인은 직접 하며 실행은OFF 상태로 준비합니다. / Install over the existing same-signed app,confirm0.4.0 and keep executionOFF while configuring.
+2. **사용할 앱 / Apps to use**에서 YouTube·Instagram·TikTok 중 설치된 지원 대상을 선택합니다. TikTok은 처음에는 선택OFF이며 `com.ss.android.ugc.trill`만 지원합니다. / Select supported installed hosts;TikTok is deselected initially and only this package is supported.
+3. **앱별 설정 / Settings for each app**의 앱을 골라 횟수를 숫자로 입력하고 완료/적용합니다. 화살표도 사용 가능합니다. 예:YouTube2,Instagram1,TikTok2. 탭 선택은 자동화를 켜는 동작이 아닙니다. / Select an editor,apply a typed count or use arrows;tabs do not enable automation.
+4. 필요한 독립 옵션을 설정하고 **사용 준비 / Setup**에서 접근성을 연결합니다. 플로팅은 선택 사항이며 사용할 때만 다른 앱 위 표시 권한이 필요합니다. 배터리 제한 없음 안내도 확인합니다. / Configure desired rules,accessibility,optional overlay permission and battery guidance.
+5. 활성 창만 처리하려면 여러 앱 모드OFF,분할의 보이는 대상들을 처리하려면 **여러 앱 동시 적용 / Process multiple apps**를ON으로 합니다. 한 개/두 개/세 개 배치마다 다시 켤 필요는 없지만 안전한 창·실제 재생이 필요합니다. / ModeON follows one,two or three eligible visible hosts without forcing playback.
+6. 하단 **전체 자동 넘김 실행 / Auto-advance**을 켜고 재생합니다. X는 해당 앱만 일시정지하고 인앱 해당 탭의 재개 버튼 또는 전체OFF→ON으로 재개합니다. 빠른 설정 짧은 터치는 전체ON/OFF입니다. / Enable master execution;X pauses one host,and the tile toggles all.
+
+### 시간 설정 예 / Timing examples
+
+| 설정 / Setting | 입력 예 / Example | 결과 / Result |
+| --- | --- | --- |
+| 일반 반복 / Ordinary count |2 | 처음 포함 총2회,중간 시작이면 다음 처음 대기 / Two complete plays including the first;may wait for a fresh beginning |
+| Instagram 시간제 / Clockless timer |3초 | 판별2초 포함 총3초,진행정보 없는 지원 일반 영상만 / Three seconds total including2s qualification,eligible clockless videos only |
+| 광고 대기 / Ad delay |1.3초 | 안전하게 확인된 같은 Instagram 광고를 추가1.3초 기다린 뒤 넘김 / Wait1.3s before skipping the identified ad |
+| 광고 대기 / Ad delay |0.0초 | 추가대기 없음,안전 확인은 유지 / No added delay;guards remain |
+| 라이브·사진 / Live and photos |0초 | 지원 콘텐츠에서 안전 확인 후 즉시 / Immediate after guards on supported content |
+
+Instagram 시간제는 **2–60초·미설정3초**이며,기존에10초 등을 저장했다면 그 값이 유지됩니다. 토글은 기본OFF입니다.1초·0초·소수는 저장하지 않습니다. 광고 대기는 **0.0–9.9초·기본0.0초**,화살표는0.1초씩 움직입니다. `1.3`은13개의0.1초 단위이며 `9.99`는 거부합니다. 입력 초안은 완료/적용 전까지 저장값을 바꾸지 않습니다.
+
+Clockless timing accepts whole2–60s,default3 only when unset;existing10s or other valid values stay unchanged. Ad delay uses0.0–9.9s in0.1s steps;1.3 is accepted,9.99 rejected. Drafts do not replace saved values.
+
+**반복0회는 일반 반복·시간제·화면 분석을 끕니다.** Instagram 광고·사진,YouTube 라이브,YouTube/Instagram 긴 영상은 지원된 별도 옵션이ON이면 독립적으로 동작합니다. 광고만 넘기려면 반복0,광고ON,다른 독립옵션OFF,전체ON으로 설정합니다. 모든 것을 끄려면 전체OFF입니다.
+
+**Count0 stops ordinary repeat,timer and visual counting.** Supported ads,photos,live and long-video filters remain independent. For ads only,use count0,adsON,other filtersOFF,masterON.
+
+### TikTok와 멈춤 안내 / TikTok and waiting
+
+TikTok은 추천 피드에서 진행값을 읽을 수 있는 일반 영상만 대상으로 하며 기본2회입니다. 진행값0–10000은 비율이지 영상 길이가 아닙니다. 진행정보 없음·광고·LIVE·사진·긴 영상 필터·시간제는 지원하지 않습니다. 지원하지 않는 옵션은 TikTok 탭에 표시하지 않습니다.
+
+TikTok supports readable ordinary recommendation-video progress,default2 plays. Its0–10000 range is a proportion,not duration. Clockless timing and special-content filtering are unsupported and hidden.
+
+카운트0은 설정값0과 다릅니다. 설정이2인데 현재0이면 시작점·진행정보를 기다릴 수 있습니다. 일반 초단위 영상의 시작 인정은 최대1.3초이면서 길이10% 이내이며 모든 초기화 원인을 해결한 것은 아닙니다. 광고 대기의 양수 설정은 같은 광고 식별 정보가 없으면 기다립니다. 광고 지연을 키우면 모든 다음 영상 시작 문제가 해결된다고 보장하지 않습니다.
+
+Current0 differs from configured0:with target2,it may mean waiting for a beginning/progress. The1.3s/10% start tolerance is not a universal reset fix. Positive ad delays wait when identity is unavailable,and cannot promise to fix every next-video start.
+
+정지 안내가 계속되면 댓글·메뉴·키보드·가림·PiP·앱 자체 일시정지를 확인합니다. 일반 영상에서 다시 **전체OFF→ON**으로 시작하세요. 특히 다음 TikTok 목적지 확인 실패 뒤에는 수동으로 정상 영상에 이동한 다음 다시 시작해야 할 수 있습니다. 접근성 연결 자체가 끊겼다면 Android 설정에서 이 앱 서비스를OFF→ON하고 돌아와 전체 실행을 켭니다. USB/디버깅은 일반 사용에 필요하지 않습니다.
+
+Check menus,keyboard,obstruction,PiP and host pauses,then restart **masterOFF→ON** on a supported ordinary video. An unconfirmed TikTok destination may require manually choosing a normal video before restart. If accessibility disconnected,reconnect it in Android Settings. Normal use needs no debugging connection.
+
+[짧은 현장 점검 순서](FIELD_TEST_0.4.0.md) · [상세 계약](PRODUCT_SPEC.md) · [업데이트](UPDATE_DELIVERY_PLAN.md).
+
+## 이전0.3.0·0.2.x 사용법과 당시 시험 원문 / Historical guides and evidence
+
+아래 당시 버전·시험·이전UI명·기본10초 등의 내용은 역사적 기록입니다. 충돌하는 설정값·메뉴는 위0.4.0 안내가 우선하며 이전 PASS는 이번 결과가 아닙니다.
+
+Historical versions,tests,UI names and old defaults below are retained as evidence,not the current contract or fresh test results.
 
 ## 현재 안내 · 공개 완료 / Current guide · Published
 

@@ -8,7 +8,7 @@ if (-not $photoReader.Contains('return withPageIdentity(YouTubeSnapshot.advertis
     throw 'Recognized ads must preserve available photo transition page evidence.'
 }
 if (-not $photoService.Contains('store != null && store.enabled() && !state.blocked') -or
-    -not $photoService.Contains('YouTubeReader.PACKAGE.equals(activePackage) || photoSkippingEnabled()') -or
+    -not $photoService.Contains('YouTubeReader.PACKAGE.equals(activePackage) || TikTokReader.PACKAGE.equals(activePackage) || photoSkippingEnabled()') -or
     $photoService -notmatch 'if \(configureLiveTree\(activePackage\)\) return YouTubeSnapshot.unavailable') {
     throw 'Photo index tree mode must be opt-in and reacquired before reading.'
 }

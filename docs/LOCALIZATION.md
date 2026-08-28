@@ -1,4 +1,18 @@
-# 한국어·영어 안내 / Korean and English · ShortsLoop 0.3.0
+# 한국어·영어 안내 / Korean and English · ShortsLoop 0.4.0
+
+## 현재0.4.0/code33 표시 / Current display
+
+첫 시스템 언어가한국어이면한국어,그 밖에는영어인 규칙을 유지한다. TikTok 앱 선택/설정/미지원 안내·TT 라벨·진행정보 없음/정지/지원불가 상태·광고 대기0.0–9.9초 편집과 오류·Instagram 시간제2–60/기본3 안내를 두 언어로 추가했다. 여러 앱 모드는 저장키를 바꾸지 않고 표시명을 갱신했다.
+
+The first-language policy is unchanged. Added bilingual TikTok selection/capability/status labels,TT badge,exact ad-delay editing/errors and updated Instagram timer guidance. Multi-app wording changes do not replace the saved preference key.
+
+좁은 폭 또는 큰 글꼴에서는 세 앱 이름을 세로로 배치한다. 앱별 입력 초안·오류·저장 단위는 언어와 무관하게 분리된다. 표시 번역은 모든 TikTok지역패키지·호스트언어·영상 종류 인식 지원을 의미하지 않는다. 최종 번역/네이티브/시각 시험은 [검증](VERIFICATION.md),게시 상태는 [0.4.0 기록](releases/v0.4.0.md)을 확인한다.
+
+Narrow/large-font app selectors stack vertically;typed drafts and validation remain host-specific. Translation does not prove host-language/variant/content recognition. See current verification and release records.
+
+## 이전 언어·검증 원문 / Historical localization records
+
+아래0.3.0·0.2.x 버전·수치·공개 상태는 당시 기록이며 이번 검증에 재사용하지 않는다. / Earlier version results are not new0.4.0 evidence.
 
 대상은 **0.3.0/code32**입니다. 시스템 첫 언어에 따른 한영 선택을 유지하고 앱별 설정·듀얼·호스트별X 안내를 추가합니다. 최종 제품 후보의 빌드·단위·3개 OS 검사와 범위별 실기기 동작을 확인했으며,공개 릴리스·CI·익명 공개 파일 동일성 검증도 완료했습니다. 모든 실시간 언어 변경·모든 기기 동작을 검증했다는 뜻은 아닙니다. 현재 공개판은0.3.0/code32입니다. [검증 원장](VERIFICATION.md),[0.3.0 기록](releases/v0.3.0.md).
 

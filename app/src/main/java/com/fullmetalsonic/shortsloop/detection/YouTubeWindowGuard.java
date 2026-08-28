@@ -16,6 +16,12 @@ public final class YouTubeWindowGuard {
         Rect current = checkedBounds(windows, videoWindowId, corridor);
         return corridor != null && expectedBounds != null && expectedBounds.equals(current);
     }
+    /** Node actions have no touch path. Own non-focused floats do not intercept a semantic scroll. */
+    public boolean allowsSemantic(List<AccessibilityWindowInfo> windows, int videoWindowId, Rect expectedBounds, Rect page) {
+        Rect current = allowedBounds(windows, videoWindowId);
+        return current != null && expectedBounds != null && current.equals(expectedBounds)
+                && page != null && !page.isEmpty() && current.contains(page);
+    }
     private Rect checkedBounds(List<AccessibilityWindowInfo> windows, int videoWindowId, Rect corridor) {
         try {
             java.util.List<com.fullmetalsonic.shortsloop.core.WindowPolicy.Window> metadata = new java.util.ArrayList<>();

@@ -1,0 +1,22 @@
+<resources>
+    <string name="tiktok_tap_quick">Repeat on/off\n0 ↔ configured plays</string>
+    <string name="ui_tiktok">TikTok</string>
+    <string name="tiktok_count_helper">0 stops TikTok automation · Maximum 99 plays\nStarting mid-video may wait for its next beginning. An unconfirmed skip stays stopped until you restart this host or turn execution off and on.</string>
+    <string name="ui_tiktok_missing">TikTok · Not installed</string>
+    <string name="mw_tiktok_repeat">TikTok only · Count complete plays using readable progress in the recommendation feed.</string>
+    <string name="tiktok_capabilities">TikTok (com.ss.android.ugc.trill) only. No timer for unreadable progress, and no ad, LIVE, photo or long-video skipping. Unknown screens wait. Real-device auto-advance and three-app playback still need validation.</string>
+    <string name="ad_delay_title">Wait before skipping (seconds)</string>
+    <string name="ad_delay_decrease">Decrease ad wait by 0.1 seconds</string>
+    <string name="ad_delay_increase">Increase ad wait by 0.1 seconds</string>
+    <string name="ad_delay_description">Ad wait, 0.0 to 9.9 seconds, in 0.1-second steps</string>
+    <string name="ad_delay_apply">Apply ad wait</string>
+    <string name="ad_delay_error">Enter 0.0–9.9, with at most one decimal place</string>
+    <string name="ad_delay_saved">Default 0.0 seconds · +/− changes by 0.1 · 0.0 means immediate after safety checks, not off</string>
+    <string name="state_ads_delayed">Waiting before skipping ad</string>
+    <string name="state_tiktok_waiting">Waiting for TikTok recommendation video</string>
+    <string name="state_tiktok_no_progress">TikTok progress unavailable · Waiting</string>
+    <string name="state_tiktok_unsupported">Unsupported TikTok content · Waiting</string>
+    <string name="state_tiktok_paused">TikTok paused or interacting · Waiting</string>
+    <string name="host_overlay_tiktok_short">TT</string>
+    <string name="host_overlay_tiktok_name">TikTok</string>
+</resources>

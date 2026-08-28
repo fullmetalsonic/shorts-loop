@@ -73,6 +73,6 @@ public class LiveSettingsStoreTest {
         store.ceiling(3); store.skipLive(true); store.liveDelaySeconds(12); store.skipLive(false);
         assertFalse(store.skipLive()); assertEquals(12, store.liveDelaySeconds());
         assertEquals(3, store.ceiling()); assertEquals(3, store.target());
-        assertFalse(store.skipAds()); assertEquals(10, store.fallbackSeconds());
+        assertFalse(store.skipAds()); assertEquals(3, store.fallbackSeconds());
     }
 }

@@ -303,14 +303,14 @@ public class SettingsStoreTest {
         assertFalse(store.enabled()); assertEquals(0, store.ceiling()); assertEquals(0, store.target());
     }
 
-    @Test public void timeoutDefaultsOffAndTenSecondsForEveryUpgradePath() {
+    @Test public void timeoutDefaultsOffAndThreeSecondsForEveryUpgradePath() {
         SettingsStore fresh = new SettingsStore(new MemoryPreferences());
-        assertFalse(fresh.timedFallback()); assertEquals(10, fresh.fallbackSeconds());
+        assertFalse(fresh.timedFallback()); assertEquals(3, fresh.fallbackSeconds());
         SettingsStore legacy = new SettingsStore(new MemoryPreferences(Map.of("target", 1)));
-        assertFalse(legacy.timedFallback()); assertEquals(10, legacy.fallbackSeconds());
+        assertFalse(legacy.timedFallback()); assertEquals(3, legacy.fallbackSeconds());
         MemoryPreferences current = new MemoryPreferences(Map.of("settings_version", 1, "ceiling", 5, "target", 2));
         SettingsStore existing = new SettingsStore(current);
-        assertFalse(existing.timedFallback()); assertEquals(10, existing.fallbackSeconds());
+        assertFalse(existing.timedFallback()); assertEquals(3, existing.fallbackSeconds());
         assertEquals(0, current.writes.size()); assertEquals(1, current.getInt("settings_version", 0));
     }
 
@@ -329,19 +329,19 @@ public class SettingsStoreTest {
     @Test public void malformedTimeoutPreferencesUseSafeDefaults() {
         for (Object invalid : new Object[] {"15", true, 15L, 15.0f}) {
             SettingsStore store = new SettingsStore(new MemoryPreferences(Map.of("settings_version", 1, "timed_fallback", "true", "fallback_seconds", invalid)));
-            assertFalse(store.timedFallback()); assertEquals(10, store.fallbackSeconds());
+            assertFalse(store.timedFallback()); assertEquals(3, store.fallbackSeconds());
         }
     }
 
     @Test public void timeoutSecondsPreserveEveryValidSecondAndRejectOutOfRangeValues() {
         SettingsStore store = new SettingsStore(new MemoryPreferences());
-        for (int seconds = 5; seconds <= 60; seconds++) {
+        for (int seconds = 2; seconds <= 60; seconds++) {
             store.fallbackSeconds(seconds); assertEquals(seconds, store.fallbackSeconds());
         }
-        for (int invalid : new int[] {Integer.MIN_VALUE, -1, 0, 4, 61, 120, Integer.MAX_VALUE}) {
-            store.fallbackSeconds(invalid); assertEquals(10, store.fallbackSeconds());
+        for (int invalid : new int[] {Integer.MIN_VALUE, -1, 0, 1, 61, 120, Integer.MAX_VALUE}) {
+            store.fallbackSeconds(invalid); assertEquals(3, store.fallbackSeconds());
             SettingsStore restored = new SettingsStore(new MemoryPreferences(Map.of("settings_version", 1, "fallback_seconds", invalid)));
-            assertEquals(10, restored.fallbackSeconds());
+            assertEquals(3, restored.fallbackSeconds());
         }
     }
 

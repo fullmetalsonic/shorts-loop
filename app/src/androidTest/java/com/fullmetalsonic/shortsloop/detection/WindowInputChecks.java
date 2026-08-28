@@ -66,6 +66,12 @@ public final class WindowInputChecks {
             require(observation(TARGET, app(TARGET, expected), caption), "Small top caption is allowed only for observation");
             require(!input(TARGET, expected, new Rect(450, 10, 480, 100), app(TARGET, expected), caption),
                     "Observation-exempt caption cannot be touched by an automatic gesture");
+            require(semantic(TARGET, expected, expected, app(TARGET, expected), caption),
+                    "Semantic pager action has no touch corridor through an exempt caption");
+            require(!semantic(TARGET, expected, expected, app(TARGET, moved)), "Semantic scroll rechecks exact window geometry");
+            require(!semantic(TARGET, expected, null, app(TARGET, expected)), "Semantic scroll requires a known page");
+            require(!semantic(TARGET, expected, new Rect(-1, 0, 1000, 1800), app(TARGET, expected)), "Semantic page stays in its window");
+            require(!semantic(TARGET, expected, expected, app(TARGET, expected), settings), "Semantic scroll cannot bypass a real covering settings window");
             return checks;
         } catch (RuntimeException error) {
             throw new AssertionError("Detached AccessibilityWindowInfo parcel fixture failed on API " + Build.VERSION.SDK_INT, error);
@@ -78,6 +84,9 @@ public final class WindowInputChecks {
     }
     private static boolean observation(int id, Spec... specs) {
         return new YouTubeWindowGuard().allows(windows(specs), id);
+    }
+    private static boolean semantic(int id, Rect expected, Rect page, Spec... specs) {
+        return new YouTubeWindowGuard().allowsSemantic(windows(specs), id, expected, page);
     }
     @SuppressWarnings("deprecation")
     private static List<AccessibilityWindowInfo> windows(Spec... specs) {

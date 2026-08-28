@@ -67,11 +67,12 @@ public final class ShortsTileService extends TileService implements SharedPrefer
     }
     private String hostCounts() {
         StringBuilder value = new StringBuilder();
-        for (String host : new String[]{SettingsStore.YOUTUBE_PACKAGE, SettingsStore.INSTAGRAM_PACKAGE}) {
+        for (String host : com.fullmetalsonic.shortsloop.core.HostRegistry.packages()) {
             if (!store.isSelected(host) || !installed(host)) continue;
             if (value.length() != 0) value.append(" · ");
             SettingsStore scoped = store.forHost(host);
-            value.append(SettingsStore.YOUTUBE_PACKAGE.equals(host) ? "YT " : "IG ");
+            value.append(SettingsStore.YOUTUBE_PACKAGE.equals(host) ? "YT "
+                    : SettingsStore.INSTAGRAM_PACKAGE.equals(host) ? "IG " : "TT ");
             value.append(scoped.hostPaused() ? text(R.string.off)
                     : RuntimeState.forHost(host).blocked ? text(R.string.restart_needed) : Integer.toString(scoped.target()));
         }

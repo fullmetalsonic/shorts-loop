@@ -1,5 +1,95 @@
 # 디버그·재발방지 대장
 
+## 0.4.0/code33 현재 상태 / Current scope
+
+1.3초 시작 상한·시간설정·다중 호스트·제한적 TikTok 경로를 구현했다. 현재 검사와 게시 여부는 [검증](VERIFICATION.md),[0.4.0 기록](releases/v0.4.0.md)을 따른다. D-044의 늦은 시작 표본 경로를 보완했으나 별도 초기화 호출 원인과 YouTube 동일 원인은 미확정이다. `resetReason`은 원인 구분을 위한 진단이며 실폰 해결 증거가 아니다.
+
+The start/timing/multi-host/TikTok changes are implemented. Other D-044 reset callers and YouTube causation remain unresolved;reset-reason diagnostics are not proof of a physical fix.
+
+## D-046 · 의미 기반 스크롤과 터치 경로 혼동 / Semantic-scroll versus touch-path guard
+
+- 증상: TikTok 일반 넘김과 Instagram 광고의 노드 스크롤 요청이 정상적인 자기 플로팅 때문에 거부될 수 있었다. 독립 리뷰에서 발견한 코드상 P2이며 이번 실폰 재현 성공으로 보고하지 않는다. / Independent review found a P2 path where an ordinary own overlay could block semantic scrolling;not a new physical reproduction.
+- 재현·확인 증거: 노드 스크롤에 전체 페이지를 물리 터치 경로로 전달하던 두 호출을 확인했다. 페이지 안의 자기 플로팅이 경로와 겹치면 터치 입력 보호가 동작했다. / Two semantic-scroll sites treated the whole page as a physical touch corridor,so an own overlay intersected it.
+- 직접 원인: 접근성 노드의 의미 기반 스크롤은 실제 손가락 좌표 경로가 없는데 물리 스와이프용 검사를 재사용했다. / Semantic actions have no finger path,but used the physical gesture guard.
+- 영향 범위: TikTok 일반 요청과 Instagram 광고 노드 스크롤. 실제 스와이프의 경로 가림 보호는 별개다. / TikTok ordinary and Instagram ad semantic actions;physical swipes are distinct.
+- 수정: `YouTubeWindowGuard.allowsSemantic`으로 최신 관측 가능 창·같은 창 경계·비어 있지 않고 창 안에 포함된 페이지를 확인한다. 외부/집중 가림·PiP 등 기존 관측 보호는 유지하고 자기 비집중 플로팅을 터치 경로로 오인하지 않는다. / Semantic guard validates fresh observable geometry and page containment while retaining existing unsafe-window protections.
+- 잘못된 접근 방지: 모든 플로팅을 무시하거나 실제 스와이프 `inputClear`를 제거하지 않는다. 관측과 의미 기반 동작,실제 좌표 입력의 위험을 나눈다. / Do not remove physical touch-path protection or ignore all overlays.
+- 자동 재발방지: 네이티브 창 경계 검사5개와 코어 assertion·두 서비스 호출의 정적 연결 검사를 추가했다. / Added five native window checks,core assertions and static wiring checks.
+- 재시험: 수정 전 후보의638개 debug/release JUnit과 API26/33/34 native38,163/38,171/37,780 PASS는 이전 후보 근거다. 이 수정 후 최종 재시험은 [검증 원장](VERIFICATION.md)에 별도 확정한다. 실폰은 NOT RUN이다. / Pre-fix candidate results are historical;post-fix final validation is recorded separately,physical tests unrun.
+
+## D-045 · 시간 설정·v2 이전 회귀 예방 / Timing and migration regression prevention
+
+- 증상·위험: 시간제의2초 판별을 새3초 설정 뒤에 더하면5초가 되며,광고 지연을 다음 영상에 넘기면 잘못된 대상에 입력할 수 있다. 새호스트 이전을 실행 토글에 추가하는 초안은 기존 단일원자 실행 알림 시험을 깨뜨렸다. / Risks:double qualification,stale ad waits and a migration write breaking atomic execution notification.
+- 재현·증거: 시간 정책/설정 JUnit에서 정확한 마감·취소·기본값·기존값 이전을 검사했다. `startPublishesTargetAndEnabledInOneUpdate`가 추가 migration write로 실패한 뒤 해당 불필요한 호출을 제거하고 관련90개 시험을 다시 통과했다. / The atomic-start regression failed,was corrected and the focused90-test suite passed.
+- 직접 원인: 기존 시작은 목표/실행 상태를 한 번에 게시하는데,별도 migration apply가 먼저 listener에 전달됐다. 호스트 초기화는 기존 `forHost` 진입점에서 처리하도록 복원했다. / A separate migration commit notified listeners before atomic start;host migration remains at the dedicated entry point.
+- 영향 범위: 설정 이전,시간제,광고 대기,세 번째 호스트 초기값. 이전 YT/IG 저장값과 종류별 독립 옵션을 유지한다. / Migration,timer,ad delay and third-host defaults.
+- 수정: 시간제2–60/기본3·판별 포함,광고 **0–99개의0.1초 단위 정수 저장**,새광고/설정/관측공백/불안전 상태의 지연 취소,host schema v2 보수적 이전. / Whole timer seconds,integer tenths for ads,cancelled stale waits and conservative migration.
+- 자동 재발방지: 광고100단계 파싱/정확마감/한번발행/긴시간산술,시간제 경계/판별 포함,모든 기존5–60저장값 유지,타호스트 변경 격리,실행 원자성,한영 네이티브 편집 초안/복원 시험. / Boundary,deadline,one-shot,overflow,migration,isolation,atomic-start and native draft tests.
+- 재시험: 범위별90JUnit·소스/네이티브시험 컴파일 PASS. 최종 전범위·에뮬레이터 결과는 검증 원장에 따로 기록한다. 광고→다음 릴스 시작 개선 효과는 실폰 NOT RUN이며 지연 설정만으로 해결됐다고 판단하지 않는다. / Focused tests passed;physical ad-to-next-start efficacy remains unrun.
+
+아래 D-044 본문의 ‘제품 변경 없음/대기/폰 미적용’은 당시 진단 체크포인트다. 현재 구현 상태는 위 설명이 우선하며 원인 미확정 항목은 여전히 열린 상태다.
+
+D-044's older no-change/hold statements below are historical;unresolved causation remains open.
+
+## D-044 · 가벼운 접촉 후 카운트 초기화 / Light-contact reset investigation
+
+최신2026-08-29: 일반 시작 상한만1.3초로 로컬 변경했다(길이10% 유지). 새6개 포함570JUnit/컴파일/가드PASS,폰APK는 변경하지 않아 실기기 해결 여부는 미검증이다.1.3초를 넘는 지연과 별도 세션 초기화 문제는 해결됐다고 주장하지 않는다. TikTok 화면 관측 후 추가 작업 대기. [최신 검증](VERIFICATION.md). / Local1.3s cap passes compilation/570 tests;not installed or device-verified. Other reset paths remain unresolved. Further work is on hold.
+
+상태: **Instagram 실폰 재현·시작 판정 실패 경로 확인, 일부 초기화 호출 원인 미확정·미수정**. 2026-08-29 후속 진단은 설치 앱이 보고한0.3.0과 현재 소스를 대조했다. 이번에 설치 APK 해시를 다시 검증하지 않았으므로 과거 산출물 동일성 검사를 이번 결과로 재사용하지 않는다.
+
+- 증상: 최초에는 YouTube·Instagram에서 가벼운 접촉 후 현재 카운트0이 보고됐으나, 후속 Instagram 왕복 시험에서 미세 접촉을 추가하지 않아도 재현했다. YouTube는 이번 개발 측 실폰 재현 대상이 아니며 동일 원인으로 확정하지 않는다.
+- 재현 계획: 단독 YouTube에서 무접촉과 가장자리/중앙/진행바/플로팅/길게 누르기를 분리하고 같은 종류의 Instagram 표본 및 분할 조합을 비교한다. 현재 카운트0과 설정 횟수0을 구분한다.
+- 직접 원인: 관측된38.590초 영상은 최초 유효 표본이1초 이내여야 처음부터 본 회차로 인정된다. 갱신 실패/세션 초기화 뒤1.047초 또는2.161초에서 새로 시작하면 `LoopCounter.seed`가 다음 시작점 대기로 처리한다. 첫 복귀에서는 `playback.refresh`에 따른 초기화가 관측됐고, 두 번째 복귀에서는 세대 증가로 세션 초기화 자체는 확인했지만 호출 사유는 아직 구분하지 못했다. 입력 압력·미세 접촉이 직접 원인이라는 증거는 없다.
+- 코드 증거: `HostPlaybackSession.onAccessibilityEvent`는 일반 YouTube 클릭 전체가 아닌 SeekBar·활성 특수 정책 등의 일부 경로를 중단한다. `tick()`의 unusable snapshot은 `invalidate()`로 카운트를 지우고,`snapshot()`의 창/경계 변경도 세션을 중단한다. `LoopCounter.observe`는 identity/길이 변경,3초 초과 공백,비정상 진행에서 초기화한다. `YouTubeReader`는 진행 노드의 refresh/개수와 비클릭 표시 텍스트 기반 identity를 사용한다. 이 분기가 실제 접촉 때문에 실행됐다는 실폰 증거는 아직 없다.
+- 영향 범위: 두 앱에 같은 증상이 보고되어 공통 세션/카운터와 앱별 감지를 모두 점검한다. 호스트별 감지와 특수 정책은 달라 동일 원인으로 단정하지 않는다. 플로팅의 실제 탭은 설정 변경이라는 별도 동작이다.
+- 피해야 할 접근: 모든 클릭 무시,시간만 짧으면 무조건 복원,identity 변경/가림/일시정지 보호 삭제,숫자만 보존,미확인 입력 재시도. 다른 영상으로 카운트가 이어질 수 있다.
+- 수정 상태·검토안: 제품 변경 없음. [기획 §4.2](TIKTOK_MULTI_APP_PLAN.md#42-가벼운-접촉짧은-관측-누락-후-카운트-보존--light-contact-continuity-review)의 일반 재생 전용 제한적 입력 보류/카운트 보존을 원인 확인 후 검토한다. 기존 특수 콘텐츠·복구·전환 확인 보호는 유지한다.
+- 자동 재발방지 계획: 일시 누락/실제 페이지 이동/동일 길이 다른 영상/보류 중 반복 경계/메뉴·탐색/반복 접촉/늦은 콜백/두 호스트 분리 시험. 아직 미구현·미실행.
+- 재시험: BUILD/제품 자동 TEST N/A(코드 변경 없음),아래 Instagram 진단 재현 완료,수정 검증 NOT RUN. 초기화 호출 사유·이벤트 시점을 추가 구분해야 한다. 실제 제목/계정/원시 노드/기기 식별자는 공개 기록에 포함하지 않는다.
+
+### 2026-08-29 · Instagram 시작 정보 손실 재현 / Reproduced entry-start loss
+
+- 범위: 기존 설정 그대로 Instagram 일반 영상 하나와 바로 다음 영상 사이를 수동으로2왕복(총4회 스와이프)했다. 이동 뒤 별도의 미세 접촉은 가하지 않았다. 앞선 약150초 읽기 전용 관측에는 사용자 재현 조작이 섞일 수 있어 전체 구간을 무조작 시험으로 주장하지 않는다.
+- 상태: 대상 반복1, 실행/접근성 연결 정상, 진행정보가 실제 증가하며 차단 상태는 false였다. 진행정보 없는 영상의 시간제 문제나 권한 해제로 분류하지 않는다. 플로팅0/1은 현재 회차0이며 설정 횟수0이 아니다. 현재1도 완료1회가 아니라 첫 회차 관측 중이라는 의미다.
+
+| 구간 | 포착된 진행 상태 | 판정 |
+| --- | --- | --- |
+| 앞선 광고 후 일반 영상 | 첫 포착 비대기 표본1.416/38.590초, 현재0 | 광고 이후 시작 누락도 관측. 광고 전 지연으로 해결된다는 근거는 아님 |
+| 왕복1 다음 영상 | 0.315/36.638초, 현재1 | 옆 영상의 시작 인정 |
+| 왕복1 문제 영상 복귀 | `playback.refresh` 후1.047/38.590초에서 seed, 현재0 | 갱신 실패 후 시작 인정 범위 초과 |
+| 왕복2 다음 영상 | 0.298/36.638초, 현재1 | 옆 영상의 시작 인정 |
+| 왕복2 문제 영상 복귀 | 0.540초에서 현재1, 이후2.161초에서 seed/현재0 및 세대 증가 | 처음 잡은 상태도 다시 초기화됨. 정확한 호출 사유 미확정 |
+| 앞선 자연 반복 | 현재0으로 진행하다 다음 시작0.239초에서 현재1, 이후 한 전체 회차를 관측하고 자동 전환 확인 | 영구 정지가 아니라 다음 시작까지 대기할 수 있음. 수정 성공은 아님 |
+
+수동2왕복 동안 자동 요청/확인 누적값은 변하지 않았다. 따라서 수동4회 이동을 자동 넘김 성공 수로 합산하지 않는다. 서비스 덤프의 필드는 하나의 원자적 표본이 아니므로 순간적으로 혼합된 값 하나가 아니라 연속 상태와 세대·진행값으로 판단했다. 실제 화면은 로컬 비공개 캡처로 확인했으며 공개 문서에 콘텐츠/계정 이미지나 원시 로그를 포함하지 않았다.
+
+코드상 추가 조사: `AdvanceGate`의 일반/광고 전환 확인은 요청 후 최소1.2초를 기다리고, 확인 후 카운터를 초기화한다. 이는1초 시작 인정 조건과 충돌할 가능성이 있지만 요청 시각과 목적지 재생 시작은 같지 않으므로 모든 전환의 확정 원인으로 단정하지 않는다. 전환 대기 중 목적지 초기 표본을 입력 없이 보관하고, 확정된 목적지와 독립 페이지 근거·창·연속성이 일치할 때만 활용하는 방안을 검토한다. 늦은 페이지 이벤트나 잠깐의 읽기 실패로 이미 잡은 시작 정보가 지워지는 경로는 별도로 추적해야 한다.
+
+추가 자동 예방 계획: 첫 표본1초 경계,확인 대기 중 목적지 시작,시작 인정 후 refresh/늦은 pager 이벤트,이전 페이지 표본·A→B→A 롤백·동일 길이 다른 영상 폐기,특수 콘텐츠/실제 탐색/가림 보호를 시험한다. 단순히 모든 접촉을 무시하거나 시작 기준을 무제한 늘리지 않는다. 독립 읽기 전용 리뷰에서 위 확인 범위와 미확정 호출 사유 구분을 대조했다. 제품·설정·권한·빌드·설치·게시 변경은 없다.
+
+**같은 날 광고 후속 관측:** 추가 입력 없이 상태만 읽었다. 선행 표본은 현재1·광고 요청/확인12/12였고,후속6초 관측15표본에서는 광고 요청/확인13/13·현재0·`playback.next_start`였다.46.066초 영상의 위치는3.539→9.496초로 증가했고 반복 설정1·차단false·동일 세션 세대가 유지됐다. 두 읽기 구간 사이에 광고 전환1건이 확인됐으나 그 사이의 최초 목적지 표본과 사용자 입력 유무는 연속 수집하지 않았으므로 정확한 첫 seed 시점이나 전체 무조작 재현으로 주장하지 않는다. 같은 길이만으로 선행/후속 영상의 동일성도 단정하지 않는다.
+
+소스에서는 광고 전환 WAITING 동안 일반 카운터 관측 전 반환하며,CONFIRMED에서 `counter.reset()` 후 일반 표본을 처리한다. 이 초기화는 세션 세대를 증가시키지 않는다. 따라서 세대가 유지된 이번0 대기는 앞선 `invalidate()` 사례와 구분해 조사해야 한다. 시작 표본 보관과 전환 후 초기화 순서의 검증이 필요하며 광고 전 지연만 늘리면 해결된다고 단정하지 않는다. 일반/광고→일반 전환 각각에 대해 확인 대기 중 초기 표본 수집·확인 후 적용·반복 횟수 충족 후 단일 입력·불명확 목적지 표본 폐기를 검증 대상으로 추가한다. 구현·설정·권한 변경은 하지 않았다.
+
+EN follow-up: Read-only samples later showed one additional confirmed ad transition. Fifteen subsequent samples over6s kept current0/next-start while a46.066s video progressed from3.539s to9.496s,with target1,no block and an unchanged session generation. The gap between read intervals did not capture the first destination seed or establish absence of user input;equal duration alone does not prove video identity. The confirmed-ad branch resets the counter without incrementing session generation,and waiting returns before ordinary counter observation. Investigate this path separately from session invalidation. Ad pre-skip delay alone is not a verified remedy;no implementation or settings changes occurred.
+
+### 광고 복귀 연속 재현2회 / Two controlled ad-return reproductions
+
+앞선 읽기 구간의 공백을 줄이기 위해 같은 날00:11KST에 이전 페이지로 수동 이동하는 입력만 각1회씩,총2회 실행했다. 이전 페이지는 제품의 광고 경로로 인식됐고,광고를 넘겨 원래 일반 릴스로 돌아오는 입력은 제품이 자동 실행했다. 별도 수동 다음 입력이나 설정 변경은 없었다. 시작/종료 비공개 화면을 대조해 원래 게시물 복귀와 플로팅0/1을 확인했다. 아래는 제목·계정·기기 식별자를 제외한 상태 증거다.
+
+| 회차 | 광고 전환 확인 중 | 첫 포착 확인 완료/일반 카운터 표본 | 이후 상태 |
+| --- | --- | --- | --- |
+| 1 | 00:11:16.448부터 `ads.confirming`,광고 요청/확인14/13 | 00:11:18.031,광고14/14,1.103/46.066초,seed·현재0·next_start | 6.772초까지0,확인 중/이후 세션 세대 동일 |
+| 2 | 00:11:38.900부터 `ads.confirming`,광고 요청/확인15/14 | 00:11:40.412,광고15/15,1.015/46.066초,seed·현재0·next_start | 4.477초까지0,확인 중/이후 세션 세대 동일 |
+
+**확인한 직접 경로:** 광고 전환 확인 완료 후 일반 카운터의 시작 표본이1.103초·1.015초로 시작 인정 기준1초를 넘어서,0/다음 시작 대기가 되는 현상을2/2 재현했다. 확인 완료 이후 세대가 늘지 않았으므로 이번 두 사례는 추가 세션 초기화 없이도 늦은 첫 seed로 설명된다. 광고 넘김2건은 확인됐지만 다음 일반 영상 카운트 시작은2건 모두 실패했다. 이를 전체 자동 넘김 정상 통과로 보고하지 않는다.
+
+**남은 원인 한계:** 기존 덤프의 위치는 확인 대기 중 일반 카운터 직전의 새 snapshot 값을 내보내지 않는다. 따라서1초 미만의 유효 표본이 Reader에서 이미 나왔는데 폐기됐다고 입증한 것은 아니다. 대기 중 카운터 관측 생략과 확인 후 초기화 구조는 확인했지만,초기 노드 제공 지연과 확인 대기의 기여도를 분리하려면 해당 경로의 원인별 진단이 필요하다. 목적지 초기 표본을 실제 확보할 수 있는지부터 검증하며,없던 초기 관측/완료 횟수를 만들어내거나 전환 확인을 제거하지 않는다. 독립 읽기 전용 리뷰에서 이 결론과 제한을 대조했다. 제품/설정/권한/빌드/설치/게시 변경 없음.
+
+EN: Two controlled previous-page inputs each reached an ad; the product itself skipped that ad and returned to the original Reel, verified with private before/after screens. In both cases the first captured ordinary-counter sample after ad confirmation was late:1.103s and1.015s for a46.066s video, beyond its1s start threshold. Current0/next-start persisted through6.772s and4.477s with unchanged session generations from confirmation waiting onward. Two ads were confirmed skipped, but both destination counting starts failed;this is not an end-to-end pass. The waiting branch omits ordinary counter observation and confirmation resets that counter, but the dump does not reveal whether valid sub-1s snapshots existed during waiting. Reader latency versus guard delay remains to be separated. Independent review confirmed this scope;no implementation/settings/permission/build/install/publication changes.
+
+EN: On2026-08-29, two controlled Instagram next/back round trips reproduced entry-start loss without additional light contact. The adjacent36.638s video counted; the38.590s target returned to0 both times. One return showed a refresh failure followed by a1.047s seed, beyond its1s start threshold. Another first counted at0.540s, then reseeded at2.161s with a session-generation increment; that reset's exact caller remains unknown. A separate observed natural wrap restored counting and a subsequent full counted cycle led to a confirmed automatic transition. This is diagnosis, not a fix or an endurance pass. Manual moves did not increase automatic request/confirmation totals. Dump fields are not atomic. The reported app version is0.3.0; installed APK hash parity was not rechecked. YouTube causation remains unverified. Review destination-start buffering during the1.2s transition guard separately from later invalidation, retaining independent page/window/continuity proof and discarding rollback or special-content samples. No product/settings/permission/build/install/publication changes; captures remain private.
+
 ## D-043 · 분할 화면 상태/대기 입력 분리 / Split-screen isolation and deferred input
 
 현재0.3.0/code32는2026-08-28 공개 완료했다. 최종 APK는742,854bytes/SHA256 `9AA1E88425206CF1B9CEFBCD55B722DF83822D2F00830C81DDF925981AF394AA`이며,아래 실기기 흐름 후보53FD와 ZIP 내부의 소스 revision 기록만 다르고 나머지 항목은 동일하다. 최종 APK의 같은3개 OS native 검사·실폰 덮어 설치/해시·설정 보존·접근성 연결·전체OFF,CI와 익명 공개3파일 동일성 검증을 완료했다. 아래 과정별 후보·실패·미실행 범위를 보존한다. [최종 검증 원장](VERIFICATION.md),[공개 기록](releases/v0.3.0.md).

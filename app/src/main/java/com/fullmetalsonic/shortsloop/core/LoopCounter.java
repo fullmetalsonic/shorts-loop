@@ -67,7 +67,8 @@ public final class LoopCounter {
     }
     private void seed(Progress progress, String videoIdentity, long now) {
         previous = progress; previousAt = now; identity = videoIdentity;
-        wholeCycle = progress.position <= Math.min(1, progress.duration * 0.1);
+        // Allow one extra polling interval at entry; short clips still cap tolerance at 10%.
+        wholeCycle = progress.position <= Math.min(1.3, progress.duration * 0.1);
         covered = progress.position;
         cycleStartedAt = now;
         motion.reset(progress.position, now);

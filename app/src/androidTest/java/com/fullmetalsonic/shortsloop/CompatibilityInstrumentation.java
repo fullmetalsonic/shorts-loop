@@ -49,6 +49,7 @@ public final class CompatibilityInstrumentation extends Instrumentation {
             checks += com.fullmetalsonic.shortsloop.detection.YouTubeLiveChecks.run(getTargetContext());
             checks += com.fullmetalsonic.shortsloop.detection.ContentKeyChecks.run(getTargetContext());
             checks += com.fullmetalsonic.shortsloop.detection.PagePositionChecks.run(getTargetContext());
+            checks += com.fullmetalsonic.shortsloop.detection.TikTokNodeChecks.run(getTargetContext());
             updates = getTargetContext().getSharedPreferences("updates", 0); originalUpdates = updates.getAll();
             updates.edit().putBoolean("automatic", false).commit();
             SettingsStore store = new SettingsStore(getTargetContext());
@@ -57,6 +58,8 @@ public final class CompatibilityInstrumentation extends Instrumentation {
             runOnMainSync(() -> checks += PhotoServiceChecks.run(getTargetContext(), store));
             runOnMainSync(() -> checks += HostSessionIsolationChecks.run(getTargetContext(), store));
             runOnMainSync(() -> checks += DeferredSessionChecks.run(getTargetContext(), store));
+            runOnMainSync(() -> checks += TripleHostChecks.run(getTargetContext(), store));
+            runOnMainSync(() -> checks += NormalizedSessionChecks.run(getTargetContext(), store));
             runOnMainSync(() -> checks += com.fullmetalsonic.shortsloop.detection.WindowInputChecks.run());
             // Simulate restored choices without granting permissions or starting automation.
             store.enabled(false); store.visualAssist(true); store.timedFallback(true); store.skipAds(true);

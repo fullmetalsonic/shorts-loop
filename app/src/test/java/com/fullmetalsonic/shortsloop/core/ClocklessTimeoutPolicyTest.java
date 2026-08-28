@@ -4,13 +4,13 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class ClocklessTimeoutPolicyTest {
-    @Test public void storedSecondsUseTenOnlyForInvalidValues() {
-        for (int value = 5; value <= 60; value++) assertEquals(value, ClocklessTimeoutPolicy.sanitizeSeconds(value));
-        for (int value : new int[]{Integer.MIN_VALUE, -1, 0, 1, 4, 61, 120, Integer.MAX_VALUE})
-            assertEquals(10, ClocklessTimeoutPolicy.sanitizeSeconds(value));
+    @Test public void storedSecondsUseThreeOnlyForInvalidValues() {
+        for (int value = 2; value <= 60; value++) assertEquals(value, ClocklessTimeoutPolicy.sanitizeSeconds(value));
+        for (int value : new int[]{Integer.MIN_VALUE, -1, 0, 1, 61, 120, Integer.MAX_VALUE})
+            assertEquals(3, ClocklessTimeoutPolicy.sanitizeSeconds(value));
     }
     @Test public void integerInputAcceptsTheInclusiveBounds() {
-        assertEquals(Integer.valueOf(5), ClocklessTimeoutPolicy.parseSeconds("5"));
+        assertEquals(Integer.valueOf(2), ClocklessTimeoutPolicy.parseSeconds("2"));
         assertEquals(Integer.valueOf(15), ClocklessTimeoutPolicy.parseSeconds(" 15 "));
         assertEquals(Integer.valueOf(60), ClocklessTimeoutPolicy.parseSeconds("60"));
         assertEquals(Integer.valueOf(15), ClocklessTimeoutPolicy.parseSeconds("0015"));
@@ -21,7 +21,7 @@ public class ClocklessTimeoutPolicyTest {
         assertEquals(Integer.valueOf(5), ClocklessTimeoutPolicy.parseSeconds("\u00a05\u00a0"));
     }
     @Test public void unfinishedOutOfRangeAndOverflowingInputIsRejected() {
-        for (String value : new String[]{null, "", " ", "0", "4", "61", "120", "2147483648", "99999999999999999999999999999"})
+        for (String value : new String[]{null, "", " ", "0", "1", "61", "120", "2147483648", "99999999999999999999999999999"})
             assertNull(value, ClocklessTimeoutPolicy.parseSeconds(value));
     }
     @Test public void signsDecimalsUnitsAndInternalSpacesAreNotIntegers() {

@@ -1,4 +1,24 @@
-# Android 버전별 기능 / Android compatibility
+# Android 버전별 기능 / Android compatibility · 0.4.0
+
+## 현재0.4.0/code33 호환 범위 / Current compatibility
+
+앱 설치 하한은Android8.0/API26,compile/target35이며 변경하지 않는다. 타일 상태줄API29+,타일 추가 요청API33+,선택형 실험적 화면 분석API34+ 경계는 그대로다. 그보다 낮은 OS에서는 수동 타일 등록 등 기존 안내를 제공하고 미지원 기능을 활성화하지 않는다.
+
+MinimumAPI26 and compile/target35 remain unchanged. Tile subtitles requireAPI29,tile-add requestsAPI33,and experimental visual assistanceAPI34;older systems retain the appropriate fallback guidance.
+
+YouTube·Instagram의 기존 지원과 별개로 TikTok은 `com.ss.android.ugc.trill` 패키지만 선택 가능하며46.7.3에서 읽기 구조를 관측했다. 다른 지역 패키지·Lite·Douyin·복제/업무 프로필·같은 앱 여러 인스턴스는 이번 범위가 아니다. 호스트 앱이 해당OS에서 설치·재생되는지와 ShortsLoop의 감지 성공은 별개다.
+
+TikTok package support is limited to `com.ss.android.ugc.trill`,observed at46.7.3. Other variants,Lite,Douyin,clones,work profiles and multiple instances are outside scope. Host installation/playback and automation detection are different compatibility questions.
+
+여러 앱 모드는 기본OFF이며1/2/3개 가시 호스트를 독립 처리하는 구조다. 실제3분할 제공 여부,비초점 재생,음성 포커스,회전·가림은 기기/OS/호스트에 달려 있다. 모든Android기기의3분할 또는세 앱 동시 재생을 보장하지 않는다. PiP와 외부 화면/DeX는 이번 신규 지원 대상이 아니다. 여러 대상이 보이면 화면 분석은 비활성이다.
+
+Multiple-host mode does not guarantee three-window layouts or simultaneous playback on every device. Multi-resume,audio focus,obstruction and rotation depend on the host/system;PiP and external-display/DeX support are not added.
+
+이번 최종 APK의 PC/에뮬레이터 결과는 [검증 원장](VERIFICATION.md),공개 상태는 [릴리스](releases/v0.4.0.md)에 기록한다. 새TikTok/세 앱 실폰 자동 넘김·광고 지연 비교는 NOT RUN이며 [현장 점검](FIELD_TEST_0.4.0.md)으로 남긴다. 아래0.3.0·0.2.x 검사 수치를0.4.0에 재사용하지 않는다.
+
+See artifact-specific verification and release records. New TikTok/triple-host physical playback and ad-delay comparisons remain unrun;old-version results below are historical.
+
+## 이전 버전 호환성·검증 원문 / Historical compatibility records
 
 ## 현재0.3.0/code32 · 공개 완료 / Current published release
 

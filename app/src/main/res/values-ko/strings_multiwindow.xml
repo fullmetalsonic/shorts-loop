@@ -1,22 +1,22 @@
 <resources>
     <string name="mw_mode_title">화면 처리 방식 · 공통</string>
-    <string name="mw_dual_toggle">듀얼 화면 적용</string>
-    <string name="mw_mode_help">꺼짐(기본): 현재 활성 창 하나만 처리합니다. 켜짐: 화면에 보이는 선택한 앱을 각각 감지합니다. 쇼츠 앱 하나와 일반 앱을 함께 사용할 때도 켜세요. 보이지 않는 앱은 처리하지 않습니다. 각 앱이 스스로 일시정지한 영상을 강제로 재생하지는 않습니다. 모드를 바꿔도 앱별 설정은 유지되며 전체 실행이 자동으로 켜지지 않습니다.</string>
+    <string name="mw_dual_toggle">여러 앱 동시 적용</string>
+    <string name="mw_mode_help">꺼짐(기본): 현재 활성 창 하나만 처리합니다. 켜짐: 화면에 보이는 선택한 앱을 각각 감지하며 한 개·두 개·세 개에 자동 대응합니다. 쇼츠 앱 하나와 일반 앱을 함께 사용할 때도 켜세요. 보이지 않는 앱은 처리하지 않습니다. 각 앱이 스스로 일시정지한 영상을 강제로 재생하지는 않습니다. 모드를 바꿔도 앱별 설정은 유지되며 전체 실행이 자동으로 켜지지 않습니다.</string>
     <string name="mw_single_running">켜짐 · 현재 활성 창만 적용</string>
     <string name="mw_settings_title">앱별 설정</string>
-    <string name="mw_settings_help">탭을 골라 해당 앱의 설정을 바꾸세요. 탭 선택은 실행할 앱 선택이나 듀얼 화면 켜기와 별개입니다. 실행할 앱은 ‘사용할 앱’에서 선택하세요.</string>
+    <string name="mw_settings_help">탭을 골라 해당 앱의 설정을 바꾸세요. 탭 선택은 실행할 앱 선택이나 여러 앱 동시 적용와 별개입니다. 실행할 앱은 ‘사용할 앱’에서 선택하세요.</string>
     <string name="mw_youtube_repeat">YouTube만 적용 · 재생 정보가 있는 영상을 총 몇 번 볼까요?</string>
     <string name="mw_instagram_repeat">Instagram만 적용 · 재생 정보가 있는 영상을 총 몇 번 볼까요?</string>
     <string name="mw_resume_host">이 앱 다시 시작</string>
     <string name="mw_host_floating_title">이 앱의 플로팅 조작</string>
     <string name="mw_host_floating_help">터치하면 이 앱의 횟수만 바뀝니다. 끌어서 위치를 저장하세요. X는 이 앱만 일시정지합니다. 여기서 다시 시작하거나 전체 실행을 껐다 켜면 재개됩니다.</string>
-    <string name="mw_common_floating_help">선택한 앱의 플로팅을 표시합니다. 숨겨도 자동 넘김은 계속됩니다. 맨 아래 전체 실행 스위치는 두 앱을 함께 중지합니다.</string>
+    <string name="mw_common_floating_help">선택한 앱의 플로팅을 표시합니다. 숨겨도 자동 넘김은 계속됩니다. 맨 아래 전체 실행 스위치는 선택한 모든 앱을 함께 중지합니다.</string>
     <string name="mw_host_off">전체 실행이 꺼져 있습니다</string>
     <string name="mw_host_paused">이 앱만 일시정지됨</string>
     <string name="mw_host_running">켜짐 · 영상 화면이 안전하게 보이면 동작</string>
     <string name="mw_host_unselected">‘사용할 앱’에서 이 앱을 선택하세요</string>
     <string name="mw_host_missing">이 앱을 설치하면 사용할 수 있습니다</string>
-    <string name="mw_all_running">켜짐 · 듀얼 화면 · 선택한 앱마다 따로 적용</string>
-    <string name="mw_common_settings">공통 설정 · 두 앱에 적용</string>
+    <string name="mw_all_running">켜짐 · 여러 앱 · 선택한 앱마다 따로 적용</string>
+    <string name="mw_common_settings">공통 설정 · 모든 앱에 적용</string>
     <string name="mw_start_draft_error">선택한 앱 탭에서 미적용 설정을 확인하세요.</string>
 </resources>

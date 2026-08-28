@@ -1,4 +1,27 @@
-# 분할 화면 설계·시험 범위 / Split-screen design and verification · 0.3.0
+# 여러 창 설계·시험 범위 / Multi-window design and verification · 0.4.0
+
+## 현재1/2/3호스트 계약 / Current multi-host contract
+
+0.4.0/code33은 명시적인 YouTube/Instagram/TikTok 등록 목록과 앱별 세션·설정·플로팅을 사용한다. `dual_mode` 키·ON/OFF를 보존하며 표시명은‘여러 앱 동시 적용 / Process multiple apps’이다. 기본OFF는 활성 대상 한 개,ON은 안전하게 보이는 선택 대상을 각각 처리한다. 앱 위치 순서가 상태 소유자를 바꾸지 않는다.
+
+Version0.4.0 uses explicit host registration and isolated sessions/preferences/overlays. The existing `dual_mode` preference remains,defaultOFF;ON follows eligible visible hosts independently of layout order.
+
+- 가시 대상1→2→3→1 변화에 따라 현재 창을 다시 읽는다. 숨긴 앱의 상태를 다른 앱에 재사용하거나 입력을 보내지 않는다. / Re-read current windows as visibility changes;never redirect hidden-host work.
+- 입력 조정기는 호스트별 대기 의도 한 개와 공정한 순서를 사용한다. 입력 소유권은 한 개이며,지연/만료/세대·페이지·창 변경 의도는 폐기하고 실행 직전에 다시 검사한다. / Bounded fair per-host intentions share one input lease and fresh dispatch validation.
+- 광고의 최대9.9초 추가 대기는 입력 소유권 밖에서 진행한다. 다른 호스트 관측을 막지 않고 설정/페이지/가림/중단 시 취소한다. / Ad waiting does not occupy the shared input lease.
+- YT/IG/TT 플로팅은 각각72×56dp이며 호스트 상대 위치 저장·경계 보정·개별X를 유지한다. 전체OFF/타일OFF는 모두 중지한다. / Labelled per-host floats preserve relative placement and scopedX;masterOFF stops all.
+- 실제 비초점 영상이 일시정지하면 완주를 만들지 않는다. 초점을 번갈아 강제로 잡거나 재생 버튼을 누르지 않는다. / Do not fabricate plays or force focus/playback.
+- PiP·잠금·키보드·모달/입력 경로 가림·변경된 창 보호를 유지한다. 여러 대상이 보이는 상태에서 실험적 화면 분석은 비활성이다. / Existing window/input and visual-assistance restrictions remain.
+
+TikTok에서 읽을 수 있는 일반 추천 영상만 신규 대상이며 진행정보 없는 페이지·광고/LIVE/사진·길이 필터/시간제는 지원하지 않는다. 현재6페이지 읽기 관측은 다중 앱 자동 넘김 성공이 아니다. 실제 세 앱 동시10회씩 총30회·순서 교환6배치·회전 왕복·한쪽 일시정지/가림은 [현장 점검](FIELD_TEST_0.4.0.md)의 미실행 항목이다. PC 합성 검사와 최종 산출물은 [검증](VERIFICATION.md),[릴리스](releases/v0.4.0.md)에 기록한다.
+
+TikTok scope remains readable ordinary recommendation videos. Triple-host endurance,permutations,rotation and focus/obstruction behavior are unrun physical checks;synthetic tests are separate evidence.
+
+## 이전0.3.0 두 앱 시험·후보 이력 / Historical two-host evidence
+
+아래 현재/최신/공개 완료 표현과 수치는 0.3.0 당시 기록이다.0.4.0/세 앱 성공으로 확대하거나 다시 합산하지 않는다. / Relative statuses and results below are historical0.3.0 evidence,not new-version/triple-host passes.
+
+후속 연구: [TikTok·최대 세 앱 사전기획](TIKTOK_MULTI_APP_PLAN.md)은 **미구현 제안**이다. 아래0.3.0의 두 앱 계약과 시험 근거를 대체하거나 세 앱으로 확대하지 않는다. / The follow-up TikTok/three-host proposal is not implemented and does not expand the two-host release evidence below.
 
 상태: **현재 Public 공개판은0.3.0/code32다.** 듀얼 모드는0.2.9 배포에 포함되지 않는다. 전체화면·분할 복귀,회전·상하 두 배치와 일반 앱 병행의 확인 범위를 아래처럼 후보별로 구분하며,최종 판정과 정확한 수치·해시는 [검증 원장](VERIFICATION.md)을 따른다. 공개 파일·CI·익명 다운로드 동일성 확인을 완료했으며,모든 앱·배치·전체 UI 검증 완료를 주장하지 않는다.
 
