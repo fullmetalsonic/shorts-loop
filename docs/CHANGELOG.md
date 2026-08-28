@@ -1,10 +1,10 @@
 # 누적이력
 
-## 0.4.0/code33 · 2026-08-29 구현 및 전달 준비 / Implementation and delivery preparation
+## 0.4.0/code33 · 2026-08-29 공개 완료 / Public delivery
 
-기준0.3.0 이후 계획을 다음 범위로 구현했다. 현재 게시·최종 산출물 결과는 [릴리스 원장](releases/v0.4.0.md)과 [검증 원장](VERIFICATION.md)이 우선한다. 이 항목은 게시 완료나 새 실폰 시험 성공을 미리 선언하지 않는다.
+기준0.3.0 이후 계획을 다음 범위로 구현하고 공개했다. 제품46e84e5/v0.4.0,CI33188268354 SUCCESS,동일 서명 APK·업데이트메타데이터·체크섬의 익명 다운로드/바이트 일치까지 확인했다. 최종 산출물 결과는 [릴리스 원장](releases/v0.4.0.md)과 [검증 원장](VERIFICATION.md)이 우선하며 새 실폰 시험은NOT RUN이다.
 
-The post0.3.0 batch is implemented within the following scope. Final release/artifact/test status is recorded separately,not assumed here.
+The post0.3.0 batch is public with successful source CI and verified anonymous artifact/update metadata/checksum delivery. New physical playback tests remain NOT RUN.
 
 - TikTok 추천 피드의 읽을 수 있는 비율 진행 경로,정확한 패키지 제한,독립 일반 카운터/창/페이지 확인을 추가했다. 시간제·광고·LIVE·사진·총길이 필터는 지원하지 않는다. / Limited normalized TikTok recommendation progress;unsupported filters remain off.
 - 명시적 세 호스트 등록,독립 설정·상태·플로팅,공정 입력 대기와 최신 창 재검증을 추가했다. 기존 `dual_mode` 키와 선택을 유지하며 기본OFF다. / Three-host registration/isolation,fair input and revalidation preserve the existing opt-in preference.

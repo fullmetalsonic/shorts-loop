@@ -4,9 +4,9 @@ YouTube Shorts·Instagram Reels·TikTok 추천 영상을 설정한 횟수에 따
 
 An Android auto-scroll app for YouTube Shorts, Instagram Reels and readable TikTok recommendation videos, with separate play counts, translucent controls, Quick Settings and optional multi-window processing. Host apps are not modified.
 
-**0.4.0/code33 배포 준비 중입니다.** 현재 작업은 PC 검증을 거쳐 기존 Public 저장소에 게시하는 단계입니다. 최종 게시·APK·CI·해시 상태는 [0.4.0 릴리스 기록](docs/releases/v0.4.0.md)과 [검증 원장](docs/VERIFICATION.md)을 확인하세요. 과거0.3.0 실폰 시험을 새 버전의 성공으로 계산하지 않습니다.
+**0.4.0/code33 공개 완료.** PC 단위시험638개씩(debug/release),Android8·13·14 검사,GitHub Actions와 익명 다운로드 파일 일치를 확인했습니다. 설치 파일과 인앱 업데이트 정보를 함께 제공합니다. 상세 근거는 [0.4.0 릴리스 기록](docs/releases/v0.4.0.md)과 [검증 원장](docs/VERIFICATION.md)을 확인하세요. 새 버전 실폰 자동 넘김은 아직 미검증이며 과거0.3.0 시험을 새 버전의 성공으로 계산하지 않습니다.
 
-**0.4.0/code33 is being prepared for publication.** Final release, artifact, CI and checksum evidence belongs in the linked records. Earlier0.3.0 physical tests are not new-version passes.
+**0.4.0/code33 is public.**638 unit tests per variant,API26/33/34 native checks,GitHub Actions and anonymous download parity pass. The APK and in-app update metadata are available. New-version physical playback remains untested;earlier0.3.0 physical results are not new-version passes.
 
 [최신 공개 릴리스 / Latest published release](https://github.com/fullmetalsonic/shorts-loop/releases/latest) · [사용 설명서 / User guide](docs/USER_GUIDE.md) · [실사용 점검표 / Field checks](docs/FIELD_TEST_0.4.0.md)
 

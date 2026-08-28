@@ -1,10 +1,10 @@
 # ShortsLoop · 기술 인수인계 / Technical handover
 
-## 0.4.0/code33 · 구현·PC 검증·게시 준비 / Implementation and delivery checkpoint
+## 0.4.0/code33 · 공개 완료 / Public delivery checkpoint
 
-2026-08-29 기준0.3.0 이후 묶음 변경을 구현했다. 현재 Public 게시 여부·최종 소스/산출물/서명/CI/해시는 [0.4.0 원장](docs/releases/v0.4.0.md)과 [검증 원장](docs/VERIFICATION.md)이 최종 기준이다. 이 체크포인트는 게시 완료나 실폰 시험 성공 선언이 아니다.
+2026-08-29 Public 공개 완료. 제품/태그46e84e5/v0.4.0,APK763322bytes/D8E10BC3…987BBA,CI33188268354 SUCCESS. debug/release638JUnit씩,최종APK API26/33/34 native38122/38130/37741,공개3파일 바이트·해시·GitHubdigest/익명HTTP200/latest/인앱feed PASS. 상세는 [0.4.0 원장](docs/releases/v0.4.0.md)과 [검증 원장](docs/VERIFICATION.md)을 따른다. 새 실폰 자동 넘김은NOT RUN이며 휴대폰 설치본은 이 작업에서 변경하지 않았다.
 
-The post0.3.0 batch is implemented. Final publication,source,artifact,signer,CI and checksum evidence belongs in the linked records;this checkpoint does not declare publication or physical-test success.
+The post0.3.0 batch is public. Source/tag,638 tests per variant,exact-artifact three-OS checks,CI and anonymous delivery parity pass. Physical playback remains NOT RUN and the phone installation was not changed during this release work.
 
 - TikTok `com.ss.android.ugc.trill`: 추천 피드의 읽을 수 있는 비율 진행값 일반 영상만. 앱 선택OFF/반복2회 기본. 초단위 총길이로 변환하거나 추정하지 않는다. 진행정보 없음·광고·LIVE·사진·긴 영상·시간제는 미지원. / Readable normalized ordinary recommendation videos only;deselected/default2,no invented duration or unsupported filters.
 - 여러 앱: `dual_mode` 키·값 보존,기본OFF. ON은 선택된 안전한1/2/3개 가시 호스트별 상태·설정·플로팅을 분리한다. 입력 직렬화·공정 대기·직전 재검증을 유지하고 강제 초점/재생은 하지 않는다. / Preserve the existing mode preference,independent hosts,fair serialized input and fresh validation.
@@ -12,7 +12,7 @@ The post0.3.0 batch is implemented. Final publication,source,artifact,signer,CI 
 - 일반 시작 상한1.3초/길이10% 제한. 엄격한 전환·정지·탐색 보호는 유지한다. `resetReason`으로 초기화 경로를 진단하며 D-044의 모든0초기화·YouTube 원인이 해결된 것은 아니다. / Start cap1.3s/10% with guards retained;reset-reason diagnostics do not prove all reset causes fixed.
 - 새 권한·개인 데이터 업로드 없음. 기존 서명·패키지·업데이트 계약 보존. UI는 버전만 표시하며 앱 전체에 시험판 등급을 붙이지 않는다. / No new permissions/uploads;preserve signer,package,update contract and neutral version labels.
 
-완료된 범위별 PC 결과와 남은 에뮬레이터·릴리스 검사는 검증 원장에서 갱신한다. 폰 디버깅 종료 이후의 소셜 앱 자동 전환은 NOT RUN. TikTok6페이지의4개 비율 증가·1개숨김·1개홍보 관측은 새 제품 자동 넘김 성공이 아니다. 세 앱 각각10회/총30회·앱별 연속 시험과 광고 지연 실폰 비교는 [현장 점검표](docs/FIELD_TEST_0.4.0.md)에 남긴다. 미확정 목적지 차단은 화면 확인 후 전체OFF→ON으로 복구한다.
+PC·에뮬레이터·릴리스 검증은 완료했고 범위별 결과를 검증 원장에 기록했다. 폰 디버깅 종료 이후의 소셜 앱 자동 전환은 NOT RUN. TikTok6페이지의4개 비율 증가·1개숨김·1개홍보 관측은 새 제품 자동 넘김 성공이 아니다. 세 앱 각각10회/총30회·앱별 연속 시험과 광고 지연 실폰 비교는 [현장 점검표](docs/FIELD_TEST_0.4.0.md)에 남긴다. 미확정 목적지 차단은 화면 확인 후 전체OFF→ON으로 복구한다.
 
 PC evidence is tracked separately from physical playback. TikTok's six-page survey is not automatic-advance evidence. Host endurance,triple-host30 transitions and ad-delay comparisons remain field checks;inspect and restart masterOFF→ON after an unconfirmed transition.
 

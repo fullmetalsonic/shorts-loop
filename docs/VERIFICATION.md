@@ -2,12 +2,12 @@
 
 ## 현재0.4.0/code33 · PC 검증 / Current PC verification
 
-제품 소스·서명 APK를 고정하여 기존 Public 저장소에 게시하는 단계다. 최종 소스/태그/해시/CI/익명 다운로드는 [0.4.0 릴리스 원장](releases/v0.4.0.md)에 확정한다. 아래 과거 버전의 실제 폰 성공을0.4.0 시험으로 재사용하지 않는다.
+제품/태그 `46e84e5`/`v0.4.0`,최종763322-byte APK SHA256 `D8E10BC33664E83ED602F82168F2049D576FF1404E5415E83225D2C673987BBA`를 고정했다. 이 APK의 API26/33/34 native **38122/38130/37741 PASS**이며638JUnit debug/release·정적 검사·380한영쌍/108상태·release lint 오류0/경고13·서명 연속성·내장revision 일치·debug APK 게시 거부 검사도 통과했다. CI/익명 다운로드의 최종 상태는 [0.4.0 릴리스 원장](releases/v0.4.0.md)을 따른다. 과거 버전의 실제 폰 성공을0.4.0 시험으로 재사용하지 않는다.
 
 - BUILD PASS: release/debug APK, release/debug 단위시험 클래스, Android instrumentation APK, release lint를 컴파일했다.
 - Unit PASS: 직접 JUnit4.13.2로 debug/release 각각638개, 실패0. Windows 한글 경로의 Gradle worker 대신 동일 컴파일 클래스를 실행했다. 비제품 VisualSequence 실험20개는 제품과 분리하며 PASS에 포함하지 않는다.
-- 정적 안전/권한/모듈/전환/시간제/사진/자기 플로팅 의미 스크롤 분리 검사 PASS. 새 권한·추가 네트워크 대상 없음. 한국어/영어 리소스379쌍·상태108개 PASS(후속 TT 라디오 안내1쌍 추가 후 최종 재검사 예정).
-- 후보 `5B5AB6DA39B9F372DC723274DF2685921BE0DBF1C971989823D4AF9954C50EEC`,763158bytes의 API26/33/34 native 검사 **38145/38153/37764 PASS**. 분리된 합성 창/노드·설정·UI·상태·전환 검사 수이며 실제 소셜 앱 전환 수가 아니다. 마지막 TT 라디오 안내 분리 이후 최종 APK로 다시 실행한다.
+- 정적 안전/권한/모듈/전환/시간제/사진/자기 플로팅 의미 스크롤 분리 검사 PASS. 새 권한·추가 네트워크 대상 없음. 한국어/영어 리소스380쌍·상태108개 PASS. TT 횟수 도움말과 빠른 반복 모드 문구를 각각 지원 범위에 맞게 분리했다.
+- 이전 후보 `5B5AB6DA39B9F372DC723274DF2685921BE0DBF1C971989823D4AF9954C50EEC`,763158bytes의 API26/33/34 native 검사 **38145/38153/37764 PASS**. 마지막 TT 라디오 안내 분리 이후 위 최종 APK로 다시 통과했다. 수치는 분리된 합성 창/노드·설정·UI·상태·전환 검사 수이며 실제 소셜 앱 전환 수가 아니다. UI 줄 수·가시 요소 검사 때문에 문구 변경으로 총 검사 수가 달라진다.
 - 업그레이드 PASS: 공개0.3.0/code32→이전0.4.0 후보 `5771129C1633E14D0CD6E8FAF085429706AE95E7797347DA689453F565431008`를 일회용 API26/33/34에 덮어 설치. 기존44개 자료형/값을 보존(schema1→2 제외),전체53키,서로 다른 앱별 반복·길이·좌표/dual/업데이트 선호/UID/서명 유지,TT 선택OFF·반복2·특수OFF 추가,실행OFF·재실행 비파괴 확인. 이후 변경은 의미 입력 검증·TT 도움말·시험 코드이며 설정 이전 로직은 동일하다.
 - Lint: 오류0/경고13(OldTargetApi1,ObsoleteSdkInt1,UnusedResources11). min26/target35를 유지하며 미해결 오류로 숨기지 않는다.
 - UI/UX: KO/EN,320dp,글꼴1/1.5/2배의 보존 뷰 검사와 광고/TT 화면 렌더 수행. 앱별 탭·서로 다른 입력초안·저장·무효값·재생성·0.1초 증감 검사 PASS. TT 횟수 입력을 지원 설명보다 먼저 배치하고 지원하지 않는 특수정책·일반 복구 안내를 분리했다. API33 실제 Activity에서 숫자7 표시도 육안 확인했다. 분리된 뷰의 정적 렌더는 EditText 숫자가 비어 보여 숫자 표시 증거로 쓰지 않는다. 큰 글꼴의 영어 하단 제목은 여러 줄로 접히며 화면 스크롤이 필요하다.
@@ -15,7 +15,7 @@
 - 개인정보 점검: 공개 대상에서 원시 로그·개인 캡처·계정·기기 식별자·키·토큰·불필요한 내부 경로 제외. 기존 출처 요청/라이선스 상태 유지.
 - **NOT RUN:** 새 버전 실폰 설치·YT/IG 영상 회귀·틱톡 자연반복/10연속·세 앱 각10/총30·광고 대기 비교·독립 장시간 배터리. 휴대폰 연결 종료로 [현장 점검표](FIELD_TEST_0.4.0.md)에 구분한다.1.3초는 모든 카운트 초기화 원인을 해결했다는 의미가 아니다.
 
-EN: Candidate build,638 unit tests per variant,static guards,native API26/33/34 checks and typed-preference upgrade pass. Final signed-artifact reruns and public delivery evidence will be recorded in the release ledger. Native synthetic checks are not social-app playback success. Independent scoped review has no open P1/P2. Physical playback/triple-host/endurance and ad-delay comparison remain NOT RUN;earlier0.3.0 results are historical only.
+EN: Final product46e84e5/v0.4.0,763322-byte D8E10BC3…987BBA APK passes638 unit tests per variant,static/localization guards and exact-artifact native38122/38130/37741 checks on API26/33/34. Typed-preference upgrade passes on the earlier candidate with unchanged migration logic. Signer/revision/debug-rejection checks pass. Native synthetic checks are not social-app playback success. Independent scoped review has no open P1/P2. Physical playback/triple-host/endurance and ad-delay comparison remain NOT RUN;earlier0.3.0 results are historical only. See the release ledger for CI and anonymous delivery status.
 
 ## 이전 체크포인트 / Historical checkpoints
 
