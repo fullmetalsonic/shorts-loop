@@ -74,6 +74,9 @@ public final class MainActivity extends Activity {
         screen.back.setOnClickListener(v -> showHome());
         bindRules(screen.instagramRules, instagramStore);
         bindRules(screen.tiktokRules, tiktokStore);
+        bindAds(screen.youtubeAds, youtubeStore);
+        bindAds(screen.instagramRules.ads, instagramStore);
+        bindAds(screen.tiktokRules.ads, tiktokStore);
         updater = new UpdateController(this, screen.updates, screen.updateBanner, () -> { showHome(); screen.showUpdates(); });
         screen.setupJump.setOnClickListener(v -> { showHome(); screen.showSetup(RuntimeState.connected && !hasInstalledSelection()); });
         screen.youtube.setOnCheckedChangeListener((v, checked) -> { if (!rendering) { store.selectedApp(YOUTUBE, checked); render(); } });
@@ -133,6 +136,9 @@ public final class MainActivity extends Activity {
             renderHostPanel(screen.tiktokSettings, tiktokStore, tiktokInstalled, false);
             renderRules(screen.instagramRules, instagramStore, instagramInstalled);
             renderRules(screen.tiktokRules, tiktokStore, tiktokInstalled);
+            renderAds(screen.youtubeAds, youtubeStore, youtubeInstalled);
+            renderAds(screen.instagramRules.ads, instagramStore, instagramInstalled);
+            renderAds(screen.tiktokRules.ads, tiktokStore, tiktokInstalled);
             screen.youtubeEntry.render(youtubeInstalled, store.youtubeEnabled(), youtubeStore.target(), youtubeStore.hostPaused(), store.enabled());
             screen.instagramEntry.render(instagramInstalled, store.instagramEnabled(), instagramStore.target(), instagramStore.hostPaused(), store.enabled());
             screen.tiktokEntry.render(tiktokInstalled, store.tiktokEnabled(), tiktokStore.target(), tiktokStore.hostPaused(), store.enabled());
@@ -173,7 +179,6 @@ public final class MainActivity extends Activity {
     }
     private void bindRules(SharedVideoRulesPanel rules, SettingsStore hostStore) {
         rules.onSeconds = value -> { hostStore.fallbackSeconds(value); render(); };
-        rules.onAdDelay = value -> { hostStore.adDelayTenths(value); render(); };
         rules.photos.whole.changed = value -> { hostStore.photoWholeSeconds(value); render(); };
         rules.photos.slide.changed = value -> { hostStore.photoSlideSeconds(value); render(); };
         rules.photos.toggle.setOnCheckedChangeListener((v, checked) -> {
@@ -194,23 +199,34 @@ public final class MainActivity extends Activity {
             if (!hostReady(hostStore) || !rules.seconds.commit()) { render(); return; }
             hostStore.timedFallback(true); render();
         });
-        rules.skipAds.setOnCheckedChangeListener((v, checked) -> {
+    }
+    private void bindAds(AdRulesPanel ads, SettingsStore hostStore) {
+        ads.onDelay = value -> { hostStore.adDelayTenths(value); render(); };
+        ads.toggle.setOnCheckedChangeListener((v, checked) -> {
             if (rendering) return;
+            if (!ads.automationSupported) { render(); return; }
             if (!checked) { hostStore.skipAds(false); render(); return; }
-            if (!hostReady(hostStore) || !rules.adDelay.commit()) { render(); return; }
+            if (!hostReady(hostStore) || !ads.delay.commit()) { render(); return; }
             hostStore.skipAds(true); render();
         });
+    }
+    private void renderAds(AdRulesPanel ads, SettingsStore hostStore, boolean appInstalled) {
+        boolean selected = hostStore.isSelected(hostStore.hostPackage());
+        boolean available = appInstalled && selected;
+        ads.delay.render(hostStore.adDelayTenths()); ads.delay.setAvailable(!ads.automationSupported || available);
+        ads.toggle.setChecked(ads.automationSupported && hostStore.skipAds() && available);
+        ads.toggle.setEnabled(ads.automationSupported && available);
+        ads.support.setText(!ads.automationSupported ? R.string.youtube_ads_unavailable
+                : !appInstalled ? R.string.mw_host_missing : !selected ? R.string.mw_host_unselected : R.string.host_rules_ready);
     }
     private void renderRules(SharedVideoRulesPanel rules, SettingsStore hostStore, boolean appInstalled) {
         boolean selected = hostStore.isSelected(hostStore.hostPackage());
         boolean available = appInstalled && selected;
         int reason = !appInstalled ? R.string.mw_host_missing : !selected ? R.string.mw_host_unselected : R.string.host_rules_ready;
         rules.seconds.render(hostStore.fallbackSeconds()); rules.seconds.setAvailable(available);
-        rules.adDelay.render(hostStore.adDelayTenths()); rules.adDelay.setAvailable(available);
         rules.photos.render(hostStore, available); rules.photos.support.setText(reason);
         rules.timedFallback.setChecked(hostStore.timedFallback() && available); rules.timedFallback.setEnabled(available);
-        rules.skipAds.setChecked(hostStore.skipAds() && available); rules.skipAds.setEnabled(available);
-        rules.timedSupport.setText(reason); rules.adSupport.setText(reason);
+        rules.timedSupport.setText(reason);
     }
     private void bindHostPanel(HostSettingsPanel panel, SettingsStore hostStore, boolean instagramHost) {
         panel.longVideo.toggle.setOnCheckedChangeListener((view, checked) -> {
@@ -237,9 +253,10 @@ public final class MainActivity extends Activity {
         boolean valid = panel.count.commit() && (!hostStore.skipLong() || panel.longVideo.commit());
         if (valid && rules != null) {
             valid = (hostStore.ceiling() == 0 || !hostStore.timedFallback() || rules.seconds.commit())
-                    && (!hostStore.photoEnabled() || rules.photos.commit(hostStore))
-                    && (!hostStore.skipAds() || rules.adDelay.commit());
+                    && (!hostStore.photoEnabled() || rules.photos.commit(hostStore));
         }
+        AdRulesPanel ads = screen.ads(hostStore.hostPackage());
+        if (valid && ads.automationSupported && hostStore.skipAds()) valid = ads.delay.commit();
         if (valid) return true;
         showHost(hostStore.hostPackage()); screen.focusError(hostStore.hostPackage()); return false;
     }
@@ -276,7 +293,7 @@ public final class MainActivity extends Activity {
             String value = runtime.blocked ? localized
                     : remaining >= 0 ? getString(R.string.ui_status_timer, remaining, localized)
                     : hostStore.target() == 0 ? StatusText.text(this, hostStore.photoEnabled() ? "photo.rules"
-                            : LongVideoPolicy.zeroCountStatus(hostStore.skipAds(), hostStore.skipLive(), hostStore.skipLong()))
+                            : LongVideoPolicy.zeroCountStatus(screen.ads(hostStore.hostPackage()).automationSupported && hostStore.skipAds(), hostStore.skipLive(), hostStore.skipLong()))
                     : getString(R.string.ui_status_count, runtime.current, hostStore.target(), localized);
             if (!runtime.blocked && remaining < 0 && hostStore.target() == 0
                     && (LiveSkipPolicy.isLiveStatus(code) || LongVideoPolicy.CHECKING.equals(code) || LongVideoPolicy.CONFIRMING.equals(code)))

@@ -1,5 +1,13 @@
 # ShortsLoop · 기술 인수인계 / Technical handover
 
+## YouTube 광고 추가 준비 · 실제 광고 근거 필요 / Pending physical evidence
+
+YouTube 전용 광고 토글·0.0–9.9초/0.1단위 저장과 UI를 준비했다. 실제 Shorts 광고 구조를 확보하지 못해 감지·자동 넘김 연결은 미구현이며 토글은 현재 미지원으로 비활성화한다. 일반 광고 버튼·협찬 고지를 Shorts 광고로 추측하지 않는다. [준비 소스 공개 범위·근거·다음 시험](docs/YOUTUBE_ADS_PREPARATION.md). 이번 공개는 준비 소스·시험·문서만이며 배포0.5.0 APK·태그·업데이트는 그대로다. 아래 공개 완료는 기존0.5.0 APK에 대한 기록이다.
+
+로컬 준비 소스·시험 컴파일 및705JUnit, 다국어399키/108상태, 사진 안전 정적 검사 PASS. 게시 전 재컴파일·705JUnit·debug lint(오류0/경고21)·민감정보 검사 PASS. 독립 준비 범위 리뷰의 미해결 P1/P2 0건. 새 배포APK·네이티브 화면 실행·실폰 자동 넘김은 NOT RUN이며 실제 광고 근거 확보까지 기능 완료 판정을 보류한다.
+
+YouTube ad settings/UI preparation is not functional automation. Compilation and705 unit tests pass; detection/action wiring requires a real Shorts-ad sample and the control remains disabled. This source-only publication does not replace the distributed0.5.0 APK or update. See the linked preparation record for current validation and remaining limits.
+
 ## 0.5.0/code34 · 공개 완료 / Public delivery checkpoint
 
 요구범위구현완료: 홈3개앱버튼/개별상세/공통분리,TT SurfaceView·광고/사진/적격무진행/실제총길이규칙. 기존설정·서명보존,새권한없음. source/page/pager/media/index재검증과hard-stop을유지하고독립리뷰P2(사진scope·준비시간/카운트키누락)를회귀검사와함께보완했다.

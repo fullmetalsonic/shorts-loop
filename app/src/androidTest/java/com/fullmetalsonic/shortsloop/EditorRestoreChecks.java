@@ -14,10 +14,10 @@ final class EditorRestoreChecks {
         int checks = 0;
         int[] inputs = {R.id.count_input, R.id.fallback_seconds_input, R.id.live_delay_input, R.id.long_video_seconds_input,
                 R.id.ad_delay_input, R.id.photo_whole_input, R.id.photo_slide_input, R.id.tt_ad_delay_input,
-                R.id.tt_fallback_seconds_input, R.id.tt_photo_whole_input, R.id.tt_photo_slide_input, R.id.mw_tiktok_long_input};
+                R.id.tt_fallback_seconds_input, R.id.tt_photo_whole_input, R.id.tt_photo_slide_input, R.id.mw_tiktok_long_input, R.id.yt_ad_delay_input};
         int[] apply = {R.id.count_apply, R.id.fallback_seconds_apply, R.id.live_delay_apply, R.id.long_video_seconds_apply,
                 R.id.ad_delay_apply, R.id.photo_whole_apply, R.id.photo_slide_apply, R.id.tt_ad_delay_apply,
-                R.id.tt_fallback_seconds_apply, R.id.tt_photo_whole_apply, R.id.tt_photo_slide_apply, R.id.mw_tiktok_long_apply};
+                R.id.tt_fallback_seconds_apply, R.id.tt_photo_whole_apply, R.id.tt_photo_slide_apply, R.id.mw_tiktok_long_apply, R.id.yt_ad_delay_apply};
         for (String from : new String[]{"ko", "en"}) {
             int[] saves = {0};
             SettingsScreen old = screen(AppLocale.forLanguage(base, from), saves);

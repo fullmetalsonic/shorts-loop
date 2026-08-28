@@ -6,6 +6,10 @@ An Android auto-scroll app for YouTube Shorts, Instagram Reels and supported Tik
 
 [최신 APK / Latest release](https://github.com/fullmetalsonic/shorts-loop/releases/latest) · [앱별 설정 설명서 / Per-app guide](docs/APP_SETTINGS_0.5.0.md) · [0.5.0 검증·릴리스 / Release evidence](docs/releases/v0.5.0.md)
 
+**개발 소스 안내:** `main`에는 YouTube 광고 설정 준비 코드가 추가되어 있지만, 실제 광고 감지·자동 넘김은 아직 미지원이며 해당 토글은 비활성입니다. **배포 APK와 인앱 업데이트는 v0.5.0 그대로**입니다. 배포본과 같은 소스는 [v0.5.0 태그](https://github.com/fullmetalsonic/shorts-loop/tree/v0.5.0)를 사용하세요. [준비 범위·검증·남은 조건](docs/YOUTUBE_ADS_PREPARATION.md).
+
+**Development source:** `main` includes preparation for YouTube ad settings, not working ad detection/skipping; its toggle is disabled. **The distributed APK and in-app update remain v0.5.0.** Use the v0.5.0 tag for matching release source; see the linked preparation record.
+
 ## 0.5.0 변경 / Changes
 
 - **앱별 설정 화면:** 홈에서 YouTube·Instagram·TikTok 버튼을 누르면 해당 앱 설정만 표시합니다. 앱 사용 선택도 그 화면에 있으며 실행·플로팅·권한·업데이트는 공통입니다. / **Per-app pages:** choose a host button; host selection and its rules stay together, with shared controls outside.

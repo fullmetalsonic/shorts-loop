@@ -1,0 +1,5 @@
+<resources>
+    <string name="youtube_ads_helper">YouTube ad auto-advance is not supported yet. The switch stays disabled until a real Shorts-feed ad screen is verified. Planned scope excludes creator sponsorships and ads in regular videos.</string>
+    <string name="youtube_ads_only_help">You can save the delay in advance; it does not skip ads now. Planned range: 0.0–9.9 seconds, in 0.1-second steps. 0.0 will mean no extra wait after safety checks, not off.</string>
+    <string name="youtube_ads_unavailable">Awaiting an ad-screen check · Auto-advance currently unsupported</string>
+</resources>

@@ -29,6 +29,12 @@ final class DualModeUiChecks {
             require(!store.enabled(), "Dual mode fixture starts with execution OFF"); checks++;
             require(toggle != null && toggle.isEnabled(), "Dual mode is a distinct available common switch"); checks++;
             require(toggle.isChecked() == originalMode, "Stored dual mode is rendered"); checks++;
+            require(!screen.youtubeAds.toggle.isEnabled() && !screen.youtubeAds.toggle.isChecked()
+                    && screen.youtubeAds.delay.findViewById(R.id.yt_ad_delay_input).isEnabled(),
+                    "YouTube ad switch is unavailable while its delay can be prepared"); checks++;
+            screen.youtubeAds.toggle.setChecked(true);
+            require(!screen.youtubeAds.toggle.isChecked() && before.equals(unrelated(store)),
+                    "Programmatic restored YouTube ad selection cannot enable unsupported automation or write settings"); checks++;
             screen.back.performClick();
             store.dualMode(false); render(activity);
             require(!toggle.isChecked(), "Off mode is visible"); checks++;

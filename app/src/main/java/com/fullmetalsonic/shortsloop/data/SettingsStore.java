@@ -138,6 +138,8 @@ public final class SettingsStore {
     /** Instagram/root keep their existing keys; TikTok starts with independent lazy defaults. */
     private String reelKey(String name) { return TIKTOK_PACKAGE.equals(host) ? scopedKey(name) : name; }
     private boolean reelHost() { return host == null || INSTAGRAM_PACKAGE.equals(host) || TIKTOK_PACKAGE.equals(host); }
+    /** Legacy Instagram/root ad keys stay unchanged; YouTube and TikTok never inherit them. */
+    private String adKey(String name) { return host == null || INSTAGRAM_PACKAGE.equals(host) ? name : scopedKey(name); }
 
     public int target() { return ModePolicy.clampTarget(intValue(scopedKey("target"), ModePolicy.DEFAULT_COUNT), ceiling()); }
     public int ceiling() { return ModePolicy.sanitize(intValue(scopedKey("ceiling"), ModePolicy.DEFAULT_COUNT)); }
@@ -149,9 +151,9 @@ public final class SettingsStore {
     public boolean youtubeEnabled() { return booleanValue("youtube_enabled", true); }
     public boolean instagramEnabled() { return booleanValue("instagram_enabled", false); }
     public boolean tiktokEnabled() { return booleanValue("tiktok_enabled", false); }
-    public boolean skipAds() { return reelHost() && booleanValue(reelKey("skip_ads"), false); }
-    public int adDelayTenths() { return com.fullmetalsonic.shortsloop.core.AdDelayPolicy.sanitize(intValue(reelKey("ad_delay_tenths"), 0)); }
-    public void adDelayTenths(int value) { preferences.edit().putInt(reelKey("ad_delay_tenths"), com.fullmetalsonic.shortsloop.core.AdDelayPolicy.sanitize(value)).apply(); }
+    public boolean skipAds() { return booleanValue(adKey("skip_ads"), false); }
+    public int adDelayTenths() { return com.fullmetalsonic.shortsloop.core.AdDelayPolicy.sanitize(intValue(adKey("ad_delay_tenths"), 0)); }
+    public void adDelayTenths(int value) { preferences.edit().putInt(adKey("ad_delay_tenths"), com.fullmetalsonic.shortsloop.core.AdDelayPolicy.sanitize(value)).apply(); }
     public boolean photoEnabled() { return reelHost() && booleanValue(reelKey("photo_enabled"), false); }
     public int photoMode() { return com.fullmetalsonic.shortsloop.core.PhotoReelPolicy.mode(intValue(reelKey("photo_mode"), 0)); }
     public int photoWholeSeconds() { return com.fullmetalsonic.shortsloop.core.PhotoReelPolicy.seconds(intValue(reelKey("photo_whole_seconds"), com.fullmetalsonic.shortsloop.core.PhotoReelPolicy.DEFAULT_SECONDS)); }
@@ -201,7 +203,7 @@ public final class SettingsStore {
     }
 
     public void floatingEnabled(boolean value) { preferences.edit().putBoolean("floating_enabled", value).apply(); }
-    public void skipAds(boolean value) { preferences.edit().putBoolean(reelKey("skip_ads"), value).apply(); }
+    public void skipAds(boolean value) { preferences.edit().putBoolean(adKey("skip_ads"), value).apply(); }
     public void skipLive(boolean value) { preferences.edit().putBoolean("skip_live", value).apply(); }
     public void liveDelaySeconds(int value) {
         preferences.edit().putInt("live_delay_seconds", LiveSkipPolicy.clamp(value)).apply();

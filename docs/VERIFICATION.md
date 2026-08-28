@@ -1,5 +1,11 @@
 # 검증 기록 · ShortsLoop
 
+## YouTube 광고 준비 소스 · 기능 미완료 / Source-only preparation
+
+변경 소스·JUnit·Android 화면 시험 소스 컴파일 PASS. 직접 JUnit **705개 PASS**(기존685+설정10+미연결 전환 모듈10), 다국어399키/108상태·사진 안전 정적 검사·diff 형식 PASS. 게시 전 재컴파일·705JUnit·debug lint(오류0/경고21)·민감정보 검사 PASS. 독립 준비 범위 리뷰의 미해결 P1/P2 0건. 실제 광고 구조 근거가 없어 감지/넘김 연결은 미구현이고, UI는 현재 미지원·비활성으로 준비했다. 새 배포APK·설치/네이티브 UI 실행·육안 감사/실폰 광고 및 기존 영상 회귀는 **NOT RUN**. 전체 기능 완료 또는 광고 자동 전환 PASS가 아니다. 배포0.5.0은 변경 없음. [범위·근거·시험·다음 조건](YOUTUBE_ADS_PREPARATION.md).
+
+EN: Compilation,705 unit tests and debug lint(0 errors,21 warnings) pass for source preparation only. YouTube ad detection/action remains unimplemented and disabled. No new distribution APK/native UI/physical automation; functional acceptance awaits actual ad evidence. Distributed0.5.0 is unchanged.
+
 ## 0.5.0/code34 · 현재 검증 / Current verification
 
 ### 최종 제품 cdd94ae / Final product

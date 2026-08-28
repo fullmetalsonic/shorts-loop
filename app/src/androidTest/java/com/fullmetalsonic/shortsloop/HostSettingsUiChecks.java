@@ -30,6 +30,26 @@ final class HostSettingsUiChecks {
             require(screen.instagramSettings.root.getVisibility() == View.GONE, "Instagram tab hidden"); checks++;
             require(((View)screen.live.getParent()).getVisibility() == View.VISIBLE, "YouTube live card visible"); checks++;
             require(((View)screen.photos.getParent()).getVisibility() == View.GONE, "Instagram photo card hidden"); checks++;
+            require(screen.youtubeAds.card.getVisibility() == View.VISIBLE
+                    && screen.youtubeSettings.special.getChildAt(0) == screen.youtubeAds.root
+                    && screen.youtubeSettings.special.getChildAt(1) == screen.live.getParent(), "YouTube ads precede live inside its details"); checks++;
+            require(screen.rules(SettingsStore.YOUTUBE_PACKAGE) == null
+                    && screen.youtubeSettings.root.findViewById(R.id.photo_panel) == null
+                    && screen.youtubeSettings.root.findViewById(R.id.timed_fallback_toggle) == null,
+                    "YouTube ad-only panel does not expose photo or clockless controls"); checks++;
+            require(hasText(screen.youtubeAds.root, screen.root.getContext().getString(R.string.youtube_ads_helper)),
+                    "YouTube helper describes Shorts feed scope and physical validation limit"); checks++;
+            require(!screen.youtubeAds.automationSupported && !screen.youtubeAds.toggle.isEnabled() && !screen.youtubeAds.toggle.isChecked()
+                    && screen.youtubeAds.support.getText().toString().equals(screen.root.getContext().getString(R.string.youtube_ads_unavailable)),
+                    "YouTube ads explicitly remain unsupported and cannot look enabled"); checks++;
+            require(screen.instagramRules.ads.automationSupported && screen.tiktokRules.ads.automationSupported,
+                    "Existing Instagram and TikTok ad capabilities remain available"); checks++;
+            EditText ytAd = screen.root.findViewById(R.id.yt_ad_delay_input);
+            ytAd.setText("1.3"); require(screen.youtubeAds.delay.commit() && saves[9] == 13 && saves[5] == 0 && saves[6] == 0,
+                    "YouTube ad delay commits to its own callback"); checks++;
+            screen.root.findViewById(R.id.yt_ad_delay_plus).performClick();
+            require(saves[9] == 14 && "1.4".contentEquals(ytAd.getText()), "YouTube ad plus changes one tenth"); checks++;
+            ytAd.setText("9.99"); require(!screen.youtubeAds.delay.commit() && saves[9] == 14, "Invalid YouTube ad precision is not saved"); checks++;
             EditText yt = screen.root.findViewById(R.id.count_input);
             EditText ig = screen.root.findViewById(R.id.mw_instagram_count_input);
             require("7".contentEquals(yt.getText()) && "3".contentEquals(ig.getText()), "Different host counts"); checks++;
@@ -50,6 +70,8 @@ final class HostSettingsUiChecks {
             screen.showHost(true);
             require(((View)screen.live.getParent()).getVisibility() == View.GONE, "Instagram hides live card"); checks++;
             require(((View)screen.photos.getParent()).getVisibility() == View.VISIBLE, "Instagram shows photo card"); checks++;
+            require(screen.youtubeAds.card.getVisibility() == View.GONE && "9.99".contentEquals(ytAd.getText()),
+                    "Other app details hide YouTube ads but preserve the draft"); checks++;
             require(screen.execution.getVisibility() == View.VISIBLE && screen.floating.getVisibility() == View.VISIBLE, "Global controls remain present"); checks++;
             EditText tt = screen.root.findViewById(R.id.mw_tiktok_count_input);
             tt.setText("8"); screen.showHost(SettingsStore.TIKTOK_PACKAGE);
@@ -113,6 +135,8 @@ final class HostSettingsUiChecks {
                     && !restored.adDelay.commit(), "Ad draft restored without saving"); checks++;
             require("bad".contentEquals(((EditText)restored.root.findViewById(R.id.tt_ad_delay_input)).getText())
                     && !restored.tiktokRules.adDelay.commit(), "TikTok ad draft restores independently"); checks++;
+            require("9.99".contentEquals(((EditText)restored.root.findViewById(R.id.yt_ad_delay_input)).getText())
+                    && !restored.youtubeAds.delay.commit(), "YouTube ad draft restores independently across locale changes"); checks++;
             Configuration narrow = new Configuration(base.getResources().getConfiguration()); narrow.screenWidthDp = 320; narrow.fontScale = 2f;
             SettingsScreen narrowScreen = screen(AppLocale.forLanguage(base.createConfigurationContext(narrow), language), new int[10]);
             require(narrowScreen.youtubeEntry.getParent() == narrowScreen.instagramEntry.getParent()
@@ -130,6 +154,7 @@ final class HostSettingsUiChecks {
                 2, n -> saves[4] = n, 0, n -> saves[5] = n, 60, n -> saves[8] = n);
         screen.tiktokRules.onAdDelay = n -> saves[6] = n;
         screen.tiktokRules.onSeconds = n -> saves[7] = n;
+        screen.youtubeAds.onDelay = n -> saves[9] = n;
         return screen;
     }
     private static boolean uniqueIds(View view, Set<Integer> seen) {

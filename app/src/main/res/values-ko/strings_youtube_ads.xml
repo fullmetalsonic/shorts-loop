@@ -1,0 +1,5 @@
+<resources>
+    <string name="youtube_ads_helper">YouTube 광고 자동 넘김은 아직 지원하지 않습니다. 실제 쇼츠 피드 광고 화면을 확인할 때까지 스위치는 비활성입니다. 지원 예정 범위에서 제작자 협찬과 일반 영상의 광고는 제외합니다.</string>
+    <string name="youtube_ads_only_help">시간은 준비용으로 미리 저장할 수 있지만 현재 광고를 넘기지는 않습니다. 예정 범위는 0.0~9.9초, 0.1초 단위입니다. 0.0초는 안전 확인 후 추가 대기 없음이며 끄기가 아닙니다.</string>
+    <string name="youtube_ads_unavailable">광고 화면 확인 후 지원 예정 · 현재 자동 넘김 미지원</string>
+</resources>

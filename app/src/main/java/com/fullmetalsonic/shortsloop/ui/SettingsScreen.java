@@ -43,6 +43,7 @@ public final class SettingsScreen {
     public final UpdatePanel updates;
     public final HostSettingsPanel youtubeSettings, instagramSettings, tiktokSettings;
     public final SharedVideoRulesPanel instagramRules, tiktokRules;
+    public final AdRulesPanel youtubeAds;
     public final AppEntryCard youtubeEntry, instagramEntry, tiktokEntry;
     private final ScrollView scroll;
     private final LinearLayout appsCard, setupCard, updateCard, liveCard, experimental, navigation;
@@ -130,6 +131,7 @@ public final class SettingsScreen {
         seconds=instagramRules.seconds; adDelay=instagramRules.adDelay; photos=instagramRules.photos;
         timedFallback=instagramRules.timedFallback; skipAds=instagramRules.skipAds;
         timedSupport=instagramRules.timedSupport; adSupport=instagramRules.adSupport;
+        youtubeAds = new AdRulesPanel(c,SettingsStore.YOUTUBE_PACKAGE,0); youtubeSettings.special.addView(youtubeAds.root);
         liveCard = UiTheme.card(c,youtubeSettings.special,c.getString(R.string.live_card_title));
         live = new LiveSkipPanel(c,initialLiveDelay,liveListener); liveCard.addView(live);
         experimental = UiTheme.card(c,instagramSettings.special,c.getString(R.string.ui_experimental_title));
@@ -185,6 +187,12 @@ public final class SettingsScreen {
         if(SettingsStore.TIKTOK_PACKAGE.equals(host)) return tiktokRules;
         return null;
     }
+    public AdRulesPanel ads(String host) {
+        if(SettingsStore.YOUTUBE_PACKAGE.equals(host)) return youtubeAds;
+        if(SettingsStore.INSTAGRAM_PACKAGE.equals(host)) return instagramRules.ads;
+        if(SettingsStore.TIKTOK_PACKAGE.equals(host)) return tiktokRules.ads;
+        throw new IllegalArgumentException("Unsupported host");
+    }
     public String currentHost() { return currentHost; }
     public void showHome() { navigate(null); }
     public void showHost(boolean instagramHost) { showHost(instagramHost?SettingsStore.INSTAGRAM_PACKAGE:SettingsStore.YOUTUBE_PACKAGE); }
@@ -199,7 +207,7 @@ public final class SettingsScreen {
         homeContent.setVisibility(home?View.VISIBLE:View.GONE); navigation.setVisibility(home?View.GONE:View.VISIBLE);
         boolean yt=SettingsStore.YOUTUBE_PACKAGE.equals(host),ig=SettingsStore.INSTAGRAM_PACKAGE.equals(host),tt=SettingsStore.TIKTOK_PACKAGE.equals(host);
         youtubeSettings.root.setVisibility(yt?View.VISIBLE:View.GONE);instagramSettings.root.setVisibility(ig?View.VISIBLE:View.GONE);tiktokSettings.root.setVisibility(tt?View.VISIBLE:View.GONE);
-        liveCard.setVisibility(yt?View.VISIBLE:View.GONE);experimental.setVisibility(ig?View.VISIBLE:View.GONE);
+        liveCard.setVisibility(yt?View.VISIBLE:View.GONE);youtubeAds.card.setVisibility(yt?View.VISIBLE:View.GONE);experimental.setVisibility(ig?View.VISIBLE:View.GONE);
         for(LinearLayout card:new LinearLayout[]{instagramRules.timedCard,instagramRules.adsCard,instagramRules.photoCard})card.setVisibility(ig?View.VISIBLE:View.GONE);
         for(LinearLayout card:new LinearLayout[]{tiktokRules.timedCard,tiktokRules.adsCard,tiktokRules.photoCard})card.setVisibility(tt?View.VISIBLE:View.GONE);
         if(!home)detailTitle.setText(yt?R.string.ui_youtube:ig?R.string.ui_instagram:R.string.ui_tiktok);

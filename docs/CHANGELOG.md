@@ -1,5 +1,9 @@
 # 누적이력
 
+## APK 미배포 · YouTube 광고 준비 소스 / Source-only preparation
+
+YouTube 광고 설정·저장 및 미연결 전환 검증 모듈을 준비했다. 공개 Android 자료는 일반 광고와 협찬 고지를 구분하지만 실제 Shorts 광고의 접근성 구조는 미확보다. 자동 기능은 미지원·비활성으로 두고 준비 소스·시험·문서만 공개 범위에 포함한다. 기존 v0.5.0 APK·태그·인앱 업데이트 유지, 신규 설치용 APK 없음. [검증·공개 범위·필요 표본](YOUTUBE_ADS_PREPARATION.md). / Source-only preparation with a disabled control and unconnected transition helper; physical evidence is still required. No replacement APK or new in-app update.
+
 ## 0.5.0/code34 · 앱별 상세 및 TikTok 확장
 
 2026-08-29 Public v0.5.0 게시 완료. 제품 cdd94ae, CI33211739492 SUCCESS, 공개3파일·latest·업데이트feed와 로컬 APK 바이트/해시 일치 PASS. [최종 전달 원장](releases/v0.5.0.md). / Published with successful product CI and anonymous delivery parity; physical automation remains unrun.

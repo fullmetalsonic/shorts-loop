@@ -1,0 +1,8 @@
+<resources>
+    <item name="yt_skip_ads" type="id" />
+    <item name="yt_ad_support" type="id" />
+    <item name="yt_ad_delay_input" type="id" />
+    <item name="yt_ad_delay_minus" type="id" />
+    <item name="yt_ad_delay_plus" type="id" />
+    <item name="yt_ad_delay_apply" type="id" />
+</resources>
