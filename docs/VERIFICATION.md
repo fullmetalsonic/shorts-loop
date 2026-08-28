@@ -6,6 +6,8 @@
 
 EN: Compilation,705 unit tests and debug lint(0 errors,21 warnings) pass for source preparation only. YouTube ad detection/action remains unimplemented and disabled. No new distribution APK/native UI/physical automation; functional acceptance awaits actual ad evidence. Distributed0.5.0 is unchanged.
 
+소스91791f2 Public 게시 후 [CI33218554151](https://github.com/fullmetalsonic/shorts-loop/actions/runs/33218554151) debug/release 빌드·단위·lint·배포안전·다국어 **SUCCESS**. 비로그인 소스 접근, 문서 상대 링크248개, 기존 정식0.5.0의3개 파일 바이트·SHA256·digest 동일성 PASS. 새 설치용 Release는 만들지 않았다. / Public source CI and anonymous source/unchanged stable-artifact verification pass; no new installable release.
+
 ## 0.5.0/code34 · 현재 검증 / Current verification
 
 ### 최종 제품 cdd94ae / Final product

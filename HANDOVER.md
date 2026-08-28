@@ -8,6 +8,8 @@ YouTube 전용 광고 토글·0.0–9.9초/0.1단위 저장과 UI를 준비했�
 
 YouTube ad settings/UI preparation is not functional automation. Compilation and705 unit tests pass; detection/action wiring requires a real Shorts-ad sample and the control remains disabled. This source-only publication does not replace the distributed0.5.0 APK or update. See the linked preparation record for current validation and remaining limits.
 
+준비 소스91791f2를 기존 Public `main`에 게시했고 CI33218554151 SUCCESS를 확인했다. 비로그인 소스·문서 접근과 기존0.5.0의3개 배포 파일 바이트/해시 일치 PASS. 새 설치용 Release·인앱 업데이트 없음. / Preparation source91791f2 is public with successful CI; anonymous source and unchanged stable-artifact parity pass. No new installable update.
+
 ## 0.5.0/code34 · 공개 완료 / Public delivery checkpoint
 
 요구범위구현완료: 홈3개앱버튼/개별상세/공통분리,TT SurfaceView·광고/사진/적격무진행/실제총길이규칙. 기존설정·서명보존,새권한없음. source/page/pager/media/index재검증과hard-stop을유지하고독립리뷰P2(사진scope·준비시간/카운트키누락)를회귀검사와함께보완했다.

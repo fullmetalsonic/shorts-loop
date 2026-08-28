@@ -52,6 +52,16 @@ Changed-source compilation and705 direct JUnit tests pass, including20 new prepa
 
 Publication is source-only on the existing Public repository. Do not modify v0.5.0 tags, assets or update metadata; CI verification builds are not distributed releases. Recompiled source/tests and705 JUnit tests pass. Debug lint has0 errors and21 disclosed warnings. Localization, photo-safety, diff and scoped sensitive-content checks pass. Physical ad automation and native UI execution remain unrun.
 
+### 게시 완료 / Published source checkpoint
+
+- Public `main` 준비 소스: [`91791f2eebed1de624497b1d0f0c107a83fd0094`](https://github.com/fullmetalsonic/shorts-loop/commit/91791f2eebed1de624497b1d0f0c107a83fd0094).
+- [GitHub Actions33218554151](https://github.com/fullmetalsonic/shorts-loop/actions/runs/33218554151) **SUCCESS**: debug/release 검사용 빌드·단위시험·lint, 배포 안전·다국어 검사. Actions 런타임/setup-java 지원 종료 안내 경고는 남아 있으며 제품 오류가 아니다. CI의 검사용 산출물을 새 설치용 Release로 올리지 않았다.
+- 비로그인 Public 저장소·정확한 소스 커밋·미지원 안내 문서 접근 **PASS**. 문서 상대 링크248개 **PASS**.
+- 최신 정식 Release는 계속 **v0.5.0**, 태그 원천은 `cdd94aeb9e50dcbd03deb76bc06c159ed7556806`이다. APK·업데이트JSON·SHA256파일을 비로그인으로 다시 내려받아 로컬 기존 파일의 바이트·SHA256·GitHub digest 일치 **PASS**.
+- 유지된 APK: **778294 bytes**, SHA256 `08B0BE6A34F666E6EA3BC21950D152B7D14B239ED10F47299E382E7B281EEDEA`. 업데이트 메타데이터는 계속0.5.0/code34. 새 태그·Release·설치·메일 발송 없음.
+
+Source91791f2 is public and CI33218554151 succeeds. Anonymous source/document access and248 relative documentation links pass. The stable0.5.0 tag, three release files and update metadata are unchanged; anonymous byte/hash/digest parity passes. No new installable release, installation or email. Source publication does not complete YouTube ad support.
+
 ## 다음에 필요한 시험 / Required next evidence
 
 프리미엄이 적용되지 않는 YouTube의 실제 Shorts 광고1–2개와 앞뒤 일반 쇼츠를 같은 연결에서 비교한다. 광고 전용 표시·page/pager 소속·페이지 번호·창 범위·정지/댓글/외부 링크 상태를 확인한다. 광고 문구/계정/원시 트리는 공개하지 않는다.
